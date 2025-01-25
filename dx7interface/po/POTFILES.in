@@ -1,0 +1,18 @@
+# List of source files containing translatable strings.
+
+# Main application
+src/dx7interface.cc
+src/dx7interface.h
+
+#ui
+data/ui/libdx7interface-0.0.1.ui
+data/launcher/dx7interface.desktop.in
+
+
+
+
+
+
+
+
+

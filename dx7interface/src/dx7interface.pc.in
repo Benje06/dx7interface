@@ -1,0 +1,12 @@
+prefix=@prefix@
+eprefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: lib@PACKAGE_NAME@
+Description: load module synth library.
+Version: @PACKAGE_VERSION@
+URL: @PACKAGE_URL@
+Libs: -L${libdir} -l@PACKAGE_NAME@-@LIB_VERSION@
+Cflags: -I${includedir}/@PACKAGE_NAME@-@API_VERSION@/@PACKAGE_NAME@ -I${libdir}/@PACKAGE_NAME@-@API_VERSION@/include

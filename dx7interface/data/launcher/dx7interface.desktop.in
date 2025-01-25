@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=@PACKAGE_NAME@
+Comment=Plugin to control Dx7
+Comment[fr]=Module de controle du Dx7
+Exec=sh -c 'GTK_THEME=Blackbird gxinterface -m /usr/share/@PACKAGE_NAME@/@VERSION@/lib@PACKAGE_NAME@-@LIB_VERSION@.la'
+Icon=/usr/share/@PACKAGE_NAME@/@VERSION@/images/dx7.jpg
+Terminal=false
+Type=Application
+Categories=GTK;GNOME;AudioVideo;Audio;X-Synthesis;
+Keywords=Synthesizer;Plugin;

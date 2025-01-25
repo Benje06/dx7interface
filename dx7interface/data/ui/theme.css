@@ -1,0 +1,95 @@
+/*
+*   CSS file for theme widget
+*   Green dx7:  #66cc99 / 0.4,0.8,0.6,1.0 / 102,204,153,1
+*/
+/*
+ * spinbutton.horizontal
+ ├ ── undershoo*t.left
+ ├── undershoot.right
+ ├── entry
+ │   ╰── ...
+ ├── button.down
+ ╰── button.up
+*/
+spinbutton {
+    min-width: 1px;
+    min-height: 1px;
+    padding: 0 0;
+    /*color:black;*/
+}
+
+spinbutton entry {
+    min-height: 1px;
+    min-width: 1px;
+    padding: 1px 4px;
+   /* background-color: #66cc99;*/
+}
+
+spinbutton button {
+    min-height: 1px;
+    min-width: 1px;
+    padding: 0 0;
+}
+
+/*combobox
+├── box.linked
+│   ╰── button.combo
+│       ╰── box
+│           ├── cellview
+│           ╰── arrow
+*/
+combobox *{
+    min-height: 1px;
+    min-width: 1px;
+    padding: 0 0;
+    margin: 0 0;
+}
+/*
+entry[.read-only][.flat][.warning][.error]
+├── image.left
+├── image.right
+├── undershoot.left
+├── undershoot.right
+├── [selection]
+├── [progress[.pulse]]
+╰── [window.popup]
+*/
+entry {
+    min-height: 1px;
+    min-width: 1px;
+    padding: 0 0;
+}
+/*scale[.fine-tune][.marks-before][.marks-after]
+├── marks.top
+│   ├── mark
+│   ┊    ├── [label]
+│   ┊    ╰── indicator
+┊   ┊
+│   ╰── mark
+├── [value]
+├── contents
+│   ╰── trough
+│       ├── slider
+│       ├── [highlight]
+│       ╰── [fill]
+╰── marks.bottom
+├── mark
+┊    ├── indicator
+┊    ╰── [label]
+╰── mark
+*/
+scale contents trough highlight{
+    /*color:#66cc99;*/
+    background-color:#66cc99;
+}
+/*
+checkbutton
+├── check
+╰── <child>
+*/
+checkbutton:checked >check{
+    color:black;
+    background-image: none;
+    background-color:#66cc99;
+    border-color:black;
+}

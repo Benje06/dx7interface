@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+#	 Copyright (C) 2010		BENHAÏM Jérôme.
+# 
+# This file is part of GxInterface.
+#
+#    GxInterface is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    GxInterface is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with GxInterface.  If not, see <http://www.gnu.org/licenses/>.
+
+echo "
+Installer les outils de compilation ( build-essential )
+    les autotool (autoconf automake autogen autotools-dev)
+    les outils de traduction (libtool gettext)
+    les libraries c++ gtk (libgtkmm-3.0-dev )
+    la librairie alsa (libasound2-dev)
+    l'outils de build du paquets deb (checkinstall)
+"
+sudo apt-get install build-essential autoconf autogen automake autotools-dev libtool gettext libgtkmm-3.0-dev libasound2-dev checkinstall
+
+echo "Enlever l'ancien gxinterface
+    nettoyer les repertoire des sources (make distclean ou make clean)
+    lancer la generation par les autotols (autogen.sh)
+    lancer la configuration (configure)
+    lancer le build (make)
+    et lancer checkinstall avec le numero de version 1.0.0
+    ## sudo apt remove -y gxinterface ; make distclean || make clean ; NOCONFIGURE=no ./autogen.sh && ./configure --prefix=/usr && make && sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y 
+
+"
+cd ../../gxinterface
+sudo apt remove -y gxinterface
+make distclean || make clean
+./autogen.sh --prefix=/usr
+make
+sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y 
+
+echo "Enlever l'ancien dx7interface
+    nettoyer les repertoire des sources (make distclean ou make clean)
+    lancer la generation par les autotols (autogen.sh)
+    lancer la configuration (configure)
+    lancer le build (make)
+    et lancer checkinstall avec le numero de version 1.0.0
+    ## make distclean || make clean && NOCONFIGURE=no  ./autogen.sh --prefix=/usr && sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y 
+"
+cd ../dx7interface
+make distclean || make clean
+./autogen.sh --prefix=/usr
+sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y 
+

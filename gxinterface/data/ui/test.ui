@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <!-- interface-name  -->
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkBox" id="box_main">
+    <child>
+      <object class="GtkButton"/>
+    </child>
+    <child>
+      <object class="GtkComboBox"/>
+    </child>
+    <child>
+      <object class="GtkCheckButton"/>
+    </child>
+    <child>
+      <object class="GtkCalendar"/>
+    </child>
+    <child>
+      <object class="GtkNotebook">
+        <child>
+          <object class="GtkNotebook"/>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

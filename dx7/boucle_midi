@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+#	 Copyright (C) 2010		BENHAÏM Jérôme.
+# 
+# This file is part of GxInterface.
+#
+#    GxInterface is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    GxInterface is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with GxInterface.  If not, see <http://www.gnu.org/licenses/>.
+#
+if [[ `ps aux | grep -c qjackctl` -lt "2" ]] ;then
+	qjackctl &
+	sleep 2
+fi
+
+hexter_cl=`pmidi -l | grep "hexter DX7" | cut -b -5`
+
+if [[ $hexter_cl == "" ]]; then
+	jack-dssi-host hexter.so &
+	sleep 2
+fi
+
+if [[ `ps aux | grep -c amidi` -lt "2" ]] ;then
+	amidi -d -p virtual &
+fi
+
+hexter_cl=`pmidi -l | grep "hexter DX7" | cut -b -5`
+while [ [1] ] ;do
+
+	pmidi -p $hexter_cl 'boucle_midi.mid'
+	 
+done

@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+#	 Copyright (C) 2010		BENHAÏM Jérôme.
+# 
+# This file is part of GxInterface.
+#
+#    GxInterface is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    GxInterface is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with GxInterface.  If not, see <http://www.gnu.org/licenses/>.
+
+#GxInterface 
+pkg1="autotools-dev libglib2.0-dev autoconf automake autogen libtool gettext intltool build-essential libglibmm-2.4-dev libgtkmm-3.0-dev checkinstall libasound2-dev"
+#Dx7interface
+pkg2="libasound2-dev pmidi"
+
+echo "
+This Script will install :
+for GxInterface :
+$pkg1
+
+for Dx7interface :
+$pkg2
+
+"
+sudo apt-get install $pkg1 $pkg2
+
+echo "Compilation and install of GxInterface :
+"
+
+cd ../../gxinterface
+make distclean || make clean
+./autogen.sh --prefix=/usr
+make
+sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y
+
+echo "Compilation and install of Dx7interface :
+"
+
+cd ../dx7interface
+make distclean || make clean
+./autogen.sh --prefix=/usr 
+make
+sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y
+

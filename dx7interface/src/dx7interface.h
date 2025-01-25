@@ -1,0 +1,506 @@
+/* ----------------------------------------------------------------------------
+ * Dx7interface.h -- DX7 Graphic interface
+ * dx7 interface Headers                                             header
+ * ----------------------------------------------------------------------------
+ * copyright © 2006, 2007, 2008, 2009, 2010  Jérôme BENHAÏM <benhaimjerome@gmail.com>,
+ *
+ * ----------------------------------------------------------------------------
+ * This program is free software ; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License 
+ * as published by the Free Software Foundation ;
+ * either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY ; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * ----------------------------------------------------------------------------
+ */
+/*TODO :
+ *timer 
+ *delete midi
+ *write bank 
+ *receive sysex
+ *charger/decharger synth
+ *attache/detache midi one by synth
+*/
+#pragma once
+#define MODULE_NAME "Dx7SyX"
+/* sys */
+#include <memory>
+// #include <cairomm/surface.h>
+/*** APP ***/
+#include <gxinterface/0.0.1/gxmodule.h>
+/* Synth */
+#include <synth.h>
+/* sysex */
+#include "dx7sysex.h"
+
+
+/** CONSTANTS **/
+#define UI MOD_UI_DIRECTORY"libdx7interface-0.0.1.ui"
+#define CSSFILE MOD_UI_DIRECTORY"theme.css"
+
+extern "C" {
+    std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring> LoadPlug(uint8_t);
+};
+
+class Dx7interface : public Gx_module, public Synth {
+    public:
+        Dx7interface(Glib::ustring,uint8_t);
+        virtual ~Dx7interface();
+    private:
+        /*** Dx7 ***/
+        //Gtk::Window* main_window = nullptr;
+        static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
+        /* SySeX format (bank/sound/message) */
+        St_dx7sysex<1> bank_1_origin;           /* bank d'origine 1 son */
+        St_dx7sysex<1> bank_1_modif;            /* bank modifié 1 son */
+        St_dx7sysex<32> bank_32_origin;         /* bank d'origine 32 sons */
+        St_dx7sysex<32> bank_32_modif;          /* ... */
+        St_dx7sysex<128> bank_128_origin;       /* ... */
+        St_dx7sysex<128> bank_128_modif;        /* ... */
+        Glib::RefPtr<Gio::File> bank_file;      /* pointeur de lecture de fichier */
+        Glib::RefPtr<Gio::DataInputStream> data_stream; /* pointeur de flux */
+        /*** ALSA MIDI ***/
+        /* midi_receive;*/
+        /*snd_rawmidi_t *handle_in ,*handle_out ;*/
+        snd_seq_t* seq_handle = nullptr;                /* handler */
+        snd_seq_system_info_t* info = nullptr;          /* info */
+        snd_seq_event_t* ev = nullptr;                  /* evenement */
+        size_t in_buff_size, out_buff_size;   /* buffer d'entré et de sorti */
+        /*** DRAWING ***/
+        /* lines/curves */
+        double line_width = 3.0;                                      // epaisseur
+        /* point */
+        double r_point = 4.5;
+        double r_point_shadow = 9.0;
+        std::array<double, 4> line_color = {0.4,0.8,0.6,1.0};       // couleur des courbes ( vert Dx7 ) format rgbax
+        /* dashes */            
+        double dash_width = 0.5;                                      // epaisseur
+        std::array<double, 4> dash_color = {0.4,0.8,0.6,0.8};    // couleur format rgba
+        const std::vector< double > dash_pattern = {3.0, 5.0, 3.0, 5.0};  // pattern des pointillé ( lgt couleur, lgt espace , lgt couleur , lgt espace)
+        double dash_offset = 0.0;                                   // offset du dash pattern
+        /* grid */
+        double grid_step_y=5.0, grid_step_x=20.0;                  // nombre de pas voulu en x y
+        /* text */
+        std::array<double, 4> text_color = {1.0, 0.5, 0.2, 0.8};
+        std::array<double, 4> bg_color = {0.0, 0.0, 0.0, 0.0};
+        /* Cairomm context helpers */
+        int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);  /* retourne la taille de sla zone visible */
+        /* ADSR */
+
+        double* old_draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int*, Glib::ustring);   /* dessine la courbe */
+
+        void draw_background(const Cairo::RefPtr<Cairo::Context>&);                     /* dessine le fond */
+        void draw_grid(const Cairo::RefPtr<Cairo::Context>&, int*, double*);            /* dessisne la grille */
+        double* draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int*, Glib::ustring);   /* dessine la courbe */
+        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double);                        /* dessine un point */
+        void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
+        /* Generic error */
+        bool error();
+        /*** THREAD ***/
+        bool Run() ;    /* Thread function  */
+        /*** MIDI ***/
+        void listen_midi() override;
+        /* sound bank */
+        void load_bank(Glib::RefPtr<Gio::File>);
+        void save_bank(Glib::RefPtr<Gio::File>);
+        void save_bank_as(Glib::RefPtr<Gio::File>);
+        void clean_bank();
+        /* voice load  */
+        void seek_voice(uint8_t, st_dx7sysex_1*);
+        void send_voice(st_dx7sysex_1*);
+        void set_voice(st_dx7sysex_1*);
+
+        /*** UI ***/
+        Glib::RefPtr<Gtk::ListStore> m_refListStore ; /* liste des nom des sons de la banque chargé */
+       
+       /** EVENTS / SIGNAL **/
+       void block_all();                       /* blocage des evenements de l'interface */
+       void unblock_all();                     /* ... */
+       void attach_signals() override;
+       void dettach_signals() override;
+
+        /* Drawing */
+        bool on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&);
+        sigc::connection slot_pitch_draw_eg;
+        bool on_draw_op_event(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);
+        sigc::connection slot_op1_draw;
+        sigc::connection slot_op2_draw;
+        sigc::connection slot_op3_draw;
+        sigc::connection slot_op4_draw;
+        sigc::connection slot_op5_draw;
+        sigc::connection slot_op6_draw;
+
+        /* events and sigc::connection slot for blocking*/
+        bool on_bank_reveal(GdkEventButton*);
+        sigc::connection slot_bank_reveal;
+
+        void on_treeview_row_clicked();
+        sigc::connection slot_treeview_row_clicked;
+        void on_bank_select();
+        sigc::connection slot_bank_select;
+        /* general algo */
+        void on_algo_event();
+        sigc::connection slot_algo;
+        void on_feedback_event();
+        sigc::connection slot_feedback;
+        void on_transpose_event();
+        sigc::connection slot_note_transpose;
+        sigc::connection slot_octv_transpose;
+        void on_oks_event();
+        sigc::connection slot_oks;
+        /* general lfo */
+        void on_lfo_wav_event();
+        sigc::connection slot_lfo_wav;
+        void on_lfo_sync_event();
+        sigc::connection slot_lfo_sync;
+        void on_speed_event();
+        sigc::connection slot_speed;
+        void on_delay_event();
+        sigc::connection slot_delay;
+        void on_pmd_event();
+        sigc::connection slot_pmd;
+        void on_amd_event();
+        sigc::connection slot_amd;
+        /* lfo modulation */
+        void on_pms_event();
+        sigc::connection slot_pms;
+        /* pitch eg*/
+        void on_pitch_rt1_event();
+        sigc::connection slot_pitch_rt1;
+        void on_pitch_rt2_event();
+        sigc::connection slot_pitch_rt2;
+        void on_pitch_rt3_event();
+        sigc::connection slot_pitch_rt3;
+        void on_pitch_rt4_event();
+        sigc::connection slot_pitch_rt4;
+        void on_pitch_lvl1_event();
+        sigc::connection slot_pitch_lvl1;
+        void on_pitch_lvl2_event();
+        sigc::connection slot_pitch_lvl2;
+        void on_pitch_lvl3_event();
+        sigc::connection slot_pitch_lvl3;
+        void on_pitch_lvl4_event();
+        sigc::connection slot_pitch_lvl4;
+        /* mute operator for dx7*/
+        void on_mute_op_event();
+        sigc::connection slot_mute_op1;
+        sigc::connection slot_mute_op2;
+        sigc::connection slot_mute_op3;
+        sigc::connection slot_mute_op4;
+        sigc::connection slot_mute_op5;
+        sigc::connection slot_mute_op6;
+        void on_txt_freq_op_event();
+        /* op1 */
+        void on_ams_op1_event(); //frame lfo
+        sigc::connection slot_ams_op1;
+        void on_freq_mode_op1_event();
+        sigc::connection slot_freq_mode_op1;
+        void on_freq_coarse_op1_event();
+        sigc::connection slot_freq_coarse_op1;
+        void on_freq_fine_op1_event();
+        sigc::connection slot_freq_fine_op1;
+        void on_dtun_op1_event();
+        sigc::connection slot_dtun_op1;
+        /* op1 EG*/
+        void on_eg_rt1_op1_event();
+        sigc::connection slot_eg_rt1_op1;
+        void on_eg_rt2_op1_event();
+        sigc::connection slot_eg_rt2_op1;
+        void on_eg_rt3_op1_event();
+        sigc::connection slot_eg_rt3_op1;
+        void on_eg_rt4_op1_event();
+        sigc::connection slot_eg_rt4_op1;
+        void on_eg_lvl1_op1_event();
+        sigc::connection slot_eg_lvl1_op1;
+        void on_eg_lvl2_op1_event();
+        sigc::connection slot_eg_lvl2_op1;
+        void on_eg_lvl3_op1_event();
+        sigc::connection slot_eg_lvl3_op1;
+        void on_eg_lvl4_op1_event();
+        sigc::connection slot_eg_lvl4_op1;
+        /* op1 VOLUME*/
+        void on_krs_op1_event();
+        sigc::connection slot_krs_op1;
+        void on_kvs_op1_event();
+        sigc::connection slot_kvs_op1;
+        void on_lvl_op1_event();
+        sigc::connection slot_lvl_op1;
+        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        void on_mute_hexter_op1_event();
+        sigc::connection slot_mute_hexter_op1;
+
+        /* op1 KLS*/
+        void on_kls_lft_curve_op1_event();
+        sigc::connection slot_kls_lft_curve_op1;
+        void on_kls_rght_curve_op1_event();
+        sigc::connection slot_kls_rght_curve_op1;
+        void on_kls_lft_dpth_op1_event();
+        sigc::connection slot_kls_lft_depth_op1;
+        void on_kls_rght_dpth_op1_event();
+        sigc::connection slot_kls_rght_depth_op1;
+        void on_kls_brk_pt_op1_event();
+        sigc::connection slot_kls_note_brk_pt_op1;
+        sigc::connection slot_kls_octv_brk_pt_op1;
+
+        /*----------------------LES AUTRES OPERATEURS------------------------*/
+
+        /* op2 */
+        void on_ams_op2_event(); //frame lfo
+        sigc::connection slot_ams_op2;
+        void on_freq_mode_op2_event();
+        sigc::connection slot_freq_mode_op2;
+        void on_freq_coarse_op2_event();
+        sigc::connection slot_freq_coarse_op2;
+        void on_freq_fine_op2_event();
+        sigc::connection slot_freq_fine_op2;
+        void on_dtun_op2_event();
+        sigc::connection slot_dtun_op2;
+        /* op2 EG*/
+        void on_eg_rt1_op2_event();
+        sigc::connection slot_eg_rt1_op2;
+        void on_eg_rt2_op2_event();
+        sigc::connection slot_eg_rt2_op2;
+        void on_eg_rt3_op2_event();
+        sigc::connection slot_eg_rt3_op2;
+        void on_eg_rt4_op2_event();
+        sigc::connection slot_eg_rt4_op2;
+        void on_eg_lvl1_op2_event();
+        sigc::connection slot_eg_lvl1_op2;
+        void on_eg_lvl2_op2_event();
+        sigc::connection slot_eg_lvl2_op2;
+        void on_eg_lvl3_op2_event();
+        sigc::connection slot_eg_lvl3_op2;
+        void on_eg_lvl4_op2_event();
+        sigc::connection slot_eg_lvl4_op2;
+        /* op2 VOLUME*/
+        void on_krs_op2_event();
+        sigc::connection slot_krs_op2;
+        void on_kvs_op2_event();
+        sigc::connection slot_kvs_op2;
+        void on_lvl_op2_event();
+        sigc::connection slot_lvl_op2;
+        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        void on_mute_hexter_op2_event();
+        sigc::connection slot_mute_hexter_op2;
+        /* op2 KLS*/
+        void on_kls_lft_curve_op2_event();
+        sigc::connection slot_kls_lft_curve_op2;
+        void on_kls_rght_curve_op2_event();
+        sigc::connection slot_kls_rght_curve_op2;
+        void on_kls_lft_dpth_op2_event();
+        sigc::connection slot_kls_lft_depth_op2;
+        void on_kls_rght_dpth_op2_event();
+        sigc::connection slot_kls_rght_depth_op2;
+        void on_kls_brk_pt_op2_event();
+        sigc::connection slot_kls_note_brk_pt_op2;
+        sigc::connection slot_kls_octv_brk_pt_op2;
+
+        /* op3 */
+        void on_ams_op3_event(); //frame lfo
+        sigc::connection slot_ams_op3;
+        void on_freq_mode_op3_event();
+        sigc::connection slot_freq_mode_op3;
+        void on_freq_coarse_op3_event();
+        sigc::connection slot_freq_coarse_op3;
+        void on_freq_fine_op3_event();
+        sigc::connection slot_freq_fine_op3;
+        void on_dtun_op3_event();
+        sigc::connection slot_dtun_op3;
+        /* op3 EG*/
+        void on_eg_rt1_op3_event();
+        sigc::connection slot_eg_rt1_op3;
+        void on_eg_rt2_op3_event();
+        sigc::connection slot_eg_rt2_op3;
+        void on_eg_rt3_op3_event();
+        sigc::connection slot_eg_rt3_op3;
+        void on_eg_rt4_op3_event();
+        sigc::connection slot_eg_rt4_op3;
+        void on_eg_lvl1_op3_event();
+        sigc::connection slot_eg_lvl1_op3;
+        void on_eg_lvl2_op3_event();
+        sigc::connection slot_eg_lvl2_op3;
+        void on_eg_lvl3_op3_event();
+        sigc::connection slot_eg_lvl3_op3;
+        void on_eg_lvl4_op3_event();
+        sigc::connection slot_eg_lvl4_op3;
+        /* op3 VOLUME*/
+        void on_krs_op3_event();
+        sigc::connection slot_krs_op3;
+        void on_kvs_op3_event();
+        sigc::connection slot_kvs_op3;
+        void on_lvl_op3_event();
+        sigc::connection slot_lvl_op3;
+        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        void on_mute_hexter_op3_event();
+        sigc::connection slot_mute_hexter_op3;
+        /* op3 KLS*/
+        void on_kls_lft_curve_op3_event();
+        sigc::connection slot_kls_lft_curve_op3;
+        void on_kls_rght_curve_op3_event();
+        sigc::connection slot_kls_rght_curve_op3;
+        void on_kls_lft_dpth_op3_event();
+        sigc::connection slot_kls_lft_depth_op3;
+        void on_kls_rght_dpth_op3_event();
+        sigc::connection slot_kls_rght_depth_op3;
+        void on_kls_brk_pt_op3_event();
+        sigc::connection slot_kls_note_brk_pt_op3;
+        sigc::connection slot_kls_octv_brk_pt_op3;
+
+        /* op4 */
+        void on_ams_op4_event(); //frame lfo
+        sigc::connection slot_ams_op4;
+        void on_freq_mode_op4_event();
+        sigc::connection slot_freq_mode_op4;
+        void on_freq_coarse_op4_event();
+        sigc::connection slot_freq_coarse_op4;
+        void on_freq_fine_op4_event();
+        sigc::connection slot_freq_fine_op4;
+        void on_dtun_op4_event();
+        sigc::connection slot_dtun_op4;
+        /* op4 EG*/
+        void on_eg_rt1_op4_event();
+        sigc::connection slot_eg_rt1_op4;
+        void on_eg_rt2_op4_event();
+        sigc::connection slot_eg_rt2_op4;
+        void on_eg_rt3_op4_event();
+        sigc::connection slot_eg_rt3_op4;
+        void on_eg_rt4_op4_event();
+        sigc::connection slot_eg_rt4_op4;
+        void on_eg_lvl1_op4_event();
+        sigc::connection slot_eg_lvl1_op4;
+        void on_eg_lvl2_op4_event();
+        sigc::connection slot_eg_lvl2_op4;
+        void on_eg_lvl3_op4_event();
+        sigc::connection slot_eg_lvl3_op4;
+        void on_eg_lvl4_op4_event();
+        sigc::connection slot_eg_lvl4_op4;
+        /* op4 VOLUME*/
+        void on_krs_op4_event();
+        sigc::connection slot_krs_op4;
+        void on_kvs_op4_event();
+        sigc::connection slot_kvs_op4;
+        void on_lvl_op4_event();
+        sigc::connection slot_lvl_op4;
+        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        void on_mute_hexter_op4_event();
+        sigc::connection slot_mute_hexter_op4;
+        /* op4 KLS*/
+        void on_kls_lft_curve_op4_event();
+        sigc::connection slot_kls_lft_curve_op4;
+        void on_kls_rght_curve_op4_event();
+        sigc::connection slot_kls_rght_curve_op4;
+        void on_kls_lft_dpth_op4_event();
+        sigc::connection slot_kls_lft_depth_op4;
+        void on_kls_rght_dpth_op4_event();
+        sigc::connection slot_kls_rght_depth_op4;
+        void on_kls_brk_pt_op4_event();
+        sigc::connection slot_kls_note_brk_pt_op4;
+        sigc::connection slot_kls_octv_brk_pt_op4;
+
+        /* op5 */
+        void on_ams_op5_event(); //frame lfo
+        sigc::connection slot_ams_op5;
+        void on_freq_mode_op5_event();
+        sigc::connection slot_freq_mode_op5;
+        void on_freq_coarse_op5_event();
+        sigc::connection slot_freq_coarse_op5;
+        void on_freq_fine_op5_event();
+        sigc::connection slot_freq_fine_op5;
+        void on_dtun_op5_event();
+        sigc::connection slot_dtun_op5;
+        /* op5 EG*/
+        void on_eg_rt1_op5_event();
+        sigc::connection slot_eg_rt1_op5;
+        void on_eg_rt2_op5_event();
+        sigc::connection slot_eg_rt2_op5;
+        void on_eg_rt3_op5_event();
+        sigc::connection slot_eg_rt3_op5;
+        void on_eg_rt4_op5_event();
+        sigc::connection slot_eg_rt4_op5;
+        void on_eg_lvl1_op5_event();
+        sigc::connection slot_eg_lvl1_op5;
+        void on_eg_lvl2_op5_event();
+        sigc::connection slot_eg_lvl2_op5;
+        void on_eg_lvl3_op5_event();
+        sigc::connection slot_eg_lvl3_op5;
+        void on_eg_lvl4_op5_event();
+        sigc::connection slot_eg_lvl4_op5;
+        /* op5 VOLUME*/
+        void on_krs_op5_event();
+        sigc::connection slot_krs_op5;
+        void on_kvs_op5_event();
+        sigc::connection slot_kvs_op5;
+        void on_lvl_op5_event();
+        sigc::connection slot_lvl_op5;
+        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        void on_mute_hexter_op5_event();
+        sigc::connection slot_mute_hexter_op5;
+        /* op5 KLS*/
+        void on_kls_lft_curve_op5_event();
+        sigc::connection slot_kls_lft_curve_op5;
+        void on_kls_rght_curve_op5_event();
+        sigc::connection slot_kls_rght_curve_op5;
+        void on_kls_lft_dpth_op5_event();
+        sigc::connection slot_kls_lft_depth_op5;
+        void on_kls_rght_dpth_op5_event();
+        sigc::connection slot_kls_rght_depth_op5;
+        void on_kls_brk_pt_op5_event();
+        sigc::connection slot_kls_note_brk_pt_op5;
+        sigc::connection slot_kls_octv_brk_pt_op5;
+
+        /* op6 */
+        void on_ams_op6_event(); //frame lfo
+        sigc::connection slot_ams_op6;
+        void on_freq_mode_op6_event();
+        sigc::connection slot_freq_mode_op6;
+        void on_freq_coarse_op6_event();
+        sigc::connection slot_freq_coarse_op6;
+        void on_freq_fine_op6_event();
+        sigc::connection slot_freq_fine_op6;
+        void on_dtun_op6_event();
+        sigc::connection slot_dtun_op6;
+        /* op6 EG*/
+        void on_eg_rt1_op6_event();
+        sigc::connection slot_eg_rt1_op6;
+        void on_eg_rt2_op6_event();
+        sigc::connection slot_eg_rt2_op6;
+        void on_eg_rt3_op6_event();
+        sigc::connection slot_eg_rt3_op6;
+        void on_eg_rt4_op6_event();
+        sigc::connection slot_eg_rt4_op6;
+        void on_eg_lvl1_op6_event();
+        sigc::connection slot_eg_lvl1_op6;
+        void on_eg_lvl2_op6_event();
+        sigc::connection slot_eg_lvl2_op6;
+        void on_eg_lvl3_op6_event();
+        sigc::connection slot_eg_lvl3_op6;
+        void on_eg_lvl4_op6_event();
+        sigc::connection slot_eg_lvl4_op6;
+        /* op6 VOLUME*/
+        void on_krs_op6_event();
+        sigc::connection slot_krs_op6;
+        void on_kvs_op6_event();
+        sigc::connection slot_kvs_op6;
+        void on_lvl_op6_event();
+        sigc::connection slot_lvl_op6;
+        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        void on_mute_hexter_op6_event();
+        sigc::connection slot_mute_hexter_op6;
+        /* op6 KLS*/
+        void on_kls_lft_curve_op6_event();
+        sigc::connection slot_kls_lft_curve_op6;
+        void on_kls_rght_curve_op6_event();
+        sigc::connection slot_kls_rght_curve_op6;
+        void on_kls_lft_dpth_op6_event();
+        sigc::connection slot_kls_lft_depth_op6;
+        void on_kls_rght_dpth_op6_event();
+        sigc::connection slot_kls_rght_depth_op6;
+        void on_kls_brk_pt_op6_event();
+        sigc::connection slot_kls_note_brk_pt_op6;
+        sigc::connection slot_kls_octv_brk_pt_op6;
+
+};

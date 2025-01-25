@@ -1,0 +1,157 @@
+Files :
+	PKGBUILD:
+		COPYRIGHT AND LICENSE INFORMATION FOR PKGBUILD FILES
+
+		* The following am file are part of Dx7interface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: Makefile.am
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+		  
+	Makefile.am :
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+		* The following am file are part of Dx7interface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: Makefile.am
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+		  
+	autogen.sh :
+		autogen script with .po generator		
+		COPYRIGHT AND LICENSE INFORMATION FOR AUTOGEN.SH FILES
+
+		* The following autogen.sh file are part of Dx7interface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: autogen.sh
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+		  
+	configure.ac :			
+		COPYRIGHT AND LICENSE INFORMATION FOR .AC FILES
+
+		* The following configure.ac file are part of Dx7interface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: configure.ac
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010-2024 BENHAÏM Jérôme.  
+		
+		parts inside, about : 
+			Check for windows,
+			Check for GDK Quartz and MacOSX integration package, 
+			Gnome init,
+		comes from glade3 project see http://glade.gnome.org/
+		
+Directory :
+	- data/ui :
+		libdx7interface-0.0.1.ui		dx7interface interface ui file :
+						
+			COPYRIGHT AND LICENSE INFORMATION FOR .UI FILES
+
+			* The following .ui file are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: libDx7interface-0.0.1.ui
+			  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+
+	- data/images :
+		algo2.png
+		algo6.png
+		algo29.png
+		algo30.png
+		algo31.png
+		algo32.png
+		algo&wave.svg
+		SAW-.png
+		SAW+.png
+		S_HOLD.png
+		SIN.png
+		SQU.png
+		TRI.png
+		
+		COPYRIGHT AND LICENSE INFORMATION FOR IMAGE AND VECTORIEL FILES
+
+			* The following .png and .svg files are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: algo2.png	algo6.png algo29.png algo30.png	algo31.png
+				  algo32.png algo&wave.svg SAW-.png	SAW+.png S_HOLD.png
+				  SIN.png SQU.png TRI.png			 
+			  Author: BENHAÏM Jérôme Jean-Michel THIÉMONGE
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+			   
+		Makefile.am : 
+		
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+			* The following .am file are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: Makefile.am
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+			  
+	- po :
+		de.po
+		en.po
+		es.po
+		fr.po
+		fr_FR.po
+		fr_FR.utf8.po
+		dx7interface.pot
+		jap.po
+		languagecode.po
+		ru.po :
+		
+		COPYRIGHT AND LICENSE INFORMATION FOR .PO and .POT FILES
+
+			* The following .po and .pot files are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: de.po en.po es.po fr.po fr_FR.po fr_FR.utf8.po dx7interface.pot jap.po languagecode.po ru.po
+			 
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+			   
+		Makefile.am : 
+		
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+			* The following .am file are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: Makefile.am
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+
+	- src : 
+		dx7interface.cc
+		dx7interface.h
+		dx7sysex.h :
+
+			COPYRIGHT AND LICENSE INFORMATION FOR .H AND .CC FILES
+
+				* The following headers and sources file are part of Dx7interface.  All are licensed under the
+				  GNU General Public License version 3 (see COPYING) or later.
+
+				File :  dx7interface.cc	dx7interface.h dx7sysex.h
+				  Author: BENHAÏM Jérôme Jean-Michel THIÉMONGE
+				  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+				
+		Makefile.am
+		dx7interface.pc.in
+	
+			COPYRIGHT AND LICENSE INFORMATION FOR .AM and .PC FILES
+
+			* The following .am and .pc file are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: Makefile.am, dx7interface.pc.in
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010-2024-2024 BENHAÏM Jérôme.		  
+			  

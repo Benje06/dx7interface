@@ -1,0 +1,12 @@
+prefix=@prefix@
+eprefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libtx81zinterface
+Description: load module synth library.
+Version: @PACKAGE_VERSION@
+URL: @PACKAGE_URL@
+Libs: -L${libdir} -ltx81zinterface-@LIB_VERSION@
+Cflags: -I${includedir}/tx81zinterface-@API_VERSION@/tx81zinterface -I${libdir}/tx81zinterface-@API_VERSION@/include

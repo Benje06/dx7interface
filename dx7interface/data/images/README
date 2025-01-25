@@ -1,0 +1,35 @@
+algo2.png
+		algo6.png
+		algo29.png
+		algo30.png
+		algo31.png
+		algo32.png
+		algo&wave.svg
+		SAW-.png
+		SAW+.png
+		S_HOLD.png
+		SIN.png
+		SQU.png
+		TRI.png :
+		
+		COPYRIGHT AND LICENSE INFORMATION FOR IMAGE AND VECTORIEL FILES
+
+			* The following .png and .svg files are part of GxSynth.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: algo2.png	algo6.png algo29.png algo30.png	algo31.png
+				  algo32.png algo&wave.svg SAW-.png	SAW+.png S_HOLD.png
+				  SIN.png SQU.png TRI.png			 
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010 BENHAÏM Jérôme.
+			   
+		Makefile.am : 
+		
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+			* The following .am file are part of GxSynth.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: Makefile.am
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010 BENHAÏM Jérôme.

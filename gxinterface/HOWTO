@@ -1,0 +1,14 @@
+open a terminal and go to the main directory (gxinterface) :
+		cd where_you_have_decompressed/gxinterface/gxinterface
+	regenerate by :
+		./autogen.sh
+	configure by ( --prefix=/usr for debian/ubuntu users ) :
+		./configure --prefix=/usr
+	compilation :
+		make 
+	installation ( or use checkinstall to make a .deb ) :
+		sudo make install 
+	or 
+		sudo checkinstall -D --fstrans=no --install=yes 
+	( in checkinstall set the number version (3) of gxsynth ex: 0.0.1 )
+	

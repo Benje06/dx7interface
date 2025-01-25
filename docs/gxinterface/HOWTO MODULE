@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+#	 Copyright (C) 2010		BENHAÏM Jérôme.
+# 
+# This file is part of GxInterface.
+#
+#    GxInterface is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    GxInterface is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with GxInterface.  If not, see <http://www.gnu.org/licenses/>.
+
+nom du dossier contenant les sources : nom du module
+source modules dans : src 
+modifier dans :
+	configure.ac src/Makefile.am po/POTFILES.in
+dx7interface par le nom du module ainsi que les noms des fichiers :
+	src/dx7interface.pc.in
+	data/ui/dx7interface-0.0.1.ui
+
+4 variables pour les chemins dans le module :
+
+PROGRAMNAME_LOCALEDIR=[${datadir}/locale/]
+PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
+PROGRAMNAME_MOD_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
+PROGRAMNAME_IMG_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/images/]
+
+# modules simple 
+element principale d un module (gx_module): Gtk::Box box_main
+
+# modules gestionnaire d'autre modules
+element conteneur d un gestionnaire de module (gemod): Gtk::Notebook notebook_main
+
+Gtk::MenuItem menu_add_module menu_del_module
+
+

@@ -1,0 +1,39 @@
+* this directory contain all documentation for the GxInterface program
+  about translation, how it was made and making module, compilation, and installation.
+
+* TODO : add the description of GxInterface structure, complete howto do module
+
+translation :
+	is a no-working memo howto script for include translation for a program
+	
+gxinterface :
+	is a script to install, on debian based package (.deb), all necessary file to compil program
+	
+HOWTO MODULE :
+	is a text file which explain howto do a module 
+	
+HOWTO GXINTERFACE :
+	is a text file which explain howto install the whole application (gxinterface, gxsynth and gxdx7) in a scripting shape
+	
+COPYRIGHT AND LICENSE INFORMATION FOR TEXT FILES
+
+	* The following text files are part of gxinterface.  All are licensed under the
+	  GNU General Public License version 3 (see COPYING) or later.
+	  The text files contain copyright and license information, but
+	  it is reproduced here for convenience.  
+
+	File: HOWTO MODULE, HOWTO GXINTERFACE
+	  Author: BENHAÏM Jérôme
+	  Copyright (C) 2010 BENHAÏM Jérôme.
+	
+COPYRIGHT AND LICENSE INFORMATION FOR SCRIPT FILES
+
+	* The following script are part of gxinterface.  All are licensed under the
+	  GNU General Public License version 3 (see COPYING) or later.
+	  The PNG files contain copyright and license information, but
+	  it is reproduced here for convenience.  
+
+	File: translation, gxinterface
+	  Author: BENHAÏM Jérôme
+	  Copyright (C) 2010 BENHAÏM Jérôme.
+	    

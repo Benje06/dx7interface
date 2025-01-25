@@ -1,0 +1,113 @@
+Directory :
+- gxinterface : ( source  )
+	Start an user interface form an .ui file
+	to know how read the HOWTOs
+	For licences read the README and COPYING
+
+- dx7interface : ( source  )
+	Start an user interface form a .la and .ui files
+	to know how read the HOWTO
+	For licences read the README and COPYING
+		
+- dx7 : doc and utilities for dx7
+	boucle_midi.mid :
+		midi loop file to be use by boucle_midi script
+	boucle_midi :
+		script starting qjackctl, hexter, amidi and connecting pmidi on hexter
+	usefull link :
+		link on dx7 pages references 
+	sysex2ins :
+		script converting raw bank to instruments list .ins
+	Table_sysex_dx7.ods :
+		full spreedsheet of dx7 sysex
+	bank_hexter :
+		extracted sound of hexter from https://smbolton.com/hexter.html https://github.com/theabolton/hexter
+	 
+	COPYRIGHT AND LICENSE INFORMATION FOR .ODS FILES
+	* The following .ODS files are part of gxinterface.  All are licensed under the
+	  GNU General Public License version 3 (see COPYING) or later.
+
+		File: 
+		-Table_sysex_dx7.ods
+		  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
+		  Copyright (C) 2010 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+	  
+	COPYRIGHT AND LICENSE INFORMATION FOR SCRIPT FILES
+	* The following script are part of gxinterface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+		  The SCRIPT files contain copyright and license information, but
+		  it is reproduced here for convenience.  
+
+		File: boucle_midi, sys2ins
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010 BENHAÏM Jérôme.
+		  
+	COPYRIGHT AND LICENSE INFORMATION FOR MIDI FILES
+		* The following MIDI files are part of gxinterface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+		  
+		File: boucle_midi.mid
+		  Author: Jean-Michel THIÉMONGE
+		  Copyright (C) 2010 Jean-Michel THIÉMONGE.
+	
+- docs :  	
+	- gxinterface :
+		translation :
+			is a no-working memo howto script for include translation for a program
+	
+		gxinterface :
+			is a script to install, on debian based package (.deb),
+			all necessary file to compil program
+			
+		HOWTO GXINTERFACE DEBIAN like:
+		HOWTO GXINTERFACE ARCHLINUX like:
+			are text file with specifics informations for each distribution
+				
+		HOWTO MODULE :
+			is a text file which explain howto do a module 
+	
+		HOWTO GXINTERFACE :
+			is a text file which explain howto compile and install the whole application
+			(gxinterface, dx7interface) in a scripting shape
+			
+		COPYRIGHT AND LICENSE INFORMATION FOR TEXT FILES
+
+		* The following text files are part of gxinterface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+		  The text files contain copyright and license information, but
+		  it is reproduced here for convenience.  
+
+		File: HOWTO MODULE, HOWTO GXINTERFACE, HOWTO GXINTERFACE DEBIAN like, HOWTO GXINTERFACE ARCHLINUX like
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010 BENHAÏM Jérôme.
+	
+		COPYRIGHT AND LICENSE INFORMATION FOR SCRIPT FILES
+
+			* The following script are part of gxinterface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+			  The PNG files contain copyright and license information, but
+			  it is reproduced here for convenience.  
+
+			File: translation, gxinterface
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010 BENHAÏM Jérôme.
+			  	
+			
+- screenshot :
+	Dx7interface.png :
+		interface screenshot of interface.ui and libgxsynth-0.0.1.ui
+	
+		COPYRIGHT AND LICENSE INFORMATION FOR IMAGE FILES
+
+		* The following images are part of gxinterface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+		  The PNG files contain copyright and license information, but
+		  it is reproduced here for convenience.  
+
+		File: Dx7interface.png
+	 	 Author: BENHAÏM Jérôme
+	 	 Copyright (C) 2010 BENHAÏM Jérôme.
+	    
+	
+	
+

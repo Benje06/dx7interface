@@ -1,0 +1,47 @@
+### DOC
+doc d'utilisation*
+normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
+normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
+normalisation gx_module (fonction load,
+
+# LANG
+traductions
+internationalisation
+
+# effectivité
+evenements MIDI
+lecture/ecriture fichier(dans fonctions ?)
+lecture/ecriture midi
+multiplateforme (midi/interface) drumkit, Juce ???
+
+
+# Interface
+correct ths resize scaling
+drawarea level scaling
+Nom du son de la banque chargé
+repliement de la banque son
+son par defaut (son init)
+grab des points des drawarea
+marge draw area 
+options des couleurs
+dessin des algo et S/hold
+refonte interface( size/expand des elements)
+trouver un themes std( Blackbird pour le moment)
+verification des courbes
+boutons compare/randomize/panique
+fenetre secondaires (option, module, chargement de fichier)
+
+### CODE
+passe a gtk-4.0
+gestion d'exceptions
+filtre des variables utilisateurs ???
+evenement standard (erreur ???)
+fenetre secondaires (option, module, chargement de fichier) gxinterface
+verifier la récuperations des bon bit du syx(cf tableau.ods)
+
+# ergonomie
+drag&drop
+tooltype
+menu alacarte
+
+

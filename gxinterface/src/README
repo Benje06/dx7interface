@@ -1,0 +1,13 @@
+common.cc
+	common.h
+	debug.h
+	gemod.cc
+	gemod.h
+	gxinterface.cc
+	gxinterface.h
+	gxthread.cc
+	gxthread.h
+	lang.h
+	main.cc
+	main.h
+	Makefile.am

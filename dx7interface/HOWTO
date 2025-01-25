@@ -1,0 +1,24 @@
+in this directory :
+	For Archlinux use PKGBUILD file as base
+	
+	For others
+		cd where_you_have_decompressed/gxinterface/dx7interface
+		regenerate/configure by :
+			./autogen.sh ( --prefix=/usr for debian/ubuntu users )
+			( --libdir= is specify in the configure ac ) :
+		compilation :
+			make 
+		you can start gxinterface and click the add module to start dx7interface
+		or you can starts a module as standalone directly
+			gxinterface -m /path/to/the/module.file		(module can be .la .so .lo)
+		change the ui
+			gxinterface -i /path/to/the/ui.file 		(ui can be .ui or .xml )
+		ui file for interface must contain a Gtk::Window named "window_main"
+		ui file for module must contain a Gtk::Box name "box_main"
+		installation ( or use checkinstall to make a .deb ) :
+			sudo make install 
+		or 
+			sudo checkinstall -D --fstrans=no --install=yes --pkgversion="X.X.X" -y
+
+	
+	

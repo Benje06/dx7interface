@@ -1,0 +1,104 @@
+#!/bin/bash
+#
+#	 Copyright (C) 2010		BENHAÏM Jérôme.
+# 
+# This file is part of GxInterface.
+#
+#    GxInterface is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    GxInterface is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with GxInterface.  If not, see <http://www.gnu.org/licenses/>.
+#Traduction
+# _("")
+# in src
+# xgettext -a -o ../po/languagecode --omit-header *.cc *.h
+
+#dans /po
+$files="LINGUAS POTFILES.in ChangeLog"
+linguas="en fr fr_FR fr_Fr.utf8"
+potfile.in="src/main.cc"
+po/makefile.am="
+po_DATA = \
+	ChangeLog\
+	de.po \
+	en.po \
+	fr.po \
+	fr_FR.utf8.po \
+	languagecode\
+	jap.po \
+	LINGUAS \
+	POTFILES \
+	POTFILES.skip \
+	ru.po \
+	Makefile.am
+
+EXTRA_DIST = \
+	$(po_DATA)
+
+podir = \
+	$(pkgdatadir)/po
+
+"
+top/makefile.am="
+SUBDIR= po
+
+INTLTOOL_FILES = intltool-extract.in \
+                 intltool-merge.in \
+                 intltool-update.in	
+
+DISTCLEANFILES = ... intltool-extract \
+                 intltool-merge \
+                 intltool-update \
+                 po/.intltool-merge-cache 
+                 
+EXTRA_DIST = INTLTOOL_FILES                       
+                
+"
+src/makefile.am="
+AM_CPPFLAGS = ... -DPROGRAMNAME_LOCALEDIR=\\\"${PROGRAMNAME_LOCALEDIR}\\\"
+"
+
+main.cc="
+#ifdef ENABLE_NLS
+	setlocale (LC_ALL, "");
+	bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, \"UTF-8\");
+	textdomain(GETTEXT_PACKAGE);
+#endif
+"
+
+in po run intltool-update --pot
+cp iface.pot languagecode.po
+cp iface.pot fr_FR.utf8
+cp iface.pot fr_FR
+cp iface.pot fr
+
+configure.ac="
+dnl ================================================================
+dnl Gettext stuff.
+dnl ================================================================
+AC_CHECK_FUNCS([setlocale])
+GETTEXT_PACKAGE=AC_PACKAGE_NAME
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], AC_PACKAGE_NAME)
+ALL_LINGUAS="de en es fr fr_FR fr_FR.utf8 jap languagecode ru" 
+#IT_PROG_INTLTOOL
+AM_GLIB_GNU_GETTEXT
+
+PROGRAMNAME_LOCALEDIR=[${datadir}/locale]
+AC_SUBST(PROGRAMNAME_LOCALEDIR)
+
+AC_CONFIG_FILES([
+                 po/Makefile
+                 po/Makefile.in
+                 ])
+"
+

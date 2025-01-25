@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=@PACKAGE_NAME@
+Comment=Module Loader
+Comment[fr]=Gestionnaire de modules
+Exec=sh -c 'GTK_THEME=Blackbird @PACKAGE_NAME@'
+Icon=/usr/share/@PACKAGE_NAME@/@VERSION@/images/@PACKAGE_NAME@.jpg
+Terminal=false
+Type=Application
+Categories=GTK;GNOME;AudioVideo;Audio;X-Synthesis;
+Keywords=Synthesizer;Plugin;

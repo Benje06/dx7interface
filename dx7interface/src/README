@@ -1,0 +1,29 @@
+	  
+		dx7interface.cc
+		dx7interface.h
+		dx7stysex.h :
+
+			COPYRIGHT AND LICENSE INFORMATION FOR .H AND .CC FILES
+
+				* The following .H and .CC file are part of Dx7interface.  All are licensed under the
+				  GNU General Public License version 3 (see COPYING) or later.
+
+				File : Dx7interface.cc Dx7interface.h
+				  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
+				  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+				File :  dx7interface.cc	dx7interface.h dx7sysex.h
+				  Author: BENHAÏM Jérôme
+				  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+				
+		Makefile.am
+		dx7interface.pc.in
+	
+			COPYRIGHT AND LICENSE INFORMATION FOR .AM and .PC FILES
+
+			* The following .am and .pc file are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: Makefile.am, dx7interface.pc.in
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme.		  
+			  

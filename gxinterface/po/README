@@ -1,0 +1,19 @@
+COPYRIGHT AND LICENSE INFORMATION FOR .PO and .POT FILES
+
+	* The following po and pot files are part of GxInterface.  All are licensed under the
+	  GNU General Public License version 3 (see COPYING) or later.
+
+	File: de.po en.po es.po fr.po fr_FR.po fr_FR.utf8.po gxinterface.pot jap.po languagecode.po ru.po
+	 
+	  Author: BENHAÏM Jérôme
+	  Copyright (C) 2010 BENHAÏM Jérôme.
+	  
+COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+	* The following am file are part of GxInterface.  All are licensed under the
+	  GNU General Public License version 3 (see COPYING) or later.
+
+	File: Makefile.am
+	  Author: BENHAÏM Jérôme
+	  Copyright (C) 2010 BENHAÏM Jérôme.
+	  

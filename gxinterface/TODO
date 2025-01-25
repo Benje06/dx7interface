@@ -1,0 +1,27 @@
+#  docs
+normalisation fichier ui (noms d'objets, l'element parent d'un module->vbox_main)
+normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
+normalisation gx_module (fonction load,
+gxsynth
+dxsynth
+
+# effectivité
+evenements
+lecture/ecriture fichier
+lecture/ecriture midi
+doc d'utilisation*
+
+# stabilisation interface
+evenement standart
+fenetre secondaires (option, module, chargement de fichier)
+drawarea
+gestion d'exeptions
+filtre des variables utilisateurs
+
+# ergonomie
+drag&drop
+tooltype
+menu alacarte
+
+
+
