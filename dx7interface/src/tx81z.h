@@ -30,6 +30,7 @@
 /* sys */
 #include <memory>
 #include <gxinterface/0.0.1/gxmodule.h>
+#include "GtkClass.h"
 /* Synth */
 #include <synth.h>
 /* sysex */
@@ -84,7 +85,8 @@ class Tx81z : public Gx_module, public Synth {
         void set_voice(st_tx81zsysex_1*);
 
         /**** UI ****/
-        Glib::RefPtr<Gtk::ListStore> m_refListStore ; /* liste des nom des sons de la banque chargé */
+        //Glib::RefPtr<Gio::ListStore> m_refListStore ; /* liste des nom des sons de la banque chargé */
+        Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_refListStore;
         /*** DRAWING ***/
         /* lines/curves */
         double line_width=1.0;                                      // epaisseur
@@ -114,7 +116,7 @@ class Tx81z : public Gx_module, public Synth {
         void dettach_signals() override;
         void on_bank_select();
         sigc::connection slot_bank_select;
-        bool on_bank_reveal(GdkEventButton*);
+        void on_bank_reveal();
         sigc::connection slot_bank_reveal;
 
 };

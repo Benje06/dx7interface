@@ -17,6 +17,7 @@ lib_LTLIBRARIES = \
 dx7interface_0_0_1_la_SOURCES = \
         dx7interface.h dx7interface.cc\
 	synth.h synth.cc\
+	GtkClass.h GtkClass.cc\
         dx7sysex.h
 
 dx7interface_0_0_1_la_LDFLAGS = \
@@ -42,6 +43,7 @@ dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
 tx81zinterface_0_0_1_la_SOURCES = \
         tx81z.h tx81z.cc\
         synth.h synth.cc\
+	GtkClass.h GtkClass.cc\
         tx81zsysex.h
 
 ## Lib DX7 interface for sysex editing as module

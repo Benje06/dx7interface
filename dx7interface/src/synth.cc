@@ -16,6 +16,13 @@ Synth::~Synth(){
     std::cerr << caller;
 };
 
+void Synth::unblock_midi(){
+    block_midi_msg=false;
+};
+
+void Synth::block_midi(){
+    block_midi_msg=true;
+};
 void Synth::connect_midi(Glib::ustring name){
     LOG_IN();
     /* 0 can be replace by SND_SEQ_NONBLOCK */
@@ -50,20 +57,22 @@ void Synth::send_midi(char ev_type, uint size, u_char *msg){
     LOG_IN();
     /* TODO; use seq queue */
     //#ifdef USE_ALSA_MIDI
-    /* seq event */
-    snd_seq_event_t ev_out;
-    snd_seq_ev_clear(&ev_out);
-    snd_seq_ev_set_source(&ev_out, port_out);
-    snd_seq_ev_set_subs(&ev_out);
-    /* */
-    snd_seq_ev_set_direct(&ev_out);
+    std::cerr << (int)block_midi_msg << std::endl;
+    if (!block_midi_msg){
+        /* seq event */
+        snd_seq_event_t ev_out;
+        snd_seq_ev_clear(&ev_out);
+        snd_seq_ev_set_source(&ev_out, port_out);
+        snd_seq_ev_set_subs(&ev_out);
+        /* */
+        snd_seq_ev_set_direct(&ev_out);
 
-    ev_out.type = ev_type;
+        ev_out.type = ev_type;
 
-    snd_seq_ev_set_variable(&ev_out, size, msg);
-    snd_seq_event_output(seq_handle, &ev_out);
-    snd_seq_drain_output(seq_handle);
-
+        snd_seq_ev_set_variable(&ev_out, size, msg);
+        snd_seq_event_output(seq_handle, &ev_out);
+        snd_seq_drain_output(seq_handle);
+    };
     LOG_OUT();
 };
 

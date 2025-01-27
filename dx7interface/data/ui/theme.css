@@ -16,13 +16,14 @@ spinbutton {
     min-height: 1px;
     padding: 0 0;
     /*color:black;*/
+
 }
 
 spinbutton entry {
     min-height: 1px;
     min-width: 1px;
     padding: 1px 4px;
-   /* background-color: #66cc99;*/
+    background-color: #66cc99;
 }
 
 spinbutton button {
@@ -59,37 +60,78 @@ entry {
     min-width: 1px;
     padding: 0 0;
 }
-/*scale[.fine-tune][.marks-before][.marks-after]
+/*
+scale[.fine-tune][.marks-before][.marks-after]
+├── [value][.top][.right][.bottom][.left]
 ├── marks.top
 │   ├── mark
 │   ┊    ├── [label]
 │   ┊    ╰── indicator
-┊   ┊
 │   ╰── mark
-├── [value]
-├── contents
-│   ╰── trough
-│       ├── slider
-│       ├── [highlight]
-│       ╰── [fill]
-╰── marks.bottom
-├── mark
-┊    ├── indicator
-┊    ╰── [label]
-╰── mark
+├── marks.bottom
+│   ├── mark
+│   ┊    ├── indicator
+│   ┊    ╰── [label]
+│   ╰── mark
+╰── trough
+├── [fill]
+├── [highlight]
+╰── slider
 */
-scale contents trough highlight{
+scale highlight{
     /*color:#66cc99;*/
     background-color:#66cc99;
 }
 /*
 checkbutton
 ├── check
-╰── <child>
+╰── [label]
 */
 checkbutton:checked >check{
     color:black;
     background-image: none;
     background-color:#66cc99;
-    border-color:black;
+    /*border-color:black;*/
+}
+
+.toolbar {
+    margin:0 0;
+    padding:0 3px;
+    padding-left:0px;
+}
+.toolbar *{
+    margin:0 0;
+    padding:0 0;
+    min-width:5px;
+    min-height:200px;
+}
+.frameloadbank {
+    min-width:160px;
+}
+
+/*
+ *
+ columnview[.colu*mn-separators][.rich-list][.navigation-sidebar][.data-table]
+ ├── header
+ │   ├── <column header>
+ │   ╰── <column header>    listview[.separators][.rich-list][.navigation-sidebar][.data-table]
+                            ├── row[.activatable]
+                            ├── row[.activatable]
+                            ╰── [rubberband]
+ ├── listview
+ ╰── [rubberband]
+ */
+.frameloadbank columnview{
+    min-width:160px;
+    /*background-color:#66cc99;*/
+ }
+.frameloadbank columnview listview{
+    /*background-color: #66cc99;*/
+    min-width:160px;
+    color:white;
+    /*background-color:red;*/
+}
+.frameloadbank columnview header label{
+     min-width:100px;
+     background-color: #66cc99;
 }

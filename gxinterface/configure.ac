@@ -113,10 +113,10 @@ AM_CONDITIONAL([DEV], [test x$dev = xtrue])
 
 
 AM_COND_IF([DEV],[
-PROGRAMNAME_LOCALEDIR=[~/dev/$PACKAGE_NAME/gxinterface_gtk4/$PACKAGE_NAME/locale]
-PROGRAMNAME_UI_DIR=[~/dev/$PACKAGE_NAME/gxinterface_gtk4/$PACKAGE_NAME/data/ui/]
-PROGRAMNAME_MOD_DIR=[~/dev/$PACKAGE_NAME/gxinterface_gtk4/$PACKAGE_NAME/src/]
-PROGRAMNAME_IMG_DIR=[~/dev/$PACKAGE_NAME/gxinterface_gtk4/$PACKAGE_NAME/pixmaps/$PACKAGE_NAME/]
+PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/locale]
+PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
+PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]
+PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/pixmaps/$PACKAGE_NAME/]
 ],[
 PROGRAMNAME_LOCALEDIR=[${datadir}/locale]
 PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/ui/]
@@ -153,14 +153,18 @@ echo "
 
 Configuration:
 
-	Source code location:	 ${srcdir}
-	Compiler:		 C : ${CC},		C++ : ${CXX}
-	GNOME UI Widgets:		 ${have_gnome}
-	CFLAGS:  ${CFLAGS}
-	CPPFLAGS: ${CPPFLAGS}
-	CXXFLAGS: ${CXXFLAGS}
-	LDFLAGS: ${LDFLAGS}
-	
+  Source code location:	 ${srcdir}
+  Compiler:		 C : ${CC},		C++ : ${CXX}
+  GNOME UI Widgets:		 ${have_gnome}
+  CFLAGS:  ${CFLAGS}
+  CPPFLAGS: ${CPPFLAGS}
+  CXXFLAGS: ${CXXFLAGS}
+  LDFLAGS: ${LDFLAGS}
+  PROGRAMNAME_LOCALEDIR: ${PROGRAMNAME_LOCALEDIR}
+  PROGRAMNAME_UI_DIR: ${PROGRAMNAME_UI_DIR}
+  PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
+  PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
+
 "
 
 : variables='

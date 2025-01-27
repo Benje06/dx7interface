@@ -1,49 +1,37 @@
 [Buildset]
-BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x16\x00g\x00x\x00i\x00n\x00t\x00e\x00r\x00f\x00a\x00c\x00e\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x16\x00g\x00x\x00i\x00n\x00t\x00e\x00r\x00f\x00a\x00c\x00e\x00\x00\x00\n\x00c\x00l\x00e\x00a\x00n\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x16\x00g\x00x\x00i\x00n\x00t\x00e\x00r\x00f\x00a\x00c\x00e\x00\x00\x00\x12\x00d\x00i\x00s\x00t\x00c\x00l\x00e\x00a\x00n)
-CheckSystemHeaders=true
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x03\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x16\x00g\x00x\x00i\x00n\x00t\x00e\x00r\x00f\x00a\x00c\x00e\x00\x00\x00\x0b\x00\x00\x00\x00\x03\x00\x00\x00\x16\x00g\x00x\x00i\x00n\x00t\x00e\x00r\x00f\x00a\x00c\x00e\x00\x00\x00\x06\x00s\x00r\x00c\x00\x00\x00\n\x00c\x00l\x00e\x00a\x00n\x00\x00\x00\x0b\x00\x00\x00\x00\x03\x00\x00\x00\x16\x00g\x00x\x00i\x00n\x00t\x00e\x00r\x00f\x00a\x00c\x00e\x00\x00\x00\x06\x00s\x00r\x00c\x00\x00\x00\x12\x00d\x00i\x00s\x00t\x00c\x00l\x00e\x00a\x00n)
 
 [ClangTidy]
 CheckSystemHeaders=true
 
 [Cppcheck]
-checkConfig=true
-checkInformation=true
 checkMissingInclude=true
 checkPerformance=true
 checkPortability=true
-checkStyle=true
-checkUnusedFunction=true
-forceCheck=true
-inconclusiveAnalysis=true
 useSystemIncludes=true
 
 [CustomDefinesAndIncludes][ProjectPath0]
 Path=.
-parseAmbiguousAsCPP=true
-parserArguments=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c++11
+parseAmbiguousAsCPP=false
+parserArguments=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c++17
 parserArgumentsC=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c99
 parserArgumentsCuda=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -std=c++11
 parserArgumentsOpenCL=-ferror-limit=100 -fspell-checking -Wdocumentation -Wunused-parameter -Wunreachable-code -Wall -cl-std=CL1.1
 
 [CustomDefinesAndIncludes][ProjectPath0][Compiler]
-Name=Clang
-
-[CustomDefinesAndIncludes][ProjectPath0][Includes]
-1=/usr/include/gtkmm-3.0/
-2=/usr/include/glibmm-2.68/
+Name=GCC
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 2,Launch Configuration 4,Launch Configuration 1,Launch Configuration 5
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5,Launch Configuration 6
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
 Configured Launchers=scriptAppLauncher
-Name=Autogen
+Name=4Autogen
 Type=Script Application
 
 [Launch][Launch Configuration 0][Data]
 Arguments=--prefix=/usr --disable-maintainer-mode --enable-dev
-Configured from ProjectItem=gxinterface,autogen.sh
 EnvironmentGroup=GTK4
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/autogen.sh
 Execute on Remote Host=false
@@ -51,43 +39,16 @@ Interpreter=bash
 Output Filtering Mode=2
 Remote Host=
 Run current file=false
-Working Directory=file:///home/jerome/dev/git/gtk4/gxinterface/
+Working Directory=file:///home/jerome/dev/git/gtk4/gxinterface
 
 [Launch][Launch Configuration 1]
 Configured Launch Modes=execute
-Configured Launchers=nativeAppLauncher
-Name=Gxinterface
-Type=Native Application
-
-[Launch][Launch Configuration 1][Data]
-Arguments=
-Debugger Shell=
-Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
-Dependency Action=Nothing
-Display Demangle Names=true
-Display Static Members=true
-EnvironmentGroup=DEBUG
-Executable=file:///home/jerome/dev/git/gtk4/gxinterface/src/gxinterface
-External Terminal=konsole --noclose --workdir %workdir -e %exe
-GDB Path=
-Kill Before Executing Again=4194304
-Project Target=
-Remote GDB Config Script=
-Remote GDB Run Script=
-Remote GDB Shell Script=
-Start With=ApplicationOutput
-Use External Terminal=false
-Working Directory=file:///home/jerome/dev/git/gtk4/gxinterface/dx7interface/
-isExecutable=true
-
-[Launch][Launch Configuration 2]
-Configured Launch Modes=execute
 Configured Launchers=scriptAppLauncher
-Name=D_Autogen
+Name=4D_Autogen
 Type=Script Application
 
-[Launch][Launch Configuration 2][Data]
-Arguments=--prefix=/usr --enable-maintainer-mode --enable-dev
+[Launch][Launch Configuration 1][Data]
+Arguments=--prefix=/usr --disable-maintainer-mode --enable-dev
 EnvironmentGroup=GTK4_DBUG
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/autogen.sh
 Execute on Remote Host=false
@@ -95,31 +56,61 @@ Interpreter=bash
 Output Filtering Mode=2
 Remote Host=
 Run current file=false
+Working Directory=file:///home/jerome/dev/git/gtk4/gxinterface
+
+[Launch][Launch Configuration 2]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=4_Make
+Type=Native Application
+
+[Launch][Launch Configuration 2][Data]
+Arguments=-j3
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=GTK4_DBUG
+Executable=file:///usr/bin/make
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Kill Before Executing Again=4194304
+Project Target=
+Use External Terminal=false
 Working Directory=file:///home/jerome/dev/git/gtk4/gxinterface/
+isExecutable=true
+
+[Launch][Launch Configuration 3]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=4_Gxinterface
+Type=Native Application
+
+[Launch][Launch Configuration 3][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=GTK4_DBUG
+Executable=file:///home/jerome/dev/git/gtk4/gxinterface/src/gxinterface
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Kill Before Executing Again=4194304
+Project Target=
+Use External Terminal=false
+Working Directory=file:///home/jerome/dev/git/gtk4/dx7interface
+isExecutable=true
 
 [Launch][Launch Configuration 4]
 Configured Launch Modes=execute
 Configured Launchers=nativeAppLauncher
-Name=Make
+Name=4_Clean
 Type=Native Application
 
 [Launch][Launch Configuration 4][Data]
-Arguments=-j3
-Debugger Shell=
+Arguments=clean
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
-Display Demangle Names=true
-Display Static Members=true
 EnvironmentGroup=GTK4_DBUG
 Executable=file:///usr/bin/make
 External Terminal=konsole --noclose --workdir %workdir -e %exe
-GDB Path=
 Kill Before Executing Again=4194304
 Project Target=
-Remote GDB Config Script=
-Remote GDB Run Script=
-Remote GDB Shell Script=
-Start With=ApplicationOutput
 Use External Terminal=false
 Working Directory=file:///home/jerome/dev/git/gtk4/gxinterface
 isExecutable=true
@@ -134,13 +125,32 @@ Type=Native Application
 Arguments=-c 'cp /home/jerome/dev/git/gtk4/gxinterface/PKGBUILD /home/jerome/dev/build/ ; makepkg -fsi; /bin/bash'
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
-EnvironmentGroup=
+EnvironmentGroup=GTK4
 Executable=file:///bin/bash
 External Terminal=gnome-terminal --working-directory /home/jerome/dev/build/ -- %exe
 Kill Before Executing Again=4194304
 Project Target=
 Use External Terminal=true
 Working Directory=file:///home/jerome/dev/build/
+isExecutable=true
+
+[Launch][Launch Configuration 6]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=4_distclean
+Type=Native Application
+
+[Launch][Launch Configuration 6][Data]
+Arguments=distclean
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=GTK4_DBUG
+Executable=file:///usr/bin/make
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Kill Before Executing Again=4194304
+Project Target=
+Use External Terminal=false
+Working Directory=file:///home/jerome/dev/git/gtk4/gxinterface
 isExecutable=true
 
 [Project]

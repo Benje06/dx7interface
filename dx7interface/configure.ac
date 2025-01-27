@@ -80,7 +80,7 @@ AC_TYPE_SIZE_T
 AC_CHECK_FUNCS([pow])
 AC_FUNC_ERROR_AT_LINE
 
-pkg_modules="alsa glibmm-2.4 gtkmm-3.0 gthread-2.0 gxinterface cairomm-1.16"
+pkg_modules="alsa glibmm-2.68 gtkmm-4.0 gthread-2.0 gxinterface cairomm-1.16"
 PKG_CHECK_MODULES(DEPS, [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_LIBS)
@@ -122,7 +122,7 @@ fi
 dnl ================================================================
 dnl Check for GDK Quartz and MacOSX integration package 
 dnl ================================================================
-_gdk_tgt=`$PKG_CONFIG --variable=target gdk-3.0`
+_gdk_tgt=`$PKG_CONFIG --variable=target gdk-4.0`
 AM_CONDITIONAL([GDK_TARGET_QUARTZ], [test x$_gdk_tgt = xquartz])
 if test "x$_gdk_tgt" = xquartz; then 
    PKG_CHECK_MODULES(IGE_MAC, ige-mac-integration)
@@ -177,10 +177,10 @@ AM_CONDITIONAL([DEV], [test x$dev = xtrue])
 
 
 AM_COND_IF([DEV],[
-PROGRAMNAME_LOCALEDIR=[~/dev/gxinterface/$PACKAGE_NAME/locale]
-PROGRAMNAME_UI_DIR=[~/dev/gxinterface/$PACKAGE_NAME/data/ui/]
-PROGRAMNAME_MOD_DIR=[~/dev/gxinterface/$PACKAGE_NAME/src/]
-PROGRAMNAME_IMG_DIR=[~/dev/gxinterface/$PACKAGE_NAME/data/images/]
+PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/locale]
+PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
+PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]
+PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/images/]
 ],[
 PROGRAMNAME_LOCALEDIR=[${datadir}/locale/]
 PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
@@ -214,13 +214,18 @@ AC_OUTPUT
 echo "
 Configuration:
 
-	Source code location:	 ${srcdir}
-	Compiler:		 C : ${CC},		C++ : ${CXX}
-	GNOME UI Widgets:		 ${have_gnome}
-	CFLAGS:  ${CFLAGS}
-	CPPFLAGS: ${CPPFLAGS}
-	CXXFLAGS: ${CXXFLAGS}
-	LDFLAGS: ${LDFLAGS}
+      Source code location:	 ${srcdir}
+      Compiler:		 C : ${CC},		C++ : ${CXX}
+      GNOME UI Widgets:		 ${have_gnome}
+      CFLAGS:  ${CFLAGS}
+      CPPFLAGS: ${CPPFLAGS}
+      CXXFLAGS: ${CXXFLAGS}
+      LDFLAGS: ${LDFLAGS}
+
+      PROGRAMNAME_LOCALEDIR: ${PROGRAMNAME_LOCALEDIR}
+      PROGRAMNAME_UI_DIR: ${PROGRAMNAME_UI_DIR}
+      PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
+      PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
 "
 
 : variables='

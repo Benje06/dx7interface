@@ -275,6 +275,7 @@ bool Gx_module::load_ui(Glib::ustring filename, uint8_t index){
             if(rootbox){
                 if( (rootbox)->get_parent() != nullptr ){     // if the box_main widget has a parent
                     // box_main cannot be attached reset and go
+                    std::cerr<< "box_main get a parent cannot include it" << std::endl;
                     rootbox = nullptr;
                     LOG_OUT();
                     return false;

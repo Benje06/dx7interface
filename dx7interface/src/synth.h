@@ -16,6 +16,50 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  * ----------------------------------------------------------------------------
+ * SysEx MSG
+ * 0x7E	126	Non-real time
+ * 0x7F	127	Real time*
+ * Fabricant ID
+ * 0x01	1	Sequential Circuits
+ * 0x02	2	Big B*riar
+ * 0x03	3	Octave / Plateau
+ * 0x04	4	Moog
+ * 0x05	5	Passport Designs
+ * 0x06	6	Lexicon
+ * 0x07	7	Kurzweil
+ * 0x08	8	Fender
+ * 0x09	9	Gulbransen
+ * 0x0A	10	Delta Labs
+ * 0x0B	11	Sound Comp.
+ * 0x0C	12	General Electro
+ * 0x0D	13	Techmar
+ * 0x0E	14	Matthews Research
+ * 0x10	16	Oberheim
+ * 0x11	17	PAIA
+ * 0x12	18	Simmons
+ * 0x13	19	Gentle Electric
+ * 0x14	20	Fairlight
+ * 0x15	21	JL Cooper
+ * 0x16	22	Lowery
+ * 0x17	23	Lin
+ * 0x18	24	Emu
+ * 0x1B	27	Peavey
+ * 0x20	32	Bon Tempi
+ * 0x21	33	S.I.E.L.
+ * 0x23	35	SyntheAxe
+ * 0x24	36	Hohner
+ * 0x25	37	Crumar
+ * 0x26	38	Solton
+ * 0x27	39	Jellinghous Ms
+ * 0x28	40	CTS
+ * 0x29	41	PPG
+ * 0x2F	47	Elka
+ * 0x40	64	Kawai
+ * 0x41	65	Roland
+ * 0x42	66	Korg
+ * 0x43	67	Yamaha
+ * 0x44	68	Casio
+ * 0x45	69	Akai
  */
 /*TODO :
  *timer
@@ -24,6 +68,7 @@
  *receive sysex
  *charger/decharger synth
  *attache/detache midi one by synth
+ * !!! USE flag to prevent midi send !!!
 */
 #pragma once
 /* sys */
@@ -43,24 +88,29 @@ class Synth : public Thread {
     public:
         Synth(Glib::ustring);
         virtual ~Synth();
+        void block_midi();
+        void unblock_midi();
     private:
+        bool block_midi_msg;
         Glib::ustring caller="None";
         /*** ALSA MIDI ***/
-        snd_seq_t* seq_handle;	                /* handler */
-        snd_seq_system_info_t* seq_info;            /* info */
-        snd_seq_event_t* ev;                    /* evenement */
-        size_t in_buff_size, out_buff_size;	    /* buffers d'entrée et de sortie */
-        int port_in=0, port_out=0;	            /* ports d'entréee et de sortie */
+        snd_seq_t* seq_handle;                 /* handler */
+        snd_seq_system_info_t* seq_info;       /* info */
+        snd_seq_event_t* ev;                   /* evenement */
+        size_t in_buff_size, out_buff_size;      /* buffers d'entrée et de sortie */
+        int port_in=0, port_out=0;             /* ports d'entréee et de sortie */
         /* seq queue */
         int spfd;                              /* taille de la file de queue */
         struct pollfd *pfd;                    /* array de file de queue du sequenceur */
+
     protected:
-        uint8_t id_fabricant = 0;                                /* selected fabricant */
-        uint8_t channel = 0;                                     /* selected channel */
-        uint8_t sub_status = 0;                                  /* selected sub_s */
+        uint8_t id_fabricant = 0;              /* selected fabricant */
+        uint8_t channel = 0;                   /* selected channel */
+        uint8_t sub_status = 0;                /* selected sub_s */
         /* generic error */
         bool error();
         /*** MIDI ***/
+                      /* Flag to prevent midi send */
         std::string get_event_name(int);
         snd_seq_event_t* get_seq_event_handler();
         snd_seq_t* get_seq_handler();
@@ -69,8 +119,8 @@ class Synth : public Thread {
         void connect_midi(Glib::ustring);
         void deconnect_midi();
         void send_midi(char, uint, u_char*);
-        /* to be implemented in the module itself*/
-        virtual void listen_midi();        /* sound bank */
+        /* could be overrride in the synthé module itself*/
+        virtual void listen_midi();             /* function that handle midi events */
         /*** THREAD ***/
         virtual bool Run();
 };

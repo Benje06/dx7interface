@@ -33,7 +33,7 @@ image_DATA = \
 	algo26.png\
 	algo27.png\
 	algo28.png\
-	algo29.png\
+	algo29.png\					
 	algo30.png\
 	algo31.png\
 	algo32.png\

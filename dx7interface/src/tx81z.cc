@@ -146,17 +146,16 @@ void Tx81z::attach_signals(){
     /*slot_bank_select = (get_gwidget<Gtk::FileChooserButton>("bank_select"))->signal_selection_changed().connect(
      *   sigc::mem_fun(*this, &Dx7interface::on_bank_select));
      */
-    (get_gwidget<Gtk::Toolbar>("toolbar_reveal_bank"))->add_events(Gdk::BUTTON_PRESS_MASK);
-    slot_bank_reveal = (get_gwidget<Gtk::Toolbar>("toolbar_reveal_bank"))->signal_button_press_event().connect(
+    slot_bank_reveal = (get_gwidget<Gtk::Button>("btn_toolbar_reveal_bank"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Tx81z::on_bank_reveal));
+
 
     LOG_OUT();
 };
 
-bool Tx81z::on_bank_reveal(GdkEventButton* event){
+void Tx81z::on_bank_reveal(){
     LOG_IN();
     (get_gwidget<Gtk::Revealer>("revealer_bank"))->set_reveal_child(!(get_gwidget<Gtk::Revealer>("revealer_bank"))->get_reveal_child());
-    return true;
     LOG_OUT();
 };
 

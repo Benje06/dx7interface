@@ -32,14 +32,17 @@
 // #include <cairomm/surface.h>
 /*** APP ***/
 #include <gxinterface/0.0.1/gxmodule.h>
+//s#include <gdkmm-3.0/gdkmm.h>
+#include "GtkClass.h"
 /* Synth */
 #include <synth.h>
 /* sysex */
 #include "dx7sysex.h"
 
 
+
 /** CONSTANTS **/
-#define UI MOD_UI_DIRECTORY"libdx7interface-0.0.1.ui"
+#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1.ui"
 #define CSSFILE MOD_UI_DIRECTORY"theme.css"
 
 extern "C" {
@@ -61,8 +64,13 @@ class Dx7interface : public Gx_module, public Synth {
         St_dx7sysex<32> bank_32_modif;          /* ... */
         St_dx7sysex<128> bank_128_origin;       /* ... */
         St_dx7sysex<128> bank_128_modif;        /* ... */
+        uint bank_nb_sound = 0;                     /* number of sound in the current loaded bank 1/32/128 */
         Glib::RefPtr<Gio::File> bank_file;      /* pointeur de lecture de fichier */
         Glib::RefPtr<Gio::DataInputStream> data_stream; /* pointeur de flux */
+        Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model; /* liste des nom des sons de la banque chargé */
+        Glib::RefPtr<Gtk::SingleSelection> m_selection_model;
+        Glib::RefPtr<Gtk::SignalListItemFactory> m_factory;
+
         /*** ALSA MIDI ***/
         /* midi_receive;*/
         /*snd_rawmidi_t *handle_in ,*handle_out ;*/
@@ -91,12 +99,12 @@ class Dx7interface : public Gx_module, public Synth {
         int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);  /* retourne la taille de sla zone visible */
         /* ADSR */
 
-        double* old_draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int*, Glib::ustring);   /* dessine la courbe */
+        void old_draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);   /* dessine la courbe */
 
-        void draw_background(const Cairo::RefPtr<Cairo::Context>&);                     /* dessine le fond */
-        void draw_grid(const Cairo::RefPtr<Cairo::Context>&, int*, double*);            /* dessisne la grille */
-        double* draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int*, Glib::ustring);   /* dessine la courbe */
-        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double);                        /* dessine un point */
+        void draw_background(const Cairo::RefPtr<Cairo::Context>&);                         /* dessine le fond */
+        void draw_grid(const Cairo::RefPtr<Cairo::Context>&, int, int);                     /* dessisne la grille */
+        void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);      /* dessine la courbe */
+        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double);              /* dessine un point */
         void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
         /* Generic error */
         bool error();
@@ -108,15 +116,15 @@ class Dx7interface : public Gx_module, public Synth {
         void load_bank(Glib::RefPtr<Gio::File>);
         void save_bank(Glib::RefPtr<Gio::File>);
         void save_bank_as(Glib::RefPtr<Gio::File>);
-        void clean_bank();
+        void clean_bank();                          // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
+        void clear_sound(uint8_t,St_dx7sysex_1*);    // set 0x00 to all param to voice struct "aka clear struct"
         /* voice load  */
-        void seek_voice(uint8_t, st_dx7sysex_1*);
-        void send_voice(st_dx7sysex_1*);
-        void set_voice(st_dx7sysex_1*);
+        void seek_voice(uint8_t, st_dx7sysex_1*);   // set all param from file to voice struct
+        void send_voice(st_dx7sysex_1*);            // send voice to midi
+        void set_voice(st_dx7sysex_1*);             // set voice in GUI
 
         /*** UI ***/
-        Glib::RefPtr<Gtk::ListStore> m_refListStore ; /* liste des nom des sons de la banque chargé */
-       
+
        /** EVENTS / SIGNAL **/
        void block_all();                       /* blocage des evenements de l'interface */
        void unblock_all();                     /* ... */
@@ -124,24 +132,20 @@ class Dx7interface : public Gx_module, public Synth {
        void dettach_signals() override;
 
         /* Drawing */
-        bool on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&);
-        sigc::connection slot_pitch_draw_eg;
-        bool on_draw_op_event(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);
-        sigc::connection slot_op1_draw;
-        sigc::connection slot_op2_draw;
-        sigc::connection slot_op3_draw;
-        sigc::connection slot_op4_draw;
-        sigc::connection slot_op5_draw;
-        sigc::connection slot_op6_draw;
+        void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&, int, int);
+        void on_draw_op_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
 
         /* events and sigc::connection slot for blocking*/
-        bool on_bank_reveal(GdkEventButton*);
+        void on_bank_reveal();
         sigc::connection slot_bank_reveal;
 
-        void on_treeview_row_clicked();
-        sigc::connection slot_treeview_row_clicked;
+        void on_bank_sound_change(uint,uint);
+        sigc::connection slot_bank_sound_change;
         void on_bank_select();
         sigc::connection slot_bank_select;
+        void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
+        void on_bind_name(const Glib::RefPtr<Gtk::ListItem>&);
+        void on_setup_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
         /* general algo */
         void on_algo_event();
         sigc::connection slot_algo;
