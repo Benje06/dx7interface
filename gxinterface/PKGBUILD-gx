@@ -1,0 +1,29 @@
+# Maintainer: Jerome <>
+# Contributor: Jmeshmesh <>
+
+pkgname=gxinterface
+pkgver='1.0.0'
+pkgrel='1'
+pkgdesc="Gtk Extended Interface: Module Loader for .la or .ui, provides headers for module construction"
+arch=('i686' 'x86_64')
+url="bzr://bzr.savannah.nongnu.org/gxinterface"
+license=('GPL')
+depends=('glibmm' 'gtkmm3' 'cairomm-1.16' 'alsa-lib')
+makedepends=('breezy' 'intltool' 'glibmm' 'gtkmm3' 'glib2' 'cairomm-1.16' 'alsa-lib' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4')
+provides=(${pkgname})
+conflicts=(${pkgname})
+
+source=("bzr://bzr.savannah.nongnu.org/${pkgname}")
+md5sums=('SKIP')
+
+build() {
+    cd ${pkgname}/${pkgname}/
+    ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2'
+    make
+}
+
+package() {
+    cd ${pkgname}/${pkgname}
+    make DESTDIR="$pkgdir/" install
+}
+
