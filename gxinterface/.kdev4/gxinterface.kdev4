@@ -85,14 +85,22 @@ Type=Native Application
 
 [Launch][Launch Configuration 3][Data]
 Arguments=
+Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
+Display Demangle Names=true
+Display Static Members=false
 EnvironmentGroup=GTK4_DBUG
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/src/gxinterface
-External Terminal=konsole --noclose --workdir %workdir -e %exe
+External Terminal=gnome-terminal --working-directory %workdir -- %exe
+GDB Path=
 Kill Before Executing Again=4194304
 Project Target=
-Use External Terminal=false
+Remote GDB Config Script=
+Remote GDB Run Script=
+Remote GDB Shell Script=
+Start With=ApplicationOutput
+Use External Terminal=true
 Working Directory=file:///home/jerome/dev/git/gtk4/dx7interface
 isExecutable=true
 

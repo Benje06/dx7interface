@@ -1,14 +1,14 @@
 ## Process this file with automake to produce Makefile.in
-              
+
 ## TODO: 
 SUBDIRS = \
-        data\
-        src\
-        lib
+	data\
+	src\
+	lib
 
 INTLTOOL_FILES = intltool-extract.in \
-                 intltool-merge.in \
-                 intltool-update.in
+		intltool-merge.in \
+		intltool-update.in
 
 
 ## If make built it, and it is commonly something that one would want to rebuild
@@ -17,12 +17,12 @@ INTLTOOL_FILES = intltool-extract.in \
 
 ## Otherwise, if make built it, then clean should delete it. 
 CLEANFILES = \
-        lib/gxinterface.pc
+	lib/gxinterface.pc
 ##        data/launcher/dx7interface.desktop
 
 ##        po/*.gmo\
 ##        po/.intltool-merge-cache
-          
+
 ## ???      lib/makefile \
 ##          lib/makefile.in \  
 ##            m4/Makefile \
@@ -30,57 +30,59 @@ CLEANFILES = \
 
 ## If configure built it, then distclean should delete it.                 
 DISTCLEANFILES = \
-        aclocal.m4\
-        autoscan.log\
-        config.h\
-        config.h.in\
-        config.h.in~\
-        config.log\
-        config.status\
-        configure\
-        configure.ac~\
-        configure.scan\
-        configure~\
-        libtool\
-        Makefile\
-        Makefile.in\
-        stamp-h1\
-        config/compile\
-        config/config.guess\
-        config/config.sub\
-        config/install-sh\
-        config/missing\
-        config/depcomp\
-        config/ltmain.sh\
-        src/Makefile\
-        src/Makefile.in\
-        data/Makefile\
-        data/Makefile.in\
-        data/images/Makefile\
-        data/images/Makefile.in\
-        data/launcher/Makefile\
-        data/launcher/Makefile.in\
-        data/launcher/gxinterface.desktop.in.h\
-        data/ui/Makefile\
-        data/ui/Makefile.in\
-        data/ui/interface.ui.h\
+	aclocal.m4\
+	autoscan.log\
+	config.h\
+	config.h.in\
+	config.h.in~\
+	config.log\
+	config.status\
+	configure\
+	configure.ac~\
+	configure.scan\
+	configure~\
+	libtool\
+	Makefile\
+	Makefile.in\
+	stamp-h1\
+	config/compile\
+	config/config.guess\
+	config/config.sub\
+	config/install-sh\
+	config/missing\
+	config/depcomp\
+	config/ltmain.sh\
+	src/Makefile\
+	src/Makefile.in\
+	data/Makefile\
+	data/Makefile.in\
+	data/images/Makefile\
+	data/images/Makefile.in\
+	data/launcher/Makefile\
+	data/launcher/Makefile.in\
+	data/launcher/gxinterface.desktop.in.h\
+	data/ui/Makefile\
+	data/ui/Makefile.in\
+	data/ui/interface.ui.h\
 	po/*.gmo \
-        po/de.po\
-        po/gxinterface.pot\
-        po/en.po\
-        po/es.po\
-        po/fr.po\
-        po/jap.po\
-        po/ru.po\
-        po/languagecode.po\
-        po/Makefile\
-        po/Makefile.in\
-        po/Makefile.in.in\
-        po/notexist\
-        po/missing\
-        po/POTFILES\
+	po/de.po\
+	po/gxinterface.pot\
+	po/en.po\
+	po/es.po\
+	po/fr.po\
+	po/jap.po\
+	po/ru.po\
+	po/languagecode.po\
+	po/Makefile\
+	po/Makefile.in\
+	po/Makefile.in.in\
+	po/notexist\
+	po/missing\
+	po/POTFILES\
 	lib/Makefile \
-	lib/Makefile.in
+	lib/Makefile.in\
+	m4/.*\
+	m4/
 
 # local command need a tabulation
 #distclean-local:
@@ -105,20 +107,20 @@ EXTRA_DIST = \
 install-data-local:
 	@$(NORMAL_INSTALL)
 	if test -d $(srcdir)/pixmaps; then \
-	  $(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/pixmaps; \
-	  for pixmap in $(srcdir)/pixmaps/*; do \
-	    if test -f $$pixmap; then \
-	      $(INSTALL_DATA) $$pixmap $(DESTDIR)$(pkgdatadir)/pixmaps; \
-	    fi \
-	  done \
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/pixmaps; \
+	for pixmap in $(srcdir)/pixmaps/*; do \
+	if test -f $$pixmap; then \
+	$(INSTALL_DATA) $$pixmap $(DESTDIR)$(pkgdatadir)/pixmaps; \
+	fi \
+	done \
 	fi
 
 dist-hook:
 	if test -d pixmaps; then \
-	  mkdir $(distdir)/pixmaps; \
-	  for pixmap in pixmaps/*; do \
-	    if test -f $$pixmap; then \
-	      cp -p $$pixmap $(distdir)/pixmaps; \
-	    fi \
-	  done \
+	mkdir $(distdir)/pixmaps; \
+	for pixmap in pixmaps/*; do \
+	if test -f $$pixmap; then \
+	cp -p $$pixmap $(distdir)/pixmaps; \
+	fi \
+	done \
 	fi

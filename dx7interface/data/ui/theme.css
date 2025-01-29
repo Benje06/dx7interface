@@ -3,13 +3,18 @@
 *   Green dx7:  #66cc99 / 0.4,0.8,0.6,1.0 / 102,204,153,1
 */
 /*
- * spinbutton.horizontal
- ├ ── undershoo*t.left
- ├── undershoot.right
- ├── entry
- │   ╰── ...
- ├── button.down
- ╰── button.up
+spinbutton.horizontal
+├── text
+│    ├── undershoot.left
+│    ╰── undershoot.right
+├── button.down
+╰── button.up
+spinbutton.vertical
+├── button.up
+├── text
+│    ├── undershoot.left
+│    ╰── undershoot.right
+╰── button.down
 */
 spinbutton {
     min-width: 1px;
@@ -19,11 +24,11 @@ spinbutton {
 
 }
 
-spinbutton entry {
+spinbutton text {
     min-height: 1px;
     min-width: 1px;
-    padding: 1px 4px;
-    background-color: #66cc99;
+    padding: 0.2em 0.2em;
+    /*background-color: #66cc99;*/
 }
 
 spinbutton button {
@@ -39,10 +44,10 @@ spinbutton button {
 │           ├── cellview
 │           ╰── arrow
 */
-combobox *{
+dropdown *{
     min-height: 1px;
     min-width: 1px;
-    padding: 0 0;
+    padding: 0.1em 0.1em;
     margin: 0 0;
 }
 /*
@@ -58,7 +63,7 @@ entry[.read-only][.flat][.warning][.error]
 entry {
     min-height: 1px;
     min-width: 1px;
-    padding: 0 0;
+    padding: 0.1em 0.1em;
 }
 /*
 scale[.fine-tune][.marks-before][.marks-after]
@@ -78,6 +83,12 @@ scale[.fine-tune][.marks-before][.marks-after]
 ├── [highlight]
 ╰── slider
 */
+scale slider{
+    /*color:#66cc99;*/
+   /* margin: 0 0;
+    padding: 0 0;*/
+    /*background-color:#66cc00;*/
+}
 scale highlight{
     /*color:#66cc99;*/
     background-color:#66cc99;
@@ -94,14 +105,15 @@ checkbutton:checked >check{
     /*border-color:black;*/
 }
 
-.toolbar {
+.btn_reveal {
     margin:0 0;
     padding:0 3px;
-    padding-left:0px;
+    min-width:5px;
+    min-height:200px;
 }
-.toolbar *{
+.btn_reveal *{
     margin:0 0;
-    padding:0 0;
+    padding:0 3px;
     min-width:5px;
     min-height:200px;
 }
@@ -132,6 +144,10 @@ checkbutton:checked >check{
     /*background-color:red;*/
 }
 .frameloadbank columnview header label{
-     min-width:100px;
-     background-color: #66cc99;
+     /*min-width:40px;
+     background-color: #66cc99;*/
+}
+image *{
+    margin:0 0;
+    padding: 0 0;
 }

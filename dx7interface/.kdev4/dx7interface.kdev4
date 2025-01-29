@@ -97,7 +97,7 @@ Display Demangle Names=true
 Display Static Members=true
 EnvironmentGroup=GTK4_DBUG
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/src/gxinterface
-External Terminal=konsole --noclose --workdir %workdir -e %exe
+External Terminal=gnome-terminal --working-directory %workdir -- bash -c "%exe -m src/dx7interface-0.0.1.la ; bash"
 GDB Path=
 Kill Before Executing Again=4194304
 Project Target=
@@ -105,7 +105,7 @@ Remote GDB Config Script=
 Remote GDB Run Script=
 Remote GDB Shell Script=
 Start With=ApplicationOutput
-Use External Terminal=false
+Use External Terminal=true
 Working Directory=file:///home/jerome/dev/git/gtk4/dx7interface
 isExecutable=true
 
