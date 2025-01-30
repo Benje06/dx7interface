@@ -94,5 +94,17 @@
         strm << val;
         return strm.str();
     };
+    constexpr std::size_t str_const_hash(const char* str) {
+        // Implement a simple compile-time hash function
+        std::size_t h = 0;
+        for (; *str; ++str) {
+            h = h * 31 + *str;
+        }
+        return h;
+    }
+
+    constexpr std::size_t operator""_hash(const char* str, std::size_t) {
+        return str_const_hash(str);
+    }
 #endif /* interface_COMMON_H */
 
