@@ -282,6 +282,8 @@
                                                 <object class="GtkBox" id="box_lfo_wav_sync">
                                                     <child>
                                                         <object class="GtkDropDown" id="lfo_wav">
+                                                            <property name="halign">center</property>
+                                                            <property name="css-classes">dropdown</property>
                                                             <property name="model">
                                                                 <object class="GtkStringList">
                                                                     <items>
@@ -295,13 +297,14 @@
                                                                 </object>
                                                             </property>
                                                             <property name="selected">0</property>
+                                                            <property name="valign">center</property>
                                                         </object>
                                                     </child>
                                                     <child>
                                                         <object class="GtkCheckButton" id="lfo_sync">
                                                             <property name="focusable">1</property>
                                                             <property name="halign">end</property>
-                                                            <property name="hexpand">True</property>
+                                                            <property name="hexpand">0</property>
                                                             <property name="label" translatable="yes">Sync</property>
                                                         </object>
                                                     </child>
@@ -3833,7 +3836,7 @@
                               <object class="GtkBox" id="box_kls_op1">
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkDrawingArea" id="drawingarea1">
+                                  <object class="GtkDrawingArea" id="drawingarea_kls_op1">
                                     <property name="vexpand">1</property>
                                   </object>
                                 </child>
@@ -4008,7 +4011,7 @@
                               <object class="GtkBox" id="box_kls_op2">
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkDrawingArea" id="drawingarea2">
+                                  <object class="GtkDrawingArea" id="drawingarea_kls_op2">
                                     <property name="vexpand">1</property>
                                   </object>
                                 </child>
@@ -4184,7 +4187,7 @@
                               <object class="GtkBox" id="box_kls_op3">
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkDrawingArea" id="drawingarea3">
+                                  <object class="GtkDrawingArea" id="drawingarea_kls_op3">
                                     <property name="vexpand">1</property>
                                   </object>
                                 </child>
@@ -4360,7 +4363,7 @@
                               <object class="GtkBox" id="box_kls_op4">
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkDrawingArea" id="drawingarea4">
+                                  <object class="GtkDrawingArea" id="drawingarea_kls_op4">
                                     <property name="vexpand">1</property>
                                   </object>
                                 </child>
@@ -4536,7 +4539,7 @@
                               <object class="GtkBox" id="box_kls_op5">
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkDrawingArea" id="drawingarea5">
+                                  <object class="GtkDrawingArea" id="drawingarea_kls_op5">
                                     <property name="vexpand">1</property>
                                   </object>
                                 </child>
@@ -4712,7 +4715,7 @@
                               <object class="GtkBox" id="box_kls_op6">
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkDrawingArea" id="drawingarea6">
+                                  <object class="GtkDrawingArea" id="drawingarea_kls_op6">
                                     <property name="vexpand">1</property>
                                   </object>
                                 </child>

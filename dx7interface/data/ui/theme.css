@@ -44,10 +44,29 @@ spinbutton button {
 │           ├── cellview
 │           ╰── arrow
 */
+/*.dropdown {
+    min-height: 1px;
+    min-width: 1px;
+    padding: 0 0;
+    margin: 0 0;
+}
+.dropdown *{
+    min-height: 1px;
+    min-width: 1px;
+    padding: 0 0;
+    margin: 0 0;
+}*/
+
+dropdown{
+    min-height: 1px;
+    min-width: 1px;
+    padding: 0 0;
+    margin: 0 0;
+}
 dropdown *{
     min-height: 1px;
     min-width: 1px;
-    padding: 0.1em 0.1em;
+    padding: 0 0;
     margin: 0 0;
 }
 /*

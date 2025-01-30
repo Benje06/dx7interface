@@ -98,14 +98,15 @@ class Dx7interface : public Gx_module, public Synth {
         /* Cairomm context helpers */
         int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);  /* retourne la taille de sla zone visible */
         /* ADSR */
-
-        void old_draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);   /* dessine la courbe */
-
         void draw_background(const Cairo::RefPtr<Cairo::Context>&);                         /* dessine le fond */
         void draw_grid(const Cairo::RefPtr<Cairo::Context>&, int, int);                     /* dessisne la grille */
         void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);      /* dessine la courbe */
         void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double);              /* dessine un point */
         void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
+        /* Level Scaling */
+        void draw_kls(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);       /* dessine la courbe */
+        void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);  /*dessine le clavier */
+        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, int, int);  /*dessine le clavier */
         /* Generic error */
         bool error();
         /*** THREAD ***/
@@ -134,6 +135,7 @@ class Dx7interface : public Gx_module, public Synth {
         /* Drawing */
         void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&, int, int);
         void on_draw_op_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
+        void on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
 
         /* events and sigc::connection slot for blocking*/
         void on_bank_reveal();
