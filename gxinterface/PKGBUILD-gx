@@ -9,7 +9,7 @@ arch=('i686' 'x86_64')
 url="https://git.savannah.nongnu.org/git/${pkgname}.git"
 license=('GPL')
 depends=('glibmm-2.68' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib')
-makedepends=('breezy' 'intltool' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4' 'libsigc++-3.0' 'glibmm-2.68' 'pangomm-2.48')
+makedepends=('git' 'intltool' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4' 'libsigc++-3.0' 'glibmm-2.68' 'pangomm-2.48')
 provides=(${pkgname})
 conflicts=(${pkgname})
 
@@ -18,12 +18,13 @@ md5sums=('SKIP')
 
 build() {
     cd gtk4/${pkgname}/
-    ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2'
-    make
+    
+    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 ./autogen.sh --prefix=/usr --enable-maintainer-mode 'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra ' 'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED  -ggdb3 -O0 -Wall -fno-inline -std=c++17'
+    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make
 }
 
 package() {
     cd gtk4/${pkgname}/
-    make DESTDIR="$pkgdir/" install
+    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make DESTDIR="$pkgdir/" install
 }
 

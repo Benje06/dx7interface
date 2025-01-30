@@ -2,29 +2,29 @@
 # Contributor: Jmeshmesh <>
 
 pkgname=dx7interface
-pkgver='1.0.0'
+pkgver='2.0.0'
 pkgrel='1'
 pkgdesc="Gtk Extended Interface: Module Loader for .la or .ui, provides headers for module construction"
 arch=('i686' 'x86_64')
-url="bzr://bzr.savannah.nongnu.org/gxinterface"
+url="https://git.savannah.nongnu.org/git/${pkgname}.git"
 license=('GPL')
-depends=('glibmm' 'gtkmm3' 'cairomm-1.16' 'alsa-lib' 'gxinterface')
-makedepends=('breezy' 'intltool' 'glibmm' 'gtkmm3' 'glib2' 'cairomm-1.16' 'alsa-lib' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4' 'gxinterface')
+depends=('glibmm-2.68' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'gxinterface')
+makedepends=('git' 'intltool' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4' 'libsigc++-3.0' 'glibmm-2.68' 'pangomm-2.48' 'gxinterface')
 provides=(${pkgname})
 conflicts=(${pkgname})
 options=(libtool)
 
-source=("bzr://bzr.savannah.nongnu.org/gxinterface")
+source=("git+file:///home/jerome/dev/git/gtk4")
 md5sums=('SKIP')
 
 build() {
-    cd gxinterface/${pkgname}/
-    ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2'
-    make
+    cd gtk4/${pkgname}/
+    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 ./autogen.sh --prefix=/usr --enable-maintainer-mode 'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra ' 'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED  -ggdb3 -O0 -Wall -fno-inline -std=c++17'
+    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make
 }
 
 package() {
-    cd gxinterface/${pkgname}
-    make DESTDIR="$pkgdir/" install
+    cd gtk4/${pkgname}
+    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make DESTDIR="$pkgdir/" install
 }
 

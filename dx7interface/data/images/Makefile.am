@@ -37,7 +37,8 @@ image_DATA = \
 	algo30.png\
 	algo31.png\
 	algo32.png\
-	dx7.jpg
+	dx7.jpg\
+	keyboard.png
 
 imagedir = \
 	$(pkgdatadir)/$(PACKAGE_VERSION)/images
