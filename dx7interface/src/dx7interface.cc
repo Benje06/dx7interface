@@ -170,12 +170,7 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
                 };
                 file_size -= 8;
             };
-            if (data == 0x5F || data == 0x5E ){
-                data_stream->close();
-                data_stream = Gio::DataInputStream::create(bank_file->read());
-                file_size = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
-            };
-            if (data == 0x00 ){ //reset file
+            if (data == 0x5F || data == 0x5E || data == 0x00 || data == 0x2F ){
                 data_stream->close();
                 data_stream = Gio::DataInputStream::create(bank_file->read());
                 file_size = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
@@ -1215,10 +1210,9 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     width-=2.0*r_point;
     double x_ratio=( (width ) /400.0);
     double y_ratio=( (height) /100.0);
-    // TODO: draw key off line l3 at r4 rate to l4
-    // global output lvl scale the distance
+    // TODO: global output lvl scale the distance
     // put key on key off mark
-    //height = height - 6.0;
+
     /* Draw curve */
     double x=0.0, y=0.0;     // coordonee du point
     x += r_point;
@@ -1273,91 +1267,100 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
     Glib::ustring note = (std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+num_op))->get_selected_item()))->get_string();
     uint num_note = get_gwidget<Gtk::DropDown>("note_brk_pt_op"+num_op)->get_selected();
     uint octv = get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+num_op)->get_value();
-    /* compute step */
-    int note_ref = 3;
-    int dec = num_note - note_ref;// -3  = note - 3
+    // note_ = (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected();
+    //octv_ = (((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value() - 1) * 12);
     /* Key touch */
     //C 4 = note=3 oct=4
     //A 4 = note=0 oct=4
-    //deplacement_reel = position_intial - ( decalage  * taille d'une note)
+
     // progression  -2  1 3  6 8 noir
     //             -3-10 2 45 7  blanche
-    double dep;
+    /* compute step */
+    int note_ref = 3; // C
+    int dec = num_note - note_ref;// -3  = note - 3
+    int octv_base = 0;
+    int dep_octv = octv_base - octv;
+    double dep = (2.0* width_w) - ((double)dep_octv)*(7.0*width_w);
     switch(dec){
-        case -3:{
-            dep = - ((2.0 * width_w));
-            touch = touch_w;
-            break;
-        };
-        case -2:{
-            dep = - (width_w + (width_w / 2.0));
-            touch = touch_b;
-            break;
-        };
-        case -1:{
-            dep = - width_w;
-            touch = touch_w;
-            break;
-        };
-        case 0:{
-            dep = 0;
+        case 0:{ // C
+            dep = dep;
             touch = touch_w;
             break;
         }
-        case 1:{
-            dep = width_w /2.0;
+        case 1:{ // C#
+            dep = dep + (width_w /2.0);
             touch = touch_b;
             break;
         };
-        case 2:{
-            dep = (width_w);
+        case 2:{ // D
+            dep = dep + (width_w);
             touch = touch_w;
             break;
         };
-        case 3:{
-            dep = ( width_w + (width_w/2.0));
+        case 3:{ // D#
+            dep = dep + ( ( width_w ) + ( width_w/2.0 ) );
+            touch = touch_b;
+
+            break;
+        };
+        case 4:{ // E
+            dep = dep + ( 2.0 * width_w ) ;
+            touch = touch_w;
+            break;
+        };
+        case 5:{ // F
+            dep = dep + ( 3.0 * width_w );
+            touch = touch_w;
+            break;
+        };
+        case 6:{ // F#
+            dep = dep + ( ( 3.0 * width_w ) + ( width_w/2.0 ) );
             touch = touch_b;
             break;
         };
-        case 4:{
-            dep = (2.0 * width_w);
+        case 7:{ // G
+            dep = dep + ( 4.0 * width_w );
             touch = touch_w;
             break;
         };
-        case 5:{
-            dep = (3.0 * width_w);
-            touch = touch_w;
-            break;
-        };
-        case 6:{
-            dep = ( (3.0 * width_w) + (width_w /2.0) );
+        case 8:{ // G#
+            dep = dep +( ( 4.0 * width_w) + (width_w/2.0) ) ;
             touch = touch_b;
             break;
         };
-        case 7:{
-            dep = (4.0 * width_w);
+        case -3:{ // A
+            dep = dep + ( ( 5.0 * width_w ) );
             touch = touch_w;
             break;
         };
-        case 8:{
-            dep = ( (4.0 * width_w) + (width_w /2.0) );
+        case -2:{ // A#
+            dep = dep + ( ( 5.0 * width_w ) + (width_w/2.0) ) ;
             touch = touch_b;
+            break;
+        };
+        case -1:{ // B
+            dep = dep + ( ( 6.0 * width_w ) );
+            touch = touch_w;
             break;
         };
     };
 
     /* Keyboard */
     double keyboard_pos = height - keyboard_heigth;
-    double keyboard_start = (width /2.0) - (keyboard_width / 2.0)  - dep;
+    double keyboard_start = (width /2.0) - (0.5*width_w) - dep;
     double pos_key = (width /2.0) - (touch->get_width() / 2.0);
 
     /* Keyboard bg */
     cr->save();
     cr->set_source(keyboard_bg_image_surface, keyboard_start, keyboard_pos);
     cr->paint();
+    cr->set_source(keyboard_bg_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
+    cr->paint();
     if( touch == touch_b ){
         /* Keyboard */
         cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
+        cr->paint();
+        cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
         cr->paint();
         /* Touch */
         cr->set_source(touch, pos_key, keyboard_pos );
@@ -1368,6 +1371,8 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
         cr->paint();
         /* Keyboard */
         cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
+        cr->paint();
+        cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
         cr->paint();
     };
     cr->restore();
@@ -1381,11 +1386,6 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     //set origin to bottom left
     double r,g,b,a;
     // Orange dx7 0.88,0.35,0.27,1.0
-    r=line_color[0];
-    g=line_color[1];
-    b=line_color[2];
-    a=line_color[3];
-
     r=0.88;
     g=0.35;
     b=0.27;
@@ -1396,7 +1396,7 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     cr->set_source_rgba(r,g,b,a);
     cr->set_line_width(1.0);
     cr->move_to(x, 0);
-    cr->line_to(x, height);      // trace une ligne
+    cr->line_to(x, height);
     cr->move_to(0, y);
     cr->line_to(width, y);
     cr->stroke();
@@ -1407,10 +1407,11 @@ void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::
     switch (str_const_hash(type_curve.c_str())) {
         case "EXP+"_hash:{
             // EXP+ rigth
-            double scale_factor = (100.0 - dpth);
+            double scale_factor = (100.0 - dpth) +25 ;
             cr->move_to(width/2.0, height /2.0);
             for (double x = 0.0, y=0.0; x <= (width/2.0) && y <= (height /2.0) ; x +=5.0) {
-                y = std::min(height, std::exp(x / scale_factor ) - 1 );
+                // -1 facteur correctif à l'origine
+                y = std::exp( x / scale_factor ) - 1 ;
                 if (dir == "lft"){ x = -x; };
                 cr->line_to( (width/2.0) + x, (height/2.0) + y );
                 if (dir == "lft"){ x = -x; };
@@ -1419,10 +1420,10 @@ void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::
         };
         case "EXP-"_hash:{
             // EXP- right
-            double scale_factor = (100.0 - dpth);
+            double scale_factor = (100.0 - dpth) +25;
             cr->move_to(width/2.0, height /2.0);
             for (double x = 0.0, y=0.0; x <= (width/2.0) && y < (height /2.0) ; x +=5.0) {
-                y = std::min(height, std::exp(x / scale_factor ) - 1);
+                y = std::exp( x / scale_factor ) - 1;
                 if (dir == "lft"){ x = -x; };
                 cr->line_to( (width/2.0) + x, (height/2.0) - y );
                 if (dir == "lft"){ x = -x; };
@@ -1553,7 +1554,7 @@ void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
 
 void Dx7interface::on_bank_select(){
     LOG_IN();
-    /* if (modif done)
+    /* TODO: if (modif done)
         ask save
     */
     try{
@@ -1580,6 +1581,12 @@ void Dx7interface::on_bank_select(){
                         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
                         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
                         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
+                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
                         Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
                         Glib::ustring name = filename.substr(0,filename.find_last_of("."));
                         get_gwidget<Gtk::Button>("bank_select")->set_label(name);
@@ -1635,7 +1642,7 @@ void Dx7interface::on_transpose_event() {
     msg[3]=0x01;
     msg[4]=0x10;
     msg[5]=(get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()-1)*12;
+        +((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()+1)*12;
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
 };

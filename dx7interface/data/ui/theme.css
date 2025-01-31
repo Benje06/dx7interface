@@ -57,7 +57,9 @@ spinbutton button {
     padding: 0 0;
     margin: 0 0;
 }*/
-
+.kls_draw *{
+ padding: 2px 2px;
+}
 dropdown{
     min-height: 1px;
     min-width: 1px;
