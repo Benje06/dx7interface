@@ -42,8 +42,8 @@
 
 
 /** CONSTANTS **/
-//#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify.ui"
-#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-gtk4_git-simplify.ui"
+#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify.ui"
+//#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-gtk4_git-simplify.ui"
 #define CSSFILE MOD_UI_DIRECTORY"theme.css"
 
 extern "C" {
@@ -99,15 +99,16 @@ class Dx7interface : public Gx_module, public Synth {
         /* Cairomm context helpers */
         int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);  /* retourne la taille de sla zone visible */
         /* ADSR */
-        void draw_background(const Cairo::RefPtr<Cairo::Context>&);                         /* dessine le fond */
-        void draw_grid(const Cairo::RefPtr<Cairo::Context>&, int, int);                     /* dessisne la grille */
-        void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);      /* dessine la courbe */
-        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double);              /* dessine un point */
+        void draw_background(const Cairo::RefPtr<Cairo::Context>&);                                 /* dessine le fond */
+        void draw_grid(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /* dessisne la grille */
+        void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);        /* dessine la courbe */
+        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double,double);               /* dessine un point */
         void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
         /* Level Scaling */
-        void draw_kls(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);       /* dessine la courbe */
-        void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);  /*dessine le clavier */
-        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, int, int);  /*dessine le clavier */
+        void draw_kls(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);         /* dessine la courbe */
+        void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);    /*dessine le clavier */
+        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /*dessine le clavier */
+        void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>&,Glib::ustring, double, double, double, Glib::ustring); /* draw kls curve type */
         /* Generic error */
         bool error();
         /*** THREAD ***/

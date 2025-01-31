@@ -1076,11 +1076,9 @@ void Dx7interface::draw_background(const Cairo::RefPtr<Cairo::Context>& cr){
     //LOG_OUT();
 };
 
-void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, int hght){
+void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
     //LOG_IN();
     double x=0.0, y=0.0;   // coordonee du point
-    double width=(double)wdth;
-    double height=(double)hght;
     // representation d'un pas en fonction de la zone d'affichage
     double x_step=(width/grid_step_x);
     double y_step=(height/grid_step_y);
@@ -1139,13 +1137,25 @@ void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, 
     //LOG_OUT();
 };
 
-void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y){
+void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,double width){
     // TODO set value in a var to be changed by interface
     //LOG_IN();
+    double r,g,b,a;
+    // Orange dx7 0.88,0.35,0.27,1.0
+    r=line_color[0];
+    g=line_color[1];
+    b=line_color[2];
+
+    //int width = (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->get_width();
+    if( x == r_point || (x + r_point) >= width ){
+        r=0.88;
+        g=0.35;
+        b=0.27;
+    };
     double radius;
     cr->save();
     // interior circle
-    cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
+    cr->set_source_rgba(r,g,b,1.0);
     radius = r_point/2.0;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
     cr->fill();
@@ -1153,7 +1163,7 @@ void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x,
     cr->restore();
     cr->save();
     // interior circle
-    cr->set_source_rgba(line_color[0],line_color[1],line_color[2],0.8);
+    cr->set_source_rgba(r,g,b,0.8);
     radius = r_point/1.33;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
     cr->fill();
@@ -1161,7 +1171,7 @@ void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x,
     cr->restore();
     // interior circle
     cr->save();
-    cr->set_source_rgba(line_color[0],line_color[1],line_color[2],0.8);
+    cr->set_source_rgba(r,g,b,0.8);
     radius = r_point;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
     //cr->fill();
@@ -1169,7 +1179,7 @@ void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x,
     cr->restore();
     // exterior circle
     cr->save();
-    cr->set_source_rgba(line_color[0],line_color[1],line_color[2],0.1);
+    cr->set_source_rgba(r,g,b,0.1);
     radius = r_point_shadow;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
     cr->stroke();
@@ -1190,13 +1200,9 @@ void Dx7interface::draw_note_off(const Cairo::RefPtr<Cairo::Context>& cr,double 
     cr->restore();
 };
 
-void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, int hght, Glib::ustring type){
+void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring type){
     // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
-
-    // visible size
-    double width=(double)wdth;
-    double height=(double)hght;
     //set origin to bottom left
     cr->translate(0, height);
     cr->scale(1, -1);
@@ -1215,13 +1221,14 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, 
     //height = height - 6.0;
     /* Draw curve */
     double x=0.0, y=0.0;     // coordonee du point
+    x += r_point;
+    y += (r_point/2.0);
+
     for(uint8_t i=1;i<=4;i++) {
         cr->save();
         cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
         cr->set_line_width(line_width);
         if (i==1) {
-            x += r_point;
-            y += (r_point/2.0);
             cr->move_to( x,
                        ( y + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value()+1.0) * y_ratio )
             );
@@ -1242,184 +1249,222 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, 
 
         cr->stroke();
         cr->restore();
-        draw_point(cr,x,y);
+        draw_point(cr,x,y, width);
     };
+    //draw first point at last to covert line
+    draw_point(cr,r_point,(r_point/2.0) + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value()+1.0) * y_ratio, width);
     //LOG_OUT();
 };
 
-void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, int hght, Glib::ustring type){
+void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
     // TODO : get sound from bank_1_modif.sound
     LOG_IN();
-    Cairo::RefPtr<Cairo::ImageSurface> m_image_surface = Cairo::ImageSurface::create_from_png("data/images/keyboard.png");
-    double img_width = (double)m_image_surface->get_width();
-    double img_heigth = (double)m_image_surface->get_height();
+    /* key touch */
+    Cairo::RefPtr<Cairo::ImageSurface> touch;
+    Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png("data/images/touche_b.png");
+    Cairo::RefPtr<Cairo::ImageSurface> touch_w = Cairo::ImageSurface::create_from_png("data/images/touche_w.png");
+    double width_w = (double)touch_w->get_width();
+    /* keyboard */
+    Cairo::RefPtr<Cairo::ImageSurface> keyboard_bg_image_surface = Cairo::ImageSurface::create_from_png("data/images/keyboard_background.png");
+    Cairo::RefPtr<Cairo::ImageSurface> keyboard_image_surface = Cairo::ImageSurface::create_from_png("data/images/keyboard.png");
+    double keyboard_width = (double)keyboard_image_surface->get_width();
+    double keyboard_heigth = (double)keyboard_image_surface->get_height();
+    /* UI values */
+    Glib::ustring note = (std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+num_op))->get_selected_item()))->get_string();
+    uint num_note = get_gwidget<Gtk::DropDown>("note_brk_pt_op"+num_op)->get_selected();
+    uint octv = get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+num_op)->get_value();
+    /* compute step */
+    int note_ref = 3;
+    int dec = num_note - note_ref;// -3  = note - 3
+    /* Key touch */
+    //C 4 = note=3 oct=4
+    //A 4 = note=0 oct=4
+    //deplacement_reel = position_intial - ( decalage  * taille d'une note)
+    // progression  -2  1 3  6 8 noir
+    //             -3-10 2 45 7  blanche
+    double dep;
+    switch(dec){
+        case -3:{
+            dep = - ((2.0 * width_w));
+            touch = touch_w;
+            break;
+        };
+        case -2:{
+            dep = - (width_w + (width_w / 2.0));
+            touch = touch_b;
+            break;
+        };
+        case -1:{
+            dep = - width_w;
+            touch = touch_w;
+            break;
+        };
+        case 0:{
+            dep = 0;
+            touch = touch_w;
+            break;
+        }
+        case 1:{
+            dep = width_w /2.0;
+            touch = touch_b;
+            break;
+        };
+        case 2:{
+            dep = (width_w);
+            touch = touch_w;
+            break;
+        };
+        case 3:{
+            dep = ( width_w + (width_w/2.0));
+            touch = touch_b;
+            break;
+        };
+        case 4:{
+            dep = (2.0 * width_w);
+            touch = touch_w;
+            break;
+        };
+        case 5:{
+            dep = (3.0 * width_w);
+            touch = touch_w;
+            break;
+        };
+        case 6:{
+            dep = ( (3.0 * width_w) + (width_w /2.0) );
+            touch = touch_b;
+            break;
+        };
+        case 7:{
+            dep = (4.0 * width_w);
+            touch = touch_w;
+            break;
+        };
+        case 8:{
+            dep = ( (4.0 * width_w) + (width_w /2.0) );
+            touch = touch_b;
+            break;
+        };
+    };
 
-    // visible size
-    double width=(double)wdth;
-    double height=(double)hght;
+    /* Keyboard */
+    double keyboard_pos = height - keyboard_heigth;
+    double keyboard_start = (width /2.0) - (keyboard_width / 2.0)  - dep;
+    double pos_key = (width /2.0) - (touch->get_width() / 2.0);
 
-    double start = (width /2.0) - (img_width / 2.0);
+    /* Keyboard bg */
     cr->save();
-    cr->set_source(m_image_surface, start, height - img_heigth);
+    cr->set_source(keyboard_bg_image_surface, keyboard_start, keyboard_pos);
     cr->paint();
+    if( touch == touch_b ){
+        /* Keyboard */
+        cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
+        cr->paint();
+        /* Touch */
+        cr->set_source(touch, pos_key, keyboard_pos );
+        cr->paint();
+    }else{
+        /* Touch */
+        cr->set_source(touch, pos_key, keyboard_pos );
+        cr->paint();
+        /* Keyboard */
+        cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
+        cr->paint();
+    };
     cr->restore();
     LOG_OUT();
 };
 
-void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, int hght){
+void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
     // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
-    double x, y;
-    double width = (double)wdth;
-    double height = (double)hght;
+    double x=(width/2.0), y=(height/2.0);
     //set origin to bottom left
+    double r,g,b,a;
+    // Orange dx7 0.88,0.35,0.27,1.0
+    r=line_color[0];
+    g=line_color[1];
+    b=line_color[2];
+    a=line_color[3];
+
+    r=0.88;
+    g=0.35;
+    b=0.27;
+    a=1.0;
 
     // Draw AXIS
     cr->save();
-    cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-    cr->set_line_width(line_width);
-    x = (width/2.0);
+    cr->set_source_rgba(r,g,b,a);
+    cr->set_line_width(1.0);
     cr->move_to(x, 0);
     cr->line_to(x, height);      // trace une ligne
-    cr->stroke();
-    cr->restore();
-
-    cr->save();
-    cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-    cr->set_line_width(line_width);
-    y = (height/2.0);
     cr->move_to(0, y);
     cr->line_to(width, y);
     cr->stroke();
     cr->restore();
     //LOG_OUT();
 };
-
-void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, int wdth, int hght, Glib::ustring type){
+void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir){
+    switch (str_const_hash(type_curve.c_str())) {
+        case "EXP+"_hash:{
+            // EXP+ rigth
+            double scale_factor = (100.0 - dpth);
+            cr->move_to(width/2.0, height /2.0);
+            for (double x = 0.0, y=0.0; x <= (width/2.0) && y <= (height /2.0) ; x +=5.0) {
+                y = std::min(height, std::exp(x / scale_factor ) - 1 );
+                if (dir == "lft"){ x = -x; };
+                cr->line_to( (width/2.0) + x, (height/2.0) + y );
+                if (dir == "lft"){ x = -x; };
+            }
+            break;
+        };
+        case "EXP-"_hash:{
+            // EXP- right
+            double scale_factor = (100.0 - dpth);
+            cr->move_to(width/2.0, height /2.0);
+            for (double x = 0.0, y=0.0; x <= (width/2.0) && y < (height /2.0) ; x +=5.0) {
+                y = std::min(height, std::exp(x / scale_factor ) - 1);
+                if (dir == "lft"){ x = -x; };
+                cr->line_to( (width/2.0) + x, (height/2.0) - y );
+                if (dir == "lft"){ x = -x; };
+            }
+            break;
+        };
+        case "LIN+"_hash:{
+            //LIN+ rigth
+            cr->move_to(width/2.0,height/2.0);
+            if (dir == "lft"){ width = 0; };
+            cr->line_to( (width), (height/2.0) + ( (height/2.0)*(dpth/100) ) );
+            break;
+        };
+        case "LIN-"_hash:{
+            //LIN- rigth
+            cr->move_to(width/2.0,(height/2.0));
+            if (dir == "lft"){ width = 0; };
+            cr->line_to( (width), (height/2.0) - ( (height/2.0)*(dpth/100) ) );
+            break;
+        };
+    };
+}
+void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
     // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
-    double x, y;
-    double width = (double)wdth;
-    double height = (double)hght;
-    // GtkSpinButton" id="octv_brk_pt_op6
-    // GtkDropDown" id="note_brk_pt_op6"
+    Glib::ustring rght_curve =( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+num_op))->get_selected_item()))->get_string() ;
+    double rght_dpth =(double)(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+num_op))->get_value()+1 ;
+    Glib::ustring lft_curve =( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+num_op))->get_selected_item()))->get_string() ;
+    double lft_dpth =(double)(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+num_op))->get_value()+1 ;
 
-    // GtkDropDown" id="kls_lft_curve_op6"
-    // GtkSpinButton" id="kls_lft_dpth_op6
-
-    // GtkDropDown" id="kls_rght_curve_op6"
-    // GtkSpinButton" id="kls_rght_dpth_op6"
-
-    Glib::ustring rght_curve =( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->get_selected_item()))->get_string() ;
-    double rght_dpth =(double)(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->get_value()+1 ;
-    Glib::ustring lft_curve =( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->get_selected_item()))->get_string() ;
-    double lft_dpth =(double)(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->get_value()+1 ;
-    //Glib::ustring rght_curve =(get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->get_selected();
-    //Glib::ustring rght_curve =(get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->get_selected();
-
-    x=0.0;
-    y=0.0;
-    switch (str_const_hash(rght_curve.c_str())) {
-        case "EXP+"_hash:
-            cr->save();
-            cr->translate(0, height);
-            cr->scale(1, -1);
-
-            cr->rectangle(width/2.0,height/2.0, width/2.0, height/2.0);
-            cr->clip();
-
-            cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-            cr->set_line_width(line_width);
-            cr->move_to(width/2.0, height /2.0);
-            // Plot the curve
-            double scale_factor = std::min(1.0, 50.0 / (100.0 - rght_dpth));
-
-            for (double x = 0; x <= (width/2.0); x += 5) {
-                double y = std::exp(x / (100.0 - rght_dpth)) - 1;
-                cr->line_to( (width/2.0) + x, (height/2.0) + (y * scale_factor));
-            }
-            cr->stroke();
-            cr->restore();
-            break;
-    };
-        /*case "EXP-"_hash:
-            cr->save();
-            cr->translate(0, height);
-            cr->scale(1, -1);
-            cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-            cr->set_line_width(line_width);
-            cr->move_to(width/2.0, height /2.0);
-            // Plot the curve
-            for (double x = 0.0; x <= width; x += 10) {
-                double y = std::exp(x / (100 - rght_dpth));
-                cr->line_to( (width/2.0) + x, (height/2.0) - y);
-                cr->stroke_preserve();
-            }
-            cr->restore();
-            break;
-        case "LIN+"_hash:
-                //LINEAR + rigth
-            cr->save();
-            cr->translate(0, height);
-            cr->scale(1, -1);
-            cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-            cr->set_line_width(line_width);
-            cr->move_to(width/2.0,height/2.0);
-            //cr->line_to(width, height - ( (height*(99-rght_dpth))/100) );      // trace une ligne
-            cr->line_to(width, (height/2.0) +  ( (height/2.0)*(rght_dpth/100) ) );      // trace une ligne
-            cr->stroke();
-            cr->restore();
-            break;
-        case "LIN-"_hash:
-            //LINEAR + rigth
-            cr->save();
-            cr->translate(0, height);
-            cr->scale(1, -1);
-            cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-            cr->set_line_width(line_width);
-            cr->move_to(width/2.0,(height/2.0));
-            cr->line_to(width, 0);      // trace une ligne
-            cr->stroke();
-            cr->restore();
-            break;
-    }
-    x=0.0;
-    y=0.0;
-    switch (str_const_hash(lft_curve.c_str())) {
-        case "EXP+"_hash:
-
-            break;
-        case "EXP-"_hash:
-
-            break;
-        case "LIN+"_hash:
-            //LINEAR + left
-            cr->save();
-            cr->translate(0, height);
-            cr->scale(1, -1);
-            cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-            cr->set_line_width(line_width);
-            cr->move_to(width/2.0,height/2.0);
-            cr->line_to(0, height);      // trace une ligne
-            cr->stroke();
-            cr->restore();
-            break;
-        case "LIN-"_hash:
-            //LINEAR + left
-            cr->save();
-            cr->translate(0, height);
-            cr->scale(1, -1);
-            cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
-            cr->set_line_width(line_width);
-            cr->move_to(width/2.0,height/2.0);
-            cr->line_to(0, 0);      // trace une ligne
-            cr->stroke();
-            cr->restore();
-            break;
-    }*/
+    cr->save();
+    cr->translate(0, height);
+    cr->scale(1, -1);
+    cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
+    cr->set_line_width(line_width);
+    draw_kls_curve(cr,rght_curve,width,height,rght_dpth,"rght");
+    cr->stroke();
+    draw_kls_curve(cr,lft_curve,width,height,lft_dpth,"lft");
+    cr->stroke();
+    cr->restore();
     //LOG_OUT();
 };
-
 
 /* EVENTS */
 void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
@@ -1428,11 +1473,11 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
         if( width == 0 || height == 0 ){
             return;
         };
+        double wdth=(double)width, hght=(double)height;
         draw_background(cr);
-        //draw_grid( cr, width, height);
-        draw_kls( cr, width, height, "op"+num_op);
-        draw_axis(cr,width, height);
-        draw_keyboard( cr, width, height, "op"+num_op );
+        draw_axis(cr,wdth, hght);
+        draw_kls( cr, wdth, hght, num_op);
+        draw_keyboard( cr, wdth, hght, num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
         /*};*/
     };
@@ -1442,22 +1487,15 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
 void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
     LOG_IN();
     if (cr){
-        /*auto vsize = get_cr_visible_size(cr, "drawingarea_eg_op"+num_op);
-        if( !vsize ){
+        if( width == 0 || height == 0 ){
             return;
-        }else{
-            width = (double)vsize[0];
-            height = (double)vsize[1];*/
-            if( width == 0 || height == 0 ){
-                return;
-            };
-            //std::cout << "Area size: " << vsize[0] << "x" << vsize[1] << std::endl;
-            draw_background(cr);
-            //auto d_length = draw_adsr( cr, vsize, "op"+num_op );
-            draw_adsr( cr, width, height, "op"+num_op );
-            draw_grid( cr, width, height);
-            (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
-        /*};*/
+        };
+        double wdth=(double)width, hght=(double)height;
+        draw_background(cr);
+        //auto d_length = draw_adsr( cr, vsize, "op"+num_op );
+        draw_adsr( cr, wdth, hght, "op"+num_op );
+        draw_grid( cr, wdth, hght);
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
     };
     LOG_OUT();
 };
@@ -1465,21 +1503,14 @@ void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int 
 void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
     LOG_IN();
     if (cr){
-        /*auto vsize = get_cr_visible_size(cr, "drawingarea_eg_pitch" );
-        if( !vsize ){
+        if( width == 0 || height == 0 ){
             return;
-        }else{
-            width = (double)vsize[0];
-            height = (double)vsize[1];*/
-            if( width == 0 || height == 0 ){
-                return;
-            };
-            //std::cout << "Area size: " << vsize[0] << "x" << vsize[1] << std::endl;
-            draw_background(cr);
-            draw_adsr( cr, width, height, "pitch" );
-            draw_grid( cr, width, height );
-            (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
-       /* };*/
+        };
+        double wdth=(double)width, hght=(double)height;
+        draw_background(cr);
+        draw_adsr( cr, wdth, hght, "pitch" );
+        draw_grid( cr, wdth, hght );
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
     LOG_OUT();
 };
@@ -1511,6 +1542,12 @@ void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
     LOG_OUT();
 };
 
@@ -1523,7 +1560,7 @@ void Dx7interface::on_bank_select(){
         auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
         dialog->set_title("Select Module .la, .so or .ui");
         dialog->set_modal(true);
-        Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("/home/jerome/dev/git/gtk4/dx7");
+        Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
         dialog->set_initial_folder(initial_folder);
         dialog->open( *(get_window()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
                 try {
@@ -1557,7 +1594,7 @@ void Dx7interface::on_bank_select(){
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
-        throw std::runtime_error(err_msg);
+        //throw std::runtime_error(err_msg);
     };
     LOG_OUT();
 };
