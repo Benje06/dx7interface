@@ -4997,519 +4997,643 @@
     </columns>
   </object>
   <object class="GtkAdjustment" id="adj_algo">
-    <property name="lower">1</property>
-    <property name="step-increment">1</property>
-    <property name="upper">32</property>
-    <property name="value">1</property>
+      <property name="lower">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">32</property>
+      <property name="value">1</property>
   </object>
   <object class="GtkAdjustment" id="adj_amd">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_ams_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">3</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">3</property>
   </object>
   <object class="GtkAdjustment" id="adj_ams_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">3</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">3</property>
   </object>
   <object class="GtkAdjustment" id="adj_ams_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">3</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">3</property>
   </object>
   <object class="GtkAdjustment" id="adj_ams_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">3</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">3</property>
   </object>
   <object class="GtkAdjustment" id="adj_ams_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">3</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">3</property>
   </object>
   <object class="GtkAdjustment" id="adj_ams_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">3</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">3</property>
   </object>
   <object class="GtkAdjustment" id="adj_delay">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_dtun_op1">
-    <property name="lower">-7</property>
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-7</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_dtun_op2">
-    <property name="lower">-7</property>
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-7</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_dtun_op3">
-    <property name="lower">-7</property>
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-7</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_dtun_op4">
-    <property name="lower">-7</property>
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-7</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_dtun_op5">
-    <property name="lower">-7</property>
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-7</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_dtun_op6">
-    <property name="lower">-7</property>
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-7</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl1_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl1_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl1_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl1_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl1_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl1_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl2_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl2_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl2_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl2_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl2_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl2_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl3_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl3_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl3_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl3_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl3_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl3_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl4_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl4_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl4_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl4_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl4_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_lvl4_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt1_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt1_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt1_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt1_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt1_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt1_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt2_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt2_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt2_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt2_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt2_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt2_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt3_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt3_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt3_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt3_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt3_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt3_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt4_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt4_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt4_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt4_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt4_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_eg_rt4_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_fct_volume">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_feedback">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_coarse_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">31</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">31</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_coarse_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">31</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">31</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_coarse_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">31</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">31</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_coarse_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">31</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">31</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_coarse_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">31</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">31</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_coarse_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">31</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">31</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_fine_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_fine_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_fine_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_fine_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_fine_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_freq_fine_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_lft_dpth_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_lft_dpth_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_lft_dpth_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_lft_dpth_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_lft_dpth_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_lft_dpth_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_rght_dpth_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_rght_dpth_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_rght_dpth_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_rght_dpth_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_rght_dpth_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_kls_rght_dpth_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_krs_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_krs_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_krs_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_krs_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_krs_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_krs_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_kvs_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_kvs_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_kvs_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_kvs_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_kvs_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_kvs_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_lvl_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_lvl_op2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_lvl_op3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_lvl_op4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_lvl_op5">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_lvl_op6">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_octv_brk_pt_op1">
-    <property name="step-increment">1</property>
-    <property name="upper">8</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">8</property>
   </object>
   <object class="GtkAdjustment" id="adj_octv_brk_pt_op2">
-    <property name="lower">-1</property>
-    <property name="step-increment">1</property>
-    <property name="upper">8</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">8</property>
   </object>
   <object class="GtkAdjustment" id="adj_octv_brk_pt_op3">
-    <property name="lower">-1</property>
-    <property name="step-increment">1</property>
-    <property name="upper">8</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">8</property>
   </object>
   <object class="GtkAdjustment" id="adj_octv_brk_pt_op4">
-    <property name="lower">-1</property>
-    <property name="step-increment">1</property>
-    <property name="upper">8</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">8</property>
   </object>
   <object class="GtkAdjustment" id="adj_octv_brk_pt_op5">
-    <property name="lower">-1</property>
-    <property name="step-increment">1</property>
-    <property name="upper">8</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">8</property>
   </object>
   <object class="GtkAdjustment" id="adj_octv_brk_pt_op6">
-    <property name="lower">-1</property>
-    <property name="step-increment">1</property>
-    <property name="upper">8</property>
+      <property name="page-increment">1</property>
+      <property name="lower">-1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">8</property>
   </object>
   <object class="GtkAdjustment" id="adj_octv_transpose">
-    <property name="lower">1</property>
-    <property name="step-increment">1</property>
-    <property name="upper">5</property>
-    <property name="value">1</property>
+      <property name="page-increment">1</property>
+      <property name="lower">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">5</property>
+      <property name="value">1</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_lvl1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_lvl2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_lvl3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_lvl4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_rt1">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_rt2">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_rt3">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_rt4">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pmd">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
   <object class="GtkAdjustment" id="adj_pms">
-    <property name="page-increment">7</property>
-    <property name="step-increment">1</property>
-    <property name="upper">7</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">7</property>
   </object>
   <object class="GtkAdjustment" id="adj_speed">
-    <property name="step-increment">1</property>
-    <property name="upper">99</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">99</property>
   </object>
 </interface>

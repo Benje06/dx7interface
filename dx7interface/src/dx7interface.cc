@@ -622,6 +622,8 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_feedback_event));
     slot_note_transpose = (get_gwidget<Gtk::DropDown>("note_transpose"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_transpose_event));
+    auto note_transpose_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_transpose"));
+
     slot_octv_transpose = (get_gwidget<Gtk::SpinButton>("octv_transpose"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_transpose_event));
     slot_oks = (get_gwidget<Gtk::CheckButton>("oks"))->signal_toggled().connect(
@@ -630,6 +632,8 @@ void Dx7interface::attach_signals(){
     /* lfo */
     slot_lfo_wav = (get_gwidget<Gtk::DropDown>("lfo_wav"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_wav_event));
+    auto lfo_wav_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("lfo_wav"));
+
     slot_lfo_sync = (get_gwidget<Gtk::CheckButton>("lfo_sync"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_sync_event));
     slot_speed = (get_gwidget<Gtk::SpinButton>("speed"))->signal_value_changed().connect(
@@ -700,6 +704,7 @@ void Dx7interface::attach_signals(){
     /* OP1 FREQUENCE */
     slot_freq_mode_op1 = (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op1_event));
+    auto freq_mode_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op1"));
     slot_freq_coarse_op1 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op1_event));
     slot_freq_fine_op1 = (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->signal_value_changed().connect(
@@ -737,14 +742,17 @@ void Dx7interface::attach_signals(){
     /* OP1 KLS */
     slot_kls_lft_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op1_event));
+    auto kls_lft_curve_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"));
     slot_kls_rght_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op1_event));
+    auto kls_rght_curve_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"));
     slot_kls_lft_depth_op1 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op1_event));
     slot_kls_rght_depth_op1 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op1_event));
     slot_kls_note_brk_pt_op1 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
+    auto note_brk_pt_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"));
     slot_kls_octv_brk_pt_op1 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
 
@@ -755,6 +763,7 @@ void Dx7interface::attach_signals(){
     /* OP2 FREQUENCE */
     slot_freq_mode_op2 = (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op2_event));
+    auto freq_mode_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op2"));
     slot_freq_coarse_op2 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op2_event));
     slot_freq_fine_op2 = (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->signal_value_changed().connect(
@@ -792,17 +801,19 @@ void Dx7interface::attach_signals(){
     /* OP2 KLS */
     slot_kls_lft_curve_op2 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op2_event));
+    auto kls_lft_curve_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"));
     slot_kls_rght_curve_op2 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op2_event));
+    auto kls_rght_curve_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"));
     slot_kls_lft_depth_op2 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op2_event));
     slot_kls_rght_depth_op2 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op2_event));
     slot_kls_note_brk_pt_op2 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
+    auto note_brk_pt_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"));
     slot_kls_octv_brk_pt_op2 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
-
 
     /* OP3 */
     slot_ams_op3 = (get_gwidget<Gtk::Scale>("ams_op3"))->signal_value_changed().connect(
@@ -810,6 +821,7 @@ void Dx7interface::attach_signals(){
     /* OP3 FREQUENCE */
     slot_freq_mode_op3 = (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op3_event));
+    auto freq_mode_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op3"));
     slot_freq_coarse_op3 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op3_event));
     slot_freq_fine_op3 = (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->signal_value_changed().connect(
@@ -847,14 +859,17 @@ void Dx7interface::attach_signals(){
     /* OP3 KLS */
     slot_kls_lft_curve_op3 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op3_event));
+    auto kls_lft_curve_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"));
     slot_kls_rght_curve_op3 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op3_event));
+    auto kls_rght_curve_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"));
     slot_kls_lft_depth_op3 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op3_event));
     slot_kls_rght_depth_op3 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op3_event));
     slot_kls_note_brk_pt_op3 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
+    auto note_brk_pt_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"));
     slot_kls_octv_brk_pt_op3 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
 
@@ -865,6 +880,7 @@ void Dx7interface::attach_signals(){
     /* OP4 FREQUENCE */
     slot_freq_mode_op4 = (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op4_event));
+    auto freq_mode_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op4"));
     slot_freq_coarse_op4 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op4_event));
     slot_freq_fine_op4 = (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->signal_value_changed().connect(
@@ -902,14 +918,17 @@ void Dx7interface::attach_signals(){
     /* OP4 KLS */
     slot_kls_lft_curve_op4 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op4_event));
+    auto kls_lft_curve_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"));
     slot_kls_rght_curve_op4 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op4_event));
+    auto kls_rght_curve_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"));
     slot_kls_lft_depth_op4 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op4_event));
     slot_kls_rght_depth_op4 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op4_event));
     slot_kls_note_brk_pt_op4 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
+    auto note_brk_pt_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"));
     slot_kls_octv_brk_pt_op4 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
 
@@ -919,6 +938,7 @@ void Dx7interface::attach_signals(){
     /* OP5 FREQUENCE */
     slot_freq_mode_op5 = (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op5_event));
+    auto freq_mode_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op5"));
     slot_freq_coarse_op5 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op5_event));
     slot_freq_fine_op5 = (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->signal_value_changed().connect(
@@ -956,14 +976,17 @@ void Dx7interface::attach_signals(){
     /* op5 KLS */
     slot_kls_lft_curve_op5 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op5_event));
+    auto kls_lft_curve_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"));
     slot_kls_rght_curve_op5 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op5_event));
+    auto kls_rght_curve_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"));
     slot_kls_lft_depth_op5 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op5_event));
     slot_kls_rght_depth_op5 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op5_event));
     slot_kls_note_brk_pt_op5 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
+    auto note_brk_pt_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"));
     slot_kls_octv_brk_pt_op5 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
 
@@ -973,6 +996,7 @@ void Dx7interface::attach_signals(){
     /* OP6 FREQUENCE */
     slot_freq_mode_op6 = (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op6_event));
+    auto freq_mode_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op6"));
     slot_freq_coarse_op6 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op6_event));
     slot_freq_fine_op6 = (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->signal_value_changed().connect(
@@ -1010,14 +1034,18 @@ void Dx7interface::attach_signals(){
     /* OP6 KLS */
     slot_kls_lft_curve_op6 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op6_event));
+    auto kls_lft_curve_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"));
     slot_kls_rght_curve_op6 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op6_event));
+    auto kls_rght_curve_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"));
     slot_kls_lft_depth_op6 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op6_event));
     slot_kls_rght_depth_op6 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op6_event));
 
-
+    slot_kls_note_brk_pt_op6 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->property_selected().signal_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
+    auto note_brk_pt_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"));
     slot_kls_octv_brk_pt_op6 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
     //get_gwidget<gtk::algo>("algo_select")->click_on().connect(sigc::mrmçfunc(*this,&Dx7interface::on_change_algo_event))
@@ -1132,7 +1160,7 @@ void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     //LOG_OUT();
 };
 
-void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,double width){
+void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,double width,bool red){
     // TODO set value in a var to be changed by interface
     //LOG_IN();
     double r,g,b,a;
@@ -1142,7 +1170,7 @@ void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x,
     b=line_color[2];
 
     //int width = (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->get_width();
-    if( x == r_point || (x + r_point) >= width ){
+    if( red ){
         r=0.88;
         g=0.35;
         b=0.27;
@@ -1214,6 +1242,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     // put key on key off mark
 
     /* Draw curve */
+    bool r_flag = 0;
     double x=0.0, y=0.0;     // coordonee du point
     x += r_point;
     y += (r_point/2.0);
@@ -1222,6 +1251,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
         cr->save();
         cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
         cr->set_line_width(line_width);
+        r_flag = 0;
         if (i==1) {
             cr->move_to( x,
                        ( y + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value()+1.0) * y_ratio )
@@ -1233,6 +1263,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
             x = x_noteoff;
             cr->line_to(x, y);      // trace une ligne
             cr->move_to(x, y);
+            r_flag = 1;
         };
         x += ( ( x_ratio * (
             std::abs( 100.0 - (double)( (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(i)+"_"+type))->get_value() + 1.0 ) )
@@ -1243,10 +1274,10 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 
         cr->stroke();
         cr->restore();
-        draw_point(cr,x,y, width);
+        draw_point(cr,x,y, width,r_flag);
     };
     //draw first point at last to covert line
-    draw_point(cr,r_point,(r_point/2.0) + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value()+1.0) * y_ratio, width);
+    draw_point(cr,r_point,(r_point/2.0) + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value()+1.0) * y_ratio, width,true);
     //LOG_OUT();
 };
 
@@ -1272,12 +1303,11 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
     /* Key touch */
     //C 4 = note=3 oct=4
     //A 4 = note=0 oct=4
-
     // progression  -2  1 3  6 8 noir
     //             -3-10 2 45 7  blanche
     /* compute step */
     int note_ref = 3; // C
-    int dec = num_note - note_ref;// -3  = note - 3
+    int dec = num_note - note_ref;
     int octv_base = 0;
     int dep_octv = octv_base - octv;
     double dep = (2.0* width_w) - ((double)dep_octv)*(7.0*width_w);
@@ -1357,7 +1387,7 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
     cr->set_source(keyboard_bg_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
     cr->paint();
     if( touch == touch_b ){
-        /* Keyboard */
+        /* Keyboard under */
         cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
         cr->paint();
         cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
@@ -1369,7 +1399,7 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
         /* Touch */
         cr->set_source(touch, pos_key, keyboard_pos );
         cr->paint();
-        /* Keyboard */
+        /* Keyboard over */
         cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
         cr->paint();
         cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
@@ -1404,44 +1434,45 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     //LOG_OUT();
 };
 void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir){
+    double half_width  = width/2.0;
+    double half_height = height /2.0;
+    double scale_factor = (100.0 - dpth) +25 ; // +25, to get 85 at max ( 85==100 depth)
     switch (str_const_hash(type_curve.c_str())) {
         case "EXP+"_hash:{
             // EXP+ rigth
-            double scale_factor = (100.0 - dpth) +25 ;
-            cr->move_to(width/2.0, height /2.0);
-            for (double x = 0.0, y=0.0; x <= (width/2.0) && y <= (height /2.0) ; x +=5.0) {
+            cr->move_to(half_width, half_height);
+            for (double x = 0.0, y = 0.0; x <= half_width && y <= half_height ; x +=5.0) {
                 // -1 facteur correctif à l'origine
                 y = std::exp( x / scale_factor ) - 1 ;
                 if (dir == "lft"){ x = -x; };
-                cr->line_to( (width/2.0) + x, (height/2.0) + y );
+                cr->line_to( half_width + x, half_height + y );
                 if (dir == "lft"){ x = -x; };
             }
             break;
         };
         case "EXP-"_hash:{
             // EXP- right
-            double scale_factor = (100.0 - dpth) +25;
-            cr->move_to(width/2.0, height /2.0);
-            for (double x = 0.0, y=0.0; x <= (width/2.0) && y < (height /2.0) ; x +=5.0) {
+            cr->move_to(half_width, half_height);
+            for (double x = 0.0, y = 0.0; x <= half_width && y < half_height ; x +=5.0) {
                 y = std::exp( x / scale_factor ) - 1;
                 if (dir == "lft"){ x = -x; };
-                cr->line_to( (width/2.0) + x, (height/2.0) - y );
+                cr->line_to( half_width + x, half_height - y );
                 if (dir == "lft"){ x = -x; };
             }
             break;
         };
         case "LIN+"_hash:{
             //LIN+ rigth
-            cr->move_to(width/2.0,height/2.0);
+            cr->move_to(half_width,half_height);
             if (dir == "lft"){ width = 0; };
-            cr->line_to( (width), (height/2.0) + ( (height/2.0)*(dpth/100) ) );
+            cr->line_to( width, half_height + ( (half_height)*(dpth/100) ) );
             break;
         };
         case "LIN-"_hash:{
             //LIN- rigth
-            cr->move_to(width/2.0,(height/2.0));
+            cr->move_to(half_width,half_height);
             if (dir == "lft"){ width = 0; };
-            cr->line_to( (width), (height/2.0) - ( (height/2.0)*(dpth/100) ) );
+            cr->line_to( width, half_height - ( (half_height)*(dpth/100) ) );
             break;
         };
     };
@@ -1479,8 +1510,7 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
         draw_axis(cr,wdth, hght);
         draw_kls( cr, wdth, hght, num_op);
         draw_keyboard( cr, wdth, hght, num_op );
-        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
-        /*};*/
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op"+num_op))->queue_draw();
     };
     LOG_OUT();
 };
@@ -1493,7 +1523,6 @@ void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int 
         };
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
-        //auto d_length = draw_adsr( cr, vsize, "op"+num_op );
         draw_adsr( cr, wdth, hght, "op"+num_op );
         draw_grid( cr, wdth, hght);
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
@@ -1536,6 +1565,11 @@ void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
             break;
     };
     on_txt_freq_op_event();
+    redraw_all_curve();
+    LOG_OUT();
+};
+
+void Dx7interface::redraw_all_curve(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
@@ -1549,7 +1583,6 @@ void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
-    LOG_OUT();
 };
 
 void Dx7interface::on_bank_select(){
@@ -1574,19 +1607,7 @@ void Dx7interface::on_bank_select(){
                         unblock_midi();
                         unblock_all();
                         m_selection_model->set_selected(0);
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
-                        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+                        redraw_all_curve();
                         Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
                         Glib::ustring name = filename.substr(0,filename.find_last_of("."));
                         get_gwidget<Gtk::Button>("bank_select")->set_label(name);

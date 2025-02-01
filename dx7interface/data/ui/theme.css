@@ -3,26 +3,60 @@
 *   Green dx7:  #66cc99 / 0.4,0.8,0.6,1.0 / 102,204,153,1
 *   Orange dx7: #e15a46 / 0.88,0.35,0.27,1.0 / 225, 90, 70, 1
 */
+
+/*** Frame LOAD_BANK ***/
+.frameloadbank {
+    min-width:160px;
+}
 /*
-spinbutton.horizontal
+ * columnview[.colu*mn-separators][.rich-list][.navigation-sidebar][.data-table]
+ * ├── header
+ * │   ├── <column header>
+ * │   ╰── <column header>
+ * ├── listview[.separators][.rich-list][.navigation-sidebar][.data-table]
+ * │      ├── row[.activatable]
+ * │      ├── row[.activatable]
+ * │      ╰── [rubberband]
+ * ╰── [rubberband]
+ */
+.frameloadbank columnview{
+    min-width:160px;
+}
+.frameloadbank columnview listview{
+    min-width:160px;
+    color:white;
+}
+.frameloadbank columnview header label{
+}
+
+/*** Button reveal bank ***/
+.btn_reveal {
+    margin:0 2px;
+    padding:0 0px;
+    min-width:5px;
+    min-height:200px;
+}
+
+/*.btn_reveal *{
+    margin:0 0;
+    padding:0 3px;
+    min-width:1px;
+    min-height:200px;
+}*/
+
+/*
+spinbutton.(vertical|horizontal)
 ├── text
 │    ├── undershoot.left
 │    ╰── undershoot.right
 ├── button.down
 ╰── button.up
-spinbutton.vertical
-├── button.up
-├── text
-│    ├── undershoot.left
-│    ╰── undershoot.right
-╰── button.down
 */
 spinbutton {
     min-width: 1px;
     min-height: 1px;
     padding: 0 0;
     /*color:black;*/
-
 }
 
 spinbutton text {
@@ -38,28 +72,10 @@ spinbutton button {
     padding: 0 0;
 }
 
-/*combobox
-├── box.linked
-│   ╰── button.combo
-│       ╰── box
-│           ├── cellview
-│           ╰── arrow
+/*DropDown
+    ├── button
+    ╰── pophover
 */
-/*.dropdown {
-    min-height: 1px;
-    min-width: 1px;
-    padding: 0 0;
-    margin: 0 0;
-}
-.dropdown *{
-    min-height: 1px;
-    min-width: 1px;
-    padding: 0 0;
-    margin: 0 0;
-}*/
-.kls_draw *{
- padding: 2px 2px;
-}
 dropdown{
     min-height: 1px;
     min-width: 1px;
@@ -69,8 +85,11 @@ dropdown{
 dropdown *{
     min-height: 1px;
     min-width: 1px;
-    padding: 0 0;
+    padding: 0 1px;
     margin: 0 0;
+}
+dropdown button{
+    min-width: 5.3em;
 }
 /*
 entry[.read-only][.flat][.warning][.error]
@@ -105,14 +124,7 @@ scale[.fine-tune][.marks-before][.marks-after]
 ├── [highlight]
 ╰── slider
 */
-scale slider{
-    /*color:#66cc99;*/
-   /* margin: 0 0;
-    padding: 0 0;*/
-    /*background-color:#66cc00;*/
-}
 scale highlight{
-    /*color:#66cc99;*/
     background-color:#66cc99;
 }
 /*
@@ -127,49 +139,30 @@ checkbutton:checked >check{
     /*border-color:black;*/
 }
 
-.btn_reveal {
+image *{
     margin:0 0;
-    padding:0 3px;
-    min-width:5px;
-    min-height:200px;
-}
-.btn_reveal *{
-    margin:0 0;
-    padding:0 3px;
-    min-width:5px;
-    min-height:200px;
-}
-.frameloadbank {
-    min-width:160px;
+    padding:0 0;
 }
 
 /*
- *
- columnview[.colu*mn-separators][.rich-list][.navigation-sidebar][.data-table]
- ├── header
- │   ├── <column header>
- │   ╰── <column header>    listview[.separators][.rich-list][.navigation-sidebar][.data-table]
-                            ├── row[.activatable]
-                            ├── row[.activatable]
-                            ╰── [rubberband]
- ├── listview
- ╰── [rubberband]
- */
-.frameloadbank columnview{
-    min-width:160px;
-    /*background-color:#66cc99;*/
- }
-.frameloadbank columnview listview{
-    /*background-color: #66cc99;*/
-    min-width:160px;
-    color:white;
-    /*background-color:red;*/
-}
-.frameloadbank columnview header label{
-     /*min-width:40px;
-     background-color: #66cc99;*/
-}
-image *{
-    margin:0 0;
-    padding: 0 0;
+notebook
+├── header.top
+│   ├── [<action widget>]
+│   ├── tabs
+│   │   ├── [arrow]
+│   │   ├── tab
+│   │   │   ╰── <tab label>
+│   │   ├── tab[.reorderable-page]
+│   │   │   ╰── <tab label>
+│   │   ╰── [arrow]
+│   ╰── [<action widget>]
+│
+╰── stack
+├── <child>
+┊
+╰── <child>
+*/
+notebook header tabs tab:checked{
+    box-shadow: inset 0 -3px #66cc99;
+ /*background-color:   #66cc99;*/
 }

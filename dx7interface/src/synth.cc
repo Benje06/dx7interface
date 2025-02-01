@@ -57,7 +57,7 @@ void Synth::send_midi(char ev_type, uint size, u_char *msg){
     LOG_IN();
     /* TODO; use seq queue */
     //#ifdef USE_ALSA_MIDI
-    std::cerr << (int)block_midi_msg << std::endl;
+    //std::cerr << (int)block_midi_msg << std::endl;
     if (!block_midi_msg){
         /* seq event */
         snd_seq_event_t ev_out;

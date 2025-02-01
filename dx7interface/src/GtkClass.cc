@@ -21,3 +21,35 @@ void Factory::on_bind_name(void*, const Glib::RefPtr<Gtk::ListItem>& list_item){
     if (!label){ return; };
     label->set_text(col->get_name());
 };
+
+DropDownScrollController::DropDownScrollController(Gtk::DropDown* dropdown)  {
+    auto scroll_controller = Gtk::EventControllerScroll::create();
+    scroll_controller->set_flags(Gtk::EventControllerScroll::Flags::VERTICAL);
+    scroll_controller->signal_scroll().connect(
+            sigc::bind(
+                sigc::mem_fun(*this, &DropDownScrollController::on_scroll)
+                , scroll_controller
+            )
+        ,false
+    );
+    dropdown->add_controller(scroll_controller);
+};
+
+bool DropDownScrollController::on_scroll(double dx, double dy, Glib::RefPtr<Gtk::EventControllerScroll> scroll_controller){
+    Gtk::DropDown* widget = dynamic_cast<Gtk::DropDown*>(scroll_controller->get_widget());
+    if (widget) {
+        auto model = widget->get_model();
+        if (!model) return false;
+        int current = widget->get_selected();
+        int n_items = model->get_n_items();
+        if (dy < 0) {
+            // Scroll up
+            widget->set_selected(std::max(0, current - 1));
+        } else if (dy > 0) {
+            // Scroll down
+            widget->set_selected(std::min(n_items - 1, current + 1));
+        };
+        // Handle the scroll event
+    };
+    return true;
+};

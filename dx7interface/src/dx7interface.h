@@ -55,6 +55,13 @@ class Dx7interface : public Gx_module, public Synth {
         Dx7interface(Glib::ustring,uint8_t);
         virtual ~Dx7interface();
     private:
+
+        bool on_scroll(double dx, double dy) {
+            // Handle scroll event
+           // auto model = dropdown->get_model();
+            std::cout << "Scrolled: dx=" << dx << ", dy=" << dy << std::endl;
+            return true;
+        }
         /*** Dx7 ***/
         //Gtk::Window* main_window = nullptr;
         static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
@@ -99,10 +106,11 @@ class Dx7interface : public Gx_module, public Synth {
         /* Cairomm context helpers */
         int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);  /* retourne la taille de sla zone visible */
         /* ADSR */
+        void redraw_all_curve();
         void draw_background(const Cairo::RefPtr<Cairo::Context>&);                                 /* dessine le fond */
         void draw_grid(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /* dessisne la grille */
         void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);        /* dessine la courbe */
-        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double,double);               /* dessine un point */
+        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double,double,bool);               /* dessine un point */
         void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
         /* Level Scaling */
         void draw_kls(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);         /* dessine la courbe */
