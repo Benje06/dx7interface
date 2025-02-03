@@ -103,52 +103,83 @@ void Dx7interface::listen_midi(){
     /* TODO : use all seq event */
     snd_seq_event_input(seq_handle, &ev);
 
-    std::cout << std::endl;
-    std::cout << "event: " << get_event_name(int(ev->type)) << " "
-    << "type: " << int(ev->type)<< std::endl;
-    std::cout << "flags: " << int(ev->flags) << " "
-    << "tag: " << int( ev->tag) << '\t'
-    << "queue: " << int(ev->queue) << std::endl;
-    std::cout << "ticks: " << int(ev->time.tick) << " "
-    << "time: " << int(ev->time.time.tv_sec) << std::endl;
-    std::cout << "source: " << int( ev->source.client) << " " << '\t'
-    << "dest: " << int(ev->dest.client) << std::endl;
+    //std::cout << std::endl;
+    if( (int)ev->dest.client == Synth::get_client_id() && (int)ev->data.control.channel == (int)(Synth::channel & 0x0F) ){
+        switch (ev->type) {
+            case SND_SEQ_EVENT_NOTEON:
+                Synth::print_event_info(ev);
+                std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
+                << "value: " << int(ev->data.note.note) << std::endl;;
+                break;
+            case SND_SEQ_EVENT_NOTEOFF:
+                std::cout << "Note OFF" << std::endl;
+                Synth::print_event_info(ev);
+                std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
+                << "value: " <<  int(ev->data.note.note) << std::endl;
+                break;
+            case SND_SEQ_EVENT_CONTROLLER:
+                /*typedef union snd_seq_event_data {
+                    snd_seq_ev_raw8_t raw8;
+                    snd_seq_ev_raw32_t raw32;
+                    snd_seq_ev_queue_control_t queue;
+                    snd_seq_timestamp_t time;
+                    snd_seq_addr_t addr;
+                    snd_seq_connect_t connect;
+                    snd_seq_result_t result;
+                } snd_seq_event_data_t;*/
+                Synth::print_event_info(ev);
+                std::cout << "Channel: " << ( (int)(ev->data.control.channel) +1) << " " << '\t'
+                << "param: "  << ev->data.control.param << " "
+                << "value: " << int(ev->data.control.value) << std::endl;
+                std::cout << "Note channel: " << ( (int)(ev->data.note.channel) +1)  << " "
+                << "Note: "  << (int)ev->data.note.note  << " "   << std::endl;
+                std::cout << "\t" << "Velocity: " << (int)(ev->data.note.velocity) << " " << '\t'
+                << "Velocity Off: " << (int)(ev->data.note.off_velocity) << " " << '\t'
+                << "duration: " << (int)(ev->data.note.duration) << " " << '\t'
+                << std::endl;
+                std::cout << "QC queue " << (int)(ev->data.queue.queue)  << " "
+                << "QC param value: "  << (int)ev->data.queue.param.value  << " "   << std::endl;
+                std::cout << "\t" << "QC param time tv_sec: " << (int)(ev->data.queue.param.time.time.tv_sec) << " " << '\t'
+                << "QC param time tv_nsec: " << (int)(ev->data.queue.param.time.time.tv_nsec) << " " << '\t'
+                << "QC param ticks: " << (int)(ev->data.queue.param.time.tick) << " " << '\t'
+                << "QC param position: " << (int)(ev->data.queue.param.position) << " " << '\t'
+                << "QC param skew value: " << (int)(ev->data.queue.param.skew.value) << " " << '\t'
+                << "QC param skew base: " << (int)(ev->data.queue.param.skew.base) << " " << '\t'
+                << std::endl;
 
-    switch (ev->type) {
-        case SND_SEQ_EVENT_NOTEON:
-            std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
-            << "value: " << int(ev->data.note.note) << std::endl;;
-            break;
-        case SND_SEQ_EVENT_NOTEOFF:
-            std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
-            << "value: " <<  int(ev->data.note.note) << std::endl;
-            break;
-        case SND_SEQ_EVENT_CONTROLLER:
-            std::cout << "Channel: " << (int(ev->data.control.channel) +1) << " " << '\t'
-            << "param: "  << ev->data.control.param << " "
-            << "value: " << int(ev->data.control.value) << std::endl;
-            break;
-        case SND_SEQ_EVENT_PITCHBEND:
-            std::cout << "Channel: " << (int(ev->data.control.channel) +1)<< " " << '\t'
-            << "value: " << int(ev->data.control.value) << std::endl;
-            break;
-        case SND_SEQ_EVENT_PGMCHANGE:
-            /*event data type = snd_seq_ev_ctrl_t */
-            std::cout <<  "Channel : "  << (int(ev->data.control.channel) +1) << '\t'
-            << "param : "  << ev->data.control.param << " "
-            << "value : " << int(ev->data.control.value)
-            << std::endl;
-            break;
-        case SND_SEQ_EVENT_SYSEX:
-            //SND_SEQ_EVENT_SYSEX 	system exclusive data (variable length);
-            // event data type = snd_seq_ev_ext_t
-            std::cout <<  "Channel : "  << (int(ev->data.control.channel) +1) << '\t'
-            << "length : "  << int(ev->data.ext.len) << " "
-            << "ptr : " << ev->data.ext.ptr
-            << std::endl;
-            break;
+                break;
+            case SND_SEQ_EVENT_PITCHBEND:
+                Synth::print_event_info(ev);
+                std::cout << "Channel: " << (int(ev->data.control.channel) +1)<< " " << '\t'
+                << "value: " << int(ev->data.control.value) << std::endl;
+                break;
+            case SND_SEQ_EVENT_PGMCHANGE:
+                Synth::print_event_info(ev);
+                /*event data type = snd_seq_ev_ctrl_t */
+                std::cout <<  "Channel : "  << (int(ev->data.control.channel) +1) << '\t'
+                << "param : "  << ev->data.control.param << " "
+                << "value : " << int(ev->data.control.value)
+                << std::endl;
+                if ( ev->data.control.param == 0 && ( (uint)ev->data.control.value < bank_nb_sound ) ){
+                    get_gwidget<Gtk::ColumnView>("columnview_bank")->scroll_to((uint)ev->data.control.value,{},Gtk::ListScrollFlags::SELECT,NULL);
+                    //m_selection_model->set_selected((uint)ev->data.control.value);
+                }
+                break;
+            case SND_SEQ_EVENT_SYSEX:
+                Synth::print_event_info(ev);
+                //SND_SEQ_EVENT_SYSEX 	system exclusive data (variable length);
+                // event data type = snd_seq_ev_ext_t
+                std::cout <<  "Channel : "  << (int(ev->data.control.channel) +1) << '\t'
+                << "length : "  << int(ev->data.ext.len) << " "
+                << "ptr : " << ev->data.ext.ptr
+                << std::endl;
+                break;
+            case SND_SEQ_EVENT_SENSING:
+                // CLOCK REQUEST
+                break;
+        };
     };
-    std::cout << std::endl;
+    //std::cout << std::endl;
     snd_seq_free_event(ev);
 };
 
@@ -493,6 +524,9 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     /* LFO */
     (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(sound->lfo.wave.val);
     Glib::ustring name = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()))->get_string();
+    if (name == "S/HOLD"){
+        name="S_HOLD";
+    };
     (get_gwidget<Gtk::Image>("image_lfo"))->set(MOD_IMG_DIRECTORY"/"+name+".png");
     /*set image */
     (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(sound->lfo.sync.val);
@@ -614,6 +648,9 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_bind().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bind_name));
 
+    /* FUNCTIONS */
+    slot_poly = (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_mono_poly_event));
 
     /* Algo */
     slot_algo = (get_gwidget<Gtk::SpinButton>("algo_number"))->signal_value_changed().connect(
@@ -1628,6 +1665,21 @@ void Dx7interface::on_bank_select(){
 };
 
 
+void Dx7interface::on_mono_poly_event() {	LOG_IN()
+                                        // additionnal voice  ; channel
+    u_char msg[7];                      // paremter change      message
+    msg[0]=0xF0;                        // F0                   B0
+    msg[1]=id_fabricant;                // 43                   7E Poly/7F Mono
+    msg[2]=sub_status & channel;;       // 10                   00 off / 7F
+    msg[3]=0x18;                        // 18
+    msg[4]=0x40;                        // 40    / 0F / 0/1000
+                                        // 0-3 bit0=poly/mono; bit1=unison off/on
+    msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
 /* ALGO */
 void Dx7interface::on_algo_event() {	LOG_IN();
     u_char msg[7];
@@ -1688,6 +1740,11 @@ void Dx7interface::on_oks_event() {
 void Dx7interface::on_lfo_wav_event() {
     /* lfo wave form image */
     Glib::ustring name = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()))->get_string();
+    std::cout << "LFO_WAV : "<< name << std::endl;
+    if (name == "S/HOLD"){
+        name="S_HOLD";
+    };
+    std::cout << "LFO_WAV : "<< name << std::endl;
     (get_gwidget<Gtk::Image>("image_lfo"))->set(MOD_IMG_DIRECTORY"/"+name+".png");
     u_char msg[7];
     msg[0]=0xF0;

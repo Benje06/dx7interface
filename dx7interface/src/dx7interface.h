@@ -158,6 +158,12 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
         void on_bind_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
+        /* Functions */
+        void on_mono_poly_event();
+        sigc::connection slot_poly;
+
+
+
         /* general algo */
         void on_algo_event();
         sigc::connection slot_algo;

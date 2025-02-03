@@ -16,23 +16,19 @@ multiplateforme (midi/interface) drumkit, Juce ???
 
 
 # Interface
-correct ths resize scaling
-drawarea level scaling
-Nom du son de la banque chargé
-repliement de la banque son
+transpose algo (C1 -> C5) 
+correct the resize scaling
 son par defaut (son init)
 grab des points des drawarea
 marge draw area 
 options des couleurs
-dessin des algo et S/hold
+dessin S/hold
 refonte interface( size/expand des elements)
-trouver un themes std( Blackbird pour le moment)
 verification des courbes
 boutons compare/randomize/panique
 fenetre secondaires (option, module, chargement de fichier)
 
 ### CODE
-passe a gtk-4.0
 gestion d'exceptions
 filtre des variables utilisateurs ???
 evenement standard (erreur ???)

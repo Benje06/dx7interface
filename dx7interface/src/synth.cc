@@ -23,6 +23,7 @@ void Synth::unblock_midi(){
 void Synth::block_midi(){
     block_midi_msg=true;
 };
+
 void Synth::connect_midi(Glib::ustring name){
     LOG_IN();
     /* 0 can be replace by SND_SEQ_NONBLOCK */
@@ -34,9 +35,11 @@ void Synth::connect_midi(Glib::ustring name){
     port_out =	snd_seq_create_simple_port(seq_handle, name.append("_out").c_str(),
                                             SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
                                             SND_SEQ_PORT_TYPE_APPLICATION);
+
+    client_id = snd_seq_client_id(seq_handle);
     //snd_seq_set_input_buffer_size(seq_handle,in_buff_size) ;
     //snd_seq_set_output_buffer_size(seq_handle,out_buff_size) ;
-    //snd_seq_system_info(seq_handle,info);
+    snd_seq_system_info(seq_handle,seq_info);
     /* polling */
     /* size of poll descriptors */
     spfd = snd_seq_poll_descriptors_count(seq_handle, POLLIN|POLLOUT);
@@ -76,6 +79,29 @@ void Synth::send_midi(char ev_type, uint size, u_char *msg){
     LOG_OUT();
 };
 
+void Synth::print_event_info(snd_seq_event_t* ev){
+    std::cout << std::endl;
+    std::cout << "event: " << get_event_name(int(ev->type)) << " "
+    << "type: " << int(ev->type)<< std::endl;
+    std::cout << "flags: " << int(ev->flags) << " "
+    << "tag: " << int( ev->tag) << '\t'
+    << "queue: " << int(ev->queue) << std::endl;
+    std::cout << "ticks: " << int(ev->time.tick) << " "
+    << "time: " << int(ev->time.time.tv_sec) << std::endl;
+    std::cout << "source: " << int( ev->source.client) << " " << '\t'
+    << "dest: " << int(ev->dest.client) << std::endl;
+};
+
+int Synth::get_port_in_number(){
+    return port_in;
+};
+
+int Synth::get_port_out_number(){
+    return port_out;
+};
+int Synth::get_client_id(){
+    return client_id;
+};
 snd_seq_event_t* Synth::get_seq_event_handler(){
     return ev;
 };

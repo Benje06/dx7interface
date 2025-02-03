@@ -285,7 +285,7 @@
                                           <item translatable="yes">SAW+</item>
                                           <item translatable="yes">SQU</item>
                                           <item translatable="yes">SIN</item>
-                                          <item translatable="yes">S/hold</item>
+                                          <item translatable="yes">S/HOLD</item>
                                         </items>
                                       </object>
                                     </property>
@@ -825,7 +825,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkToggleButton" id="btn_compare">
+                      <object class="GtkToggleButton" id="btn_poly_mono">
                         <property name="focusable">1</property>
                         <property name="label" translatable="yes">Compare</property>
                         <property name="receives-default">1</property>

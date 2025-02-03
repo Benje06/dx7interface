@@ -98,6 +98,7 @@ class Synth : public Thread {
         snd_seq_system_info_t* seq_info;       /* info */
         snd_seq_event_t* ev;                   /* evenement */
         size_t in_buff_size, out_buff_size;      /* buffers d'entrée et de sortie */
+        int client_id=0;
         int port_in=0, port_out=0;             /* ports d'entréee et de sortie */
         /* seq queue */
         int spfd;                              /* taille de la file de queue */
@@ -110,7 +111,10 @@ class Synth : public Thread {
         /* generic error */
         bool error();
         /*** MIDI ***/
-                      /* Flag to prevent midi send */
+        void print_event_info(snd_seq_event_t*);
+        int get_port_out_number();
+        int get_port_in_number();
+        int get_client_id();
         std::string get_event_name(int);
         snd_seq_event_t* get_seq_event_handler();
         snd_seq_t* get_seq_handler();
