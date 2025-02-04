@@ -40,8 +40,8 @@ image_DATA = \
 	dx7.jpg\
 	keyboard.png\
 	keyboard_background.png\
-	touch_b.png\
-	touch_w.png
+	touche_b.png\
+	touche_w.png
 
 
 imagedir = \
