@@ -38,7 +38,11 @@ image_DATA = \
 	algo31.png\
 	algo32.png\
 	dx7.jpg\
-	keyboard.png
+	keyboard.png\
+	keyboard_background.png\
+	touch_b.png\
+	touch_w.png
+
 
 imagedir = \
 	$(pkgdatadir)/$(PACKAGE_VERSION)/images
