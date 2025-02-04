@@ -1665,13 +1665,13 @@ void Dx7interface::on_bank_select(){
 };
 
 
-void Dx7interface::on_mono_poly_event() {	LOG_IN()
-                                        // additionnal voice  ; channel
+void Dx7interface::on_mono_poly_event() {
+    LOG_IN();                           // additionnal voice  ; channel
     u_char msg[7];                      // paremter change      message
     msg[0]=0xF0;                        // F0                   B0
     msg[1]=id_fabricant;                // 43                   7E Poly/7F Mono
-    msg[2]=sub_status & channel;;       // 10                   00 off / 7F
-    msg[3]=0x18;                        // 18
+    msg[2]=sub_status & channel;;       // 10                   00 off / 01
+    msg[3]=0x08;                        // 08
     msg[4]=0x40;                        // 40    / 0F / 0/1000
                                         // 0-3 bit0=poly/mono; bit1=unison off/on
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active();
