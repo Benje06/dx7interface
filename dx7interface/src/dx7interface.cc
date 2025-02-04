@@ -1323,12 +1323,12 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
     LOG_IN();
     /* key touch */
     Cairo::RefPtr<Cairo::ImageSurface> touch;
-    Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"data/images/touche_b.png");
-    Cairo::RefPtr<Cairo::ImageSurface> touch_w = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"data/images/touche_w.png");
+    Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_b.png");
+    Cairo::RefPtr<Cairo::ImageSurface> touch_w = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_w.png");
     double width_w = (double)touch_w->get_width();
     /* keyboard */
-    Cairo::RefPtr<Cairo::ImageSurface> keyboard_bg_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"data/images/keyboard_background.png");
-    Cairo::RefPtr<Cairo::ImageSurface> keyboard_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"data/images/keyboard.png");
+    Cairo::RefPtr<Cairo::ImageSurface> keyboard_bg_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard_background.png");
+    Cairo::RefPtr<Cairo::ImageSurface> keyboard_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard.png");
     double keyboard_width = (double)keyboard_image_surface->get_width();
     double keyboard_heigth = (double)keyboard_image_surface->get_height();
     /* UI values */
