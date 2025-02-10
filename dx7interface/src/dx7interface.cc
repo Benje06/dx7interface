@@ -72,9 +72,9 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     m_selection_model->set_model(m_data_model);
 
     uint val = (get_gwidget<Gtk::SpinButton>("algo_number"))->get_value();
-    (get_gwidget<Gtk::Image>("image_algo"))->set(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(val)+".png");
+    (get_gwidget<Gtk::Picture>("picture_algo"))->set_filename(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(val)+".png");
     Glib::ustring name = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()) )->get_string() ;
-    (get_gwidget<Gtk::Image>("image_lfo"))->set(MOD_IMG_DIRECTORY"/"+name+".png");
+    (get_gwidget<Gtk::Picture>("picture_lfo"))->set_filename(MOD_IMG_DIRECTORY"/"+name+".png");
     /* attach GUI signals */
     attach_signals();
     /* start thread */
@@ -515,7 +515,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     block_midi();
     /* ALGO */
     (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(sound->algo.algo.val+1);
-    (get_gwidget<Gtk::Image>("image_algo"))->set(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(sound->algo.algo.val+1)+".png");
+    (get_gwidget<Gtk::Picture>("picture_algo"))->set_filename(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(sound->algo.algo.val+1)+".png");
     (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(sound->algo.feedback.val);
         /*	[0-11] + (([1-5]-1)*12)	*/
     (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(sound->algo.transpose.val % 12);
@@ -527,7 +527,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     if (name == "S/HOLD"){
         name="S_HOLD";
     };
-    (get_gwidget<Gtk::Image>("image_lfo"))->set(MOD_IMG_DIRECTORY"/"+name+".png");
+    (get_gwidget<Gtk::Picture>("picture_lfo"))->set_filename(MOD_IMG_DIRECTORY"/"+name+".png");
     /*set image */
     (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(sound->lfo.sync.val);
     (get_gwidget<Gtk::SpinButton>("speed"))->set_value(sound->lfo.speed.val);
@@ -1131,7 +1131,7 @@ void Dx7interface::draw_background(const Cairo::RefPtr<Cairo::Context>& cr){
     //LOG_IN();
     cr->save();
     cr->set_source_rgba(bg_color[0], bg_color[1], bg_color[2], bg_color[3]);
-    cr->paint();	// fill with color
+    cr->paint();    // fill with color
     cr->restore();
     //LOG_OUT();
 };
@@ -1279,7 +1279,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     // put key on key off mark
 
     /* Draw curve */
-    bool r_flag = 0;
+    bool r_flag = 0;           //draw_point flag for First and last point switch color
     double x=0.0, y=0.0;     // coordonee du point
     x += r_point;
     y += (r_point/2.0);
@@ -1690,7 +1690,7 @@ void Dx7interface::on_algo_event() {	LOG_IN();
     msg[4]=0x06;
     msg[5]=(get_gwidget<Gtk::SpinButton>("algo_number"))->get_value()-1;
     msg[6]=0xF7;
-    get_gwidget<Gtk::Image>("image_algo")->set(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(msg[5]+1)+".png");
+    get_gwidget<Gtk::Picture>("picture_algo")->set_filename(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(msg[5]+1)+".png");
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     LOG_OUT();
 };
@@ -1745,7 +1745,7 @@ void Dx7interface::on_lfo_wav_event() {
         name="S_HOLD";
     };
     std::cout << "LFO_WAV : "<< name << std::endl;
-    (get_gwidget<Gtk::Image>("image_lfo"))->set(MOD_IMG_DIRECTORY"/"+name+".png");
+    (get_gwidget<Gtk::Picture>("picture_lfo"))->set_filename(MOD_IMG_DIRECTORY"/"+name+".png");
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;

@@ -139,7 +139,7 @@ checkbutton:checked >check{
     /*border-color:black;*/
 }
 
-image *{
+image{
     margin:0 0;
     padding:0 0;
 }

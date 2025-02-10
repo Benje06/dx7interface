@@ -5,7 +5,7 @@ SUBDIRS = \
         po\
         data\
         src
-		  
+
 INTLTOOL_FILES = intltool-extract.in \
                  intltool-merge.in \
                  intltool-update.in

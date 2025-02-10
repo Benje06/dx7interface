@@ -59,10 +59,11 @@ AC_PROG_EGREP
 AC_CHECK_HEADERS([iostream])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([libintl.h])
-AC_HEADER_STDBOOL
+
 dnl ================================================================
 dnl checks for types
 dnl ================================================================
+AC_HEADER_STDBOOL
 AC_TYPE_UINT8_T
 dnl ================================================================
 dnl checks for structures
@@ -147,10 +148,10 @@ fi
 dnl ================================================================
 dnl Gnome init
 dnl ================================================================
-#GNOME_COMMON_INIT
-#GNOME_DEBUG_CHECK
-#GNOME_COMPILE_WARNINGS([maximum])
-#GNOME_MAINTAINER_MODE_DEFINES
+dnl GNOME_COMMON_INIT
+dnl GNOME_DEBUG_CHECK
+dnl GNOME_COMPILE_WARNINGS([maximum])
+dnl GNOME_MAINTAINER_MODE_DEFINES
 
 dnl ================================================================
 dnl Gettext stuff.
@@ -226,6 +227,7 @@ Configuration:
       PROGRAMNAME_UI_DIR: ${PROGRAMNAME_UI_DIR}
       PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
       PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
+
 "
 
 : variables='

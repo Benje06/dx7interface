@@ -17,13 +17,13 @@
  * See the GNU General Public License for more details.
  * ----------------------------------------------------------------------------
  */
-/*TODO :
- *timer 
- *delete midi
- *write bank 
- *receive sysex
- *charger/decharger synth
- *attache/detache midi one by synth
+/*
+ * TODO :
+ * timer
+ * write bank
+ * receive sysex
+ * charger/decharger synth
+ * attache/detache midi one by synth
 */
 #pragma once
 #define MODULE_NAME "Dx7SyX"
