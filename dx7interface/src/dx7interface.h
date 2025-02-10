@@ -42,6 +42,7 @@
 
 
 /** CONSTANTS **/
+#define DATA_DIR MOD_DIRECTORY
 #define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify.ui"
 //#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-gtk4_git-simplify.ui"
 #define CSSFILE MOD_UI_DIRECTORY"theme.css"

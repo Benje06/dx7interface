@@ -248,9 +248,9 @@ bool Dx7interface::error(){
 void Dx7interface::clean_bank(){
     LOG_IN();
     // TODO clean bank_modif
-    load_bank(Gio::File::create_for_path("data/reset1.syx"));
-    load_bank(Gio::File::create_for_path("data/reset32.syx"));
-    load_bank(Gio::File::create_for_path("data/reset128.syx"));
+    load_bank(Gio::File::create_for_path(DATA_DIR"data/reset1.syx"));
+    load_bank(Gio::File::create_for_path(DATA_DIR"data/reset32.syx"));
+    load_bank(Gio::File::create_for_path(DATA_DIR"data/reset128.syx"));
     uint n_items = m_data_model->get_n_items();
     if (n_items != 0) {
         /*m_data_model->splice(0, n_items, std::vector<Glib::RefPtr<SoundBankItem>>())*/
