@@ -2068,7 +2068,7 @@ void Dx7interface::on_txt_freq_op_event()   {
         ff=(get_gwidget<Gtk::SpinButton>("freq_fine_op"+tostr<uint>(i)))->get_value();
         if ( (get_gwidget<Gtk::DropDown>("freq_mode_op"+tostr<uint>(i)))->get_selected() ) {
             (get_gwidget<Gtk::Label>("label_view_freq_op"+tostr<uint>(i)))->set_label("Hz");
-            // calcul termitor
+            // calcul termitor thanks ^^
             gdouble  A = exp(log(9.772)/99);
             freq_val = pow(A,ff);
             switch (uint(fc) & 3) {

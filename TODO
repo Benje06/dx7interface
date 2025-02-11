@@ -17,12 +17,9 @@ multiplateforme (midi/interface) drumkit, Juce ???
 
 # Interface
 transpose algo (C1 -> C5) 
-correct the resize scaling
 son par defaut (son init)
-grab des points des drawarea
 marge draw area 
 options des couleurs
-dessin S/hold
 refonte interface( size/expand des elements)
 verification des courbes
 boutons compare/randomize/panique

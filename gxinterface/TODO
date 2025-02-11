@@ -14,7 +14,6 @@ doc d'utilisation*
 # stabilisation interface
 evenement standart
 fenetre secondaires (option, module, chargement de fichier)
-drawarea
 gestion d'exeptions
 filtre des variables utilisateurs
 
