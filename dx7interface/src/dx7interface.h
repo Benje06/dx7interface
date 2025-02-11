@@ -42,9 +42,9 @@
 
 
 /** CONSTANTS **/
-#define DATA_DIR MOD_DIRECTORY
+#define DATA_DIR PROGRAMNAME_DATA_DIR
 #define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify.ui"
-//#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-gtk4_git-simplify.ui"
+//#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-gtk4_simplify.ui"
 #define CSSFILE MOD_UI_DIRECTORY"theme.css"
 
 extern "C" {
@@ -56,13 +56,6 @@ class Dx7interface : public Gx_module, public Synth {
         Dx7interface(Glib::ustring,uint8_t);
         virtual ~Dx7interface();
     private:
-
-        bool on_scroll(double dx, double dy) {
-            // Handle scroll event
-           // auto model = dropdown->get_model();
-            std::cout << "Scrolled: dx=" << dx << ", dy=" << dy << std::endl;
-            return true;
-        }
         /*** Dx7 ***/
         //Gtk::Window* main_window = nullptr;
         static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
@@ -115,7 +108,8 @@ class Dx7interface : public Gx_module, public Synth {
         void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
         /* Mouse Gesture */
         void init_gesture_controller();
-        std::pair<double,double> points[5];                                                         /* array of points coordinates */
+        //std::pair<double,double> points[5];                                                      /* array of points coordinates */
+        std::map< Glib::ustring, std::pair<double,double>[5]> drawarea;
         int p_drag = -1;                                                                            /* current index in points coordinates array */
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op1;
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op2;

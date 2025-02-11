@@ -63,6 +63,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     seq_handle=get_seq_handler();
     ev=get_seq_event_handler();
 
+
     /* UI */
     /* mouse gesture for drawing area*/
     init_gesture_controller();
@@ -252,9 +253,9 @@ bool Dx7interface::error(){
 void Dx7interface::clean_bank(){
     LOG_IN();
     // TODO clean bank_modif
-    load_bank(Gio::File::create_for_path(DATA_DIR"data/reset1.syx"));
-    load_bank(Gio::File::create_for_path(DATA_DIR"data/reset32.syx"));
-    load_bank(Gio::File::create_for_path(DATA_DIR"data/reset128.syx"));
+    load_bank(Gio::File::create_for_path(DATA_DIR"/reset1.syx"));
+    load_bank(Gio::File::create_for_path(DATA_DIR"/reset32.syx"));
+    load_bank(Gio::File::create_for_path(DATA_DIR"/reset128.syx"));
     uint n_items = m_data_model->get_n_items();
     if (n_items != 0) {
         /*m_data_model->splice(0, n_items, std::vector<Glib::RefPtr<SoundBankItem>>())*/
@@ -1210,7 +1211,8 @@ void Dx7interface::mouse_mooves(double x, double y, Glib::ustring name){
             return;
         }else{
             if (p_drag > 0 && p_drag < 4){
-                val_x  = (x - points[p_drag-1].first) / x_ratio;
+                //val_x  = (x - points[p_drag-1].first) / x_ratio;
+                val_x  = (x - drawarea[name][p_drag-1].first) / x_ratio;
             }else{
                 double x_noteoff=(width)*3.0/4.0;
                 val_x = (x - x_noteoff) / x_ratio;
@@ -1227,7 +1229,7 @@ void Dx7interface::mouse_click(int n_press, double x, double y, Glib::ustring na
     double height = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_height();
     y = std::abs(height - y);
     for( int i = 0; i <= 4 ;i++){
-        if(std::hypot(abs(points[i].first-x), abs(points[i].second-y)) <= r_point_shadow +1 ){
+        if(std::hypot(abs(drawarea[name][i].first-x), abs(drawarea[name][i].second-y)) <= r_point_shadow +1 ){
             p_drag=i;
             break;
         };
@@ -1344,7 +1346,7 @@ void Dx7interface::draw_note_off(const Cairo::RefPtr<Cairo::Context>& cr,double 
     cr->restore();
 };
 
-void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring type){
+void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring name){
     // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
     //set origin to bottom left
@@ -1375,7 +1377,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
         r_flag = false;
         if (i==1) {
             cr->move_to( x,
-                       ( y + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value() * y_ratio) )
+                       ( y + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+name))->get_value() * y_ratio) )
             );
         }else{
             cr->move_to(x, y);    // deplace le curseur
@@ -1387,20 +1389,20 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
             r_flag = true;
         };
         x += ( ( x_ratio * (
-            std::abs( 100.0 - (double)( (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(i)+"_"+type))->get_value() + 1.0 ) )
+            std::abs( 100.0 - (double)( (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(i)+"_"+name))->get_value() + 1.0 ) )
         ) ) ) ;
-        y = (r_point) + ( ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(i)+"_"+type))->get_value() ) * y_ratio ) /*+ line_width*/;
+        y = (r_point) + ( ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(i)+"_"+name))->get_value() ) * y_ratio ) /*+ line_width*/;
         cr->line_to(x, y);      // trace une ligne
         cr->move_to(x, y);
         cr->stroke();
         cr->restore();
-        points[i]={x,y};
+        drawarea[name][i]={x,y};
         draw_point(cr,x,y, width,r_flag);
     };
     //draw first point at last to covert line
     x = r_point;
-    y = r_point + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value() * y_ratio );
-    points[0]={x,y};
+    y = r_point + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+name))->get_value() * y_ratio );
+    drawarea[name][0]={x,y};
     draw_point(cr, x, y, width, true);
     //LOG_OUT();
 };
@@ -1709,8 +1711,8 @@ void Dx7interface::on_bank_select(){
         auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
         dialog->set_title("Select Module .la, .so or .ui");
         dialog->set_modal(true);
-        Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
-        dialog->set_initial_folder(initial_folder);
+        //Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
+        //dialog->set_initial_folder(initial_folder);
         dialog->open( *(get_window()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
                 try {
                     auto bank_file = dialog->open_finish(result);
