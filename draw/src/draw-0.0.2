@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkAction" id="action1"/>
+  <object class="GtkBox">
+    <property name="can-focus">0</property>
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkButton" id="draw">
+        <property name="label" translatable="1">button</property>
+        <property name="related-action">action1</property>
+        <property name="receives-default">1</property>
+        <property name="action-name">draw</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkDrawingArea" id="drawingarea">
+        <property name="name">draw_test</property>
+        <property name="height-request">600</property>
+        <property name="can-focus">0</property>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_lvl1_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_lvl2_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_lvl3_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_lvl4_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_rt1_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_rt2_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_rt3_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_eg_rt4_op1">
+    <property name="upper">99</property>
+    <property name="step-increment">1</property>
+  </object>
+  <object class="GtkBox" id="box_main">
+    <property name="can-focus">0</property>
+    <property name="receives-default">1</property>
+    <property name="orientation">vertical</property>
+    <property name="baseline-position">top</property>
+    <child>
+      <object class="GtkGrid" id="grid_eg_edit_op1">
+        <property name="can-focus">0</property>
+        <property name="halign">baseline</property>
+        <property name="valign">baseline</property>
+        <child>
+          <object class="GtkSpinButton" id="eg_rt1_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_rt1_op1</property>
+            <property name="numeric">1</property>
+            <property name="value">53</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="eg_lvl1_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_lvl1_op1</property>
+            <property name="numeric">1</property>
+            <property name="value">70</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="eg_rt2_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_rt2_op1</property>
+            <property name="numeric">1</property>
+            <property name="value">43</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="eg_lvl2_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_lvl2_op1</property>
+            <property name="numeric">1</property>
+            <property name="value">30</property>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="eg_rt3_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_rt3_op1</property>
+            <property name="numeric">1</property>
+            <property name="value">43</property>
+          </object>
+          <packing>
+            <property name="left-attach">4</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="eg_lvl3_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_lvl3_op1</property>
+            <property name="numeric">1</property>
+            <property name="value">30</property>
+          </object>
+          <packing>
+            <property name="left-attach">5</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="eg_rt4_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_rt4_op1</property>
+            <property name="numeric">1</property>
+            <property name="value">70</property>
+          </object>
+          <packing>
+            <property name="left-attach">6</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="eg_lvl4_op1">
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="width-chars">2</property>
+            <property name="xalign">0.5</property>
+            <property name="caps-lock-warning">False</property>
+            <property name="adjustment">adj_eg_lvl4_op1</property>
+            <property name="numeric">1</property>
+          </object>
+          <packing>
+            <property name="left-attach">7</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_r1_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">R1</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_l1_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">L1</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_r2_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">R2</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_l2_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">L2</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_r3_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">R3</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">4</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_l3_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">L3</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">5</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_r4_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">R4</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">6</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_eg_l4_op1">
+            <property name="can-focus">0</property>
+            <property name="label" translatable="1">L4</property>
+            <property name="xalign">0.40000000596046448</property>
+          </object>
+          <packing>
+            <property name="left-attach">7</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSeparator">
+        <property name="can-focus">0</property>
+        <property name="halign">start</property>
+        <property name="valign">start</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkDrawingArea" id="drawingarea_eg_op1">
+        <property name="can-focus">0</property>
+        <property name="events"></property>
+        <property name="hexpand">1</property>
+        <property name="vexpand">1</property>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="pack-type">end</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+  </object>
+</interface>

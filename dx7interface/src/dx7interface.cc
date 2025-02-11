@@ -64,13 +64,17 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     ev=get_seq_event_handler();
 
     /* UI */
-    /* create specific datat structure model */
+    /* mouse gesture for drawing area*/
+    init_gesture_controller();
+
+    /* create specific data structure model for voice bank list */
     m_data_model = Gio::ListStore<SoundBankItem>::create();
     /* set model to GUI */
     m_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_bank"));
     m_selection_model->set_autoselect(false);
     m_selection_model->set_model(m_data_model);
 
+    /* set_default_value */
     uint val = (get_gwidget<Gtk::SpinButton>("algo_number"))->get_value();
     (get_gwidget<Gtk::Picture>("picture_algo"))->set_filename(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(val)+".png");
     Glib::ustring name = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()) )->get_string() ;
@@ -613,6 +617,37 @@ void Dx7interface::on_setup_label(const Glib::RefPtr<Gtk::ListItem>& list_item, 
     list_item->set_child(*Gtk::make_managed<Gtk::Label>("", halign));
 };
 
+/* Init all Gesture controller */
+void Dx7interface::init_gesture_controller(){
+    controller_mouse_moove_op1 = Gtk::EventControllerMotion::create();
+    controller_mouse_button_op1 = Gtk::GestureClick::create();
+    controller_mouse_button_op1->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    controller_mouse_button_op1->set_button(1); // bouton gauche souris
+    controller_mouse_moove_op2 = Gtk::EventControllerMotion::create();
+    controller_mouse_button_op2 = Gtk::GestureClick::create();
+    controller_mouse_button_op2->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    controller_mouse_button_op2->set_button(1); // bouton gauche souris
+    controller_mouse_moove_op3 = Gtk::EventControllerMotion::create();
+    controller_mouse_button_op3 = Gtk::GestureClick::create();
+    controller_mouse_button_op3->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    controller_mouse_button_op3->set_button(1); // bouton gauche souris
+    controller_mouse_moove_op4 = Gtk::EventControllerMotion::create();
+    controller_mouse_button_op4 = Gtk::GestureClick::create();
+    controller_mouse_button_op4->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    controller_mouse_button_op4->set_button(1); // bouton gauche souris
+    controller_mouse_moove_op5 = Gtk::EventControllerMotion::create();
+    controller_mouse_button_op5 = Gtk::GestureClick::create();
+    controller_mouse_button_op5->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    controller_mouse_button_op5->set_button(1); // bouton gauche souris
+    controller_mouse_moove_op6 = Gtk::EventControllerMotion::create();
+    controller_mouse_button_op6 = Gtk::GestureClick::create();
+    controller_mouse_button_op6->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    controller_mouse_button_op6->set_button(1); // bouton gauche souris
+    controller_mouse_moove_pitch = Gtk::EventControllerMotion::create();
+    controller_mouse_button_pitch = Gtk::GestureClick::create();
+    controller_mouse_button_pitch->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+    controller_mouse_button_pitch->set_button(1); // bouton gauche souris
+};
 /* attach all signals */
 void Dx7interface::attach_signals(){
     LOG_IN();
@@ -627,6 +662,7 @@ void Dx7interface::attach_signals(){
     };
     */
     /*** generale  ***/
+
     /* Bank load */
     slot_bank_reveal = (get_gwidget<Gtk::Button>("btn_toolbar_reveal_bank"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bank_reveal));
@@ -635,7 +671,6 @@ void Dx7interface::attach_signals(){
     /* Sound Select */
     slot_bank_sound_change = m_selection_model->signal_selection_changed().connect(
             sigc::mem_fun(*this, &Dx7interface::on_bank_sound_change));
-
 
     //auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(sigc::bind(sigc::mem_fun(*this,
@@ -706,22 +741,93 @@ void Dx7interface::attach_signals(){
     /* Drawing area for pitch */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->set_draw_func(
             sigc::mem_fun(*this, &Dx7interface::on_draw_pitch_event) );
+    controller_mouse_moove_pitch->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("pitch") ));
+    controller_mouse_button_pitch->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("pitch") ));
+    controller_mouse_button_pitch->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("pitch") )
+    );
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->add_controller(controller_mouse_button_pitch);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->add_controller(controller_mouse_moove_pitch);
 
     /* Drawing area for each operator */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("1") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("2") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("3") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("4") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("5") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("6") ) );
+            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("1") ));
+    controller_mouse_moove_op1->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op1") ));
+    controller_mouse_button_op1->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op1") ));
+    controller_mouse_button_op1->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op1") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->add_controller(controller_mouse_button_op1);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->add_controller(controller_mouse_moove_op1);
 
-    /* Drwing area for keyboard scaling */
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->set_draw_func(
+            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("2") ));
+    controller_mouse_moove_op2->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op2") ));
+    controller_mouse_button_op2->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op2") ));
+    controller_mouse_button_op2->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op2") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->add_controller(controller_mouse_button_op2);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->add_controller(controller_mouse_moove_op2);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->set_draw_func(
+            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("3") ));
+    controller_mouse_moove_op3->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op3") ));
+    controller_mouse_button_op3->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op3") ));
+    controller_mouse_button_op3->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op3") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->add_controller(controller_mouse_button_op3);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->add_controller(controller_mouse_moove_op3);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->set_draw_func(
+            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("4") ));
+    controller_mouse_moove_op4->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op4") ));
+    controller_mouse_button_op4->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op4") ));
+    controller_mouse_button_op4->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op4") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->add_controller(controller_mouse_button_op4);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->add_controller(controller_mouse_moove_op4);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->set_draw_func(
+            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("5") ));
+    controller_mouse_moove_op5->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op5") ));
+    controller_mouse_button_op5->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op5") ));
+    controller_mouse_button_op5->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op5") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->add_controller(controller_mouse_button_op5);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->add_controller(controller_mouse_moove_op5);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->set_draw_func(
+            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("6") ));
+    controller_mouse_moove_op6->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op6") ));
+    controller_mouse_button_op6->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op6") ));
+    controller_mouse_button_op6->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op6") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_button_op6);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_moove_op6);
+
+    /* Mouse gesture on drawing area */
+
+    controller_mouse_button_op1->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op1") ));
+    controller_mouse_button_op1->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op1") )
+    );
+
+
+    /* Drawing area for keyboard scaling */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->set_draw_func(
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("1") ) );
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->set_draw_func(
@@ -1089,21 +1195,47 @@ void Dx7interface::attach_signals(){
     LOG_OUT();
 };
 
-/*
- * int* Dx7interface::get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>& cr, Glib::ustring name){
- *    //LOG_IN();
- *    // get current size of the cr
- *    int *size = nullptr;
- *    size = new int[2];
- *    Glib::RefPtr<Gdk::Window> window = (get_gwidget<Gtk::DrawingArea>("drawingarea_"+name))->get_window();
- *    Cairo::RefPtr<Cairo::Region> visible_region = window->get_visible_region();
- *    Cairo::RectangleInt rect = visible_region->get_extents();
- *    size[0] = rect.width;
- *    size[1] = rect.height;
- *    //LOG_OUT();
- *    return size;
- *};
- */
+/*** Mouse gesture on drawingarea ***/
+void Dx7interface::mouse_mooves(double x, double y, Glib::ustring name){
+    if(p_drag != -1){
+        double width = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_width();
+        double height = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_height();
+        double x_ratio=( (width ) /400.0);
+        double y_ratio=( (height) /99.0);
+        int val_x = 0;
+        int val_y = int( (height - y) - r_point ) / y_ratio;
+
+        if(p_drag == 0){
+            (get_gwidget<Gtk::SpinButton>("eg_lvl4_"+name))->set_value(val_y);
+            return;
+        }else{
+            if (p_drag > 0 && p_drag < 4){
+                val_x  = (x - points[p_drag-1].first) / x_ratio;
+            }else{
+                double x_noteoff=(width)*3.0/4.0;
+                val_x = (x - x_noteoff) / x_ratio;
+            };
+        };
+        val_x = std::max(0, (100 - int(val_x) ) );
+        (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<int>(p_drag)+"_"+name))->set_value(val_x);
+        (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<int>(p_drag)+"_"+name))->set_value(val_y);
+    };
+};
+
+void Dx7interface::mouse_click(int n_press, double x, double y, Glib::ustring name){
+    double width = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_width();
+    double height = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_height();
+    y = std::abs(height - y);
+    for( int i = 0; i <= 4 ;i++){
+        if(std::hypot(abs(points[i].first-x), abs(points[i].second-y)) <= r_point_shadow +1 ){
+            p_drag=i;
+            break;
+        };
+    };
+};
+void Dx7interface::mouse_click_release(int n_press, double x, double y, Glib::ustring name){
+    p_drag=-1;
+};
 
 /*** DRAW FUNCT ***/
 int* Dx7interface::get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>& cr, Glib::ustring name){
@@ -1138,63 +1270,29 @@ void Dx7interface::draw_background(const Cairo::RefPtr<Cairo::Context>& cr){
 
 void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
     //LOG_IN();
-    double x=0.0, y=0.0;   // coordonee du point
-    // representation d'un pas en fonction de la zone d'affichage
-    double x_step=(width/grid_step_x);
+    double x=0.0, y=0.0;                // coordonee du point
+    double x_step=(width/grid_step_x);  // representation d'un pas
     double y_step=(height/grid_step_y);
-    cr->translate(0, height);
-    cr->scale(1, -1);
+    cr->save();
+    cr->set_source_rgba(dash_color[0], dash_color[1], dash_color[2], dash_color[3]);
+    cr->set_dash(dash_pattern,dash_offset);
+    cr->set_line_width(dash_width);
     y=0.0;
-    //draw verticals lines
-    for(x=0.0;x<=(width - dash_width); x+=x_step) {
-        cr->save();
-        cr->set_source_rgba(dash_color[0], dash_color[1], dash_color[2], dash_color[3]);
-        cr->set_dash(dash_pattern,dash_offset);
-        cr->set_line_width(dash_width);
-        cr->move_to(x, 0.0);           // deplace le curseur
-        cr->line_to(x, height);    // trace une ligne
-        cr->stroke();
-        cr->restore();
+    for(x=0.0;x<=(width - dash_width); x+=x_step) { //draw verticals lines
+        cr->move_to(x, y);
+        cr->line_to(x, height);
     };
-    cr->save();
-    cr->set_source_rgba(dash_color[0], dash_color[1], dash_color[2], dash_color[3]);
-    cr->set_dash(dash_pattern,dash_offset);
-    cr->set_line_width(dash_width);
-    cr->move_to( (width - dash_width), 0.0);           // deplace le curseur
-    cr->line_to( (width - dash_width), height);    // trace une ligne
-    cr->stroke();
-    cr->restore();
-
-    //draw horizontals lines
+    cr->move_to( (width - dash_width), y);
+    cr->line_to( (width - dash_width), height);
     x=0.0;
-    for(y=0.0;y<=(height - dash_width); y+=y_step) {
-        cr->save();
-        cr->set_source_rgba(dash_color[0], dash_color[1], dash_color[2], dash_color[3]);
-        cr->set_dash(dash_pattern,dash_offset);
-        cr->set_line_width(dash_width);
-        cr->move_to(0.0, y);           // deplace le curseur
-        cr->line_to(width, y);    // trace une ligne
-        cr->stroke();
-        cr->restore();
+    for(y=0.0;y<=(height - dash_width); y+=y_step) {  //draw horizontals lines
+        cr->move_to(x, y);
+        cr->line_to(width, y);
     };
-    cr->save();
-    cr->set_source_rgba(dash_color[0], dash_color[1], dash_color[2], dash_color[3]);
-    cr->set_dash(dash_pattern,dash_offset);
-    cr->set_line_width(dash_width);
-    cr->move_to(0, (height - dash_width) );           // deplace le curseur
-    cr->line_to(width, (height - dash_width));    // trace une ligne
-    cr->stroke();
+    cr->move_to(x , (height - dash_width) );
+    cr->line_to(width, (height - dash_width));
+    cr->stroke();  // trace le contour en preservant ceux deja tracés
     cr->restore();
-    /* DEBUG prints
-    std::cout << " Total step : x " << x_wanted_step \
-            << " de " <<  x_step << std::endl;
-    std::cout << " Total step : y " << y_wanted_step \
-            << " de " << y_step << std::endl;
-
-    std::cout << "x: "<< x << " d_x: " <<  d_length[0] << std::endl;
-    std::cout << "y: "<< y << " d_y: " <<  d_length[1] << std::endl;
-    */
-    //LOG_OUT();
 };
 
 void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,double width,bool red){
@@ -1214,37 +1312,23 @@ void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x,
     };
     double radius;
     cr->save();
-    // interior circle
     cr->set_source_rgba(r,g,b,1.0);
     radius = r_point/2.0;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
     cr->fill();
-    cr->stroke();
-    cr->restore();
-    cr->save();
-    // interior circle
     cr->set_source_rgba(r,g,b,0.8);
     radius = r_point/1.33;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
     cr->fill();
-    cr->stroke();
-    cr->restore();
-    // interior circle
-    cr->save();
     cr->set_source_rgba(r,g,b,0.8);
     radius = r_point;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
-    //cr->fill();
     cr->stroke();
-    cr->restore();
-    // exterior circle
-    cr->save();
     cr->set_source_rgba(r,g,b,0.1);
     radius = r_point_shadow;       // Radius of the point
     cr->arc(x, y, radius, 0.0, 2.0 * M_PI);
     cr->stroke();
     cr->restore();
-
     //LOG_OUT();
 };
 
@@ -1274,24 +1358,24 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     height-=2.0*r_point;
     width-=2.0*r_point;
     double x_ratio=( (width ) /400.0);
-    double y_ratio=( (height) /100.0);
+    double y_ratio=( (height) /99.0);
     // TODO: global output lvl scale the distance
     // put key on key off mark
 
     /* Draw curve */
-    bool r_flag = 0;           //draw_point flag for First and last point switch color
+    bool r_flag = false;      //draw_point flag for First and last point switch color
     double x=0.0, y=0.0;     // coordonee du point
     x += r_point;
-    y += (r_point/2.0);
+    y += r_point;
 
     for(uint8_t i=1;i<=4;i++) {
         cr->save();
         cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
         cr->set_line_width(line_width);
-        r_flag = 0;
+        r_flag = false;
         if (i==1) {
             cr->move_to( x,
-                       ( y + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value()+1.0) * y_ratio )
+                       ( y + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value() * y_ratio) )
             );
         }else{
             cr->move_to(x, y);    // deplace le curseur
@@ -1300,27 +1384,30 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
             x = x_noteoff;
             cr->line_to(x, y);      // trace une ligne
             cr->move_to(x, y);
-            r_flag = 1;
+            r_flag = true;
         };
         x += ( ( x_ratio * (
             std::abs( 100.0 - (double)( (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(i)+"_"+type))->get_value() + 1.0 ) )
         ) ) ) ;
-        y = (r_point/2.0) + ( ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(i)+"_"+type))->get_value() + 1.0 ) * y_ratio ) /*+ line_width*/;
+        y = (r_point) + ( ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(i)+"_"+type))->get_value() ) * y_ratio ) /*+ line_width*/;
         cr->line_to(x, y);      // trace une ligne
         cr->move_to(x, y);
-
         cr->stroke();
         cr->restore();
+        points[i]={x,y};
         draw_point(cr,x,y, width,r_flag);
     };
     //draw first point at last to covert line
-    draw_point(cr,r_point,(r_point/2.0) + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value()+1.0) * y_ratio, width,true);
+    x = r_point;
+    y = r_point + ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl4_"+type))->get_value() * y_ratio );
+    points[0]={x,y};
+    draw_point(cr, x, y, width, true);
     //LOG_OUT();
 };
 
 void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
     // TODO : get sound from bank_1_modif.sound
-    LOG_IN();
+    //LOG_IN();
     /* key touch */
     Cairo::RefPtr<Cairo::ImageSurface> touch;
     Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_b.png");
@@ -1411,7 +1498,6 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
             break;
         };
     };
-
     /* Keyboard */
     double keyboard_pos = height - keyboard_heigth;
     double keyboard_start = (width /2.0) - (0.5*width_w) - dep;
@@ -1443,7 +1529,7 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
         cr->paint();
     };
     cr->restore();
-    LOG_OUT();
+    //LOG_OUT();
 };
 
 void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
@@ -1470,6 +1556,7 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     cr->restore();
     //LOG_OUT();
 };
+
 void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir){
     double half_width  = width/2.0;
     double half_height = height /2.0;
@@ -1538,10 +1625,7 @@ void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double widt
 /* EVENTS */
 void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
     LOG_IN();
-    if (cr){
-        if( width == 0 || height == 0 ){
-            return;
-        };
+    if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
         draw_axis(cr,wdth, hght);
@@ -1553,30 +1637,24 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
 };
 
 void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
-    LOG_IN();
-    if (cr){
-        if( width == 0 || height == 0 ){
-            return;
-        };
+    //LOG_IN();
+    if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
-        draw_adsr( cr, wdth, hght, "op"+num_op );
         draw_grid( cr, wdth, hght);
+        draw_adsr( cr, wdth, hght, "op"+num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
     };
-    LOG_OUT();
+    //LOG_OUT();
 };
 
 void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
     LOG_IN();
-    if (cr){
-        if( width == 0 || height == 0 ){
-            return;
-        };
+    if (cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
-        draw_adsr( cr, wdth, hght, "pitch" );
         draw_grid( cr, wdth, hght );
+        draw_adsr( cr, wdth, hght, "pitch" );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
     LOG_OUT();

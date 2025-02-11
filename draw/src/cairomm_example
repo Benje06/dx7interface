@@ -1,0 +1,284 @@
+#include "draw.h"
+#include <cairommconfig.h>
+#include <cairomm/context.h>
+#include <cairomm/surface.h>
+
+
+extern "C" {
+	Gtk::Box* LoadPlug(gint index){	
+		//static const Glib::ustring ui_file=MOD_DIRECTORY"libdx7interface-0.0.1.ui";
+		static const Glib::ustring ui_file="/home/jerome/dev/gxinterface/draw/src/draw-0.0.1.ui";
+		Draw* meditor = new Draw(ui_file,index);
+		return meditor->get_module();
+	};
+}
+
+Draw::Draw(Glib::ustring name, gint index) : Gx_module(name, index) {
+	/*basic constructor */
+	LOG_IN();
+	#ifdef ENABLE_NLS
+		setlocale (LC_ALL, "");
+		bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
+		bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+		textdomain (GETTEXT_PACKAGE);
+	#endif
+	/* I/O init */
+	Gio::init();
+    mod_name=_("Draw");
+    guint xo=0, yo=0;
+    myarea = get_gwidget<Gtk::DrawingArea>("drawingarea");
+	attach_signals();
+	LOG_OUT();
+};
+
+Draw::~Draw(){ 
+	LOG_IN();
+	LOG_OUT(); 
+};
+
+
+void Draw::draw_element2()
+{
+    // Add a new rectangle when the button is clicked
+    add_rectangle(rand() % 100, rand() % 100, 50, 50);
+}
+
+void Draw::add_rectangle(int x, int y, int width, int height) {
+    rectangles.emplace_back(x, y, width, height);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea"))->queue_draw();  // Request a redraw
+}
+
+
+bool Draw::on_draw_event_ev(const Cairo::RefPtr<Cairo::Context>& cr){
+    LOG_IN();
+    if (cr){
+        guint xo=0, yo=0;   // coordonee du point
+        double width=0;     // largeur drawarea
+        double height=0;    // hauteru drawarea
+        
+        auto size = get_cr_size(cr);
+        if(!size){
+            return TRUE;
+        }else{
+            width = size[0];
+            height = size[1];
+        }
+
+        cr->set_source_rgba(0.0, 0.0, 0.0,1.0);
+	    cr->paint();	// fill with color
+        cr->restore();
+        cr->save();        
+	    cr->set_source_rgb(0.4,0.8,0.6); 
+	    cr->set_line_width(2);
+
+	    // se dit taille / 400
+	    // le resultat deviens le multiplicateur
+
+        int eg_rt[4] = {43,56,23,99};
+        int eg_lvl[4] = {99,39,42,10};
+        
+	    for(guint8 i=0;i<=3;i++) {
+		    if (i==0) {
+			    cr->move_to(xo, height - eg_lvl[3]);
+		    }else{
+			    cr->move_to(xo, yo);
+		    };
+		    if (i==4) {
+			    xo = width;
+		    }else{
+		    /* (plage - val /2)/0.678 to fit size*/
+			    xo += (( 99 - eg_rt[i] ) /2 ) /0.678;
+		    }
+		    yo = height - eg_lvl[i];
+		    cr->line_to(xo, yo);
+            cr->fill_preserve();
+		    cr->stroke_preserve();   // draw line
+	    };
+        cr->restore();
+    };
+    LOG_OUT();   
+    return TRUE;
+}
+
+
+bool Draw::on_draw_event2(const Cairo::RefPtr<Cairo::Context>& cr)
+{
+    // get current size of the cr
+    double x1, y1, x2, y2;
+    cr->get_clip_extents(x1, y1, x2, y2);
+    double width = x2 - x1;
+    double height = y2 - y1;
+    
+    std::cout << "Drawing area size: " << width << "x" << height << std::endl;
+    cr->set_source_rgb(1.0, 1.0, 1.0);
+    cr->paint();
+    
+    cr->save();
+    cr->set_source_rgb(0.2, 0.2, 0.2);
+    for (const auto& rect : rectangles) {
+        cr->rectangle(rect.get_x(), rect.get_y(), rect.get_width(), rect.get_height());
+        cr->fill();
+    }
+    cr->restore();
+    return TRUE;
+}
+
+
+bool Draw::on_timeout() {
+    myarea->queue_draw();
+    return TRUE; // Keep the timeout active
+}
+
+void Draw::draw_element(){
+    myarea->queue_draw();
+}
+
+double* Draw::get_cr_size(const Cairo::RefPtr<Cairo::Context>& cr){
+    LOG_IN();
+    // get current size of the cr
+    double *size = nullptr;
+    size = new double[2];
+    double x1, y1, x2, y2;
+    cr->get_clip_extents(x1, y1, x2, y2);
+    size[0] = x2 - x1; // width
+    size[1] = y2 - y1; // height*/
+    LOG_OUT();
+    return size;
+}
+
+bool Draw::on_draw_event(const Cairo::RefPtr<Cairo::Context>& cr){
+    LOG_IN();
+        /* pour dessiner la courbe EG */
+    if (cr){
+        double width=0;
+        double height=0;
+        auto size = get_cr_size(cr);
+        if(!size){
+            return TRUE;
+        }else{
+            width = size[0];
+            height = size[1];
+        }
+        
+        std::cout << "Drawing area size: " << width << "x" << height << std::endl;
+        cr->save();
+        cr->set_source_rgb(0.2, 0.2, 0.2);
+        cr->rectangle(0, 0, 100, 100);
+        cr->fill();
+        cr->restore();
+        
+        cr->set_line_width(10.0);
+        if(xo > width || yo > height ){
+            xo=0, yo=0;
+        }
+	    for(guint8 i=1;i<=4;i++) {
+		    cr->save();
+            cr->move_to(xo, yo);
+		    xo += 20;
+		    yo += 20;
+		    cr->line_to(xo, yo);
+		    cr->stroke(); // paint element
+		    cr->restore();
+	    };
+    };
+    LOG_OUT();
+    return TRUE;
+};
+
+
+/* UI SIGNALS CONNECTION */
+void Draw::attach_signals(){	 
+    LOG_IN();
+	/* generale  */
+    // dessine continuellement
+    // un carré et une ligne qui defile
+	/*slot_btn_draw = (get_gwidget<Gtk::Button>("draw"))->signal_clicked().connect(
+	     sigc::mem_fun(*this, &Draw::draw_element));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea"))->signal_draw().connect(
+         sigc::mem_fun(*this, &Draw::on_draw_event));
+
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &Draw::on_timeout), 10000);
+        */
+    // dessine au declenchement du bouton
+    // draw les carrés
+    /*slot_btn_draw = (get_gwidget<Gtk::Button>("draw2"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Draw::draw_element2));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea2"))->signal_draw().connect(
+        sigc::mem_fun(*this, &Draw::on_draw_event2));
+    */
+    //
+    /*slot_btn_draw = (get_gwidget<Gtk::Button>("draw2"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Draw::draw_element2));*/
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->signal_draw().connect(
+        sigc::mem_fun(*this, &Draw::on_draw_event_ev));
+};
+
+void Draw::dettach_signals(){	 
+    LOG_IN();	
+	LOG_OUT(); 
+};
+
+void Draw::block_all(){
+	/* block ui */
+	slot_btn_draw.block(true);
+};
+
+void Draw::unblock_all(){
+	/* unblock ui */
+	slot_btn_draw.unblock();
+};
+
+
+/*cr->save();
+    cr->set_source_rgb(0.86, 0.85, 0.47);
+    cr->set_line_width(10.0);
+    cr->paint(); // fill the color
+    cr->restore();
+    */
+        //cr->save();
+
+      //cr->fill();
+
+   /* Cairo::RefPtr<Cairo::ImageSurface> msurface;
+    msurface = Cairo::ImageSurface::create(
+        Cairo::FORMAT_ARGB32,
+        myArea->get_width(),
+        myArea->get_height()
+    );
+    auto cr = Cairo::Context::create(msurface);
+    */
+    // Initialize the surface to white.
+    
+    //cr->scale(width, height);
+    /*cr->set_source_rgb(1.0, 0.0, 0.0);
+    cr->set_line_width(5.0);
+    
+	cr->save(); // save context for temporay change
+	cr->set_source_rgba(0.0, 0.0, 0.0,1.0);
+    cr->paint(); // paint area
+	cr->restore(); // restore initial context
+	cr->set_source_rgb(0.4,0.8,0.6); 
+    cr->set_source_rgb(1.0,1.0,1.0); 
+	cr->set_line_width(10);
+
+	//cr->fill_preserve();
+	//
+	//guint MAX_HGT_DAREA=104;
+	// TODO : recupere taille widget
+	// se dit taille / 400
+	// le resultat deviens le multiplicateur
+
+    guint xo=0, yo=0;
+
+	for(guint8 i=1;i<=4;i++) {
+		cr->save();
+        cr->move_to(xo, yo);
+		xo += 20;
+		yo += 20;
+		cr->line_to(xo, yo);
+		cr->stroke(); // paint element
+		cr->restore();
+	};
+    cr->fill();
+    myArea->queue_draw();
+    */

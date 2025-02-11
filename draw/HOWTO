@@ -1,0 +1,16 @@
+in this directory :
+		cd where_you_have_decompressed/gxinterface/gxsynth
+	regenerate by :
+		./autogen.sh
+	configure by ( --prefix=/usr for debian/ubuntu users ) ( --libdir= is usefull if you install gxsynth but it's not needed ) :
+		./configure --prefix=/usr --libdir=/usr/share/gxinterface-0.0.1/
+	compilation :
+		make 
+	you can start gxinterface and click the add module to start gxsynth
+	installation ( or use checkinstall to make a .deb ) :
+		sudo make install 
+	or 
+		sudo checkinstall -D --fstrans=no --install=yes 
+	( in checkinstall set the number version (3) of gxsynth ex: 0.0.1 )
+	
+	

@@ -1,0 +1,10 @@
+draw-0.0.1.ui:13: property GtkButton::related-action not found
+draw-0.0.1.ui:93: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:111: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:129: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:147: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:165: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:183: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:201: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:219: property GtkSpinButton::caps-lock-warning not found
+draw-0.0.1.ui:348: property GtkDrawingArea::events not found

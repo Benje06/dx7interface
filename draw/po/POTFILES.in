@@ -1,0 +1,13 @@
+# List of source files containing translatable strings.
+src/draw.cc
+src/draw.h
+src/draw-0.0.1.ui
+
+
+
+
+
+
+
+
+

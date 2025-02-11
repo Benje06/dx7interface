@@ -111,8 +111,29 @@ class Dx7interface : public Gx_module, public Synth {
         void draw_background(const Cairo::RefPtr<Cairo::Context>&);                                 /* dessine le fond */
         void draw_grid(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /* dessisne la grille */
         void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);        /* dessine la courbe */
-        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double,double,bool);               /* dessine un point */
+        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double,double,bool);          /* dessine un point */
         void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
+        /* Mouse Gesture */
+        void init_gesture_controller();
+        std::pair<double,double> points[5];                                                         /* array of points coordinates */
+        int p_drag = -1;                                                                            /* current index in points coordinates array */
+        Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op1;
+        Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op2;
+        Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op3;
+        Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op4;
+        Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op5;
+        Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op6;
+        Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_pitch;
+        void mouse_click(int, double, double, Glib::ustring);
+        void mouse_click_release(int, double, double, Glib::ustring);
+        Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op1;
+        Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op2;
+        Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op3;
+        Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op4;
+        Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op5;
+        Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op6;
+        Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_pitch;
+        void mouse_mooves(double, double, Glib::ustring);
         /* Level Scaling */
         void draw_kls(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);         /* dessine la courbe */
         void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);    /*dessine le clavier */
@@ -137,11 +158,11 @@ class Dx7interface : public Gx_module, public Synth {
 
         /*** UI ***/
 
-       /** EVENTS / SIGNAL **/
-       void block_all();                       /* blocage des evenements de l'interface */
-       void unblock_all();                     /* ... */
-       void attach_signals() override;
-       void dettach_signals() override;
+        /** EVENTS / SIGNAL **/
+        void block_all();                       /* blocage des evenements de l'interface */
+        void unblock_all();                     /* ... */
+        void attach_signals() override;
+        void dettach_signals() override;
 
         /* Drawing */
         void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&, int, int);
