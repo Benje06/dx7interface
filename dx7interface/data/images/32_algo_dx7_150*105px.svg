@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="635"
-   height="895"
-   viewBox="0 0 168.01041 236.80208"
+   width="1555"
+   height="2191.6929"
+   viewBox="0 0 411.42707 579.88541"
    version="1.1"
    id="svg1"
    xml:space="preserve"
@@ -12,7 +12,9 @@
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
-   sodipodi:docname="all_algo_final_alpha_new_testColor2.svg"
+   sodipodi:docname="32_algo_dx7_150*105px.svg"
+   inkscape:export-batch-path="/home/jerome/dev/git/gtk4/dx7interface/data/images"
+   inkscape:export-batch-name=""
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -28,13 +30,13 @@
      inkscape:document-units="px"
      showgrid="false"
      showguides="true"
-     inkscape:zoom="0.64063676"
-     inkscape:cx="58.53551"
-     inkscape:cy="433.94325"
+     inkscape:zoom="0.16015919"
+     inkscape:cx="-608.76931"
+     inkscape:cy="1592.1659"
      inkscape:window-width="1920"
-     inkscape:window-height="1001"
+     inkscape:window-height="1011"
      inkscape:window-x="0"
-     inkscape:window-y="42"
+     inkscape:window-y="32"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"><inkscape:grid
        id="grid1"
@@ -64,7 +66,7 @@
        inkscape:export-filename="algo1.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-54.239599,11.906245)"><rect
+       transform="matrix(2.4878041,0,0,2.4878041,-138.87394,25.68394)"><rect
          style="fill:#30261d;fill-opacity:0;stroke:none;stroke-width:3.26461;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.5;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          id="rect2-1"
          width="39.687504"
@@ -229,7 +231,7 @@
              x="-44.574177"
              y="-21.308485">1</tspan></text></g></g><g
        id="algo2"
-       transform="translate(-13.229177,46.302081)"
+       transform="matrix(2.4878041,0,0,2.4878041,-36.84804,111.25404)"
        inkscape:export-filename="algo2.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -400,7 +402,7 @@
        inkscape:export-filename="algo6.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-22.489594,-58.208348)"><rect
+       transform="matrix(2.4878041,0,0,2.4878041,-59.886142,-148.74743)"><rect
          style="fill:#30261d;fill-opacity:0;stroke:none;stroke-width:1.67925;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.5;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          id="rect2-4-2"
          width="39.6875"
@@ -568,7 +570,7 @@
          d="m 96.903651,107.15626 c 0,2.64583 0,2.64583 0,2.64583 z"
          id="path1-0-8-10-1-8-9-2" /></g><g
        id="algo10"
-       transform="translate(-141.5521,168.01042)"
+       transform="matrix(2.4878041,0,0,2.4878041,-356.09032,414.04054)"
        inkscape:export-filename="algo10.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -747,7 +749,7 @@
          d="m 215.96615,-89.958337 c 0,2.64583 0,2.64583 0,2.64583 z"
          id="path1-0-8-10-1-8-9-2-2" /></g><g
        id="algo11"
-       transform="translate(105.83332,146.84375)"
+       transform="matrix(2.4878041,0,0,2.4878041,259.35612,361.382)"
        inkscape:export-filename="algo11.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -934,7 +936,7 @@
        inkscape:export-filename="algo7.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-6.6145848,-43.656256)"><rect
+       transform="matrix(2.4878041,0,0,2.4878041,-20.39223,-112.54467)"><rect
          style="fill:#30261d;fill-opacity:0;stroke:none;stroke-width:1.67925;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.5;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          id="rect2-4-2-6"
          width="39.6875"
@@ -1103,7 +1105,7 @@
          d="m 113.50626,97.565111 c 8.20208,0 8.20208,0 8.20208,0 v 0 0 z"
          id="path2-0-2-8-5-8-8" /></g><g
        id="algo14"
-       transform="translate(64.822911,173.30208)"
+       transform="matrix(2.4878041,0,0,2.4878041,157.33026,427.20515)"
        inkscape:export-filename="algo14.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -1277,7 +1279,7 @@
          d="m 1.0583371,-68.460942 c 8.8635384,0 8.8635384,0 8.8635384,0 v 0 0 z"
          id="path2-0-2-8-5-8-8-6" /></g><g
        id="algo15"
-       transform="translate(105.83333,175.94792)"
+       transform="matrix(2.4878041,0,0,2.4878041,259.35615,433.78749)"
        inkscape:export-filename="algo15.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -1451,7 +1453,7 @@
          d="m -0.92605694,-74.746996 c 10.18648774,0 10.18648774,0 10.18648774,0 v 0 0 z"
          id="path2-0-2-8-5-8-8-6-3" /></g><g
        id="algo16"
-       transform="translate(146.84373,138.90625)"
+       transform="matrix(2.4878041,0,0,2.4878041,361.38198,341.63507)"
        inkscape:export-filename="algo16.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -1626,7 +1628,7 @@
          d="m 1.0583334,-26.789064 c 8.8635421,0 8.8635421,0 8.8635421,0 v 0 0 z"
          id="path2-6-9-9-0-6-26-5-0-2" /></g><g
        id="algo17"
-       transform="translate(21.166654,189.17709)"
+       transform="matrix(2.4878041,0,0,2.4878041,48.722048,466.69907)"
        inkscape:export-filename="algo17.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -1804,7 +1806,7 @@
        inkscape:export-filename="algo8.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-54.239599,11.906245)"><rect
+       transform="matrix(2.4878041,0,0,2.4878041,-138.87394,25.68394)"><rect
          style="fill:#30261d;fill-opacity:0;stroke:none;stroke-width:1.67925;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.5;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          id="rect2-4-2-6-3"
          width="39.6875"
@@ -1981,7 +1983,7 @@
        inkscape:export-filename="algo9.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-54.239599,11.906245)"><rect
+       transform="matrix(2.4878041,0,0,2.4878041,-138.87394,25.68394)"><rect
          style="fill:#30261d;fill-opacity:0;stroke:none;stroke-width:1.67925;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.5;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          id="rect2-4-2-6-3-3"
          width="39.6875"
@@ -2155,7 +2157,7 @@
          d="m 79.110424,71.106768 c 8.20208,0 8.20208,0 8.20208,0 v 0 0 z"
          id="path2-0-2-8-5-8-8-3-9" /></g><g
        id="algo12"
-       transform="translate(154.78123,136.26043)"
+       transform="matrix(2.4878041,0,0,2.4878041,381.12893,335.05278)"
        inkscape:export-filename="algo12.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -2364,7 +2366,7 @@
          d="m -13.559897,-56.88542 c 0,1.32292 0,1.32292 0,1.32292 z"
          id="path1-0-8-8-6-6-35" /></g><g
        id="algo13"
-       transform="translate(18.520804,178.59375)"
+       transform="matrix(2.4878041,0,0,2.4878041,42.139692,440.36978)"
        inkscape:export-filename="algo13.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -2573,7 +2575,7 @@
          d="m -0.330732,-70.114582 c 0,1.32292 0,1.32292 0,1.32292 z"
          id="path1-0-8-8-6-6-35-0" /></g><g
        id="algo20"
-       transform="translate(141.55209,181.23959)"
+       transform="matrix(2.4878041,0,0,2.4878041,348.21743,446.95212)"
        inkscape:export-filename="algo20.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -2784,7 +2786,7 @@
          id="path1-0-8-8-6-6-35-0-4"
          inkscape:label="path1-0-8-8-6-6-35-0-4" /></g><g
        id="algo26"
-       transform="translate(62.177071,226.21875)"
+       transform="matrix(2.4878041,0,0,2.4878041,150.74793,558.85145)"
        inkscape:export-filename="algo26.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -2985,7 +2987,7 @@
          d="m -2.9765672,-31.750002 c 0,2.645846 0,2.645846 0,2.645846 z"
          id="path1-0-8-8-6-6-35-0-4-1" /></g><g
        id="algo27"
-       transform="translate(100.54167,224.89583)"
+       transform="matrix(2.4878041,0,0,2.4878041,246.19153,555.56028)"
        inkscape:export-filename="algo27.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -3186,7 +3188,7 @@
          d="m -0.3307342,-30.427082 c 0,2.645846 0,2.645846 0,2.645846 z"
          id="path1-0-8-8-6-6-35-0-4-1-3" /></g><g
        id="algo21"
-       transform="translate(-54.239607,148.16666)"
+       transform="matrix(2.4878041,0,0,2.4878041,-138.87395,364.67315)"
        inkscape:export-filename="algo21.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -3396,7 +3398,7 @@
          d="m 72.429697,18.193706 c 0,1.650052 0,1.650052 0,1.650052 z"
          id="path1-0-8-8-6-6-35-0-4-0" /></g><g
        id="algo22"
-       transform="translate(58.208321,213.65104)"
+       transform="matrix(2.4878041,0,0,2.4878041,140.87446,527.58545)"
        inkscape:export-filename="algo22.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -3600,7 +3602,7 @@
          d="m 0.99218309,-47.290669 c 0,1.650052 0,1.650052 0,1.650052 z"
          id="path1-0-8-8-6-6-35-0-4-0-7" /></g><g
        id="algo23"
-       transform="translate(-96.57293,212.98958)"
+       transform="matrix(2.4878041,0,0,2.4878041,-244.19096,525.93987)"
        inkscape:export-filename="algo23.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -3798,7 +3800,7 @@
          d="m 214.64324,-46.963547 c 0,1.984383 0,1.984383 0,1.984383 z"
          id="path1-0-8-8-6-6-3-5-7-6-1-8" /></g><g
        id="algo29"
-       transform="translate(21.166658,263.26041)"
+       transform="matrix(2.4878041,0,0,2.4878041,48.722058,651.00385)"
        inkscape:export-filename="algo29.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -3990,7 +3992,7 @@
          d="m 14.88281,-39.026047 c 0,1.984383 0,1.984383 0,1.984383 z"
          id="path1-0-8-8-6-6-3-5-7-6-1-8-4" /></g><g
        id="algo30"
-       transform="translate(-136.26043,260.61458)"
+       transform="matrix(2.4878041,0,0,2.4878041,-342.92568,644.42154)"
        inkscape:export-filename="algo30.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><g
@@ -4184,7 +4186,7 @@
            d="m 6.283855,-44.97917 c 0,0.661459 0,0.661459 0,0.661459 z"
            id="path1-0-8-8-6-6-3-5-7-6-1-8-4-3-8" /></g></g><g
        id="algo24"
-       transform="translate(-55.56251,212.98958)"
+       transform="matrix(2.4878041,0,0,2.4878041,-142.16508,525.93987)"
        inkscape:export-filename="algo24.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -4376,7 +4378,7 @@
          d="m 215.96616,-46.963545 c 0,1.984383 0,1.984383 0,1.984383 z"
          id="path1-0-8-8-6-6-3-5-7-6-1-8-9" /></g><g
        id="algo25"
-       transform="translate(-177.27085,242.09375)"
+       transform="matrix(2.4878041,0,0,2.4878041,-444.95158,598.34534)"
        inkscape:export-filename="algo25.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -4565,7 +4567,7 @@
          d="m 214.64324,-46.963545 c 0,1.984383 0,1.984383 0,1.984383 z"
          id="path1-0-8-8-6-6-3-5-7-6-1-8-9-2" /></g><g
        id="algo31"
-       transform="translate(-96.572938,263.26041)"
+       transform="matrix(2.4878041,0,0,2.4878041,-244.19099,651.00385)"
        inkscape:export-filename="algo31.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -4751,7 +4753,7 @@
        inkscape:export-filename="algo18.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
-       transform="translate(-54.239599,11.906245)"><rect
+       transform="matrix(2.4878041,0,0,2.4878041,-138.87394,25.68394)"><rect
          style="fill:#30261d;fill-opacity:0;stroke:none;stroke-width:1.67925;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.5;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          id="rect2-4-2-6-7-7-8-4-9"
          width="39.6875"
@@ -4925,7 +4927,7 @@
          d="m 128.65365,112.44792 c 0,1.3229 0,1.3229 0,1.3229 z"
          id="path1-0-8-10-1-8-7-8-8-1-0-4-5-9-4" /></g><g
        id="algo19"
-       transform="translate(-54.239599,11.906245)"
+       transform="matrix(2.4878041,0,0,2.4878041,-138.87394,25.68394)"
        inkscape:export-filename="algo19.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -5105,7 +5107,7 @@
          d="m 169.66409,125.01564 c 0,1.98438 0,1.98438 0,1.98438 z"
          id="path1-0-8-10-1-5-9-8-6" /></g><g
        id="algo28"
-       transform="translate(144.19792,231.51042)"
+       transform="matrix(2.4878041,0,0,2.4878041,354.79972,572.01609)"
        inkscape:export-filename="algo28.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -5282,7 +5284,8 @@
        id="algo32"
        inkscape:export-filename="algo32.png"
        inkscape:export-xdpi="96"
-       inkscape:export-ydpi="96"><rect
+       inkscape:export-ydpi="96"
+       transform="matrix(2.4878041,0,0,2.4878041,-3.9364391,-3.9364651)"><rect
          style="fill:#30261d;fill-opacity:0;stroke:none;stroke-width:1.67925;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.5;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          id="rect2"
          width="39.6875"
@@ -5448,7 +5451,7 @@
          d="m 159.08073,230.84896 c 0,2.64583 0,2.64583 0,2.64583 z"
          id="path1-2-1-61" /></g><g
        id="algo4"
-       transform="translate(68.791661,47.624997)"
+       transform="matrix(2.4878041,0,0,2.4878041,167.20373,114.5452)"
        inkscape:export-filename="algo4.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -5621,7 +5624,7 @@
              x="12.972698"
              y="-94.73037">1</tspan></text></g></g><g
        id="algo3"
-       transform="translate(27.781242,44.979163)"
+       transform="matrix(2.4878041,0,0,2.4878041,65.177847,107.96288)"
        inkscape:export-filename="algo3.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect
@@ -5791,7 +5794,7 @@
              x="12.972698"
              y="-94.73037">1</tspan></text></g></g><g
        id="algo5"
-       transform="translate(-54.2396,31.750014)"
+       transform="matrix(2.4878041,0,0,2.4878041,-138.87394,75.051348)"
        inkscape:export-filename="algo5.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><rect

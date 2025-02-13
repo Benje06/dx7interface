@@ -133,6 +133,9 @@ class Dx7interface : public Gx_module, public Synth {
         void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);    /*dessine le clavier */
         void draw_axis(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /*dessine le clavier */
         void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>&,Glib::ustring, double, double, double, Glib::ustring); /* draw kls curve type */
+
+        void on_draw_algo(const Cairo::RefPtr<Cairo::Context>&, double, double);
+        void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>&, double, double);
         /* Generic error */
         bool error();
         /*** THREAD ***/

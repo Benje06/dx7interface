@@ -77,19 +77,19 @@ spinbutton button {
     ╰── pophover
 */
 dropdown{
-    min-height: 1px;
-    min-width: 1px;
+    min-height: 0;
+    min-width: 0;
     padding: 0 0;
     margin: 0 0;
 }
 dropdown *{
-    min-height: 1px;
-    min-width: 1px;
-    padding: 0 1px;
+    min-height: 0;
+    min-width: 0;
+    padding: 0 0;
     margin: 0 0;
 }
 dropdown button{
-    min-width: 5.3em;
+    min-width: 5.2em;
 }
 /*
 entry[.read-only][.flat][.warning][.error]
@@ -102,9 +102,9 @@ entry[.read-only][.flat][.warning][.error]
 ╰── [window.popup]
 */
 entry {
-    min-height: 1px;
-    min-width: 1px;
-    padding: 0.1em 0.1em;
+    min-height: 0;
+    min-width: 0;
+    padding: 0 0;
 }
 /*
 scale[.fine-tune][.marks-before][.marks-after]
@@ -127,6 +127,10 @@ scale[.fine-tune][.marks-before][.marks-after]
 scale highlight{
     background-color:#66cc99;
 }
+scale{
+ padding:4px 4px;
+ margin:4px 4px;
+}
 /*
 checkbutton
 ├── check
@@ -137,11 +141,6 @@ checkbutton:checked >check{
     background-image: none;
     background-color:#66cc99;
     /*border-color:black;*/
-}
-
-image{
-    margin:0 0;
-    padding:0 0;
 }
 
 /*
@@ -165,4 +164,8 @@ notebook
 notebook header tabs tab:checked{
     box-shadow: inset 0 -3px #66cc99;
  /*background-color:   #66cc99;*/
+}
+picture{
+ margin: 0 0;
+ padding: 0 0;
 }
