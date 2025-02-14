@@ -39,7 +39,7 @@ void Synth::connect_midi(Glib::ustring name){
     client_id = snd_seq_client_id(seq_handle);
     //snd_seq_set_input_buffer_size(seq_handle,in_buff_size) ;
     //snd_seq_set_output_buffer_size(seq_handle,out_buff_size) ;
-    snd_seq_system_info(seq_handle,seq_info);
+    //snd_seq_system_info(seq_handle,seq_info);
     /* polling */
     /* size of poll descriptors */
     spfd = snd_seq_poll_descriptors_count(seq_handle, POLLIN|POLLOUT);

@@ -126,7 +126,14 @@ void Gx_module::create_window(){
   main_window->set_default_size(1024, 768);
   //clear_style_of_window(main_window);
   //apply_style_to<Gtk::Window>(main_window);
-  apply_style_to_screen();
+  #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+    apply_style_to_screen();
+  #else
+    auto css = Gtk::CssProvider::create();
+    css->load_from_path(cssfile);
+    auto ctx = main_window->get_style_context();
+    ctx->add_provider(css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  #endif
   main_window->set_visible();
   std::static_pointer_cast<Gx_module>(module_pointer)->set_main_window(main_window);
   //std::cout << " get_APP_name: "<< module_manager->get_app_name() << std::endl;
@@ -182,13 +189,14 @@ void Gx_module::apply_style_to(widgetType* widget){*/
 void Gx_module::apply_style_to_screen(){
     LOG_IN();
     try{
-        auto css = Gtk::CssProvider::create();
-        css->load_from_path(cssfile);
-
-        auto display = Gdk::Display::get_default();
-        if (display) {
-            Gtk::StyleProvider::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-        };
+	#if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+	    auto css = Gtk::CssProvider::create();
+	    css->load_from_path(cssfile);
+	    auto display = Gdk::Display::get_default();
+	    if (display) {
+		Gtk::StyleProvider::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	    };
+	#endif
     } catch (const std::exception& ex) {
         std::cout << "Failed to load style:" << ex.what() << std::endl;
         std::cout << "\tCSS file: " << cssfile << std::endl;

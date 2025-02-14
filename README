@@ -1,113 +1,131 @@
-Directory :
-- gxinterface : ( source  )
-	Start an user interface form an .ui file
-	to know how read the HOWTOs
-	For licences read the README and COPYING
+look at HOWTO file to configure compil and install program
 
-- dx7interface : ( source  )
-	Start an user interface form a .la and .ui files
-	to know how read the HOWTO
-	For licences read the README and COPYING
+Files :
+	Makefile.am :
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+		* The following am file are part of GxInterface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: Makefile.am
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010 BENHAÏM Jérôme.
+		  
+	autogen.sh :
+		autogen script with .po generator		
+		COPYRIGHT AND LICENSE INFORMATION FOR AUTOGEN.SH FILES
+
+		* The following autogen.sh file are part of GxInterface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: autogen.sh
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010 BENHAÏM Jérôme.
+		  
+	configure.ac :			
+		COPYRIGHT AND LICENSE INFORMATION FOR .AC FILES
+
+		* The following configure.ac file are part of GxInterface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: configure.ac
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010 BENHAÏM Jérôme.  
 		
-- dx7 : doc and utilities for dx7
-	boucle_midi.mid :
-		midi loop file to be use by boucle_midi script
-	boucle_midi :
-		script starting qjackctl, hexter, amidi and connecting pmidi on hexter
-	usefull link :
-		link on dx7 pages references 
-	sysex2ins :
-		script converting raw bank to instruments list .ins
-	Table_sysex_dx7.ods :
-		full spreedsheet of dx7 sysex
-	bank_hexter :
-		extracted sound of hexter from https://smbolton.com/hexter.html https://github.com/theabolton/hexter
-	 
-	COPYRIGHT AND LICENSE INFORMATION FOR .ODS FILES
-	* The following .ODS files are part of gxinterface.  All are licensed under the
-	  GNU General Public License version 3 (see COPYING) or later.
+		parts inside, about : 
+			Check for windows,
+			Check for GDK Quartz and MacOSX integration package, 
+			Gnome init,
+		comes from glade3 project see http://glade.gnome.org/
+		
+Directory :
+	- data/ui :
+		interface.ui :
+			main interface ui file			
+			COPYRIGHT AND LICENSE INFORMATION FOR .UI FILES
 
-		File: 
-		-Table_sysex_dx7.ods
-		  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
-		  Copyright (C) 2010 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
-	  
-	COPYRIGHT AND LICENSE INFORMATION FOR SCRIPT FILES
-	* The following script are part of gxinterface.  All are licensed under the
-		  GNU General Public License version 3 (see COPYING) or later.
-		  The SCRIPT files contain copyright and license information, but
-		  it is reproduced here for convenience.  
-
-		File: boucle_midi, sys2ins
-		  Author: BENHAÏM Jérôme
-		  Copyright (C) 2010 BENHAÏM Jérôme.
-		  
-	COPYRIGHT AND LICENSE INFORMATION FOR MIDI FILES
-		* The following MIDI files are part of gxinterface.  All are licensed under the
-		  GNU General Public License version 3 (see COPYING) or later.
-		  
-		File: boucle_midi.mid
-		  Author: Jean-Michel THIÉMONGE
-		  Copyright (C) 2010 Jean-Michel THIÉMONGE.
-	
-- docs :  	
-	- gxinterface :
-		translation :
-			is a no-working memo howto script for include translation for a program
-	
-		gxinterface :
-			is a script to install, on debian based package (.deb),
-			all necessary file to compil program
-			
-		HOWTO GXINTERFACE DEBIAN like:
-		HOWTO GXINTERFACE ARCHLINUX like:
-			are text file with specifics informations for each distribution
-				
-		HOWTO MODULE :
-			is a text file which explain howto do a module 
-	
-		HOWTO GXINTERFACE :
-			is a text file which explain howto compile and install the whole application
-			(gxinterface, dx7interface) in a scripting shape
-			
-		COPYRIGHT AND LICENSE INFORMATION FOR TEXT FILES
-
-		* The following text files are part of gxinterface.  All are licensed under the
-		  GNU General Public License version 3 (see COPYING) or later.
-		  The text files contain copyright and license information, but
-		  it is reproduced here for convenience.  
-
-		File: HOWTO MODULE, HOWTO GXINTERFACE, HOWTO GXINTERFACE DEBIAN like, HOWTO GXINTERFACE ARCHLINUX like
-		  Author: BENHAÏM Jérôme
-		  Copyright (C) 2010 BENHAÏM Jérôme.
-	
-		COPYRIGHT AND LICENSE INFORMATION FOR SCRIPT FILES
-
-			* The following script are part of gxinterface.  All are licensed under the
+			* The following .ui file are part of GxInterface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
-			  The PNG files contain copyright and license information, but
-			  it is reproduced here for convenience.  
 
-			File: translation, gxinterface
+			File: interface.ui
 			  Author: BENHAÏM Jérôme
 			  Copyright (C) 2010 BENHAÏM Jérôme.
-			  	
-			
-- screenshot :
-	Dx7interface.png :
-		interface screenshot of interface.ui and libgxsynth-0.0.1.ui
-	
-		COPYRIGHT AND LICENSE INFORMATION FOR IMAGE FILES
+		  
+	- lib :
+		Makefile.am
+		gxinterface.pc
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM and .PC FILES
 
-		* The following images are part of gxinterface.  All are licensed under the
+		* The following .am and .pc file are part of GxInterface.  All are licensed under the
 		  GNU General Public License version 3 (see COPYING) or later.
-		  The PNG files contain copyright and license information, but
-		  it is reproduced here for convenience.  
 
-		File: Dx7interface.png
-	 	 Author: BENHAÏM Jérôme
-	 	 Copyright (C) 2010 BENHAÏM Jérôme.
-	    
-	
-	
+		File: Makefile.am, gxinterface.pc
+		  Author: BENHAÏM Jérôme
+		  Copyright (C) 2010 BENHAÏM Jérôme.
+		  
+	- po :
+		de.po
+		en.po
+		es.po
+		fr.po
+		fr_FR.po
+		fr_FR.utf8.po
+		gxinterface.pot
+		jap.po
+		languagecode.po
+		ru.po
+		COPYRIGHT AND LICENSE INFORMATION FOR .PO and .POT FILES
 
+			* The following .po and .pot files are part of GxInterface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: de.po en.po es.po fr.po fr_FR.po fr_FR.utf8.po gxinterface.pot jap.po languagecode.po ru.po
+			 
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010 BENHAÏM Jérôme.
+		  
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+			* The following .am file are part of GxInterface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: Makefile.am
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010 BENHAÏM Jérôme.
+
+- src :
+	common.cc 		Common C++ tools source
+	common.h		Common C++ tools Header
+	debug.h			Debug macros Header
+	gemod.cc		Module and module manager source
+	gemod.h			Module and module manager Header
+	gxinterface.cc	GxInterface source
+	gxinterface.h	GxInterface Header
+	gxthread.h		extended p_thread Header
+	lang.h			Lang Header (obsolete) 
+	main.cc			Main source
+	main.h			Main Header
+		COPYRIGHT AND LICENSE INFORMATION FOR .H AND .CC FILES
+
+			* The following .H and .CC file are part of GxInterface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File : common.cc common.h gemod.cc gemod.h gxinterface.cc
+				  gxinterface.h gxthread.h lang.h main.cc main.h
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2006, 2007, 2008, 2009, 2010 BENHAÏM Jérôme.
+			  
+			File : debug.h
+			  Author: BENHAÏM Jérôme, Mirsal ENNAIME
+			  Copyright (C) 2006, 2007, 2008, 2009, 2010 BENHAÏM Jérôme.
+			  
+	Makefile.am
+		COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+			* The following .am file are part of GxInterface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: Makefile.am
+			  Author: BENHAÏM Jérôme
+			  Copyright (C) 2010 BENHAÏM Jérôme.
+	

@@ -42,7 +42,11 @@
 	#include "gemod.h"
 	// Liste des Class
 	/* PROGRAMNAME_UI_DIR */
-	#define UI_FILE PROGRAMNAME_UI_DIR"interface.ui"
+	#if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+		#define UI_FILE PROGRAMNAME_UI_DIR"interface.ui"
+	#else
+		#define UI_FILE PROGRAMNAME_UI_DIR"interface_4.8.ui"
+	#endif
 	#define APPLICATION_NAME (_("gxinterface"))
 
 class Gx_interface: public Gtk::Application {

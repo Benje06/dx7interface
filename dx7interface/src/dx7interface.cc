@@ -158,8 +158,15 @@ void Dx7interface::listen_midi(){
                 << "value : " << int(ev->data.control.value)
                 << std::endl;
                 if ( ev->data.control.param == 0 && ( (uint)ev->data.control.value < bank_nb_sound ) ){
-                    get_gwidget<Gtk::ColumnView>("columnview_bank")->scroll_to((uint)ev->data.control.value,{},Gtk::ListScrollFlags::SELECT,NULL);
-                    //m_selection_model->set_selected((uint)ev->data.control.value);
+                    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 12)
+                        get_gwidget<Gtk::ColumnView>("columnview_bank")->scroll_to((uint)ev->data.control.value,{},Gtk::ListScrollFlags::SELECT,NULL);
+                    #else
+                        auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
+                        adjustment->set_value((double)ev->data.control.value);
+                        m_selection_model->set_selected((uint)ev->data.control.value);
+                    #endif
+                    
+                    //
                 }
                 break;
             case SND_SEQ_EVENT_SYSEX:
@@ -1724,14 +1731,45 @@ void Dx7interface::on_bank_select(){
         ask save
     */
     try{
-        auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
-        dialog->set_title("Select Module .la, .so or .ui");
-        dialog->set_modal(true);
-        //Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
-        //dialog->set_initial_folder(initial_folder);
-        dialog->open( *(get_window()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-                try {
-                    auto bank_file = dialog->open_finish(result);
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
+            dialog->set_title("Select Module .la, .so or .ui");
+            dialog->set_modal(true);
+            //Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
+            //dialog->set_initial_folder(initial_folder);
+            dialog->open( *(get_window()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+                    try {
+                        Glib::RefPtr<Gio::File> bank_file = dialog->open_finish(result);
+                        if (bank_file) {
+                            block_all();
+                            block_midi();
+                            clean_bank();
+                            load_bank(bank_file);
+                            unblock_midi();
+                            unblock_all();
+                            m_selection_model->set_selected(0);
+                            redraw_all_curve();
+                            Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
+                            Glib::ustring name = filename.substr(0,filename.find_last_of("."));
+                            get_gwidget<Gtk::Button>("bank_select")->set_label(name);
+                        };
+                    } catch (const std::exception & ex) {
+                        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
+                        + "Reason: " + ex.what();
+                        std::cout << err_msg << std::endl;
+                    };
+                }
+            ); /* end dialog open function */
+        #else
+            GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+			auto dialog = new Gtk::FileChooserDialog("Please choose a file", Gtk::FileChooser::Action::OPEN);
+			dialog->set_transient_for(*(get_window()));
+			dialog->set_modal(true);
+			dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+            dialog->add_button("_Open", Gtk::ResponseType::ACCEPT);
+            dialog->signal_response().connect([this, dialog](int response) {
+                if (response == Gtk::ResponseType::ACCEPT) {
+                    auto bank_file = dialog->get_file();
                     if (bank_file) {
                         block_all();
                         block_midi();
@@ -1744,14 +1782,12 @@ void Dx7interface::on_bank_select(){
                         Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
                         Glib::ustring name = filename.substr(0,filename.find_last_of("."));
                         get_gwidget<Gtk::Button>("bank_select")->set_label(name);
-                    };
-                } catch (const std::exception & ex) {
-                    std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-                    + "Reason: " + ex.what();
-                    std::cout << err_msg << std::endl;
-                };
-            }
-        ); /* end dialog open function */
+                    }
+                }
+                dialog->hide();
+            });
+            dialog->show();
+        #endif
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();

@@ -43,7 +43,11 @@
 
 /** CONSTANTS **/
 #define DATA_DIR PROGRAMNAME_DATA_DIR
-#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify.ui"
+#if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+        #define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify.ui"
+#else
+         #define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify_4.8.ui"
+#endif
 //#define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-gtk4_simplify.ui"
 #define CSSFILE MOD_UI_DIRECTORY"theme.css"
 
