@@ -1,26 +1,40 @@
-#  docs
-normalisation fichier ui (noms d'objets, l'element parent d'un module->vbox_main)
+### DOC
+doc d'utilisation*
+normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
 normalisation gx_module (fonction load,
-gxsynth
-dxsynth
+
+# LANG
+traductions
+internationalisation
 
 # effectivité
-evenements
-lecture/ecriture fichier
+evenements MIDI
+lecture/ecriture fichier(dans fonctions ?)
 lecture/ecriture midi
-doc d'utilisation*
+multiplateforme (midi/interface) drumkit, Juce ???
 
-# stabilisation interface
-evenement standart
+
+# Interface
+transpose algo (C1 -> C5) 
+son par defaut (son init)
+marge draw area 
+options des couleurs
+refonte interface( size/expand des elements)
+verification des courbes
+boutons compare/randomize/panique
 fenetre secondaires (option, module, chargement de fichier)
-gestion d'exeptions
-filtre des variables utilisateurs
+
+### CODE
+gestion d'exceptions
+filtre des variables utilisateurs ???
+evenement standard (erreur ???)
+fenetre secondaires (option, module, chargement de fichier) gxinterface
+verifier la récuperations des bon bit du syx(cf tableau.ods)
 
 # ergonomie
 drag&drop
 tooltype
 menu alacarte
-
 
 
