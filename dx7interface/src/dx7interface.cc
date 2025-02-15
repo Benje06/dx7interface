@@ -648,7 +648,7 @@ void Dx7interface::init_gesture_controller(){
 
 void Dx7interface::init_global_fonction_parameter(){
 	LOG_IN();
-	(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->toggled();
+	on_mono_poly_event();
 	LOG_OUT();
 };
 
