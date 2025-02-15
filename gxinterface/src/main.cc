@@ -27,66 +27,68 @@
 #include "main.h"
 
 int main (int argc, char *argv[]){
-  LOG_IN ();
-	//gchar* filename;
-	char interface;
+    LOG_IN ();
+    setlocale (LC_ALL, "");
+    bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
+    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+    textdomain(GETTEXT_PACKAGE);
+    //gchar* filename;
+    char interface='g';
+    /* test param */
 
-    interface='g';
-  /* test param */
-
-  for ( int i = 0 ; i < argc ; i++){
-  		if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
-			interface=gchar(argv[i+1][0]);
-			std::cout << "interface mode : " << interface << std::endl;
-			break;
-		};
-	};
-	if ( interface == 0 ){
-		interface='g';
-		std::cout << "interface mode : " << interface << std::endl;
-	};
-	switch (interface) {
-				// choose interface gnome kde x11 ..
-				case 'g' :
-					try{
-						//Gx_interface *g_app;
-						//auto app = Gtk::Application::create("");
-						auto g_app = Gx_interface::create();
-						//g_app = new Gx_interface(argc, argv);
-						return g_app->run(argc, argv);
-						//delete g_app;
-					}catch(const std::exception& ex){
-						std::cerr << ex.what() << std::endl;
-						//std::cerr << ex.domain() << std::endl;
-						//std::cerr << ex.code() << std::endl;
-						LOG_OUT();
-						return 1;
-					};
-				break;
-				/*case 'k' :
-					Kinterface *k_app_interface;
-					k_app_interface = new Kinterface(argc, argv);
-					delete k_app_interface;
-				break;
-				case 'x' :
-					Xinterface *x_app_interface;
-					x_app_interface = new Xinterface(argc, argv);
-					delete x_app_interface;
-				break;
-				case 'w' :
-					Winterface *w_app_interface;
-					w_app_interface = new Winterface(argc, argv);
-					delete w_app_interface;
-				break;
-				case 'p' :
-					Pinterface *p_app_interface;
-					p_app_interface = new Pinterface(argc, argv);
-					delete p_app_interface;
-				break;*/
-				default :
-					std::cout << "L'option : "<< interface << " pour une interface n'est pas reconnue." << std::endl;
-				break;
-	};
+    for ( int i = 0 ; i < argc ; i++){
+        if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
+            interface=gchar(argv[i+1][0]);
+            std::cout << "interface mode : " << interface << std::endl;
+            break;
+        };
+    };
+    if ( interface == 0 ){
+        interface='g';
+        std::cout << "interface mode : " << interface << std::endl;
+    };
+    switch (interface) {
+                // choose interface gnome kde x11 ..
+                case 'g' :
+                    try{
+                        //Gx_interface *g_app;
+                        //auto app = Gtk::Application::create("");
+                        auto g_app = Gx_interface::create();
+                        //g_app = new Gx_interface(argc, argv);
+                        return g_app->run(argc, argv);
+                        //delete g_app;
+                    }catch(const std::exception& ex){
+                        std::cerr << ex.what() << std::endl;
+                        //std::cerr << ex.domain() << std::endl;
+                        //std::cerr << ex.code() << std::endl;
+                        LOG_OUT();
+                        return 1;
+                    };
+                break;
+                /*case 'k' :
+                    Kinterface *k_app_interface;
+                    k_app_interface = new Kinterface(argc, argv);
+                    delete k_app_interface;
+                break;
+                case 'x' :
+                    Xinterface *x_app_interface;
+                    x_app_interface = new Xinterface(argc, argv);
+                    delete x_app_interface;
+                break;
+                case 'w' :
+                    Winterface *w_app_interface;
+                    w_app_interface = new Winterface(argc, argv);
+                    delete w_app_interface;
+                break;
+                case 'p' :
+                    Pinterface *p_app_interface;
+                    p_app_interface = new Pinterface(argc, argv);
+                    delete p_app_interface;
+                break;*/
+                default :
+                    std::cout << "L'option : "<< interface << " pour une interface n'est pas reconnue." << std::endl;
+                break;
+};
   LOG_OUT ();
   return 0;
 };

@@ -29,28 +29,8 @@ CLEANFILES = \
 
 ## If configure built it, then distclean should delete it.
 DISTCLEANFILES = \
-        aclocal.m4\
-        autoscan.log\
-        config.h\
-        config.h.in\
-        config.h.in~\
-        config.log\
-        config.status\
-        configure\
-        configure.ac~\
-        configure.scan\
-        configure~\
-        libtool\
         Makefile\
         Makefile.in\
-        stamp-h1\
-        config/compile\
-        config/config.guess\
-        config/config.sub\
-        config/install-sh\
-        config/missing\
-        config/depcomp\
-        config/ltmain.sh\
         src/Makefile\
         src/Makefile.in\
         data/Makefile\
@@ -64,6 +44,30 @@ DISTCLEANFILES = \
         data/ui/Makefile.in\
         data/ui/libdx7interface-0.0.1.ui.h\
         po/dx7interface.pot\
+	aclocal.m4\
+	autoscan.log\
+	config.h\
+	config.h.in\
+	config.h.in~\
+	config.log\
+	config.status\
+	config/compile\
+	config/config.guess\
+	config/config.sub\
+	config/install-sh\
+	config/missing\
+	config/depcomp\
+	config/ltmain.sh\
+	configure\
+	configure.ac~\
+	configure.scan\
+	configure~\
+	libtool\
+	stamp-h1\
+	intltool-extract.in\
+	intltool-merge.in\
+	intltool-update.in\
+	ABOUT-NLS\
 	po/*.gmo\
         po/de.po\
         po/en.po\
@@ -74,17 +78,23 @@ DISTCLEANFILES = \
         po/languagecode.po\
         po/Makefile\
         po/Makefile.in\
-        po/Makefile.in.in\
-        po/notexist\
-        po/missing\
-        po/POTFILES
+	po/Makefile.in.in*\
+	po/notexist\
+	po/missing\
+	po/POTFILES\
+	po/*.sed\
+	po/*.header\
+	po/*.sin\
+	po/Rules-quot\
+	po/Makevars.template\
+	m4/*
 
 
 # local command need a tabulation
 #distclean-local:
 #<tab>-rm -rf src/.deps autom4te.cache        
 distclean-local:
-	-rm -rf src/.deps autom4te.cache config
+	-rm -rf src/.deps autom4te.cache config m4
 
 ## If the maintainer built it (for instance, a .info file),
 ## then maintainer-clean should delete it.

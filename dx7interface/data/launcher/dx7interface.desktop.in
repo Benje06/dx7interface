@@ -1,8 +1,9 @@
 [Desktop Entry]
 Name=@PACKAGE_NAME@
-Comment=Plugin to control Dx7
-Comment[fr]=Module de controle du Dx7
-Exec=sh -c 'GTK_THEME=Blackbird gxinterface -m /usr/share/@PACKAGE_NAME@/@VERSION@/@PACKAGE_NAME@-@LIB_VERSION@.la'
+GenericName=@PACKAGE_NAME@-@VERSION@ @LIB_VERSION@
+Comment=Control Plugin of Dx7 synthetizer
+Comment[fr]=Module de controle du synthetiseur Dx7
+Exec=sh -c 'gxinterface -m /usr/share/@PACKAGE_NAME@/@VERSION@/@PACKAGE_NAME@-@LIB_VERSION@.la'
 Icon=/usr/share/@PACKAGE_NAME@/@VERSION@/images/dx7.jpg
 Terminal=false
 Type=Application

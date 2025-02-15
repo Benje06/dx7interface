@@ -51,14 +51,12 @@
     #ifdef ENABLE_NLS
         #include <libintl.h>
         #include <glibmm/i18n.h>
+        #define textdomain(GETTEXT_PACKAGE)
+        #define bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR)
     #endif
     #include <regex>
     #include <gtkmm-4.0/gtkmm.h>
-    //#include <gtkmm/application.h>
-    //#include <glibmm-2.68/glibmm.h>
-    //#include <giomm-2.68/giomm.h>
-    //#include <gdkmm-3.0/gdkmm.h>
-    //#include <gtkmm.h>
+
     #ifdef G_OS_WIN32
         #include <windows.h>
         #define DS ('\\')

@@ -30,8 +30,6 @@ Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HAND
     try{
         /* init of error code */
         error = NULL;
-        //Gio::init();
-        /* Gtk init */
         /* analyse of command line parameters */
         signal_command_line().connect(sigc::mem_fun(*this, &Gx_interface::on_command_line), false);
         //setup_log_handlers ();

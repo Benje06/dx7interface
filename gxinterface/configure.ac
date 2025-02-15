@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 # tools :
-AC_PREREQ([2.71])
+AC_PREREQ([2.72])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([gxinterface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -48,14 +48,21 @@ dnl AX_PTHREAD
 dnl ================================================================
 dnl checks for header files
 dnl ================================================================
+AC_CHECK_INCLUDES_DEFAULT
+
+
 
 AC_CHECK_HEADERS([iostream])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([libintl.h])
-AC_HEADER_STDBOOL
+
 dnl ================================================================
 dnl checks for types
 dnl ================================================================
+AC_HEADER_STDBOOL
+AC_TYPE_INT8_T
+AC_TYPE_UINT8_T
+AC_TYPE_SIZE_T
 dnl ================================================================
 dnl checks for structures
 dnl ================================================================
@@ -67,10 +74,8 @@ dnl ================================================================
 dnl checks for library functions
 dnl ================================================================
 #LT_INIT([dlopen],[win32-dll])
-AC_TYPE_INT8_T
-AC_TYPE_UINT8_T
 AC_FUNC_ALLOCA
-AC_TYPE_SIZE_T
+
 AC_FUNC_ERROR_AT_LINE
 
 pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48"
@@ -85,32 +90,39 @@ dnl ================================================================
 dnl ================================================================
 dnl Gnome init
 dnl ================================================================
-#GNOME_COMMON_INIT
-#GNOME_DEBUG_CHECK
-#GNOME_COMPILE_WARNINGS([maximum])
-#GNOME_MAINTAINER_MODE_DEFINES
+dnl ##GNOME_COMMON_INIT
+dnl ##GNOME_DEBUG_CHECK
+dnl ##GNOME_COMPILE_WARNINGS([maximum])
+dnl ##GNOME_MAINTAINER_MODE_DEFINES
 
 dnl ================================================================
 dnl Gettext stuff.
 dnl ================================================================
-dnl AC_CHECK_FUNCS([setlocale])
-dnl GETTEXT_PACKAGE=$PACKAGE_NAME
-dnl AC_SUBST(GETTEXT_PACKAGE)
-dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",[$GETTEXT_PACKAGE])
-dnl ALL_LINGUAS="de en es fr fr_FR fr_FR.utf8 jap languagecode ru"
-dnl AM_XGETTEXT_OPTION([--from-code=utf-8])
-dnl IT_PROG_INTLTOOL
-dnl AM_GLIB_GNU_GETTEXT
+IT_PROG_INTLTOOL([0.35.0])
+AC_CHECK_FUNCS([setlocale])
+GETTEXT_PACKAGE=$PACKAGE_NAME
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",[$GETTEXT_PACKAGE])
+ALL_LINGUAS="de en es fr jap languagecode ru"
+AM_XGETTEXT_OPTION([--from-code=utf-8])
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.2])
+
+PROGRAMNAME_LOCALEDIR=[${datadir}/locale]
+AC_SUBST(PROGRAMNAME_LOCALEDIR)
+
+dnl ================================================================
+dnl Develloper stuff
+dnl ================================================================
 
 AC_ARG_ENABLE([dev],
-[  --enable-dev    Turn on debugging],
+[  --enable-dev    Turn on folder from dev directory ],
 [case "${enableval}" in
   yes) dev=true ;;
   no)  dev=false ;;
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-dev]) ;;
 esac],[dev=false])
 AM_CONDITIONAL([DEV], [test x$dev = xtrue])
-
 
 AM_COND_IF([DEV],[
 PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/locale]
@@ -134,6 +146,9 @@ dnl FOR Modules
 AC_SUBST(PROGRAMNAME_IMG_DIR)
 AC_SUBST(PROGRAMNAME_DATA_DIR)
 
+dnl ================================================================
+dnl Flags
+dnl ================================================================
 
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_CFLAGS])
@@ -142,6 +157,7 @@ AC_SUBST([AM_LDFLAGS])
 
 AC_CONFIG_FILES([Makefile
                 src/Makefile
+                po/Makefile.in
                 data/Makefile
                 data/ui/Makefile
                 data/images/Makefile

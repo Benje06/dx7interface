@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 # tools :
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.72])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([dx7interface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -29,6 +29,9 @@ AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([src])
 
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+m4_ifdef([AC_PROG_AR], [AC_PROG_AR])
+
 LT_PREREQ([1.0.0])
 LT_INIT
 AC_LANG([C++])
@@ -39,10 +42,9 @@ AC_PROG_CXXCPP
 AC_PROG_CPP
 AC_PROG_AWK
 AC_PROG_LN_S
-AC_PROG_RANLIB
+dnl AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-m4_ifdef([AC_PROG_AR], [AC_PROG_AR])
 
 dnl ================================================================
 dnl Check for libraries
@@ -64,7 +66,9 @@ dnl ================================================================
 dnl checks for types
 dnl ================================================================
 AC_HEADER_STDBOOL
+AC_TYPE_INT8_T
 AC_TYPE_UINT8_T
+AC_TYPE_SIZE_T
 dnl ================================================================
 dnl checks for structures
 dnl ================================================================
@@ -77,13 +81,13 @@ dnl checks for library functions
 dnl ================================================================
 #LT_INIT([dlopen],[win32-dll])
 AC_FUNC_ALLOCA
-AC_TYPE_SIZE_T
 AC_CHECK_FUNCS([pow])
 AC_FUNC_ERROR_AT_LINE
 
 pkg_modules="alsa glibmm-2.68 gtkmm-4.0 gthread-2.0 gxinterface cairomm-1.16"
 PKG_CHECK_MODULES(DEPS, [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)
+AC_SUBST(DEPS_CPPFLAGS)
 AC_SUBST(DEPS_LIBS)
 
 dnl ================================================================
@@ -156,16 +160,19 @@ dnl GNOME_MAINTAINER_MODE_DEFINES
 dnl ================================================================
 dnl Gettext stuff.
 dnl ================================================================
+IT_PROG_INTLTOOL([0.35.0])
 AC_CHECK_FUNCS([setlocale])
 GETTEXT_PACKAGE=$PACKAGE_NAME
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",[$GETTEXT_PACKAGE])
 ALL_LINGUAS="de en es fr jap languagecode ru"
-dnl getoff 		"xgettext: Chaîne non-ASCII repérée à [FILE].cc:[n°_line].
-dnl Veuillez spécifier l'encodage de la source avec l'option « --from-code »."
 AM_XGETTEXT_OPTION([--from-code=utf-8])
-dnl IT_PROG_INTLTOOL
-AM_GLIB_GNU_GETTEXT
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.2])
+
+dnl ================================================================
+dnl Develloper stuff
+dnl ================================================================
 
 AC_ARG_ENABLE([dev],
 [  --enable-dev    Replace path with dev directory],
@@ -196,6 +203,10 @@ AC_SUBST([PROGRAMNAME_UI_DIR])
 AC_SUBST([PROGRAMNAME_MOD_DIR])
 AC_SUBST([PROGRAMNAME_IMG_DIR])
 AC_SUBST([PROGRAMNAME_DATA_DIR])
+
+dnl ================================================================
+dnl Flags
+dnl ================================================================
 
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_CFLAGS])

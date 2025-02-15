@@ -2,11 +2,13 @@
 
 ## TODO: 
 SUBDIRS = \
+	po\
 	data\
 	src\
 	lib
 
-INTLTOOL_FILES = intltool-extract.in \
+INTLTOOL_FILES = \
+		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in
 
@@ -21,7 +23,6 @@ CLEANFILES = \
 ##        data/launcher/dx7interface.desktop
 
 ##        po/*.gmo\
-##        po/.intltool-merge-cache
 
 ## ???      lib/makefile \
 ##          lib/makefile.in \  
@@ -30,28 +31,8 @@ CLEANFILES = \
 
 ## If configure built it, then distclean should delete it.                 
 DISTCLEANFILES = \
-	aclocal.m4\
-	autoscan.log\
-	config.h\
-	config.h.in\
-	config.h.in~\
-	config.log\
-	config.status\
-	configure\
-	configure.ac~\
-	configure.scan\
-	configure~\
-	libtool\
 	Makefile\
 	Makefile.in\
-	stamp-h1\
-	config/compile\
-	config/config.guess\
-	config/config.sub\
-	config/install-sh\
-	config/missing\
-	config/depcomp\
-	config/ltmain.sh\
 	src/Makefile\
 	src/Makefile.in\
 	data/Makefile\
@@ -64,9 +45,35 @@ DISTCLEANFILES = \
 	data/ui/Makefile\
 	data/ui/Makefile.in\
 	data/ui/interface.ui.h\
-	po/*.gmo \
-	po/de.po\
 	po/gxinterface.pot\
+	lib/Makefile \
+	lib/Makefile.in\
+	aclocal.m4\
+	autoscan.log\
+	config.h\
+	config.h.in\
+	config.h.in~\
+	config.log\
+	config.status\
+	config/compile\
+	config/config.guess\
+	config/config.sub\
+	config/install-sh\
+	config/missing\
+	config/depcomp\
+	config/ltmain.sh\
+	configure\
+	configure.ac~\
+	configure.scan\
+	configure~\
+	libtool\
+	stamp-h1\
+	intltool-extract.in\
+	intltool-merge.in\
+	intltool-update.in\
+	ABOUT-NLS\
+	po/*.gmo\
+	po/de.po\
 	po/en.po\
 	po/es.po\
 	po/fr.po\
@@ -75,20 +82,22 @@ DISTCLEANFILES = \
 	po/languagecode.po\
 	po/Makefile\
 	po/Makefile.in\
-	po/Makefile.in.in\
+	po/Makefile.in.in*\
 	po/notexist\
 	po/missing\
 	po/POTFILES\
-	lib/Makefile \
-	lib/Makefile.in\
-	m4/.*\
-	m4/
+	po/*.sed\
+	po/*.header\
+	po/*.sin\
+	po/Rules-quot\
+	po/Makevars.template\
+	m4/*
 
 # local command need a tabulation
 #distclean-local:
 #<tab>-rm -rf src/.deps autom4te.cache        
 distclean-local:
-	-rm -rf src/.deps autom4te.cache config
+	-rm -rf src/.deps autom4te.cache config m4
 
 AM_CFLAGS=${CFLAGS}
 AM_CPPFLAGS=${CPPFLAGS}
@@ -104,23 +113,28 @@ EXTRA_DIST = \
 	configure.ac \
 	Makefile.am
 
+##desktopdir = $(datadir)/applications
+##desktop_in_files = gxinterface.desktop.in
+##desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+## @INTLTOOL_DESKTOP_RULE@
+
 install-data-local:
 	@$(NORMAL_INSTALL)
 	if test -d $(srcdir)/pixmaps; then \
-	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/pixmaps; \
-	for pixmap in $(srcdir)/pixmaps/*; do \
-	if test -f $$pixmap; then \
-	$(INSTALL_DATA) $$pixmap $(DESTDIR)$(pkgdatadir)/pixmaps; \
-	fi \
-	done \
+		$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/pixmaps; \
+		for pixmap in $(srcdir)/pixmaps/*; do \
+			if test -f $$pixmap; then \
+				$(INSTALL_DATA) $$pixmap $(DESTDIR)$(pkgdatadir)/pixmaps; \
+			fi \
+		done \
 	fi
 
 dist-hook:
 	if test -d pixmaps; then \
-	mkdir $(distdir)/pixmaps; \
-	for pixmap in pixmaps/*; do \
-	if test -f $$pixmap; then \
-	cp -p $$pixmap $(distdir)/pixmaps; \
-	fi \
-	done \
+		mkdir $(distdir)/pixmaps; \
+		for pixmap in pixmaps/*; do \
+			if test -f $$pixmap; then \
+				cp -p $$pixmap $(distdir)/pixmaps; \
+			fi \
+		done \
 	fi

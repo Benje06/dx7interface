@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=@PACKAGE_NAME@
+GenericName=@PACKAGE_NAME@-@VERSION@ @LIB_VERSION@
 Comment=Module Loader
 Comment[fr]=Gestionnaire de modules
 Exec=sh -c 'GTK_THEME=Blackbird @PACKAGE_NAME@'

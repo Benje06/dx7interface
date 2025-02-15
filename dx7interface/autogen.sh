@@ -69,7 +69,7 @@ fi
   }
 }
 
-(grep "^AM_GLIB_GNU_GETTEXT" $srcdir/configure.ac >/dev/null) && {
+(grep "^AM_GNU_GETTEXT" $srcdir/configure.ac >/dev/null) && {
   (grep "sed.*POTFILES" $srcdir/configure.ac) > /dev/null || \
   (glib-gettextize --version) < /dev/null > /dev/null 2>&1 || {
     echo
@@ -97,7 +97,7 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   DIE=1
 }
 
-(grep "^AC_PROG_INTLTOOL" $srcdir/configure.ac >/dev/null) && {
+(grep "^IT_PROG_INTLTOOL" $srcdir/configure.ac >/dev/null) && {
   (intltoolize --version) < /dev/null > /dev/null 2>&1 || {
     echo 
     echo "**Error**: You must have \`intltool' installed."
@@ -133,7 +133,7 @@ do
 		echo processing $dr
 		( cd $dr
 		aclocalinclude="$ACLOCAL_FLAGS"
-		if grep "^AM_GLIB_GNU_GETTEXT" configure.ac >/dev/null; then
+		if grep "^AM_GNU_GETTEXT" configure.ac >/dev/null; then
 			echo "Creating $dr/aclocal.m4 ..."
 			test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
 			echo "Running glib-gettextize...  Ignore non-fatal messages."
@@ -147,7 +147,7 @@ do
 				libtoolize --force --copy
 			fi
 		fi
-		if grep "^AC_PROG_INTLTOOL" configure.ac >/dev/null; then
+		if grep "^IT_PROG_INTLTOOL" configure.ac >/dev/null; then
 			echo "Running intltoolize..."
 			intltoolize --copy --force --automake
 		fi
@@ -162,6 +162,7 @@ do
 		echo ""
 		echo "Running autoreconf ..."
 		autoreconf --force --install -I config -I m4
+
 		if grep "^AM_CONFIG_HEADER" configure.ac >/dev/null; then
 			echo ""
 			echo "Running autoheader..."
