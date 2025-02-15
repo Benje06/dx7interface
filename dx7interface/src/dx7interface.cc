@@ -73,6 +73,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
 
     /* attach GUI signals */
     attach_signals();
+	init_global_fonction_parameter();
     /* start thread */
     S_Thread();
     unblock_midi();
@@ -644,6 +645,15 @@ void Dx7interface::init_gesture_controller(){
     controller_mouse_button_pitch->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
     controller_mouse_button_pitch->set_button(1); // bouton gauche souris
 };
+
+void Dx7interface::init_global_fonction_parameter(){
+	LOG_IN();
+	(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->toggled();
+	LOG_OUT();
+};
+
+
+
 /* attach all signals */
 void Dx7interface::attach_signals(){
     LOG_IN();
@@ -1797,8 +1807,8 @@ void Dx7interface::on_bank_select(){
 };
 
 
-void Dx7interface::on_mono_poly_event() {
-    LOG_IN();                           // additionnal voice  ; channel
+void Dx7interface::on_mono_poly_event(){
+	LOG_IN();
     u_char msg[7];                      // paremter change      message
     msg[0]=0xF0;                        // F0                   B0
     msg[1]=id_fabricant;                // 43                   7E Poly/7F Mono
@@ -1809,7 +1819,12 @@ void Dx7interface::on_mono_poly_event() {
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    LOG_OUT();
+    if ( (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active() ) {
+        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Monophonic"));   
+    }else{
+        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Polyphonic"));        
+    };
+	LOG_OUT();
 };
 
 /* ALGO */
