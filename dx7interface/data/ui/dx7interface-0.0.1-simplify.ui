@@ -263,7 +263,7 @@
                             </child>
                             <child>
                               <object class="GtkLabel" id="label_ams">
-                                <property name="label" translatable="yes">Amplitude Mod Sensitivity</property>
+                                <property name="label" translatable="yes">AMS</property>
                               </object>
                             </child>
                             <child>
@@ -442,7 +442,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_pms">
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Pitch Mod Sensi</property>
+                                    <property name="label" translatable="yes">PMS</property>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -852,8 +852,10 @@
                         <child>
                           <object class="GtkGrid" id="grid_controller">
                             <child>
-                              <object class="GtkLabel" id="label_ftrtch">
+                              <object class="GtkLabel" id="label_aftrtch">
+                                <property name="halign">center</property>
                                 <property name="label">Aftertouch</property>
+                                <property name="valign">center</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">4</property>
@@ -863,6 +865,7 @@
                             <child>
                               <object class="GtkLabel" id="label_md_whl">
                                 <property name="label">Wheel</property>
+                                <property name="valign">center</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">1</property>
@@ -870,8 +873,9 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="label_ft">
+                              <object class="GtkLabel" id="label_foot">
                                 <property name="label">Foot</property>
+                                <property name="valign">center</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">2</property>
@@ -880,6 +884,7 @@
                             </child>
                             <child>
                               <object class="GtkLabel" id="label_brth">
+                                <property name="halign">center</property>
                                 <property name="label">Breath</property>
                                 <layout>
                                   <property name="column">0</property>
@@ -889,6 +894,20 @@
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="aftrtch_rng">
+                                <property name="adjustment">
+                                  <object class="GtkAdjustment" id="adj_aftrtch_rng">
+                                    <property name="page-increment">1.0</property>
+                                    <property name="step-increment">1.0</property>
+                                    <property name="upper">99.0</property>
+                                  </object>
+                                </property>
+                                <property name="focusable">True</property>
+                                <property name="halign">start</property>
+                                <property name="numeric">True</property>
+                                <property name="text">0</property>
+                                <property name="valign">center</property>
+                                <property name="width-chars">2</property>
+                                <property name="wrap">True</property>
                                 <layout>
                                   <property name="column">1</property>
                                   <property name="row">4</property>
@@ -897,6 +916,20 @@
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="md_whl_rng">
+                                <property name="adjustment">
+                                  <object class="GtkAdjustment" id="adj_md_whl_rng">
+                                    <property name="page-increment">1.0</property>
+                                    <property name="step-increment">1.0</property>
+                                    <property name="upper">99.0</property>
+                                  </object>
+                                </property>
+                                <property name="focusable">True</property>
+                                <property name="halign">start</property>
+                                <property name="numeric">True</property>
+                                <property name="text">0</property>
+                                <property name="valign">center</property>
+                                <property name="width-chars">2</property>
+                                <property name="wrap">True</property>
                                 <layout>
                                   <property name="column">1</property>
                                   <property name="row">1</property>
@@ -904,7 +937,21 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="ft_rng">
+                              <object class="GtkSpinButton" id="foot_rng">
+                                <property name="adjustment">
+                                  <object class="GtkAdjustment" id="adj_foot_rng">
+                                    <property name="page-increment">1.0</property>
+                                    <property name="step-increment">1.0</property>
+                                    <property name="upper">99.0</property>
+                                  </object>
+                                </property>
+                                <property name="focusable">True</property>
+                                <property name="halign">start</property>
+                                <property name="numeric">True</property>
+                                <property name="text">0</property>
+                                <property name="valign">center</property>
+                                <property name="width-chars">2</property>
+                                <property name="wrap">True</property>
                                 <layout>
                                   <property name="column">1</property>
                                   <property name="row">2</property>
@@ -913,6 +960,20 @@
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="brth_rng">
+                                <property name="adjustment">
+                                  <object class="GtkAdjustment" id="adj_brth_rng">
+                                    <property name="page-increment">1.0</property>
+                                    <property name="step-increment">1.0</property>
+                                    <property name="upper">99.0</property>
+                                  </object>
+                                </property>
+                                <property name="focusable">True</property>
+                                <property name="halign">start</property>
+                                <property name="numeric">True</property>
+                                <property name="text">0</property>
+                                <property name="valign">center</property>
+                                <property name="width-chars">2</property>
+                                <property name="wrap">True</property>
                                 <layout>
                                   <property name="column">1</property>
                                   <property name="row">3</property>
@@ -920,8 +981,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="ftrtch_ptch">
-                                <property name="halign">center</property>
+                              <object class="GtkCheckButton" id="aftrtch_ptch">
                                 <layout>
                                   <property name="column">2</property>
                                   <property name="row">4</property>
@@ -930,7 +990,6 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="md_whl_ptch">
-                                <property name="halign">center</property>
                                 <layout>
                                   <property name="column">2</property>
                                   <property name="row">1</property>
@@ -938,8 +997,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="ft_ptch">
-                                <property name="halign">center</property>
+                              <object class="GtkCheckButton" id="foot_ptch">
                                 <layout>
                                   <property name="column">2</property>
                                   <property name="row">2</property>
@@ -948,7 +1006,6 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="brth_ptch">
-                                <property name="halign">center</property>
                                 <layout>
                                   <property name="column">2</property>
                                   <property name="row">3</property>
@@ -956,8 +1013,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="ftrtch_mp">
-                                <property name="halign">center</property>
+                              <object class="GtkCheckButton" id="aftrtch_mp">
                                 <layout>
                                   <property name="column">3</property>
                                   <property name="row">4</property>
@@ -966,7 +1022,6 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="md_whl_mp">
-                                <property name="halign">center</property>
                                 <layout>
                                   <property name="column">3</property>
                                   <property name="row">1</property>
@@ -974,8 +1029,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="ft_mp">
-                                <property name="halign">center</property>
+                              <object class="GtkCheckButton" id="foot_mp">
                                 <layout>
                                   <property name="column">3</property>
                                   <property name="row">2</property>
@@ -984,7 +1038,6 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="brth_mp">
-                                <property name="halign">center</property>
                                 <layout>
                                   <property name="column">3</property>
                                   <property name="row">3</property>
@@ -992,8 +1045,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="ftrtch_gbs">
-                                <property name="halign">center</property>
+                              <object class="GtkCheckButton" id="aftrtch_gbs">
                                 <layout>
                                   <property name="column">4</property>
                                   <property name="row">4</property>
@@ -1002,7 +1054,6 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="md_whl_gbs">
-                                <property name="halign">center</property>
                                 <layout>
                                   <property name="column">4</property>
                                   <property name="row">1</property>
@@ -1010,8 +1061,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="ft_gbs">
-                                <property name="halign">center</property>
+                              <object class="GtkCheckButton" id="foot_gbs">
                                 <layout>
                                   <property name="column">4</property>
                                   <property name="row">2</property>
@@ -1020,7 +1070,6 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="brth_gbs">
-                                <property name="halign">center</property>
                                 <layout>
                                   <property name="column">4</property>
                                   <property name="row">3</property>
@@ -1029,7 +1078,10 @@
                             </child>
                             <child>
                               <object class="GtkLabel" id="label_fnctns_ptch">
-                                <property name="label">Pitch</property>
+                                <property name="halign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="label">Pitch </property>
+                                <property name="valign">end</property>
                                 <layout>
                                   <property name="column">2</property>
                                   <property name="row">0</property>
@@ -1038,7 +1090,10 @@
                             </child>
                             <child>
                               <object class="GtkLabel" id="label_fnctns_mp">
-                                <property name="label">Amp</property>
+                                <property name="halign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="label">Amp </property>
+                                <property name="valign">end</property>
                                 <layout>
                                   <property name="column">3</property>
                                   <property name="row">0</property>
@@ -1047,7 +1102,10 @@
                             </child>
                             <child>
                               <object class="GtkLabel" id="label_fnctns_gbs">
-                                <property name="label">EG Bias</property>
+                                <property name="halign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="label">EG Bias </property>
+                                <property name="valign">end</property>
                                 <layout>
                                   <property name="column">4</property>
                                   <property name="row">0</property>
@@ -1055,50 +1113,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="label_controller">
-                                <property name="label">Controller</property>
-                                <layout>
-                                  <property name="column">0</property>
-                                  <property name="column-span">2</property>
-                                  <property name="row">0</property>
-                                </layout>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label_ptch_bnd">
-                                <property name="label">Pitch Bend</property>
-                                <layout>
-                                  <property name="column">6</property>
-                                  <property name="row">0</property>
-                                </layout>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label_ptch_bnd_stp">
-                                <property name="justify">right</property>
-                                <property name="label">Step</property>
-                                <layout>
-                                  <property name="column">8</property>
-                                  <property name="column-span">1</property>
-                                  <property name="row">0</property>
-                                  <property name="row-span">1</property>
-                                </layout>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label_ptch_bnd_rng">
-                                <property name="justify">right</property>
-                                <property name="label">Range</property>
-                                <layout>
-                                  <property name="column">7</property>
-                                  <property name="column-span">1</property>
-                                  <property name="row">0</property>
-                                  <property name="row-span">1</property>
-                                </layout>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkFrame" id="frame_prtmt">
+                              <object class="GtkFrame" id="frame_portamento">
                                 <property name="child">
                                   <object class="GtkBox" id="box_prtmt">
                                     <property name="halign">start</property>
@@ -1107,36 +1122,44 @@
                                       <object class="GtkBox" id="box_fnctns_prtmt">
                                         <property name="baseline-position">bottom</property>
                                         <child>
-                                          <object class="GtkToggleButton" id="prtmt_md">
-                                            <property name="label">Retain</property>
+                                          <object class="GtkToggleButton" id="btn_portamento_md">
                                             <property name="margin-end">10</property>
                                             <property name="margin-start">10</property>
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkToggleButton" id="prtmt_glss">
+                                          <object class="GtkToggleButton" id="btn_portamento_glss">
                                             <property name="label">Gliss</property>
                                             <property name="margin-end">10</property>
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel" id="label_prtmt_tm">
+                                          <object class="GtkLabel" id="label_portamento_tm">
                                             <property name="label">Time</property>
                                             <property name="margin-end">10</property>
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkSpinButton" id="prtmt_tm"/>
+                                          <object class="GtkSpinButton" id="portamento_tm">
+                                            <property name="adjustment">
+                                              <object class="GtkAdjustment" id="adj_portamento_tm">
+                                                <property name="page-increment">1.0</property>
+                                                <property name="step-increment">1.0</property>
+                                                <property name="upper">99.0</property>
+                                              </object>
+                                            </property>
+                                            <property name="numeric">True</property>
+                                          </object>
                                         </child>
                                       </object>
                                     </child>
                                   </object>
                                 </property>
-                                <property name="label">Portamento</property>
+                                <property name="label">PORTAMENTO</property>
                                 <layout>
                                   <property name="column">6</property>
-                                  <property name="column-span">3</property>
-                                  <property name="row">2</property>
+                                  <property name="column-span">4</property>
+                                  <property name="row">0</property>
                                   <property name="row-span">2</property>
                                 </layout>
                               </object>
@@ -1146,20 +1169,23 @@
                                 <property name="halign">center</property>
                                 <property name="valign">center</property>
                                 <layout>
-                                  <property name="column">6</property>
+                                  <property name="column">7</property>
+                                  <property name="column-span">2</property>
                                   <property name="row">4</property>
                                 </layout>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSeparator">
-                                <property name="halign">start</property>
+                              <object class="GtkSeparator" id="separateur_V">
+                                <property name="can-focus">False</property>
+                                <property name="can-target">False</property>
+                                <property name="focus-on-click">False</property>
+                                <property name="halign">center</property>
                                 <property name="orientation">vertical</property>
-                                <property name="vexpand">True</property>
                                 <layout>
                                   <property name="column">5</property>
-                                  <property name="row">0</property>
-                                  <property name="row-span">5</property>
+                                  <property name="row">2</property>
+                                  <property name="row-span">6</property>
                                 </layout>
                               </object>
                             </child>
@@ -1172,9 +1198,37 @@
                                     <property name="upper">12.0</property>
                                   </object>
                                 </property>
+                                <property name="digits">0</property>
+                                <property name="draw-value">True</property>
+                                <property name="fill-level">12.0</property>
+                                <property name="hexpand">True</property>
+                                <property name="value-pos">left</property>
                                 <layout>
-                                  <property name="column">7</property>
-                                  <property name="row">1</property>
+                                  <property name="column">1</property>
+                                  <property name="column-span">2</property>
+                                  <property name="row">6</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label_ptch_bnd_rng">
+                                <property name="halign">center</property>
+                                <property name="label">Range</property>
+                                <property name="valign">start</property>
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">7</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label_ptch_bnd_stp">
+                                <property name="halign">center</property>
+                                <property name="label">Step</property>
+                                <property name="valign">start</property>
+                                <layout>
+                                  <property name="column">3</property>
+                                  <property name="row">7</property>
                                 </layout>
                               </object>
                             </child>
@@ -1187,9 +1241,35 @@
                                     <property name="upper">12.0</property>
                                   </object>
                                 </property>
+                                <property name="digits">0</property>
+                                <property name="draw-value">True</property>
+                                <property name="fill-level">12.0</property>
+                                <property name="hexpand">True</property>
+                                <property name="value-pos">left</property>
                                 <layout>
-                                  <property name="column">8</property>
-                                  <property name="row">1</property>
+                                  <property name="column">3</property>
+                                  <property name="column-span">2</property>
+                                  <property name="row">6</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label_pitch_bend">
+                                <property name="halign">start</property>
+                                <property name="label">Pitch Bend</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">6</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator" id="separateur_H">
+                                <property name="valign">center</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="column-span">5</property>
+                                  <property name="row">5</property>
                                 </layout>
                               </object>
                             </child>
@@ -1197,6 +1277,7 @@
                         </child>
                       </object>
                     </property>
+                    <property name="hexpand">True</property>
                     <child type="label">
                       <object class="GtkLabel" id="label_fct_prtmt">
                         <property name="label" translatable="yes">FONCTIONS</property>

@@ -185,7 +185,41 @@ class Dx7interface : public Gx_module, public Synth {
 		void init_global_fonction_parameter();
         void on_mono_poly_event();
         sigc::connection slot_poly;
-
+        void on_portamento_md_event();
+        sigc::connection slot_portamento_md;
+        void on_portamento_glss_event();
+        sigc::connection slot_portamento_glss;
+        void on_portamento_tm_event();
+        sigc::connection slot_portamento_tm;
+        void on_ptch_bnd_rng_event();
+        sigc::connection slot_ptch_bnd_rng;
+        void on_ptch_bnd_stp_event();
+        sigc::connection slot_ptch_bnd_stp;
+        /* tableau des controleurs */
+        void on_md_whl_rng_event();
+        sigc::connection slot_md_whl_rng;
+        void on_md_whl_assgn_event();
+        sigc::connection slot_md_whl_ptch;
+        sigc::connection slot_md_whl_mp;
+        sigc::connection slot_md_whl_gbs;
+        void on_foot_rng_event();
+        sigc::connection slot_foot_rng;
+        void on_foot_assgn_event();
+        sigc::connection slot_foot_ptch;
+        sigc::connection slot_foot_mp;
+        sigc::connection slot_foot_gbs;
+        void on_brth_rng_event();
+        sigc::connection slot_brth_rng;
+        void on_brth_assgn_event();
+        sigc::connection slot_brth_ptch;
+        sigc::connection slot_brth_mp;
+        sigc::connection slot_brth_gbs;
+        void on_aftrtch_rng_event();
+        sigc::connection slot_aftrtch_rng;
+        void on_aftrtch_assgn_event();
+        sigc::connection slot_aftrtch_ptch;
+        sigc::connection slot_aftrtch_mp;
+        sigc::connection slot_aftrtch_gbs;
 
 
         /* general algo */

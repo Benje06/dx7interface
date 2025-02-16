@@ -649,9 +649,9 @@ void Dx7interface::init_gesture_controller(){
 void Dx7interface::init_global_fonction_parameter(){
 	LOG_IN();
 	on_mono_poly_event();
+    on_portamento_md_event();
 	LOG_OUT();
 };
-
 
 
 /* attach all signals */
@@ -692,6 +692,50 @@ void Dx7interface::attach_signals(){
     /* FUNCTIONS */
     slot_poly = (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mono_poly_event));
+    slot_portamento_md = (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_portamento_md_event));
+    slot_portamento_glss = (get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_portamento_glss_event));
+    slot_portamento_tm = (get_gwidget<Gtk::SpinButton>("portamento_tm"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_portamento_tm_event));
+    slot_ptch_bnd_rng = (get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_ptch_bnd_rng_event));
+    slot_ptch_bnd_stp = (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_ptch_bnd_stp_event));
+    /* tableau des controleurs */
+    slot_md_whl_rng = (get_gwidget<Gtk::SpinButton>("md_whl_rng"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_md_whl_rng_event));
+    slot_md_whl_ptch = (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_md_whl_assgn_event));
+    slot_md_whl_mp = (get_gwidget<Gtk::CheckButton>("md_whl_mp"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_md_whl_assgn_event));
+    slot_md_whl_gbs = (get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_md_whl_assgn_event));
+    slot_foot_rng = (get_gwidget<Gtk::SpinButton>("foot_rng"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_foot_rng_event));
+    slot_foot_ptch = (get_gwidget<Gtk::CheckButton>("foot_ptch"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_foot_assgn_event));
+    slot_foot_mp = (get_gwidget<Gtk::CheckButton>("foot_mp"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_foot_assgn_event));
+    slot_foot_gbs = (get_gwidget<Gtk::CheckButton>("foot_gbs"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_foot_assgn_event));
+    slot_brth_rng = (get_gwidget<Gtk::SpinButton>("brth_rng"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_brth_rng_event));
+    slot_brth_ptch = (get_gwidget<Gtk::CheckButton>("brth_ptch"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_brth_assgn_event));
+    slot_brth_mp = (get_gwidget<Gtk::CheckButton>("brth_mp"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_brth_assgn_event));
+    slot_brth_gbs = (get_gwidget<Gtk::CheckButton>("brth_gbs"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_brth_assgn_event));
+    slot_aftrtch_rng = (get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_aftrtch_rng_event));
+    slot_aftrtch_ptch = (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_aftrtch_assgn_event));
+    slot_aftrtch_mp = (get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_aftrtch_assgn_event));
+    slot_aftrtch_gbs = (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_aftrtch_assgn_event));
+
 
     /* Algo */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->set_draw_func(
@@ -1820,12 +1864,211 @@ void Dx7interface::on_mono_poly_event(){
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     if ( (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active() ) {
-        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Monophonic"));   
+        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Monophonic"));
     }else{
-        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Polyphonic"));        
+        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Polyphonic"));
     };
 	LOG_OUT();
 };
+
+void Dx7interface::on_portamento_md_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x43;                        // 43
+                                        // 0-3 bit0=retain; bit1=follow
+    msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if ( (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active() ) {
+        (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_label(_("Follow"));
+    }else{
+        (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_label(_("Retain"));
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_portamento_glss_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x44;                        // 44
+    msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->get_active();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_portamento_tm_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x45;                        // 44
+    msg[5]=(get_gwidget<Gtk::SpinButton>("portamento_tm"))->get_value();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_ptch_bnd_rng_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x41;                        // 41
+    msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->get_value();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_ptch_bnd_stp_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x42;                        // 42
+    msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->get_value();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_md_whl_rng_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x46;                        // 46
+    msg[5]=(get_gwidget<Gtk::SpinButton>("md_whl_rng"))->get_value();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+
+void Dx7interface::on_md_whl_assgn_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x47;                        // 47
+    msg[5]= (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->get_active()
+          +((get_gwidget<Gtk::CheckButton>("md_whl_mp"))->get_active()*2)
+          +((get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->get_active()*4);
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+
+void Dx7interface::on_foot_rng_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x48;                        // 48
+    msg[5]=(get_gwidget<Gtk::SpinButton>("foot_rng"))->get_value();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_foot_assgn_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x49;                        // 49
+    msg[5]= (get_gwidget<Gtk::CheckButton>("foot_ptch"))->get_active()
+    +((get_gwidget<Gtk::CheckButton>("foot_mp"))->get_active()*2)
+    +((get_gwidget<Gtk::CheckButton>("foot_gbs"))->get_active()*4);
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_brth_rng_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x4A;                        // 4A
+    msg[5]=(get_gwidget<Gtk::SpinButton>("brth_rng"))->get_value();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_brth_assgn_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x4B;                        // 4B
+    msg[5]= (get_gwidget<Gtk::CheckButton>("brth_ptch"))->get_active()
+    +((get_gwidget<Gtk::CheckButton>("brth_mp"))->get_active()*2)
+    +((get_gwidget<Gtk::CheckButton>("brth_gbs"))->get_active()*4);
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_aftrtch_rng_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x4C;                        // 4C
+    msg[5]=(get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->get_value();
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
+void Dx7interface::on_aftrtch_assgn_event(){
+    LOG_IN();
+    u_char msg[7];                      // paremter change
+    msg[0]=0xF0;                        // F0
+    msg[1]=id_fabricant;                // 43
+    msg[2]=sub_status & channel;;       // 10
+    msg[3]=0x08;                        // 08
+    msg[4]=0x4D;                        // 4D
+    msg[5]= (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->get_active()
+    +((get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->get_active()*2)
+    +((get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->get_active()*4);
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    LOG_OUT();
+};
+
 
 /* ALGO */
 void Dx7interface::on_algo_event() {	LOG_IN();
