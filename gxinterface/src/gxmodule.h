@@ -18,18 +18,16 @@
 *
 * ----------------------------------------------------------------------------
 */
-
+#pragma once
 #ifndef Gxmod_H
 	#define Gxmod_H
 	/* gnome */
 	/* app */
-	#include "debug.h"
 	#include "common.h"
 	#include <glibmm/module.h>
 /*
  ***** Gx_Module *****
 */
-
 class Gx_module {
 	private:
 		struct st_extPath{             /* Provided file informations */

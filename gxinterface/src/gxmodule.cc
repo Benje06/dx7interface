@@ -43,14 +43,15 @@ Gx_module::Gx_module(Glib::ustring filename,Glib::ustring caller){
     std::cerr << caller; 
     LOG_IN();
     mod.desc=caller;
+    mod.name=filename;
     try{
         load(filename,0);
-        std::cerr << caller;
+        std::cerr << caller << " ";
         LOG_OUT();
     }catch(const std::exception& ex){
-        std::cerr << caller;
+        std::cerr << caller << " ";
         LOG_OUT();
-        std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + " Cannot be created !!!\n => Cannot load : " + filename + "\n" + "Reason " + ex.what();
+        std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Cannot be created !!!\n => Cannot load : ") + filename + "\n" + _("Reason ") + ex.what();
         throw std::runtime_error(err_msg);
     };
 };
@@ -60,14 +61,16 @@ Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller
     std::cerr << caller; 
 	LOG_IN();
     mod.desc=caller;
+    mod.name=filename;
     try{
         load(filename,index);
-        std::cerr << caller;
+        std::cerr << caller << " ";
         LOG_OUT();
     }catch(const std::exception& ex){
-        std::cerr << caller;
+        std::cerr << caller << " ";
+        std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Cannot be created !!!\n => Cannot load : ") + filename + "\n" + _("Reason ") + ex.what();
         LOG_OUT();
-        throw;
+        throw std::runtime_error(err_msg);
     };
 };
 
@@ -75,17 +78,24 @@ Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller
 Gx_module::Gx_module() {
 	LOG_IN();
     mod.desc="part of array";
+    mod.name="Gemod";
 	LOG_OUT();
 };
 
-Gx_module::~Gx_module(){ 
+Gx_module::~Gx_module(){
+    std::cerr << mod.name << "->" << mod.desc;
 	LOG_IN();
-    std::cout << " caller: " << mod.desc << std::endl;
-    std::cout << " mod.name: " << mod.name << std::endl;
     if (gmodule){
         module_pointer.reset();
         delete gmodule;
     };
+    if(rootbox){
+        delete rootbox;
+    };
+    if (main_window){
+        delete main_window;
+    };
+    std::cerr << mod.name << "->" << mod.desc;
 	LOG_OUT();
 };
 
@@ -97,8 +107,9 @@ Gtk::Box* Gx_module::get_boxmain(){ // (get_module)
 Gtk::Box* Gx_module::get_rootbox() 	{
     return rootbox;
 };
+
 /* get Glib pointer from refxml */
-/* TODO: see where it's call */
+/* (unused) call from : nowhere */
 Glib::RefPtr<Glib::Object> Gx_module::get_gobject(Glib::ustring object_name) {
 	return refXml->get_object(object_name);
 };
@@ -107,40 +118,50 @@ Glib::RefPtr<Glib::Object> Gx_module::get_gobject(Glib::ustring object_name) {
 /* set the CSS style file provided*/
 void Gx_module::set_style_file(Glib::ustring file_css){
     LOG_IN();
-    cssfile=file_css;
+    if( std::filesystem::exists(file_css.c_str()) ){
+        cssfile=file_css;
+    }else{
+        std::cerr<< _("Warning the css style file ")<< file_css << _(" doesn't exist or is not readable")<< std::endl;
+        cssfile="";
+    };
     LOG_OUT();
 };
 
 /* WINDOW */
 void Gx_module::create_window(){
-  LOG_IN();
-    
-  main_scrolledwindow = new Gtk::ScrolledWindow();
-  main_window = new Gtk::Window();
-  main_viewport = new Gtk::Viewport(main_scrolledwindow->get_hadjustment(), 
-                                    main_scrolledwindow->get_vadjustment());
-  main_viewport->set_child(*(get_rootbox()));
-  main_scrolledwindow->set_child(*main_viewport);
-  main_window->set_child(*main_scrolledwindow);
-  main_window->set_title(get_app_name());
-  main_window->set_default_size(1024, 768);
-  //clear_style_of_window(main_window);
-  //apply_style_to<Gtk::Window>(main_window);
-  #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-    apply_style_to_screen();
-  #else
-    if(std::filesystem::exists(cssfile)){
-        auto css = Gtk::CssProvider::create();
-        css->load_from_path(cssfile);
-        auto ctx = main_window->get_style_context();
-        ctx->add_provider(css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    LOG_IN();
+    try{
+        main_scrolledwindow = new Gtk::ScrolledWindow();
+        main_window = new Gtk::Window();
+        main_viewport = new Gtk::Viewport(main_scrolledwindow->get_hadjustment(),
+                                            main_scrolledwindow->get_vadjustment());
+        main_viewport->set_child(*(get_rootbox()));
+        main_scrolledwindow->set_child(*main_viewport);
+        main_window->set_child(*main_scrolledwindow);
+        main_window->set_title(get_app_name());
+        main_window->set_default_size(1024, 768);
+        //clear_style_of_window(main_window);
+        //apply_style_to<Gtk::Window>(main_window);
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            apply_style_to_screen();
+        #else
+            if(cssfile != ""){
+                auto css = Gtk::CssProvider::create();
+                css->load_from_path(cssfile);
+                auto ctx = main_window->get_style_context();
+                ctx->add_provider(css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            };
+        #endif
+        main_window->set_visible();
+        std::static_pointer_cast<Gx_module>(module_pointer)->set_main_window(main_window);
+        //std::cout << " get_APP_name: "<< module_manager->get_app_name() << std::endl;
+        //std::cout << " get_name: " << module_manager->get_name() << std::endl;
+    }catch (const std::exception& ex){
+        std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Creating window failed !!!\n") + _("Reason ") + ex.what();
+        LOG_OUT();
+        throw std::runtime_error(err_msg);
     };
-  #endif
-  main_window->set_visible();
-  std::static_pointer_cast<Gx_module>(module_pointer)->set_main_window(main_window);
-  //std::cout << " get_APP_name: "<< module_manager->get_app_name() << std::endl;
-  //std::cout << " get_name: " << module_manager->get_name() << std::endl;
-  LOG_OUT();
+    LOG_OUT();
 }
 /* CSS style for WINDOWS */
 
@@ -191,17 +212,16 @@ void Gx_module::apply_style_to(widgetType* widget){*/
 void Gx_module::apply_style_to_screen(){
     LOG_IN();
     try{
-        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            auto css = Gtk::CssProvider::create();
-            css->load_from_path(cssfile);
-            auto display = Gdk::Display::get_default();
-            if (display) {
+        auto css = Gtk::CssProvider::create();
+        css->load_from_path(cssfile);
+        auto display = Gdk::Display::get_default();
+        if (display) {
             Gtk::StyleProvider::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-            };
-        #endif
+        };
     } catch (const std::exception& ex) {
-        std::cout << "Failed to load style:" << ex.what() << std::endl;
-        std::cout << "\tCSS file: " << cssfile << std::endl;
+        std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to load style: !!!\n") + cssfile + "\n" + _("Reason => ") + ex.what();
+        LOG_OUT();
+        throw std::runtime_error(err_msg);
     };
     LOG_OUT();
 };
@@ -218,17 +238,12 @@ bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
 	            gmodule->get_symbol( "LoadPlug", (void*&) module_func ) ){
 	            std::cout << "Name of the GLIB::Module: "<< std::endl;
                 std::cout << "\t" << gmodule->get_name() << std::endl;
-                /*auto module_func = [](gint index) -> std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring> {
-                    return LoadPlug(index);
-                };*/
 		        auto [mod_pointer, rootbox_ptr, cssfile_String] = module_func(index);
                 cssfile=cssfile_String;
                 module_pointer = mod_pointer;
                 rootbox = rootbox_ptr;
                 std::cout << cssfile << std::endl;
                 set_style_file(cssfile);
-                // working but affect all
-                //apply_style();
                 set_app_name( (rootbox)->get_name() );
                 std::cout << "Name of app: " << get_app_name() << std::endl;
                 mod.index=index;
@@ -268,9 +283,9 @@ bool Gx_module::set_refxml(Glib::ustring filename)	{
 	    LOG_OUT();
 		return true;
 	}catch (const std::exception& ex){
-		std::cerr << "Error: " << std::endl;
-        LOG_OUT();
-        throw;
+        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
+        + "\nSet refXml failed with error : " + ex.what();
+        throw std::runtime_error(err_msg);
 		return false;
 	};
 };
@@ -284,9 +299,11 @@ bool Gx_module::load_ui(Glib::ustring filename, uint8_t index){
             rootbox=refXml->get_widget<Gtk::Box>("box_main");
             if(rootbox){
                 if( (rootbox)->get_parent() != nullptr ){     // if the box_main widget has a parent
-                    // box_main cannot be attached reset and go
-                    std::cerr<< "box_main get a parent cannot include it" << std::endl;
-                    rootbox = nullptr;
+                    if( "interface.ui" != filename.substr(filename.find_last_of("/")+1, filename.length()) ){
+                        // box_main cannot be attached reset and go
+                        std::cerr<< "box_main get a parent cannot be include" << std::endl;
+                        rootbox = nullptr;
+                    };
                     LOG_OUT();
                     return false;
                 };

@@ -32,12 +32,13 @@
   * 		EOL		End Of Line
   * 	- generic function :
   * 		tostr<T_>(V_) convert to string a variable V_ of type T_
-  * 
+  *         constexpr std::size_t str_const_hash(const char* str) convert str to a hash
+  *         constexpr std::size_t operator""_hash(const char* str, std::size_t) HASH operator for switch case use
   */
 #pragma once
 #ifndef interface_COMMON_H
     #define interface_COMMON_H
-    /* Ui dir for gxinterface */
+
     #define MOD_DIRECTORY PROGRAMNAME_MOD_DIR
     #define MOD_IMG_DIRECTORY PROGRAMNAME_IMG_DIR
     #define MOD_DATA_DIRECTORY PROGRAMNAME_DATA_DIR
@@ -46,16 +47,11 @@
     #ifdef HAVE_CONFIG_H
         #include <config.h>
     #endif
-    /* TODO : remove std C in main */
+    #include "debug.h"
+
     #include <iostream>
-    #ifdef ENABLE_NLS
-        #include <libintl.h>
-        #include <glibmm/i18n.h>
-       // #define textdomain(GETTEXT_PACKAGE)
-       // #define bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR)
-    #endif
+    #include <filesystem>
     #include <regex>
-    #include <gtkmm-4.0/gtkmm.h>
 
     #ifdef G_OS_WIN32
         #include <windows.h>
@@ -85,7 +81,12 @@
         #define DS ('/')
     #endif
     #define DS ('/')
-    using namespace Glib;
+
+    #ifdef ENABLE_NLS
+        #include <libintl.h>
+        #include <glibmm/i18n.h>
+    #endif
+    #include <gtkmm-4.0/gtkmm.h>
     /** convert to string any type of number **/
     template <class paramType>
     Glib::ustring tostr(paramType val) {
@@ -93,17 +94,18 @@
         strm << val;
         return strm.str();
     };
+
+    // used to hash MACRO value to array (ex: use to convert MACRO int type of snd_seq_event_type to text message with the name of the macro)
     constexpr std::size_t str_const_hash(const char* str) {
         // Implement a simple compile-time hash function
         std::size_t h = 0;
         for (; *str; ++str) {
             h = h * 31 + *str;
-        }
+        };
         return h;
-    }
-
+    };
     constexpr std::size_t operator""_hash(const char* str, std::size_t) {
         return str_const_hash(str);
-    }
+    };
 #endif /* interface_COMMON_H */
 

@@ -16,11 +16,10 @@
                 <child>
                   <object class="GtkNotebook" id="notebook_main">
                     <child>
-                      <!-- n-columns=2 n-rows=2 -->
                       <object class="GtkGrid" id="grid_module_select">
                         <child>
                           <object class="GtkLabel" id="label2">
-                            <property name="label" translatable="yes">Select module</property>
+                            <property name="label" translatable="yes">Selected module : </property>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">0</property>

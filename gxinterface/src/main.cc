@@ -28,68 +28,64 @@
 
 int main (int argc, char *argv[]){
     LOG_IN ();
-    std::locale::global(std::locale(""));
-    textdomain(GETTEXT_PACKAGE);
-    bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
-    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-    char interface='g';
-    /* test param */
+    #ifdef ENABLE_NLS
+        std::locale::global(std::locale(""));
+        textdomain(GETTEXT_PACKAGE);
+        bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
+        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+    #endif
 
+    char interface=0;
+    /* check params */
     for ( int i = 0 ; i < argc ; i++){
         if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
             interface=gchar(argv[i+1][0]);
-            std::cout << "interface mode : " << interface << std::endl;
+            std::cout << _("Interface graphic mode : ") << interface << std::endl;
             break;
         };
     };
     if ( interface == 0 ){
-        interface='g';
-        std::cout << "interface mode : " << interface << std::endl;
+        interface='g'; //force only supported mode
+        std::cout << _("Interface graphic mode : ") << interface << std::endl;
     };
-    switch (interface) {
-                // choose interface gnome kde x11 ..
-                case 'g' :
-                    try{
-                        //Gx_interface *g_app;
-                        //auto app = Gtk::Application::create("");
-                        auto g_app = Gx_interface::create();
-                        //g_app = new Gx_interface(argc, argv);
-                        return g_app->run(argc, argv);
-                        //delete g_app;
-                    }catch(const std::exception& ex){
-                        std::cerr << ex.what() << std::endl;
-                        //std::cerr << ex.domain() << std::endl;
-                        //std::cerr << ex.code() << std::endl;
-                        LOG_OUT();
-                        return 1;
+    try{
+        switch (interface) {
+                    // choose interface gnome kde x11 ..
+                    case 'g' :{
+                            auto g_app = Gx_interface::create();
+                            return g_app->run(argc, argv);
+                            break;
                     };
-                break;
-                /*case 'k' :
-                    Kinterface *k_app_interface;
-                    k_app_interface = new Kinterface(argc, argv);
-                    delete k_app_interface;
-                break;
-                case 'x' :
-                    Xinterface *x_app_interface;
-                    x_app_interface = new Xinterface(argc, argv);
-                    delete x_app_interface;
-                break;
-                case 'w' :
-                    Winterface *w_app_interface;
-                    w_app_interface = new Winterface(argc, argv);
-                    delete w_app_interface;
-                break;
-                case 'p' :
-                    Pinterface *p_app_interface;
-                    p_app_interface = new Pinterface(argc, argv);
-                    delete p_app_interface;
-                break;*/
-                default :
-                    std::cout << _("The option : ")<< interface << _(" is not valid for an interface type") << std::endl;
-                break;
+                    /*case 'k' :
+                        Kinterface *k_app_interface;
+                        k_app_interface = new Kinterface(argc, argv);
+                        delete k_app_interface;
+                    break;
+                    case 'x' :
+                        Xinterface *x_app_interface;
+                        x_app_interface = new Xinterface(argc, argv);
+                        delete x_app_interface;
+                    break;
+                    case 'w' :
+                        Winterface *w_app_interface;
+                        w_app_interface = new Winterface(argc, argv);
+                        delete w_app_interface;
+                    break;
+                    case 'p' :
+                        Pinterface *p_app_interface;
+                        p_app_interface = new Pinterface(argc, argv);
+                        delete p_app_interface;
+                    break;*/
+                    default:{
+                            std::cout << _("The option : ")<< interface << _(" is not valid for an interface type") << std::endl;
+                        break;
+                    };
+        };
+    }catch(const std::exception& ex){
+        std::cerr << _("Error: in application start -> ") << ex.what() << std::endl;
+        LOG_OUT();
+        return 1;
+    };
+    LOG_OUT ();
+    return 0;
 };
-  LOG_OUT ();
-  return 0;
-};
-
-

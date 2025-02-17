@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-17 03:49+0100\n"
+"POT-Creation-Date: 2025-02-17 16:13+0100\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,70 +17,70 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/dx7interface.cc:1872
+#: ../src/dx7interface.cc:1883
 msgid "Monophonic"
 msgstr "Monophonique"
 
-#: ../src/dx7interface.cc:1874
+#: ../src/dx7interface.cc:1885
 msgid "Polyphonic"
 msgstr "Polyphonique"
 
-#: ../src/dx7interface.cc:1892
+#: ../src/dx7interface.cc:1903
 msgid "Follow"
 msgstr ""
 
-#: ../src/dx7interface.cc:1894
+#: ../src/dx7interface.cc:1905
 msgid "Retain"
 msgstr ""
 
-#: ../src/dx7interface.cc:2655
+#: ../src/dx7interface.cc:2666
 msgid "/* OP1 */"
 msgstr "/* Operateur 1 */"
 
-#: ../src/dx7interface.cc:2666
+#: ../src/dx7interface.cc:2677
 msgid " OP1 "
 msgstr " Operateur 1 "
 
-#: ../src/dx7interface.cc:2982
+#: ../src/dx7interface.cc:2993
 msgid "/* OP2 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:2993 ../data/ui/dx7interface-0.0.1-simplify.ui.h:59
+#: ../src/dx7interface.cc:3004 ../data/ui/dx7interface-0.0.1-simplify.ui.h:59
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:58
 msgid " OP2 "
 msgstr ""
 
-#: ../src/dx7interface.cc:3300
+#: ../src/dx7interface.cc:3311
 msgid "/* OP3 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:3311
+#: ../src/dx7interface.cc:3322
 msgid " OP3 "
 msgstr ""
 
-#: ../src/dx7interface.cc:3621
+#: ../src/dx7interface.cc:3632
 msgid "/* OP4 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:3632 ../data/ui/dx7interface-0.0.1-simplify.ui.h:61
+#: ../src/dx7interface.cc:3643 ../data/ui/dx7interface-0.0.1-simplify.ui.h:61
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:60
 msgid " OP4 "
 msgstr ""
 
-#: ../src/dx7interface.cc:3938
+#: ../src/dx7interface.cc:3949
 msgid "/* OP5 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:3949 ../data/ui/dx7interface-0.0.1-simplify.ui.h:62
+#: ../src/dx7interface.cc:3960 ../data/ui/dx7interface-0.0.1-simplify.ui.h:62
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:61
 msgid " OP5 "
 msgstr ""
 
-#: ../src/dx7interface.cc:4255
+#: ../src/dx7interface.cc:4266
 msgid "/* OP6 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:4266 ../data/ui/dx7interface-0.0.1-simplify.ui.h:63
+#: ../src/dx7interface.cc:4277 ../data/ui/dx7interface-0.0.1-simplify.ui.h:63
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:62
 msgid " OP6 "
 msgstr ""

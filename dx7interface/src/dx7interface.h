@@ -26,12 +26,13 @@
  * attache/detache midi one by synth
 */
 #pragma once
-#define MODULE_NAME "Dx7SyX"
+#define MODULE_NAME "Dx7interface"
 /* sys */
 #include <memory>
 // #include <cairomm/surface.h>
 /*** APP ***/
 #include <gxinterface/0.0.1/gxmodule.h>
+#include <filesystem>
 //s#include <gdkmm-3.0/gdkmm.h>
 #include "GtkClass.h"
 /* Synth */

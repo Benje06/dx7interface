@@ -24,11 +24,11 @@
 *
 * ----------------------------------------------------------------------------
 */
+#pragma once
 #ifndef Gemod_H
 	#define Gemod_H
 	/* gnome */
 	/* app */
-	#include "debug.h"
 	#include "common.h"
 	#include "gxmodule.h"
 

@@ -174,6 +174,7 @@ do
             echo ""
             echo "Running autoupdate ..."
             autoupdate
+
             # intltool
             # i18n
             echo ""

@@ -28,8 +28,6 @@
 #ifndef gemod_CC
 	#define gemod_CC
 	/* app */
-	#include "debug.h"
-	#include "common.h"
 	#include "gemod.h"
 /*
 * Gemod
@@ -234,43 +232,46 @@ void Gemod::on_module_select_event(){
 	LOG_IN();
 	// Gtk::FileDialog set_initial_folder
 	//						  select_folder
-	#if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-		auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_module_select");
-		dialog->set_title("Select Module .la, .so or .ui");
-		dialog->set_modal(true);
-		dialog->open( *(get_main()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-				try {
-					auto file = dialog->open_finish(result);
-					if (file) {
-						std::string filename = file->get_path();
-						this->add_module(filename );
-					}
-				} catch (const std::exception & error) {
-					std::cerr << "Error: " << error.what() << std::endl;
-				}
-			}
-		);
-	#else
-		try {
+    try {
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_module_select");
+            dialog->set_title(_("Select Module .la, .so or .ui"));
+            dialog->set_modal(true);
+            dialog->open( *(get_main()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+                    try {
+                        auto file = dialog->open_finish(result);
+                        if (file) {
+                            std::string filename = file->get_path();
+                            this->add_module(filename);
+                        }
+                    } catch (const std::exception & ex) {
+                        std::cerr << "Error: " << ex.what() << std::endl;
+                    }
+                }
+            );
+        #else
 			GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-			auto dialog = new Gtk::FileChooserDialog("Please choose a file", Gtk::FileChooser::Action::OPEN);
+			auto dialog = new Gtk::FileChooserDialog(_("Please choose a file"), Gtk::FileChooser::Action::OPEN);
 			dialog->set_transient_for(*(get_main()));
 			dialog->set_modal(true);
 			dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
             dialog->add_button("_Open", Gtk::ResponseType::ACCEPT);
             dialog->signal_response().connect(
                 [this, dialog](int response) {
-                    if (response == Gtk::ResponseType::ACCEPT) {
-                        add_module((dialog->get_file())->get_parse_name());
-                    }
-                    dialog->hide();
+                    try {
+                        if (response == Gtk::ResponseType::ACCEPT) {
+                            add_module((dialog->get_file())->get_parse_name());
+                        }
+                        dialog->hide();
+                    } catch (const std::exception & ex) {
+                        std::cerr << "Error: " << ex.what() << std::endl;
+                    };
                 });
             dialog->show();
-		} catch (const std::exception & error) {
-			std::cerr << "Error: " << error.what() << std::endl;
-		}
-		
 	#endif
+    } catch (const std::exception & ex) {
+        std::cerr << "Error: " << ex.what() << std::endl;
+    };
 	LOG_OUT();
 };
 

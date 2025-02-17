@@ -5,6 +5,8 @@ src/main.cc
 src/main.h
 src/gemod.cc
 src/gemod.h
+src/gxmodule.cc
+src/gxmodule.h
 src/gxinterface.cc
 src/gxinterface.h
 

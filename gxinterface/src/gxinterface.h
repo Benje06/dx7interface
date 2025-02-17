@@ -35,12 +35,12 @@
 * Pango
 * cairo
 */
+#pragma once
 #ifndef Gx_interface_H
 	#define Gx_interface_H
 	/* app */
 	#include "common.h"
 	#include "gemod.h"
-	// Liste des Class
 	/* PROGRAMNAME_UI_DIR */
 	#if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
 		#define UI_FILE PROGRAMNAME_UI_DIR"interface.ui"
@@ -59,15 +59,15 @@ class Gx_interface: public Gtk::Application {
 		GError *error;
 		/* UI module*/
 		void create_window();
+
 	protected:
 		Gx_interface();
 		~Gx_interface();
 		// Override default signal handlers:
 		void on_activate() override;
-		int on_command_line( const Glib::RefPtr<Gio::ApplicationCommandLine>& ) override;
+        int on_command_line( const Glib::RefPtr<Gio::ApplicationCommandLine>& ) override;
 	public:
 		static Glib::RefPtr<Gx_interface> create();
-
 };	
 
 #endif /* Gx_interface_H */

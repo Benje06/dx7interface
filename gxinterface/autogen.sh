@@ -173,6 +173,7 @@ do
             echo ""
             echo "Running autoupdate ..."
             autoupdate
+
             # intltool
             # i18n
             echo ""
@@ -192,7 +193,7 @@ do
             echo "/*** Extract string from ui files (intltool-extract --type=gettext/glade --update)***/"
             for ui in $(cat POTFILES.in|grep "\.ui$") ; do
                 intltool-extract --update ../${ui} --type=gettext/glade
-                xgettext -o ${pname}.pot --from-code=utf-8 -j -a ../${ui}.h ${pname}.pot
+                xgettext -o ${pname}.pot --from-code=utf-8 --omit-header -j -a ../${ui}.h ${pname}.pot
             done
             if test -f LINGUAS && test -r LINGUAS; then
                 for i in $(cat LINGUAS | grep -v '#') ; do

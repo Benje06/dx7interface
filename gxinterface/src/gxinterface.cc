@@ -28,10 +28,12 @@
 Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HANDLES_COMMAND_LINE) {
     LOG_IN();
     try{
-        std::locale::global(std::locale(""));
-        bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
-        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-        textdomain(GETTEXT_PACKAGE);
+        #ifdef ENABLE_NLS
+            std::locale::global(std::locale(""));
+            bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
+            bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+            textdomain(GETTEXT_PACKAGE);
+        #endif
         /* init of error code */
         error = NULL;
         /* analyse of command line parameters */
@@ -59,35 +61,33 @@ Glib::RefPtr<Gx_interface> Gx_interface::create(){
 
 void Gx_interface::on_activate(){
     LOG_IN();
-    if( itype == Glib::ustring("interface")) {
-        module_manager=new Gemod(iname);
-        if(module_manager){
-            if(module_manager->get_main()){
-                add_window(*module_manager->get_main());
-                (*module_manager->get_main()).set_default_size(1024, 768);
-                (*module_manager->get_main()).set_title(module_manager->get_app_name());
-                (*module_manager->get_main()).set_visible(true);
+    try{
+        if( itype == Glib::ustring("interface")) {
+            module_manager=new Gemod(iname);
+            if(module_manager){
+                if(module_manager->get_main()){
+                    add_window(*module_manager->get_main());
+                    (*module_manager->get_main()).set_default_size(1024, 768);
+                    (*module_manager->get_main()).set_title(module_manager->get_app_name());
+                    (*module_manager->get_main()).set_visible(true);
+                };
             };
         };
-    };
-    if(itype == Glib::ustring("module")) {
-        // Create your window here
-        module_manager=new Gemod(iname,0);
-        if(module_manager){
-            if(module_manager->get_window()){
-                add_window(*module_manager->get_window());
-                (*module_manager->get_window()).set_default_size(1024,768);
-                (*module_manager->get_window()).set_title(module_manager->get_app_name());
-                (*module_manager->get_window()).set_visible(true);
+        if(itype == Glib::ustring("module")) {
+            // Create your window here
+            module_manager=new Gemod(iname,0);
+            if(module_manager){
+                if(module_manager->get_window()){
+                    add_window(*module_manager->get_window());
+                    (*module_manager->get_window()).set_default_size(1024,768);
+                    (*module_manager->get_window()).set_title(module_manager->get_app_name());
+                    (*module_manager->get_window()).set_visible(true);
+                };
             };
         };
+    }catch(const std::exception& ex){
+        std::cerr << _("Error: in application activate -> ") << ex.what() << std::endl;
     };
-/*    // Create and show your main window here
-    auto window = new Gtk::ApplicationWindow();
-    window->set_default_size(400, 300);
-    add_window(*window);
-    window->show();
-*/
     LOG_OUT();
 };
 
@@ -102,39 +102,30 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
     itype="interface";
     iname=UI_FILE;
     for ( i = 1; i <= argc; i++) {
-        if ( (argv[i] != NULL) && (Glib::ustring(argv[i]) == "-i")
-        && (argv[i+1] != NULL) && (Glib::ustring(argv[i+1]) != "") ){  // -f and name as argument
+        if ( (argv[i] != NULL) && ( Glib::ustring(argv[i]) == "-i" || (Glib::ustring(argv[i]) == "-m") )
+        && (argv[i+1] != NULL) && ( Glib::ustring(argv[i+1]) != "" )
+        ){  // -i and interface filename as argument
             FILE *file = fopen(argv[i+1],"r");
             if ( file == NULL ) {						// try open fil
                 iname=UI_FILE;
-                std::cout << _("!!! interface file ") << argv[i+1] <<(" doesn't exist !!!") << std::endl;
-                std::cout << _("Loading default interface file. ") << std::endl;
+                if ( Glib::ustring(argv[i]) == "-m" ){
+                    std::cout << _("!!! Module ") << argv[i+1] << _(" doesn't exist or could not be read !!!") << std::endl;
+                }else{
+                    std::cout << _("!!! Interface file ") << argv[i+1] << _(" does not exist or could not be read !!!") << std::endl;
+                };
+                std::cout << _("Loading default interface file.") << std::endl;
             }else{
-            iname=Glib::ustring(argv[i+1]);
-            fclose(file);
-            };
-        };
-        if ( (argv[i] != NULL) && (Glib::ustring(argv[i]) == "-m")
-        && (argv[i+1] != NULL) && (Glib::ustring(argv[i+1]) != "") ){  // -m and name as argument
-            FILE *file = fopen(argv[i+1],"r");
-            if ( file == NULL) {						// try open fil
-                iname=UI_FILE;
-                std::cout << _("!!! Module ") << argv[i+1] << _(" doesn't exist !!!") << std::endl;
-                std::cout << _("Loading default interface file. ") << std::endl;
-            }else{
-            itype="module";
-            iname=Glib::ustring(argv[i+1]);
-            std::cout << _("Loading module.") <<std::endl;
-            fclose(file);
+                if ( Glib::ustring(argv[i]) == "-m" ){
+                    itype="module";
+                    std::cout << _("Loading module.") <<std::endl;
+                };
+                iname=Glib::ustring(argv[i+1]);
+                fclose(file);
             };
         };
     };
-    std::cout << _("Loading file: ")<< iname <<" ."<<std::endl;
+    std::cout << _("Loading file: ")<< iname <<std::endl;
     LOG_OUT();
     activate();
     return 0;
-    //return Gtk::Application::on_command_line(command_line);
 };
-
-//Glib::ustring Gx_interface::get_itype(){ LOG_IN(); return itype; LOG_OUT(); };
-

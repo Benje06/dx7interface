@@ -43,10 +43,6 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
         textdomain (GETTEXT_PACKAGE);
         bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-
-        std::cout <<  textdomain(nullptr) <<std::endl;
-        std::cout <<  bindtextdomain(GETTEXT_PACKAGE,nullptr) <<std::endl;
-        std::cout <<  bind_textdomain_codeset(GETTEXT_PACKAGE,nullptr) <<std::endl;
     #endif
     /* I/O init */
     Gio::init();
@@ -1465,29 +1461,38 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 };
 
 void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
-    /* set_default_value */
-    Cairo::RefPtr<Cairo::ImageSurface> algo_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png");
-    double scale_factor = width / algo_image_surface->get_width();
-    cr->save();
-    cr->scale(scale_factor,scale_factor);
-    cr->set_source(algo_image_surface, 0, 0);
-    cr->paint();
-    cr->restore();
+    if ( std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png")) ){
+        Cairo::RefPtr<Cairo::ImageSurface> algo_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png");
+        double scale_factor = width / algo_image_surface->get_width();
+        cr->save();
+        cr->scale(scale_factor,scale_factor);
+        cr->set_source(algo_image_surface, 0, 0);
+        cr->paint();
+        cr->restore();
+    }else{
+        std::cerr << "File not found: "<<std::endl;
+         std::cerr<<MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png"<<std::endl;
+    };
 };
 
 void Dx7interface::on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
     LOG_IN();
-    Glib::ustring img = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()))->get_string();
+    Glib::ustring img = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()) )->get_string();
     if (img == "S/HOLD"){
         img="S_HOLD";
     };
-    Cairo::RefPtr<Cairo::ImageSurface> lfo_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/"+img+".png");
-    double scale_factor = width / lfo_image_surface->get_width();
-    cr->save();
-    cr->scale(scale_factor,scale_factor);
-    cr->set_source(lfo_image_surface, 0,0);
-    cr->paint();
-    cr->restore();
+    if (std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/"+img+".png"))){
+        Cairo::RefPtr<Cairo::ImageSurface> lfo_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/"+img+".png");
+        double scale_factor = width / lfo_image_surface->get_width();
+        cr->save();
+        cr->scale(scale_factor,scale_factor);
+        cr->set_source(lfo_image_surface, 0,0);
+        cr->paint();
+        cr->restore();
+    }else{
+        std::cerr << "File not found: "<<std::endl;
+        std::cerr<<MOD_IMG_DIRECTORY"/"+img+".png"<<std::endl;
+    };
     LOG_OUT();
 };
 
@@ -1495,126 +1500,135 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
     // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
     /* key touch */
-    Cairo::RefPtr<Cairo::ImageSurface> touch;
-    Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_b.png");
-    Cairo::RefPtr<Cairo::ImageSurface> touch_w = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_w.png");
-    double width_w = (double)touch_w->get_width();
-    /* keyboard */
-    Cairo::RefPtr<Cairo::ImageSurface> keyboard_bg_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard_background.png");
-    Cairo::RefPtr<Cairo::ImageSurface> keyboard_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard.png");
-    double keyboard_width = (double)keyboard_image_surface->get_width();
-    double keyboard_heigth = (double)keyboard_image_surface->get_height();
-    /* UI values */
-    Glib::ustring note = (std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+num_op))->get_selected_item()))->get_string();
-    uint num_note = get_gwidget<Gtk::DropDown>("note_brk_pt_op"+num_op)->get_selected();
-    uint octv = get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+num_op)->get_value();
-    // note_ = (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected();
-    //octv_ = (((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value() - 1) * 12);
-    /* Key touch */
-    //C 4 = note=3 oct=4
-    //A 4 = note=0 oct=4
-    // progression  -2  1 3  6 8 noir
-    //             -3-10 2 45 7  blanche
-    /* compute step */
-    int note_ref = 3; // C
-    int dec = num_note - note_ref;
-    int octv_base = 0;
-    int dep_octv = octv_base - octv;
-    double dep = (2.0* width_w) - ((double)dep_octv)*(7.0*width_w);
-    switch(dec){
-        case 0:{ // C
-            dep = dep;
-            touch = touch_w;
-            break;
-        }
-        case 1:{ // C#
-            dep = dep + (width_w /2.0);
-            touch = touch_b;
-            break;
-        };
-        case 2:{ // D
-            dep = dep + (width_w);
-            touch = touch_w;
-            break;
-        };
-        case 3:{ // D#
-            dep = dep + ( ( width_w ) + ( width_w/2.0 ) );
-            touch = touch_b;
+    if (std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/touche_b.png"))
+        && std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/touche_w.png"))
+        && std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/keyboard_background.png"))
+        && std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/keyboard.png"))
+    ){
+        Cairo::RefPtr<Cairo::ImageSurface> touch;
+        Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_b.png");
+        Cairo::RefPtr<Cairo::ImageSurface> touch_w = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_w.png");
+        double width_w = (double)touch_w->get_width();
+        /* keyboard */
+        Cairo::RefPtr<Cairo::ImageSurface> keyboard_bg_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard_background.png");
+        Cairo::RefPtr<Cairo::ImageSurface> keyboard_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard.png");
+        double keyboard_width = (double)keyboard_image_surface->get_width();
+        double keyboard_heigth = (double)keyboard_image_surface->get_height();
+        /* UI values */
+        Glib::ustring note = (std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+num_op))->get_selected_item()))->get_string();
+        uint num_note = get_gwidget<Gtk::DropDown>("note_brk_pt_op"+num_op)->get_selected();
+        uint octv = get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+num_op)->get_value();
+        // note_ = (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected();
+        //octv_ = (((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value() - 1) * 12);
+        /* Key touch */
+        //C 4 = note=3 oct=4
+        //A 4 = note=0 oct=4
+        // progression  -2  1 3  6 8 noir
+        //             -3-10 2 45 7  blanche
+        /* compute step */
+        int note_ref = 3; // C
+        int dec = num_note - note_ref;
+        int octv_base = 0;
+        int dep_octv = octv_base - octv;
+        double dep = (2.0* width_w) - ((double)dep_octv)*(7.0*width_w);
+        switch(dec){
+            case 0:{ // C
+                dep = dep;
+                touch = touch_w;
+                break;
+            }
+            case 1:{ // C#
+                dep = dep + (width_w /2.0);
+                touch = touch_b;
+                break;
+            };
+            case 2:{ // D
+                dep = dep + (width_w);
+                touch = touch_w;
+                break;
+            };
+            case 3:{ // D#
+                dep = dep + ( ( width_w ) + ( width_w/2.0 ) );
+                touch = touch_b;
 
-            break;
+                break;
+            };
+            case 4:{ // E
+                dep = dep + ( 2.0 * width_w ) ;
+                touch = touch_w;
+                break;
+            };
+            case 5:{ // F
+                dep = dep + ( 3.0 * width_w );
+                touch = touch_w;
+                break;
+            };
+            case 6:{ // F#
+                dep = dep + ( ( 3.0 * width_w ) + ( width_w/2.0 ) );
+                touch = touch_b;
+                break;
+            };
+            case 7:{ // G
+                dep = dep + ( 4.0 * width_w );
+                touch = touch_w;
+                break;
+            };
+            case 8:{ // G#
+                dep = dep +( ( 4.0 * width_w) + (width_w/2.0) ) ;
+                touch = touch_b;
+                break;
+            };
+            case -3:{ // A
+                dep = dep + ( ( 5.0 * width_w ) );
+                touch = touch_w;
+                break;
+            };
+            case -2:{ // A#
+                dep = dep + ( ( 5.0 * width_w ) + (width_w/2.0) ) ;
+                touch = touch_b;
+                break;
+            };
+            case -1:{ // B
+                dep = dep + ( ( 6.0 * width_w ) );
+                touch = touch_w;
+                break;
+            };
         };
-        case 4:{ // E
-            dep = dep + ( 2.0 * width_w ) ;
-            touch = touch_w;
-            break;
-        };
-        case 5:{ // F
-            dep = dep + ( 3.0 * width_w );
-            touch = touch_w;
-            break;
-        };
-        case 6:{ // F#
-            dep = dep + ( ( 3.0 * width_w ) + ( width_w/2.0 ) );
-            touch = touch_b;
-            break;
-        };
-        case 7:{ // G
-            dep = dep + ( 4.0 * width_w );
-            touch = touch_w;
-            break;
-        };
-        case 8:{ // G#
-            dep = dep +( ( 4.0 * width_w) + (width_w/2.0) ) ;
-            touch = touch_b;
-            break;
-        };
-        case -3:{ // A
-            dep = dep + ( ( 5.0 * width_w ) );
-            touch = touch_w;
-            break;
-        };
-        case -2:{ // A#
-            dep = dep + ( ( 5.0 * width_w ) + (width_w/2.0) ) ;
-            touch = touch_b;
-            break;
-        };
-        case -1:{ // B
-            dep = dep + ( ( 6.0 * width_w ) );
-            touch = touch_w;
-            break;
-        };
-    };
-    /* Keyboard */
-    double keyboard_pos = height - keyboard_heigth;
-    double keyboard_start = (width /2.0) - (0.5*width_w) - dep;
-    double pos_key = (width /2.0) - (touch->get_width() / 2.0);
+        /* Keyboard */
+        double keyboard_pos = height - keyboard_heigth;
+        double keyboard_start = (width /2.0) - (0.5*width_w) - dep;
+        double pos_key = (width /2.0) - (touch->get_width() / 2.0);
 
-    /* Keyboard bg */
-    cr->save();
-    cr->set_source(keyboard_bg_image_surface, keyboard_start, keyboard_pos);
-    cr->paint();
-    cr->set_source(keyboard_bg_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
-    cr->paint();
-    if( touch == touch_b ){
-        /* Keyboard under */
-        cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
+        /* Keyboard bg */
+        cr->save();
+        cr->set_source(keyboard_bg_image_surface, keyboard_start, keyboard_pos);
         cr->paint();
-        cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
+        cr->set_source(keyboard_bg_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
         cr->paint();
-        /* Touch */
-        cr->set_source(touch, pos_key, keyboard_pos );
-        cr->paint();
+        if( touch == touch_b ){
+            /* Keyboard under */
+            cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
+            cr->paint();
+            cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
+            cr->paint();
+            /* Touch */
+            cr->set_source(touch, pos_key, keyboard_pos );
+            cr->paint();
+        }else{
+            /* Touch */
+            cr->set_source(touch, pos_key, keyboard_pos );
+            cr->paint();
+            /* Keyboard over */
+            cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
+            cr->paint();
+            cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
+            cr->paint();
+        };
+        cr->restore();
     }else{
-        /* Touch */
-        cr->set_source(touch, pos_key, keyboard_pos );
-        cr->paint();
-        /* Keyboard over */
-        cr->set_source(keyboard_image_surface, keyboard_start, keyboard_pos);
-        cr->paint();
-        cr->set_source(keyboard_image_surface, keyboard_start + keyboard_width - (3*width_w), keyboard_pos);
-        cr->paint();
+        std::cerr << "File not found: "<<std::endl;
+        std::cerr<<MOD_IMG_DIRECTORY"/ keyboard or touch .png"<<std::endl;
     };
-    cr->restore();
     //LOG_OUT();
 };
 
