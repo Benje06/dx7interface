@@ -10,6 +10,9 @@ src/gxinterface.h
 
 #ui
 data/ui/interface.ui
+data/ui/interface_4.8.ui
+data/launcher/gxinterface.desktop.in
+
 
 
 

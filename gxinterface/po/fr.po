@@ -1,0 +1,63 @@
+# French translations for gxinterface package.
+# Copyright (C) 2025 THE gxinterface'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gxinterface package.
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gxinterface 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-17 03:34+0100\n"
+"PO-Revision-Date: 2025-02-17 01:09+0100\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../src/main.cc:88
+msgid "The option : "
+msgstr "L'option : "
+
+#: ../src/main.cc:88
+msgid " is not valid for an interface type"
+msgstr " n'est pas valide pour un type d'interface"
+
+#: ../src/gxinterface.cc:110
+msgid "!!! interface file "
+msgstr "!!! Le fichier d'interface "
+
+#: ../src/gxinterface.cc:111 ../src/gxinterface.cc:123
+msgid "Loading default interface file. "
+msgstr "Chargement du fichier d'interface par defaut. "
+
+#: ../src/gxinterface.cc:122
+msgid "!!! Module "
+msgstr "!!! le module "
+
+#: ../src/gxinterface.cc:122
+msgid " doesn't exist !!!"
+msgstr " n'existe pas !!!"
+
+#: ../src/gxinterface.cc:127
+msgid "Loading module."
+msgstr "Chargement d'un module."
+
+#: ../src/gxinterface.cc:132
+msgid "Loading file: "
+msgstr "Chargment du fichier: "
+
+#: ../data/ui/interface.ui.h:1 ../data/ui/interface_4.8.ui.h:1
+msgid "Select module"
+msgstr "Selectionner le module:"
+
+#: ../data/ui/interface.ui.h:2 ../data/ui/interface_4.8.ui.h:2
+#, fuzzy
+msgid "Standalone mode"
+msgstr "Mode autonome"
+
+#: ../data/ui/interface.ui.h:3 ../data/ui/interface_4.8.ui.h:3
+msgid "Modules"
+msgstr "Modules"

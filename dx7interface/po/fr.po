@@ -1,0 +1,82 @@
+# French translations for dx7interface package.
+# Copyright (C) 2025 THE dx7interface'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the dx7interface package.
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: dx7interface 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-17 01:53+0100\n"
+"PO-Revision-Date: 2025-02-16 20:58+0100\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../src/dx7interface.cc:1872
+msgid "Monophonic"
+msgstr "Monophonique"
+
+#: ../src/dx7interface.cc:1874
+msgid "Polyphonic"
+msgstr "Polyphonique"
+
+#: ../src/dx7interface.cc:1892
+msgid "Follow"
+msgstr ""
+
+#: ../src/dx7interface.cc:1894
+msgid "Retain"
+msgstr ""
+
+#: ../src/dx7interface.cc:2655
+msgid "/* OP1 */"
+msgstr "/* Operateur 1 */"
+
+#: ../src/dx7interface.cc:2666
+msgid " OP1 "
+msgstr " Operateur 1 "
+
+#: ../src/dx7interface.cc:2982
+msgid "/* OP2 */"
+msgstr ""
+
+#: ../src/dx7interface.cc:2993
+msgid " OP2 "
+msgstr ""
+
+#: ../src/dx7interface.cc:3300
+msgid "/* OP3 */"
+msgstr ""
+
+#: ../src/dx7interface.cc:3311
+msgid " OP3 "
+msgstr ""
+
+#: ../src/dx7interface.cc:3621
+msgid "/* OP4 */"
+msgstr ""
+
+#: ../src/dx7interface.cc:3632
+msgid " OP4 "
+msgstr ""
+
+#: ../src/dx7interface.cc:3938
+msgid "/* OP5 */"
+msgstr ""
+
+#: ../src/dx7interface.cc:3949
+msgid " OP5 "
+msgstr ""
+
+#: ../src/dx7interface.cc:4255
+msgid "/* OP6 */"
+msgstr ""
+
+#: ../src/dx7interface.cc:4266
+msgid " OP6 "
+msgstr ""

@@ -51,8 +51,8 @@
     #ifdef ENABLE_NLS
         #include <libintl.h>
         #include <glibmm/i18n.h>
-        #define textdomain(GETTEXT_PACKAGE)
-        #define bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR)
+       // #define textdomain(GETTEXT_PACKAGE)
+       // #define bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR)
     #endif
     #include <regex>
     #include <gtkmm-4.0/gtkmm.h>

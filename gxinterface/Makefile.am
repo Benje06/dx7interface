@@ -73,12 +73,6 @@ DISTCLEANFILES = \
 	intltool-update.in\
 	ABOUT-NLS\
 	po/*.gmo\
-	po/de.po\
-	po/en.po\
-	po/es.po\
-	po/fr.po\
-	po/jap.po\
-	po/ru.po\
 	po/languagecode.po\
 	po/Makefile\
 	po/Makefile.in\
@@ -117,6 +111,26 @@ EXTRA_DIST = \
 ##desktop_in_files = gxinterface.desktop.in
 ##desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 ## @INTLTOOL_DESKTOP_RULE@
+if DEV
+copy-gmo-for-dev:
+	@for file in po/*.gmo; do \
+		lang=$${file%.gmo}; \
+		$(MKDIR_P) $$lang/LC_MESSAGES; \
+		cp $$file $$lang/LC_MESSAGES/$(PACKAGE).mo; \
+		echo "Copied $$file to $$lang/LC_MESSAGES/$(PACKAGE).mo"; \
+	done
+
+all-local: copy-gmo-for-dev
+
+clean-gmo-for-dev:
+	@for file in po/*.gmo; do \
+		lang=$${file%.gmo}; \
+		rm -rf $$lang/\
+		echo "Delete $$lang directory"; \
+	done
+
+clean-local: clean-gmo-for-dev
+endif
 
 install-data-local:
 	@$(NORMAL_INSTALL)

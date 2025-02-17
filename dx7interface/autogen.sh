@@ -27,14 +27,6 @@ rep=`pwd`
 pname=${rep##/*/}
 ACLOCAL_FLAGS="-I /usr/share/aclocal $ACLOCAL_FLAGS"
 
-if [ -n "$GNOME2_DIR" ]; then
-	ACLOCAL_FLAGS="-I $GNOME2_DIR/share/aclocal $ACLOCAL_FLAGS"
-	LD_LIBRARY_PATH="$GNOME2_DIR/lib:$LD_LIBRARY_PATH"
-	PATH="$GNOME2_DIR/bin:$PATH"
-	export PATH
-	export LD_LIBRARY_PATH
-fi
-
 (test -f $srcdir/configure.ac) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level package directory"
@@ -48,7 +40,6 @@ fi
   echo "or get the source tarball at ftp://ftp.gnu.org/pub/gnu/"
   DIE=1
 }
-
 
 (grep "^AM_PROG_XML_I18N_TOOLS" $srcdir/configure.ac >/dev/null) && {
   (xml-i18n-toolize --version) < /dev/null > /dev/null 2>&1 || {
@@ -106,6 +97,7 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
     DIE=1
   }
 }
+
 if test "$DIE" -eq 1; then
   exit 1
 fi
@@ -132,104 +124,88 @@ do
 	else
 		echo processing $dr
 		( cd $dr
-		aclocalinclude="$ACLOCAL_FLAGS"
-		if grep "^AM_GNU_GETTEXT" configure.ac >/dev/null; then
-			echo "Creating $dr/aclocal.m4 ..."
-			test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
-			echo "Running glib-gettextize...  Ignore non-fatal messages."
-			echo "no" | glib-gettextize --force --copy
-			echo "Making $dr/aclocal.m4 writable ..."
-			test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
-		fi
-        if grep "^AM_PROG_LIBTOOL" configure.ac >/dev/null; then
-			if test -z "$NO_LIBTOOLIZE" ; then 
-				echo "Running libtoolize..."
-				libtoolize --force --copy
-			fi
-		fi
-		if grep "^IT_PROG_INTLTOOL" configure.ac >/dev/null; then
-			echo "Running intltoolize..."
-			intltoolize --copy --force --automake
-		fi
-		if grep "^AM_PROG_XML_I18N_TOOLS" configure.ac >/dev/null; then
-			echo "Running xml-i18n-toolize..."
-			xml-i18n-toolize --copy --force --automake
-		fi
-		
-		echo "Running aclocal $aclocalinclude ..."
-		aclocal $aclocalinclude
-		
-		echo ""
-		echo "Running autoreconf ..."
-		autoreconf --force --install -I config -I m4
+            aclocalinclude="$ACLOCAL_FLAGS"
+            if grep "^AM_GNU_GETTEXT" configure.ac >/dev/null; then
+                echo "Creating $dr/aclocal.m4 ..."
+                test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
+                echo "Running glib-gettextize...  Ignore non-fatal messages."
+                echo "no" | glib-gettextize --force --copy
+                echo "Making $dr/aclocal.m4 writable ..."
+                test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
+            fi
+            if grep "^AM_PROG_LIBTOOL" configure.ac >/dev/null; then
+                if test -z "$NO_LIBTOOLIZE" ; then
+                    echo "Running libtoolize..."
+                    libtoolize --force --copy
+                fi
+            fi
+            if grep "^IT_PROG_INTLTOOL" configure.ac >/dev/null; then
+                echo "Running intltoolize..."
+                intltoolize --copy --force --automake
+            fi
+            if grep "^AM_PROG_XML_I18N_TOOLS" configure.ac >/dev/null; then
+                echo "Running xml-i18n-toolize..."
+                xml-i18n-toolize --copy --force --automake
+            fi
 
-		if grep "^AM_CONFIG_HEADER" configure.ac >/dev/null; then
-			echo ""
-			echo "Running autoheader..."
-			autoheader
-		fi
-		#autoconf
-		echo ""
-		echo "Running automake --gnu $am_opt ..."
-		automake --add-missing --gnu $am_opt
+            echo "Running aclocal $aclocalinclude ..."
+            aclocal $aclocalinclude
 
-		#autoscan
-		echo ""
-		echo "Running autoscan ..."
-		autoscan
-		
-		#autoupdate
-		echo ""
-		echo "Running autoupdate ..."
-		autoupdate
-		
-		# intltool
-		# i18n
-		update_languagecode(){
-			# xgettext
-			echo ""
-			echo "/*** Running xgettext  ***/"
-			cd src
-				# s sort, F by file,c add comment,a extract all, f from list of po file, o output file,
-				if test -f ../po/languagecode.po && test -w ../po/languagecode.po ;then
-					echo "Running xgettext  -j -F -c -a -n --no-wrap -f ../po/POTFILES --from-code=utf-8 -o ../po/languagecode.po --omit-header *.cc *.h..."
-					xgettext -j -F -c -a -n --no-wrap -f ../po/POTFILES --from-code=utf-8 -o ../po/languagecode.po --omit-header *.cc *.h
-				else
-					echo "Running xgettext -F -c -a -n --no-wrap --from-code=utf-8 -o ../po/languagecode.po --omit-header *.cc *.h..."
-					xgettext -F -c -a -n --no-wrap --from-code=utf-8 -o ../po/languagecode.po --omit-header *.cc *.h
-				fi
-			cd ..
-		}	
-		echo ""
-		echo "Running intltool-update & gettext ..."
-		update_languagecode
-		cd po 
-			echo ""
-			echo "/*** Extract string to header files (intltool-update -s)***/"
-			intltool-update -x -s
-			echo ""
-			echo "/*** Analyse potfiles (intltool-update -m) ***/"
-			intltool-update -x -m
-			if test -f $pname.pot && test -w $pname.pot ; then
-				echo ""
-				echo "/*** $pname.pot present merge with languagecode.po ***/"	
-				intltool-update -x -p -g $pname 			
-				intltool-update -x -d -g $pname -o languagecode.po languagecode			
-			else
-				echo ""
-				echo "/*** $pname.pot not present ***/"
-				echo "/*** Create new and merge with languagecode.po ***/"
-				intltool-update -x -g $pname languagecode 
-			fi
-			echo ""
-			echo "/*** Extract string to header files (intltool-update -s) ***/"
-			intltool-update -x -s
-			if test -f LINGUAS && test -r LINGUAS; then
-    			for i in $(cat LINGUAS | grep -v '#') ; do
-    			    msginit --no-translator --locale ${i} -i ${pname}.pot
-    			done
-    		fi
-			cd ..
+            echo ""
+            echo "Running autoreconf ..."
+            autoreconf --force --install -I config -I m4 --verbose --warnings=all "$srcdir"
+
+            if grep "^AC_CONFIG_HEADER" configure.ac >/dev/null; then
+                echo ""
+                echo "Running autoheader..."
+                autoheader
+            fi
+            #autoconf
+            echo ""
+            echo "Running automake --gnu $am_opt ..."
+            automake --add-missing --gnu $am_opt
+
+            #autoscan
+            echo ""
+            echo "Running autoscan ..."
+            autoscan
+
+            #autoupdate
+            echo ""
+            echo "Running autoupdate ..."
+            autoupdate
+            # intltool
+            # i18n
+            echo ""
+            echo "Running intltool-update & gettext ..."
+            cd po
+            echo ""
+            echo "/*** Extract string to header files (intltool-update -s)***/"
+            intltool-update -x -s
+            echo ""
+            echo "/*** Analyse potfiles (intltool-update -m) ***/"
+            intltool-update -x -m
+            echo ""
+            echo "/*** generate $pname.pot ***/"
+            intltool-update -x -p -g $pname
+            sed -i 's/CHARSET/UTF-8/' ${pname}.pot
+            echo ""
+            echo "/*** Extract string from ui files (intltool-extract --type=gettext/glade --update)***/"
+            for ui in $(cat POTFILES.in|grep "\.ui$") ; do
+                intltool-extract --update ../${ui} --type=gettext/glade
+                xgettext -o ${pname}.pot --from-code=utf-8 -j -a ../${ui}.h ${pname}.pot
+            done
+            if test -f LINGUAS && test -r LINGUAS; then
+                for i in $(cat LINGUAS | grep -v '#') ; do
+                    if [ ! -f ${i}.po ]; then
+                        msginit --no-translator --locale ${i} -i ${pname}.pot
+                        intltool-update -d -g $pname ${i}
+                    else
+                        msgmerge ${i}.po ${pname}.pot --output-file=${i}.po
+                    fi
+                done
+            fi
+            cd ..
 		)
 	fi
 done

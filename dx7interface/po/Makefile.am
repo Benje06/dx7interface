@@ -9,5 +9,3 @@ po_DATA = \
 
 podir = \
 	$(pkgdatadir)/po
-
-## File created by the gnome-build tools

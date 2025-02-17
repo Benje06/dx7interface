@@ -163,12 +163,11 @@ dnl ================================================================
 IT_PROG_INTLTOOL([0.35.0])
 AC_CHECK_FUNCS([setlocale])
 GETTEXT_PACKAGE=$PACKAGE_NAME
-AC_SUBST(GETTEXT_PACKAGE)
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",[$GETTEXT_PACKAGE])
-ALL_LINGUAS="de en es fr jap languagecode ru"
+AC_SUBST([GETTEXT_PACKAGE])
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"],[$GETTEXT_PACKAGE])
 AM_XGETTEXT_OPTION([--from-code=utf-8])
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.18.2])
+AM_GNU_GETTEXT_VERSION([0.19.8])
 
 dnl ================================================================
 dnl Develloper stuff
@@ -185,7 +184,7 @@ AM_CONDITIONAL([DEV], [test x$dev = xtrue])
 
 
 AM_COND_IF([DEV],[
-PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/locale]
+PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/po]
 PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/]
 PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/images/]
 PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
@@ -242,6 +241,7 @@ Configuration:
       PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
       PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
       PROGRAMNAME_DATA_DIR: ${PROGRAMNAME_DATA_DIR}
+      GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}
 
 "
 
@@ -413,12 +413,9 @@ $ac_compiler_gnu
 $ac_confdir
 $ac_config_commands
 $ac_config_files
-$ac_config_guess
 $ac_config_headers
 $ac_config_libobj_dir
 $ac_config_status_args
-$ac_config_sub
-$ac_configure
 $ac_configure_args
 $ac_cpp
 $ac_cs_success
@@ -664,8 +661,6 @@ $as_cr_digits
 $as_cr_letters
 $as_dir
 $as_dirname
-$as_echo
-$as_echo_n
 $as_executable_p
 $as_expr
 $as_lineno_1

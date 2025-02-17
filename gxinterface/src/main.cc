@@ -28,11 +28,10 @@
 
 int main (int argc, char *argv[]){
     LOG_IN ();
-    setlocale (LC_ALL, "");
+    std::locale::global(std::locale(""));
+    textdomain(GETTEXT_PACKAGE);
     bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-    textdomain(GETTEXT_PACKAGE);
-    //gchar* filename;
     char interface='g';
     /* test param */
 
@@ -86,7 +85,7 @@ int main (int argc, char *argv[]){
                     delete p_app_interface;
                 break;*/
                 default :
-                    std::cout << "L'option : "<< interface << " pour une interface n'est pas reconnue." << std::endl;
+                    std::cout << _("The option : ")<< interface << _(" is not valid for an interface type") << std::endl;
                 break;
 };
   LOG_OUT ();

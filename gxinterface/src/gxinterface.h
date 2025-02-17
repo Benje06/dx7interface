@@ -47,7 +47,7 @@
 	#else
 		#define UI_FILE PROGRAMNAME_UI_DIR"interface_4.8.ui"
 	#endif
-	#define APPLICATION_NAME (_("gxinterface"))
+	#define APPLICATION_NAME "gxinterface"
 
 class Gx_interface: public Gtk::Application {
 	private:

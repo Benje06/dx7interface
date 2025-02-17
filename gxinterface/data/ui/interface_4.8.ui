@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Created with Cambalache 0.94.1 -->
 <!-- Generated with glade 3.40.0 -->
-<interface>
+<interface domain="gxinterface">
   <!-- interface-name gxinterface.ui -->
   <requires lib="gio" version="2.0"/>
   <requires lib="gtk" version="4.0"/>
@@ -20,7 +20,7 @@
                       <object class="GtkGrid" id="grid_module_select">
                         <child>
                           <object class="GtkLabel" id="label2">
-                            <property name="label" translatable="yes">Selectionnez le module</property>
+                            <property name="label" translatable="yes">Select module</property>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">0</property>
@@ -29,7 +29,7 @@
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="checkbutton_standalone">
-                            <property name="label" translatable="yes">Mode standalone</property>
+                            <property name="label" translatable="yes">Standalone mode</property>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">1</property>

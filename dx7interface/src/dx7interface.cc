@@ -38,10 +38,15 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     LOG_IN();
     block_midi();
     #ifdef ENABLE_NLS
-        setlocale (LC_ALL, "");
+        //setlocale (LC_ALL, "");
+        std::locale::global(std::locale(""));
+        textdomain (GETTEXT_PACKAGE);
         bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-        textdomain (GETTEXT_PACKAGE);
+
+        std::cout <<  textdomain() <<std::endl;
+        std::cout <<  bindtextdomain(GETTEXT_PACKAGE) <<std::endl;
+        std::cout <<  bind_textdomain_codeset(nullptr) <<std::endl;
     #endif
     /* I/O init */
     Gio::init();

@@ -67,14 +67,9 @@ DISTCLEANFILES = \
 	intltool-extract.in\
 	intltool-merge.in\
 	intltool-update.in\
+	po/.intltool-merge-cache\
 	ABOUT-NLS\
 	po/*.gmo\
-        po/de.po\
-        po/en.po\
-        po/es.po\
-        po/fr.po\
-        po/jap.po\
-        po/ru.po\
         po/languagecode.po\
         po/Makefile\
         po/Makefile.in\
@@ -94,7 +89,7 @@ DISTCLEANFILES = \
 #distclean-local:
 #<tab>-rm -rf src/.deps autom4te.cache        
 distclean-local:
-	-rm -rf src/.deps autom4te.cache config m4
+	-rm -rf src/.deps autom4te.cache config m4 po/*/
 
 ## If the maintainer built it (for instance, a .info file),
 ## then maintainer-clean should delete it.
@@ -115,6 +110,27 @@ EXTRA_DIST = \
 	autogen.sh \
 	configure.ac \
 	Makefile.am
+
+if DEV
+copy-gmo-for-dev:
+	@for file in po/*.gmo; do \
+		lang=$${file%.gmo}; \
+		$(MKDIR_P) $$lang/LC_MESSAGES; \
+		cp $$file $$lang/LC_MESSAGES/$(PACKAGE).mo; \
+		echo "Copied $$file to $$lang/LC_MESSAGES/$(PACKAGE).gmo"; \
+	done
+
+all-local: copy-gmo-for-dev
+
+clean-gmo-for-dev:
+	@for file in po/*.gmo; do \
+		lang=$${file%.gmo}; \
+		rm -rf $$lang/\
+		echo "Delete $$lang directory"; \
+	done
+
+clean-local: clean-gmo-for-dev
+endif
 
 install-data-local:
 	@$(NORMAL_INSTALL)

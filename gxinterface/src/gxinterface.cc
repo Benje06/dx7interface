@@ -28,6 +28,10 @@
 Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HANDLES_COMMAND_LINE) {
     LOG_IN();
     try{
+        std::locale::global(std::locale(""));
+        bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
+        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+        textdomain(GETTEXT_PACKAGE);
         /* init of error code */
         error = NULL;
         /* analyse of command line parameters */
@@ -103,8 +107,8 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
             FILE *file = fopen(argv[i+1],"r");
             if ( file == NULL ) {						// try open fil
                 iname=UI_FILE;
-                std::cout << "!!! Le fichier d'interface "<<argv[i+1]<<" n'existe pas !!!" << std::endl;
-                std::cout << "Chargement du fichier d'interface par defaut. " << std::endl;
+                std::cout << _("!!! interface file ") << argv[i+1] <<(" doesn't exist !!!") << std::endl;
+                std::cout << _("Loading default interface file. ") << std::endl;
             }else{
             iname=Glib::ustring(argv[i+1]);
             fclose(file);
@@ -115,17 +119,17 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
             FILE *file = fopen(argv[i+1],"r");
             if ( file == NULL) {						// try open fil
                 iname=UI_FILE;
-                std::cout << "!!! Le module " << argv[i+1] << " n'existe pas !!!" << std::endl;
-                std::cout << "Chargement du fichier d'interface par defaut. " << std::endl;
+                std::cout << _("!!! Module ") << argv[i+1] << _(" doesn't exist !!!") << std::endl;
+                std::cout << _("Loading default interface file. ") << std::endl;
             }else{
             itype="module";
             iname=Glib::ustring(argv[i+1]);
-            std::cout << "Chargement d'un module." <<std::endl;
+            std::cout << _("Loading module.") <<std::endl;
             fclose(file);
             };
         };
     };
-    std::cout << "Chargement du fichier: "<< iname <<" ."<<std::endl;
+    std::cout << _("Loading file: ")<< iname <<" ."<<std::endl;
     LOG_OUT();
     activate();
     return 0;

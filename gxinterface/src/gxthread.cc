@@ -41,6 +41,7 @@ Thread::~Thread() {} ;
 void* Thread::T_Loop(void * thread) {
     Thread * iThread = (Thread *)thread;
     while(iThread->Run()){};
+    return 0;
 };
 
 int Thread::S_Thread(void* (*f) (void*)) {
