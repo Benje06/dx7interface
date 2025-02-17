@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-17 01:53+0100\n"
+"POT-Creation-Date: 2025-02-17 03:49+0100\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -45,7 +45,8 @@ msgstr " Operateur 1 "
 msgid "/* OP2 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:2993
+#: ../src/dx7interface.cc:2993 ../data/ui/dx7interface-0.0.1-simplify.ui.h:59
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:58
 msgid " OP2 "
 msgstr ""
 
@@ -61,7 +62,8 @@ msgstr ""
 msgid "/* OP4 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:3632
+#: ../src/dx7interface.cc:3632 ../data/ui/dx7interface-0.0.1-simplify.ui.h:61
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:60
 msgid " OP4 "
 msgstr ""
 
@@ -69,7 +71,8 @@ msgstr ""
 msgid "/* OP5 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:3949
+#: ../src/dx7interface.cc:3949 ../data/ui/dx7interface-0.0.1-simplify.ui.h:62
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:61
 msgid " OP5 "
 msgstr ""
 
@@ -77,6 +80,414 @@ msgstr ""
 msgid "/* OP6 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:4266
+#: ../src/dx7interface.cc:4266 ../data/ui/dx7interface-0.0.1-simplify.ui.h:63
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:62
 msgid " OP6 "
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:1
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:1
+msgid "Select Bank"
+msgstr "Choisir une banque"
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:2
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:2
+msgid "Banque de sons :"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:3
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:3
+msgid "N°"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:4
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:4
+msgid "1"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:5
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:5
+msgid "FB"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:6
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:6
+msgid "0"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:7
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:7
+msgid "Sync"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:8
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:8
+msgid "C"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:9
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:9
+msgid "C#"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:10
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:10
+msgid "D"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:11
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:11
+msgid "D#"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:12
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:12
+msgid "E"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:13
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:13
+msgid "F"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:14
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:14
+msgid "F#"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:15
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:15
+msgid "G"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:16
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:16
+msgid "G#"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:17
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:17
+msgid "A"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:18
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:18
+msgid "A#"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:19
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:19
+msgid "B"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:20
+msgid "AMS"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:21
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:21
+msgid "op1"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:22
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:22
+msgid "op2"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:23
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:23
+msgid "op3"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:24
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:24
+msgid "op4"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:25
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:25
+msgid "op5"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:26
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:26
+msgid "op6"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:27
+msgid "PMS"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:28
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:28
+msgid "TRI"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:29
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:29
+msgid "SAW-"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:30
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:30
+msgid "SAW+"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:31
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:31
+msgid "SQU"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:32
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:32
+msgid "SIN"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:33
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:33
+msgid "S/HOLD"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:34
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:34
+msgid "SPEED"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:35
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:35
+msgid "DELAY"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:36
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:36
+msgid "AMD"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:37
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:37
+msgid "PMD"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:38
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:38
+msgid "R1"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:39
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:39
+msgid "L1"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:40
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:40
+msgid "R2"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:41
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:41
+msgid "L2"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:42
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:42
+msgid "R3"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:43
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:43
+msgid "L3"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:44
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:44
+msgid "R4"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:45
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:45
+msgid "L4"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:46
+msgid "FONCTIONS"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:47
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:46
+msgid "Alg / LFO / Mod / Ptch"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:48
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:47
+msgid "DETUNE"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:49
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:48
+msgid "MODE"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:50
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:49
+msgid "RATIO"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:51
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:50
+msgid "FIXED"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:52
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:51
+msgid "COARSE"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:53
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:52
+msgid "FINE"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:54
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:53
+msgid "MUTE"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:55
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:54
+msgid "KRS"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:56
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:55
+msgid "KVS"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:57
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:56
+msgid "OUTPUT"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:58
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:57
+#, fuzzy
+msgid " OP1"
+msgstr " Operateur 1 "
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:60
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:59
+msgid " OP3"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:64
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:63
+msgid " Operateurs "
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:65
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:64
+msgid "left"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:66
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:65
+msgid "break point"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:67
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:66
+msgid "right"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:68
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:67
+msgid "LIN-"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:69
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:68
+msgid "EXP-"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:70
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:69
+msgid "LIN+"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:71
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:70
+msgid "EXP+"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:72
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:71
+#, fuzzy
+msgid "OP1"
+msgstr " Operateur 1 "
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:73
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:72
+msgid "97"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:74
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:73
+msgid "OP2"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:75
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:74
+msgid "OP3"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:76
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:75
+msgid "OP4"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:77
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:76
+msgid "OP5"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:78
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:77
+msgid "OP6"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:79
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:78
+msgid " Level Scalling "
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:80
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:79
+msgid "randomize"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:81
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:80
+msgid "Compare"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:82
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:81
+msgid "panique"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:83
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:82
+msgid "Fonction"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:84
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:83
+msgid "Op / Lvl Scl / Fct"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:20
+msgid "Amplitude Mod Sensitivity"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:27
+msgid "Pitch Mod Sensi"
 msgstr ""

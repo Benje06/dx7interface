@@ -5,8 +5,8 @@ src/dx7interface.cc
 src/dx7interface.h
 
 #ui
-data/ui/dx7interface-0.0.1.ui
-data/ui/dx7interface-0.0.1_4.8.ui
+data/ui/dx7interface-0.0.1-simplify.ui
+data/ui/dx7interface-0.0.1-simplify_4.8.ui
 data/launcher/dx7interface.desktop.in
 
 

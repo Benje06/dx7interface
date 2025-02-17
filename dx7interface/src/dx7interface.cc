@@ -44,9 +44,9 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
         bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 
-        std::cout <<  textdomain() <<std::endl;
-        std::cout <<  bindtextdomain(GETTEXT_PACKAGE) <<std::endl;
-        std::cout <<  bind_textdomain_codeset(nullptr) <<std::endl;
+        std::cout <<  textdomain(nullptr) <<std::endl;
+        std::cout <<  bindtextdomain(GETTEXT_PACKAGE,nullptr) <<std::endl;
+        std::cout <<  bind_textdomain_codeset(GETTEXT_PACKAGE,nullptr) <<std::endl;
     #endif
     /* I/O init */
     Gio::init();
