@@ -2119,17 +2119,20 @@ void Dx7interface::on_feedback_event() {
 };
 
 void Dx7interface::on_transpose_event() {
-    u_char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status & channel;
-    msg[3]=0x01;
-    msg[4]=0x10;
-    msg[5]=(get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()+1)*12;
-    msg[6]=0xF7;
-    bank_1_modif.sound->algo.transpose.val = msg[5];
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    char val =  (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected()
+             +( ((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()-1)*12 );
+    if( val >= 0 && val <= 48){
+        u_char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel;
+        msg[3]=0x01;
+        msg[4]=0x10;
+        msg[5]=val;
+        msg[6]=0xF7;
+        bank_1_modif.sound->algo.transpose.val = msg[5];
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    };
 };
 
 void Dx7interface::on_oks_event() {
