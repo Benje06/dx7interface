@@ -63,3 +63,10 @@ $cat .git/config
 git fetch
 git pull
 
+### Commandes utiles
+# voir les log distant sans pull
+git fetch
+git log --remotes
+# 
+
+

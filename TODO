@@ -6,19 +6,18 @@ normalisation gx_module (fonction load,
 
 # LANG
 traductions
-internationalisation
 
 # effectivité
 evenements MIDI
 lecture/ecriture fichier(dans fonctions ?)
-lecture/ecriture midi
+reception/envoi en midi (recevie bank, receive sound, send bank(32/128), plusieurs sons)
 multiplateforme (midi/interface) drumkit, Juce ???
 
 
 # Interface
-transpose algo (C1 -> C5) 
+transpose algo (C1 -> C5)
 son par defaut (son init)
-marge draw area 
+
 options des couleurs
 refonte interface( size/expand des elements)
 verification des courbes
