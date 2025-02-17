@@ -40,8 +40,6 @@
 /* sysex */
 #include "dx7sysex.h"
 
-
-
 /** CONSTANTS **/
 #define DATA_DIR PROGRAMNAME_DATA_DIR
 #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
