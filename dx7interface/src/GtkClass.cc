@@ -75,9 +75,12 @@ bool DropDownScrollController::on_scroll_kls(double dx, double dy, Glib::RefPtr<
         int current = widget->get_selected();
         int n_items = model->get_n_items();
         if (dy < 0) {
-            // Scroll up
+            // Scroll up go lower
             if(current == 0){ //A
                 widget->set_selected(n_items-1);
+                if(spinbutton->get_value() == -1 ){
+                    spinbutton->set_value(0);
+                };
             }else if(current == 3){ //C
                 widget->set_selected(std::max(0, current - 1));
                 spinbutton->set_value(spinbutton->get_value()-1);
@@ -85,13 +88,16 @@ bool DropDownScrollController::on_scroll_kls(double dx, double dy, Glib::RefPtr<
                 widget->set_selected(std::max(0, current - 1));
             }
         } else if (dy > 0) {
+            // Scroll down go upper
             if(current == n_items-1){ //G#
                 widget->set_selected(0);
             }else if(current == 2){
                 widget->set_selected(std::max(0, current + 1));
                 spinbutton->set_value(spinbutton->get_value()+1);
+            }else if(current == 3 && (spinbutton->get_value() == 8)){
+                widget->set_selected(current + 1);
+                spinbutton->set_value(7);
             }else{
-            // Scroll down
                 widget->set_selected(std::min(n_items - 1, current + 1));
             };
         };
