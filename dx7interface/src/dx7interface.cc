@@ -1891,6 +1891,9 @@ void Dx7interface::on_mono_poly_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.poly_mono.val = msg[5];
+    };
     if ( (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Monophonic"));
     }else{
@@ -1911,6 +1914,9 @@ void Dx7interface::on_portamento_md_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.portamento_md.val = msg[5];
+    };
     if ( (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_label(_("Follow"));
     }else{
@@ -1930,6 +1936,9 @@ void Dx7interface::on_portamento_glss_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.portamento_glss.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -1944,6 +1953,9 @@ void Dx7interface::on_portamento_tm_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("portamento_tm"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.portamento_tm.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -1958,6 +1970,9 @@ void Dx7interface::on_ptch_bnd_rng_event(){
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.ptch_bnd_rng.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -1972,6 +1987,9 @@ void Dx7interface::on_ptch_bnd_stp_event(){
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.ptch_bnd_stp.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -1986,6 +2004,9 @@ void Dx7interface::on_md_whl_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("md_whl_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.md_whl_rng.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -2003,6 +2024,9 @@ void Dx7interface::on_md_whl_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.md_whl_assgn.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -2018,6 +2042,9 @@ void Dx7interface::on_foot_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("foot_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.foot_rng.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -2034,6 +2061,9 @@ void Dx7interface::on_foot_assgn_event(){
     +((get_gwidget<Gtk::CheckButton>("foot_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.foot_assgn.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -2048,6 +2078,9 @@ void Dx7interface::on_brth_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("brth_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.brth_rng.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -2064,6 +2097,9 @@ void Dx7interface::on_brth_assgn_event(){
     +((get_gwidget<Gtk::CheckButton>("brth_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.brth_assgn.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -2078,6 +2114,9 @@ void Dx7interface::on_aftrtch_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.aftrtch_rng.val = msg[5];
+    };
     LOG_OUT();
 };
 
@@ -2094,15 +2133,20 @@ void Dx7interface::on_aftrtch_assgn_event(){
     +((get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if(!compare){
+        bank_1_modif.sound->extra.functions.aftrtch_assgn.val = msg[5];
+    };
     LOG_OUT();
 };
 
 /* Compare */
 void Dx7interface::on_compare_event(){
+    // TODO: mute/unmute ???
     if ( (get_gwidget<Gtk::ToggleButton>("btn_compare"))->get_active() ) {
         std::cout<< "compare on"<< std::endl;
         compare=true;
         set_voice(&bank_1_origin.sound[0]);
+        block_all(); // ?
         block_midi();
         on_txt_freq_op_event();
         redraw_all_curve();
@@ -2110,6 +2154,7 @@ void Dx7interface::on_compare_event(){
         std::cout<< "compare off"<< std::endl;
         compare=false;
         set_voice(&bank_1_modif.sound[0]);
+        unblock_all(); // ?
         on_txt_freq_op_event();
         redraw_all_curve();
     };
@@ -2474,7 +2519,7 @@ void Dx7interface::on_txt_freq_op_event()   {
         if ( (get_gwidget<Gtk::DropDown>("freq_mode_op"+tostr<uint>(i)))->get_selected() ) {
             (get_gwidget<Gtk::Label>("label_view_freq_op"+tostr<uint>(i)))->set_label("Hz");
             // calcul termitor thanks ^^
-            gdouble  A = exp(log(9.772)/99);
+            gdouble A = exp(log(9.772)/99);
             freq_val = pow(A,ff);
             switch (uint(fc) & 3) {
                 case 1: freq_val *=  10;

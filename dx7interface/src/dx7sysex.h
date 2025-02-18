@@ -124,8 +124,20 @@
     }St_algo;
 
     typedef struct st_funct {
-        St_7 feedback;
-        St_48 transpose;
+        St_1 poly_mono;
+        St_14 ptch_bnd_rng;
+        St_14 ptch_bnd_stp;
+        St_1 portamento_md;
+        St_1 portamento_glss;
+        St_99 portamento_tm;
+        St_99 md_whl_rng;
+        St_7 md_whl_assgn;
+        St_99 foot_rng;
+        St_7 foot_assgn;
+        St_99 brth_rng;
+        St_7 brth_assgn;
+        St_99 aftrtch_rng;
+        St_7 aftrtch_assgn;
     }St_funct;
 
     typedef struct st_extra {
