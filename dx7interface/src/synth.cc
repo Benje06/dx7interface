@@ -69,9 +69,7 @@ void Synth::send_midi(char ev_type, uint size, u_char *msg){
         snd_seq_ev_set_subs(&ev_out);
         /* */
         snd_seq_ev_set_direct(&ev_out);
-
         ev_out.type = ev_type;
-
         snd_seq_ev_set_variable(&ev_out, size, msg);
         snd_seq_event_output(seq_handle, &ev_out);
         snd_seq_drain_output(seq_handle);
@@ -79,23 +77,9 @@ void Synth::send_midi(char ev_type, uint size, u_char *msg){
     LOG_OUT();
 };
 
-void Synth::print_event_info(snd_seq_event_t* ev){
-    std::cout << std::endl;
-    std::cout << "event: " << get_event_name(int(ev->type)) << " "
-    << "type: " << int(ev->type)<< std::endl;
-    std::cout << "flags: " << int(ev->flags) << " "
-    << "tag: " << int( ev->tag) << '\t'
-    << "queue: " << int(ev->queue) << std::endl;
-    std::cout << "ticks: " << int(ev->time.tick) << " "
-    << "time: " << int(ev->time.time.tv_sec) << std::endl;
-    std::cout << "source: " << int( ev->source.client) << " " << '\t'
-    << "dest: " << int(ev->dest.client) << std::endl;
-};
-
 int Synth::get_port_in_number(){
     return port_in;
 };
-
 int Synth::get_port_out_number(){
     return port_out;
 };
@@ -129,6 +113,19 @@ std::string Synth::get_event_name(int value) {
         return it->second;
     }
     return "Unknown Event";
+};
+
+void Synth::print_event_info(snd_seq_event_t* ev){
+    std::cout << std::endl;
+    std::cout << "event: " << get_event_name(int(ev->type)) << " "
+    << "type: " << int(ev->type)<< std::endl;
+    std::cout << "flags: " << int(ev->flags) << " "
+    << "tag: " << int( ev->tag) << '\t'
+    << "queue: " << int(ev->queue) << std::endl;
+    std::cout << "ticks: " << int(ev->time.tick) << " "
+    << "time: " << int(ev->time.time.tv_sec) << std::endl;
+    std::cout << "source: " << int( ev->source.client) << " " << '\t'
+    << "dest: " << int(ev->dest.client) << std::endl;
 };
 
 void Synth::listen_midi(){

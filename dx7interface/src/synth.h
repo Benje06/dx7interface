@@ -106,7 +106,8 @@ class Synth : public Thread {
 
     protected:
         uint8_t id_fabricant = 0;              /* selected fabricant */
-        uint8_t channel = 0;                   /* selected channel */
+        uint8_t channel_send = 0;                   /* selected channel */
+        uint8_t channel_receive = 0;                   /* selected channel */
         uint8_t sub_status = 0;                /* selected sub_s */
         /* generic error */
         bool error();
