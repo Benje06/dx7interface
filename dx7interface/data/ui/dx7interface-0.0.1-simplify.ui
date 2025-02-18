@@ -1402,10 +1402,10 @@
                                         <property name="adjustment">adj_freq_coarse_op1</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -1460,10 +1460,10 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -1484,7 +1484,7 @@
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op1">
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -1493,7 +1493,7 @@
                                             </items>
                                           </object>
                                         </property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -1525,10 +1525,10 @@
                                         <property name="adjustment">adj_freq_fine_op1</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -1914,22 +1914,23 @@
                                         <property name="adjustment">adj_freq_coarse_op2</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_freq_mode_op2">
                                         <property name="label" translatable="yes">MODE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -1941,19 +1942,21 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op2">
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -1962,17 +1965,17 @@
                                             </items>
                                           </object>
                                         </property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_coarse_op2">
                                         <property name="label" translatable="yes">COARSE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -1982,7 +1985,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_freq_fine_op2">
                                         <property name="label" translatable="yes">FINE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -1992,7 +1995,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_dtun_op2">
                                         <property name="label" translatable="yes">DETUNE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">4</property>
                                           <property name="row">0</property>
@@ -2002,7 +2005,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_view_freq_op2">
                                         <property name="max-width-chars">2</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <property name="yalign">1</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -2015,15 +2018,16 @@
                                         <property name="adjustment">adj_freq_fine_op2</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2035,12 +2039,13 @@
                                         <property name="fill-level">14</property>
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
+                                        <property name="margin-top">8</property>
                                         <property name="round-digits">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">4</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2276,26 +2281,27 @@
                                 </child>
                                 <child>
                                   <object class="GtkGrid" id="grid_output_op2">
-                                    <property name="column-homogeneous">1</property>
+                                    <property name="column-spacing">20</property>
                                     <property name="valign">end</property>
                                     <child>
                                       <object class="GtkToggleButton" id="mute_op2">
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="label" translatable="yes">MUTE</property>
+                                        <property name="margin-end">20</property>
                                         <property name="receives-default">1</property>
                                         <property name="valign">center</property>
                                         <property name="width-request">80</property>
                                         <layout>
-                                          <property name="column">3</property>
+                                          <property name="column">4</property>
                                           <property name="row">0</property>
-                                          <property name="row-span">2</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_key_vel_sensitivity_op2">
                                         <property name="label" translatable="yes">KRS</property>
+                                        <property name="margin-top">30</property>
                                         <property name="valign">end</property>
                                         <layout>
                                           <property name="column">0</property>
@@ -2315,6 +2321,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_output_level_op2">
+                                        <property name="halign">end</property>
                                         <property name="label" translatable="yes">OUTPUT</property>
                                         <property name="valign">center</property>
                                         <layout>
@@ -2335,8 +2342,8 @@
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
-                                          <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="column">3</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2353,7 +2360,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2370,7 +2377,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2411,22 +2418,23 @@
                                         <property name="adjustment">adj_freq_coarse_op3</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_freq_mode_op3">
                                         <property name="label" translatable="yes">MODE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -2438,18 +2446,20 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">3</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op3">
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -2458,17 +2468,17 @@
                                             </items>
                                           </object>
                                         </property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_coarse_op3">
                                         <property name="label" translatable="yes">COARSE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -2478,7 +2488,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_freq_fine_op3">
                                         <property name="label" translatable="yes">FINE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -2488,7 +2498,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_dtun_op3">
                                         <property name="label" translatable="yes">DETUNE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">4</property>
                                           <property name="row">0</property>
@@ -2498,7 +2508,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_view_freq_op3">
                                         <property name="max-width-chars">2</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <property name="yalign">1</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -2511,15 +2521,16 @@
                                         <property name="adjustment">adj_freq_fine_op3</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2531,12 +2542,13 @@
                                         <property name="fill-level">14</property>
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
+                                        <property name="margin-top">8</property>
                                         <property name="round-digits">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">4</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2772,27 +2784,28 @@
                                 </child>
                                 <child>
                                   <object class="GtkGrid" id="grid_output_op3">
-                                    <property name="column-homogeneous">1</property>
+                                    <property name="column-spacing">20</property>
                                     <property name="valign">end</property>
                                     <child>
                                       <object class="GtkToggleButton" id="mute_op3">
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="label" translatable="yes">MUTE</property>
+                                        <property name="margin-end">20</property>
                                         <property name="receives-default">1</property>
                                         <property name="valign">center</property>
                                         <property name="width-request">80</property>
                                         <layout>
-                                          <property name="column">3</property>
+                                          <property name="column">4</property>
                                           <property name="row">0</property>
-                                          <property name="row-span">2</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_key_vel_sensitivity_op3">
                                         <property name="label" translatable="yes">KRS</property>
-                                        <property name="valign">start</property>
+                                        <property name="margin-top">30</property>
+                                        <property name="valign">end</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -2802,7 +2815,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_kbd_rate_scaling_op3">
                                         <property name="label" translatable="yes">KVS</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">end</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -2812,7 +2825,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_output_level_op3">
                                         <property name="label" translatable="yes">OUTPUT</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -2831,8 +2844,8 @@
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
-                                          <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="column">3</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2849,7 +2862,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2862,11 +2875,11 @@
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
                                         <property name="round-digits">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2907,10 +2920,10 @@
                                         <property name="adjustment">adj_freq_coarse_op4</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -2935,10 +2948,10 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -2949,7 +2962,7 @@
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op4">
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -2958,7 +2971,7 @@
                                             </items>
                                           </object>
                                         </property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -3011,10 +3024,10 @@
                                         <property name="adjustment">adj_freq_fine_op4</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-top">20</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -3419,15 +3432,16 @@
                                         <property name="adjustment">adj_freq_coarse_op5</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3446,18 +3460,20 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">3</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op5">
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -3467,10 +3483,10 @@
                                           </object>
                                         </property>
                                         <property name="selected">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3520,15 +3536,16 @@
                                         <property name="adjustment">adj_freq_fine_op5</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3540,12 +3557,13 @@
                                         <property name="fill-level">14</property>
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
+                                        <property name="margin-top">8</property>
                                         <property name="round-digits">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">4</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3765,27 +3783,28 @@
                                 </child>
                                 <child>
                                   <object class="GtkGrid" id="grid_output_op5">
-                                    <property name="column-homogeneous">1</property>
+                                    <property name="column-spacing">20</property>
                                     <property name="valign">end</property>
                                     <child>
                                       <object class="GtkToggleButton" id="mute_op5">
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="label" translatable="yes">MUTE</property>
+                                        <property name="margin-end">20</property>
                                         <property name="receives-default">1</property>
                                         <property name="valign">center</property>
                                         <property name="width-request">80</property>
                                         <layout>
-                                          <property name="column">3</property>
+                                          <property name="column">4</property>
                                           <property name="row">0</property>
-                                          <property name="row-span">2</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_key_vel_sensitivity_op5">
                                         <property name="label" translatable="yes">KRS</property>
-                                        <property name="valign">start</property>
+                                        <property name="margin-top">30</property>
+                                        <property name="valign">end</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -3795,7 +3814,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_kbd_rate_scaling_op5">
                                         <property name="label" translatable="yes">KVS</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">end</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -3805,7 +3824,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_output_level_op5">
                                         <property name="label" translatable="yes">OUTPUT</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -3824,8 +3843,8 @@
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
-                                          <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="column">3</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3842,7 +3861,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3859,7 +3878,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3900,15 +3919,16 @@
                                         <property name="adjustment">adj_freq_coarse_op6</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3927,18 +3947,20 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">3</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op6">
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -3947,10 +3969,10 @@
                                             </items>
                                           </object>
                                         </property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3967,7 +3989,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_freq_fine_op6">
                                         <property name="label" translatable="yes">FINE</property>
-                                        <property name="valign">center</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -3987,7 +4009,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_view_freq_op6">
                                         <property name="max-width-chars">2</property>
-                                        <property name="valign">center</property>
+                                        <property name="valign">start</property>
                                         <property name="yalign">1</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -4000,15 +4022,16 @@
                                         <property name="adjustment">adj_freq_fine_op6</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -4020,12 +4043,13 @@
                                         <property name="fill-level">14</property>
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
+                                        <property name="margin-top">8</property>
                                         <property name="round-digits">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">4</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -4261,27 +4285,28 @@
                                 </child>
                                 <child>
                                   <object class="GtkGrid" id="grid_output_op6">
-                                    <property name="column-homogeneous">1</property>
+                                    <property name="column-spacing">20</property>
                                     <property name="valign">end</property>
                                     <child>
                                       <object class="GtkToggleButton" id="mute_op6">
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="label" translatable="yes">MUTE</property>
+                                        <property name="margin-end">20</property>
                                         <property name="receives-default">1</property>
                                         <property name="valign">center</property>
                                         <property name="width-request">80</property>
                                         <layout>
-                                          <property name="column">3</property>
+                                          <property name="column">4</property>
                                           <property name="row">0</property>
-                                          <property name="row-span">2</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_key_vel_sensitivity_op6">
                                         <property name="label" translatable="yes">KRS</property>
-                                        <property name="valign">start</property>
+                                        <property name="margin-top">30</property>
+                                        <property name="valign">end</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -4291,7 +4316,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_kbd_rate_scaling_op6">
                                         <property name="label" translatable="yes">KVS</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">end</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -4301,7 +4326,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_output_level_op6">
                                         <property name="label" translatable="yes">OUTPUT</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -4320,8 +4345,8 @@
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
-                                          <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="column">3</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -4338,7 +4363,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -4351,11 +4376,11 @@
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
                                         <property name="round-digits">0</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
