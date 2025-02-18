@@ -100,6 +100,7 @@
             <child>
               <object class="GtkBox" id="box_algo_lfo_mod_ptch">
                 <property name="halign">start</property>
+                <property name="spacing">4</property>
                 <property name="valign">start</property>
                 <property name="vexpand">True</property>
                 <child>
@@ -852,12 +853,13 @@
                         <child>
                           <object class="GtkBox">
                             <property name="orientation">vertical</property>
+                            <property name="vexpand">True</property>
                             <child>
                               <object class="GtkGrid" id="grid_controller">
                                 <property name="column-homogeneous">True</property>
-                                <property name="hexpand">True</property>
                                 <property name="row-homogeneous">True</property>
                                 <property name="vexpand">True</property>
+                                <property name="vexpand-set">True</property>
                                 <child>
                                   <object class="GtkLabel" id="label_aftrtch">
                                     <property name="label" translatable="yes">After.T</property>
@@ -1149,17 +1151,11 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSeparator" id="separateur_H">
-                                <property name="valign">end</property>
-                              </object>
-                            </child>
-                            <child>
                               <object class="GtkGrid">
                                 <property name="column-homogeneous">True</property>
                                 <property name="valign">end</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_bend">
-                                    <property name="halign">center</property>
                                     <property name="label">Pitch Bend</property>
                                     <property name="valign">center</property>
                                     <layout>
@@ -1182,6 +1178,7 @@
                                     <property name="draw-value">True</property>
                                     <property name="fill-level">12.0</property>
                                     <property name="round-digits">2</property>
+                                    <property name="valign">start</property>
                                     <property name="value-pos">left</property>
                                     <layout>
                                       <property name="column">3</property>
@@ -1192,25 +1189,26 @@
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label_ptch_bnd_rng">
-                                    <property name="hexpand">True</property>
+                                    <property name="can-focus">False</property>
                                     <property name="label">Range</property>
-                                    <property name="valign">start</property>
+                                    <property name="margin-top">30</property>
+                                    <property name="valign">end</property>
                                     <layout>
                                       <property name="column">1</property>
                                       <property name="column-span">2</property>
-                                      <property name="row">1</property>
+                                      <property name="row">0</property>
                                     </layout>
                                   </object>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label_ptch_bnd_stp">
-                                    <property name="hexpand">True</property>
+                                    <property name="can-focus">False</property>
                                     <property name="label">Step</property>
-                                    <property name="valign">start</property>
+                                    <property name="valign">end</property>
                                     <layout>
                                       <property name="column">3</property>
                                       <property name="column-span">2</property>
-                                      <property name="row">1</property>
+                                      <property name="row">0</property>
                                     </layout>
                                   </object>
                                 </child>
@@ -1227,10 +1225,21 @@
                                     <property name="draw-value">True</property>
                                     <property name="fill-level">12.0</property>
                                     <property name="round-digits">2</property>
+                                    <property name="valign">start</property>
                                     <property name="value-pos">left</property>
                                     <layout>
                                       <property name="column">1</property>
                                       <property name="column-span">2</property>
+                                      <property name="row">0</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator" id="separateur_H">
+                                    <property name="valign">start</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="column-span">5</property>
                                       <property name="row">0</property>
                                     </layout>
                                   </object>
@@ -1251,11 +1260,10 @@
                                     <child>
                                       <object class="GtkBox" id="box_fnctns_prtmt">
                                         <property name="baseline-position">bottom</property>
+                                        <property name="homogeneous">True</property>
                                         <child>
                                           <object class="GtkToggleButton" id="btn_portamento_md">
                                             <property name="halign">center</property>
-                                            <property name="margin-end">10</property>
-                                            <property name="margin-start">10</property>
                                             <property name="valign">center</property>
                                           </object>
                                         </child>
@@ -1263,14 +1271,12 @@
                                           <object class="GtkToggleButton" id="btn_portamento_glss">
                                             <property name="halign">center</property>
                                             <property name="label">Gliss</property>
-                                            <property name="margin-end">10</property>
                                             <property name="valign">center</property>
                                           </object>
                                         </child>
                                         <child>
                                           <object class="GtkLabel" id="label_portamento_tm">
                                             <property name="label">Time</property>
-                                            <property name="margin-end">10</property>
                                             <property name="valign">center</property>
                                           </object>
                                         </child>
@@ -1309,9 +1315,9 @@
                                 <child>
                                   <object class="GtkToggleButton" id="btn_poly_mono">
                                     <property name="halign">center</property>
-                                    <property name="valign">start</property>
+                                    <property name="valign">center</property>
                                     <layout>
-                                      <property name="column">2</property>
+                                      <property name="column">1</property>
                                       <property name="row">1</property>
                                     </layout>
                                   </object>
@@ -1372,7 +1378,9 @@
                   <object class="GtkNotebookPage">
                     <property name="child">
                       <object class="GtkGrid" id="grid_operators">
+                        <property name="column-spacing">4</property>
                         <property name="hexpand">1</property>
+                        <property name="row-spacing">4</property>
                         <property name="vexpand">1</property>
                         <child>
                           <object class="GtkFrame" id="frame_general_op1">
@@ -1394,6 +1402,7 @@
                                         <property name="adjustment">adj_freq_coarse_op1</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
                                         <property name="valign">start</property>
@@ -1402,14 +1411,14 @@
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_dtun_op1">
                                         <property name="label" translatable="yes">DETUNE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">4</property>
                                           <property name="row">0</property>
@@ -1424,19 +1433,21 @@
                                         <property name="fill-level">14</property>
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
+                                        <property name="margin-end">10</property>
+                                        <property name="margin-top">8</property>
                                         <property name="round-digits">0</property>
                                         <property name="valign">start</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">4</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_view_freq_op1">
                                         <property name="max-width-chars">2</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <property name="yalign">1</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -1449,20 +1460,21 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_freq_mode_op1">
                                         <property name="label" translatable="yes">MODE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -1472,6 +1484,7 @@
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op1">
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -1483,14 +1496,14 @@
                                         <property name="valign">start</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_coarse_op1">
                                         <property name="label" translatable="yes">COARSE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -1500,7 +1513,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_freq_fine_op1">
                                         <property name="label" translatable="yes">FINE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -1512,6 +1525,7 @@
                                         <property name="adjustment">adj_freq_fine_op1</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
                                         <property name="valign">start</property>
@@ -1520,7 +1534,7 @@
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -1764,20 +1778,19 @@
                                 </child>
                                 <child>
                                   <object class="GtkGrid" id="grid_output_op1">
-                                    <property name="column-homogeneous">True</property>
+                                    <property name="column-spacing">20</property>
                                     <property name="valign">end</property>
                                     <child>
                                       <object class="GtkToggleButton" id="mute_op1">
                                         <property name="focusable">1</property>
-                                        <property name="halign">center</property>
                                         <property name="label" translatable="yes">MUTE</property>
+                                        <property name="margin-end">20</property>
                                         <property name="receives-default">1</property>
                                         <property name="valign">center</property>
                                         <property name="width-request">80</property>
                                         <layout>
-                                          <property name="column">3</property>
+                                          <property name="column">4</property>
                                           <property name="row">0</property>
-                                          <property name="row-span">2</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -1794,6 +1807,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_kbd_rate_scaling_op1">
                                         <property name="label" translatable="yes">KVS</property>
+                                        <property name="margin-top">30</property>
                                         <property name="valign">end</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -1803,8 +1817,9 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_output_level_op1">
+                                        <property name="halign">end</property>
                                         <property name="label" translatable="yes">OUTPUT</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -1823,8 +1838,8 @@
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
-                                          <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="column">3</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -1841,7 +1856,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -1858,7 +1873,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -2892,6 +2907,7 @@
                                         <property name="adjustment">adj_freq_coarse_op4</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
                                         <property name="valign">start</property>
@@ -2900,14 +2916,14 @@
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_freq_mode_op4">
                                         <property name="label" translatable="yes">MODE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -2919,19 +2935,21 @@
                                         <property name="editable">0</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkDropDown" id="freq_mode_op4">
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
@@ -2943,14 +2961,14 @@
                                         <property name="valign">start</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_coarse_op4">
                                         <property name="label" translatable="yes">COARSE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -2960,7 +2978,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_freq_fine_op4">
                                         <property name="label" translatable="yes">FINE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -2970,7 +2988,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_dtun_op4">
                                         <property name="label" translatable="yes">DETUNE</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <layout>
                                           <property name="column">4</property>
                                           <property name="row">0</property>
@@ -2980,7 +2998,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_view_freq_op4">
                                         <property name="max-width-chars">2</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">start</property>
                                         <property name="yalign">1</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -2993,6 +3011,7 @@
                                         <property name="adjustment">adj_freq_fine_op4</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
+                                        <property name="margin-top">20</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
                                         <property name="valign">start</property>
@@ -3001,7 +3020,7 @@
                                         <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3013,12 +3032,14 @@
                                         <property name="fill-level">14</property>
                                         <property name="focusable">1</property>
                                         <property name="hexpand">True</property>
+                                        <property name="margin-end">10</property>
+                                        <property name="margin-top">8</property>
                                         <property name="round-digits">0</property>
                                         <property name="valign">start</property>
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">4</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3262,20 +3283,19 @@
                                 </child>
                                 <child>
                                   <object class="GtkGrid" id="grid_output_op4">
-                                    <property name="column-homogeneous">1</property>
+                                    <property name="column-spacing">20</property>
                                     <property name="valign">end</property>
                                     <child>
                                       <object class="GtkToggleButton" id="mute_op4">
                                         <property name="focusable">1</property>
-                                        <property name="halign">center</property>
                                         <property name="label" translatable="yes">MUTE</property>
+                                        <property name="margin-end">20</property>
                                         <property name="receives-default">1</property>
                                         <property name="valign">center</property>
                                         <property name="width-request">80</property>
                                         <layout>
-                                          <property name="column">3</property>
+                                          <property name="column">4</property>
                                           <property name="row">0</property>
-                                          <property name="row-span">2</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3292,6 +3312,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_kbd_rate_scaling_op4">
                                         <property name="label" translatable="yes">KVS</property>
+                                        <property name="margin-top">30</property>
                                         <property name="valign">end</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -3301,8 +3322,9 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_output_level_op4">
+                                        <property name="halign">end</property>
                                         <property name="label" translatable="yes">OUTPUT</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">center</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -3321,8 +3343,8 @@
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
-                                          <property name="column">2</property>
-                                          <property name="row">1</property>
+                                          <property name="column">3</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3339,7 +3361,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">0</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -3356,7 +3378,7 @@
                                         <property name="value-pos">left</property>
                                         <layout>
                                           <property name="column">1</property>
-                                          <property name="row">1</property>
+                                          <property name="row">0</property>
                                         </layout>
                                       </object>
                                     </child>
@@ -4371,7 +4393,9 @@
                   <object class="GtkNotebookPage">
                     <property name="child">
                       <object class="GtkGrid" id="grid_level_scalling">
+                        <property name="column-spacing">4</property>
                         <property name="hexpand">1</property>
+                        <property name="row-spacing">4</property>
                         <property name="vexpand">1</property>
                         <child>
                           <object class="GtkFrame" id="frame_kls_op1">
@@ -4524,7 +4548,6 @@
                                 </child>
                               </object>
                             </property>
-                            <property name="margin-end">3</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op1">
                                 <property name="label" translatable="yes">OP1</property>
@@ -4689,8 +4712,6 @@
                                 </child>
                               </object>
                             </property>
-                            <property name="margin-end">2</property>
-                            <property name="margin-start">2</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op2">
                                 <property name="label" translatable="yes">OP2</property>
@@ -4855,7 +4876,6 @@
                                 </child>
                               </object>
                             </property>
-                            <property name="margin-start">2</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op3">
                                 <property name="label" translatable="yes">OP3</property>
@@ -5020,7 +5040,6 @@
                                 </child>
                               </object>
                             </property>
-                            <property name="margin-end">2</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op4">
                                 <property name="label" translatable="yes">OP4</property>
@@ -5185,8 +5204,6 @@
                                 </child>
                               </object>
                             </property>
-                            <property name="margin-end">2</property>
-                            <property name="margin-start">2</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op5">
                                 <property name="label" translatable="yes">OP5</property>
@@ -5351,7 +5368,6 @@
                                 </child>
                               </object>
                             </property>
-                            <property name="margin-start">2</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op6">
                                 <property name="label" translatable="yes">OP6</property>

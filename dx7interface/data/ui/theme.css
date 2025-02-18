@@ -32,18 +32,15 @@
 /*** Button reveal bank ***/
 .btn_reveal {
     margin:0 2px;
-    padding:0 0px;
+    padding:0 0;
     min-width:5px;
     min-height:200px;
 }
 
-/*.btn_reveal *{
+button{
     margin:0 0;
-    padding:0 3px;
-    min-width:1px;
-    min-height:200px;
-}*/
-
+    padding:0 0;
+}
 /*
 spinbutton.(vertical|horizontal)
 ├── text
@@ -129,7 +126,7 @@ scale highlight{
 }
 scale{
  padding:4px 4px;
- margin:4px 4px;
+ margin:8px 8px;
 }
 /*
 checkbutton
@@ -168,4 +165,9 @@ notebook header tabs tab:checked{
 picture{
  margin: 0 0;
  padding: 0 0;
+}
+
+grid >frame{
+  margin: 0 0;
+  padding: 4px 4px;
 }
