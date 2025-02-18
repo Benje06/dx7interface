@@ -1790,10 +1790,12 @@ void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
             break;
     };
     bank_1_origin.sound[0]=bank_1_modif.sound[0];
+    (get_gwidget<Gtk::ToggleButton>("btn_compare"))->set_active(false);
     set_voice(&bank_1_modif.sound[0]);
     send_voice(&bank_1_modif.sound[0]);
     on_txt_freq_op_event();
     redraw_all_curve();
+
     LOG_OUT();
 };
 
@@ -2116,7 +2118,9 @@ void Dx7interface::on_algo_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("algo_number"))->get_value()-1;
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    if (!compare){
     bank_1_modif.sound->algo.algo.val = msg[5];
+     };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->queue_draw();
     LOG_OUT();
 };
@@ -2130,8 +2134,10 @@ void Dx7interface::on_feedback_event() {
     msg[4]=0x07;
     msg[5]=(get_gwidget<Gtk::SpinButton>("feedback"))->get_value();
     msg[6]=0xF7;
-    bank_1_modif.sound->algo.feedback.val = msg[5];
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->algo.feedback.val = msg[5];
+    };
 };
 
 void Dx7interface::on_transpose_event() {
@@ -2164,7 +2170,9 @@ void Dx7interface::on_oks_event() {
         msg[5]=0x00;
     }
     msg[6]=0xF7;
+    if (!compare){
     bank_1_modif.sound->algo.oks.val = msg[5];
+    };
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
 };
 
@@ -2212,6 +2220,9 @@ void Dx7interface::on_speed_event() {
     msg[5]=(get_gwidget<Gtk::SpinButton>("speed"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->lfo.speed.val = msg[5];
+    };
 };
 
 void Dx7interface::on_delay_event() {
