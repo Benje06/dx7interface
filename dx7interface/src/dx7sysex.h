@@ -72,6 +72,13 @@
         static const guint8 mask=0x7F;
     }St_99;
 
+    typedef struct st_127{
+        guint8 val;
+        guint address;
+        static const guint8 max=127;
+        static const guint8 mask=0x7F;
+    }St_99;
+
     typedef struct st_kls {
         St_99 brk_pt;//  LEV SCL BRK PT 0-99
         St_99 lft_dpth;//  SCL LEFT DEPTH 0-99
@@ -116,6 +123,16 @@
         St_48 transpose;
     }St_algo;
 
+    typedef struct st_funct {
+        St_7 feedback;
+        St_48 transpose;
+    }St_funct;
+
+    typedef struct st_extra {
+        St_127 mute;
+        St_funct functions;
+    }St_extra;
+
     typedef struct st_dx7sysex_1 {
         St_op op[6];
         St_pitch pitch;
@@ -123,6 +140,7 @@
         St_lfo lfo;
         Glib::ustring name;
         guint8 sum;
+        St_extra extra;
     }St_dx7sysex_1;
 
     template <guint i>
