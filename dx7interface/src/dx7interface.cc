@@ -4090,6 +4090,9 @@ void Dx7interface::on_freq_coarse_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].freq_coarse.val=msg[5];
+    };
     on_txt_freq_op_event();
     LOG_OUT();
 };
@@ -4104,6 +4107,9 @@ void Dx7interface::on_freq_fine_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].freq_fine.val=msg[5];
+    };
     on_txt_freq_op_event();
     LOG_OUT();
 };
@@ -4118,6 +4124,9 @@ void Dx7interface::on_dtun_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op5"))->get_value()+7;
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].dtun.val=msg[5];
+    };
     LOG_OUT();
 };
 
@@ -4132,6 +4141,9 @@ void Dx7interface::on_eg_rt1_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_rt[0].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4146,6 +4158,9 @@ void Dx7interface::on_eg_rt2_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_rt[1].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4160,6 +4175,9 @@ void Dx7interface::on_eg_rt3_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_rt[2].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4174,6 +4192,9 @@ void Dx7interface::on_eg_rt4_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_rt[3].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4188,6 +4209,9 @@ void Dx7interface::on_eg_lvl1_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_lvl[0].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4202,6 +4226,9 @@ void Dx7interface::on_eg_lvl2_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_lvl[1].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4216,6 +4243,9 @@ void Dx7interface::on_eg_lvl3_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_lvl[2].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4230,6 +4260,9 @@ void Dx7interface::on_eg_lvl4_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].eg_lvl[3].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4245,6 +4278,9 @@ void Dx7interface::on_krs_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].krs.val=msg[5];
+    };
     LOG_OUT();
 };
 
@@ -4258,6 +4294,9 @@ void Dx7interface::on_kvs_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].kvs.val=msg[5];
+    };
     LOG_OUT();
 };
 
@@ -4271,6 +4310,9 @@ void Dx7interface::on_lvl_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].lvl.val=msg[5];
+    };
     // logout fonction mute
     if ( (get_gwidget<Gtk::ToggleButton>("mute_op5"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(false);
@@ -4308,6 +4350,9 @@ void Dx7interface::on_kls_lft_curve_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->get_selected();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].kls.lft_curve.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4322,6 +4367,9 @@ void Dx7interface::on_kls_rght_curve_op5_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->get_selected();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].kls.rght_curve.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
     LOG_OUT();
 };
@@ -4336,6 +4384,9 @@ void Dx7interface::on_kls_lft_dpth_op5_event() {
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].kls.lft_dpth.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
 };
 
@@ -4349,6 +4400,9 @@ void Dx7interface::on_kls_rght_dpth_op5_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[4].kls.rght_dpth.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
 };
 
@@ -4369,6 +4423,9 @@ void Dx7interface::on_kls_brk_pt_op5_event() {
         msg[5]=val;
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        if (!compare){
+            bank_1_modif.sound->op[4].kls.brk_pt.val=msg[5];
+        };
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
     };
 };
@@ -4384,6 +4441,9 @@ void Dx7interface::on_ams_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::Scale>("ams_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].ams.val=msg[5];
+    };
     LOG_OUT();
 };
 
@@ -4398,6 +4458,9 @@ void Dx7interface::on_freq_mode_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op6"))->get_selected();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].freq_mode.val=msg[5];
+    };
     on_txt_freq_op_event();
     LOG_OUT();
 };
@@ -4412,6 +4475,9 @@ void Dx7interface::on_freq_coarse_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].freq_coarse.val=msg[5];
+    };
     on_txt_freq_op_event();
     LOG_OUT();
 };
@@ -4426,6 +4492,9 @@ void Dx7interface::on_freq_fine_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].freq_fine.val=msg[5];
+    };
     on_txt_freq_op_event();
     LOG_OUT();
 };
@@ -4440,6 +4509,9 @@ void Dx7interface::on_dtun_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op6"))->get_value()+7;
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].dtun.val=msg[5];
+    };
     LOG_OUT();
 };
 
@@ -4454,6 +4526,9 @@ void Dx7interface::on_eg_rt1_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_rt[0].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4468,6 +4543,9 @@ void Dx7interface::on_eg_rt2_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_rt[1].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4482,6 +4560,9 @@ void Dx7interface::on_eg_rt3_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_rt[2].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4496,6 +4577,9 @@ void Dx7interface::on_eg_rt4_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_rt[3].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4510,6 +4594,9 @@ void Dx7interface::on_eg_lvl1_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_lvl[0].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4524,6 +4611,9 @@ void Dx7interface::on_eg_lvl2_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_lvl[1].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4538,6 +4628,9 @@ void Dx7interface::on_eg_lvl3_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_lvl[2].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4552,6 +4645,9 @@ void Dx7interface::on_eg_lvl4_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].eg_lvl[3].val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4567,6 +4663,9 @@ void Dx7interface::on_krs_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].krs.val=msg[5];
+    };
     LOG_OUT();
 };
 
@@ -4580,6 +4679,9 @@ void Dx7interface::on_kvs_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].kvs.val=msg[5];
+    };
     LOG_OUT();
 };
 
@@ -4593,6 +4695,9 @@ void Dx7interface::on_lvl_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].lvl.val=msg[5];
+    };
     // logout fonction mute
     if ( (get_gwidget<Gtk::ToggleButton>("mute_op6"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(false);
@@ -4631,6 +4736,9 @@ void Dx7interface::on_kls_lft_curve_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->get_selected();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].kls.lft_curve.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4645,6 +4753,9 @@ void Dx7interface::on_kls_rght_curve_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->get_selected();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].kls.rght_curve.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4659,6 +4770,9 @@ void Dx7interface::on_kls_lft_dpth_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].kls.lft_dpth.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4673,6 +4787,9 @@ void Dx7interface::on_kls_rght_dpth_op6_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    if (!compare){
+        bank_1_modif.sound->op[5].kls.rght_dpth.val=msg[5];
+    };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
     LOG_OUT();
 };
@@ -4694,6 +4811,9 @@ void Dx7interface::on_kls_brk_pt_op6_event() {
         msg[5]=val;
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        if (!compare){
+            bank_1_modif.sound->op[5].kls.brk_pt.val=msg[5];
+        };
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
     };
 };
