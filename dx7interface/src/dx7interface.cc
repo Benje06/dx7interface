@@ -56,8 +56,8 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
     /* set channel & sub_status */
-    Synth::channel_send=0xF0;
-    Synth::channel_receive=0xF0;
+    Synth::channel_send=0x00;
+    Synth::channel_receive=0x00;
     Synth::sub_status=0x10;
     seq_handle=get_seq_handler();
     ev=get_seq_event_handler();
@@ -99,13 +99,10 @@ bool Dx7interface::Run(){
 
 void Dx7interface::listen_midi(){
     /* TODO : use all seq event */
-    /* TODO : use all seq event */
     snd_seq_event_input(seq_handle, &ev);
     Synth::print_event_info(ev);
-    //std::cout << std::endl;
     if( (int)ev->dest.client == Synth::get_client_id() && (int)ev->data.control.channel == (int)(Synth::channel_receive & 0x0F) ){
         switch (ev->type) {
-
             case SND_SEQ_EVENT_NOTEON:
                 Synth::print_event_info(ev);
                 std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
@@ -139,10 +136,10 @@ void Dx7interface::listen_midi(){
                 << std::endl;
                 std::cout << "QC queue " << (int)(ev->data.queue.queue)  << " "
                 << "QC param value: "  << (int)ev->data.queue.param.value  << " "   << std::endl;
-                std::cout << "\t" << "QC param time tv_sec: " << (int)(ev->data.queue.param.time.time.tv_sec) << " " << '\t'
+                std::cout << "QC param time tv_sec: " << (int)(ev->data.queue.param.time.time.tv_sec) << " " << '\t'
                 << "QC param time tv_nsec: " << (int)(ev->data.queue.param.time.time.tv_nsec) << " " << '\t'
-                << "QC param ticks: " << (int)(ev->data.queue.param.time.tick) << " " << '\t'
-                << "QC param position: " << (int)(ev->data.queue.param.position) << " " << '\t'
+                << "QC param ticks: " << (int)(ev->data.queue.param.time.tick) << " " << '\t'<< std::endl;
+                std::cout << "QC param position: " << (int)(ev->data.queue.param.position) << " " << '\t'
                 << "QC param skew value: " << (int)(ev->data.queue.param.skew.value) << " " << '\t'
                 << "QC param skew base: " << (int)(ev->data.queue.param.skew.base) << " " << '\t'
                 << std::endl;
@@ -168,8 +165,6 @@ void Dx7interface::listen_midi(){
                         adjustment->set_value((double)ev->data.control.value);
                         m_selection_model->set_selected((uint)ev->data.control.value);
                     #endif
-                    
-                    //
                 }
                 break;
             case SND_SEQ_EVENT_SYSEX:
@@ -186,7 +181,6 @@ void Dx7interface::listen_midi(){
                 break;
         };
     };
-    //std::cout << std::endl;
     snd_seq_free_event(ev);
 };
 
@@ -240,7 +234,7 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
     }catch(const std::exception& ex){
         Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-                            + "Cannot load : " + filename + "\n"
+                            + "Cannot load: " + filename + "\n"
                             + "Reason: " + ex.what();
         throw std::runtime_error(err_msg);
     };
@@ -665,8 +659,9 @@ void Dx7interface::attach_signals(){
     /*  prototype bind button
     m_button1.signal_clicked().connect(
         sigc::bind<Glib::ustring>( sigc::mem_fun(*this, &HelloWorld::on_button_clicked), "button 1") );
-    void on_button_clicked(Glib::ustring data){
 
+    void on_button_clicked(Glib::ustring data){
+        //
     };
     */
     /*** generale  ***/
@@ -681,12 +676,12 @@ void Dx7interface::attach_signals(){
             sigc::mem_fun(*this, &Dx7interface::on_bank_sound_change));
 
     //auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(sigc::bind(sigc::mem_fun(*this,
-                                                             &Dx7interface::on_setup_label), Gtk::Align::START));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_bind().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bind_num));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_setup().connect(sigc::bind(sigc::mem_fun(*this,
-                                                             &Dx7interface::on_setup_label), Gtk::Align::START));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_setup().connect(
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
     //auto factory_name=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_name"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_bind().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bind_name));
@@ -796,7 +791,7 @@ void Dx7interface::attach_signals(){
 
     /* Drawing area for pitch */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->set_draw_func(
-            sigc::mem_fun(*this, &Dx7interface::on_draw_pitch_event) );
+        sigc::mem_fun(*this, &Dx7interface::on_draw_pitch_event) );
     controller_mouse_moove_pitch->signal_motion().connect(
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("pitch") ));
     controller_mouse_button_pitch->signal_pressed().connect(
@@ -872,14 +867,6 @@ void Dx7interface::attach_signals(){
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op6") ));
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_button_op6);
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_moove_op6);
-
-    /* Mouse gesture on drawing area */
-
-    controller_mouse_button_op1->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op1") ));
-    controller_mouse_button_op1->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op1") )
-    );
 
 
     /* Drawing area for keyboard scaling */
@@ -1266,7 +1253,6 @@ void Dx7interface::mouse_mooves(double x, double y, Glib::ustring name){
             return;
         }else{
             if (p_drag > 0 && p_drag < 4){
-                //val_x  = (x - points[p_drag-1].first) / x_ratio;
                 val_x  = (x - drawarea[name][p_drag-1].first) / x_ratio;
             }else{
                 double x_noteoff=(width)*3.0/4.0;
@@ -1334,7 +1320,6 @@ void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     cr->set_source_rgba(dash_color[0], dash_color[1], dash_color[2], dash_color[3]);
     cr->set_dash(dash_pattern,dash_offset);
     cr->set_line_width(dash_width);
-    y=0.0;
     for(x=0.0;x<=(width - dash_width); x+=x_step) { //draw verticals lines
         cr->move_to(x, y);
         cr->line_to(x, height);
@@ -1352,17 +1337,15 @@ void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     cr->restore();
 };
 
-void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,double width,bool red){
+void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,double width,bool orange){
     // TODO set value in a var to be changed by interface
     //LOG_IN();
-    double r,g,b,a;
-    // Orange dx7 0.88,0.35,0.27,1.0
+    double r,g,b;
     r=line_color[0];
     g=line_color[1];
     b=line_color[2];
-
-    //int width = (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->get_width();
-    if( red ){
+    // Orange dx7 0.88,0.35,0.27,1.0
+    if( orange ){
         r=0.88;
         g=0.35;
         b=0.27;
@@ -1421,9 +1404,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 
     /* Draw curve */
     bool r_flag = false;      //draw_point flag for First and last point switch color
-    double x=0.0, y=0.0;     // coordonee du point
-    x += r_point;
-    y += r_point;
+    double x=r_point, y=r_point;     // coordonee du point
 
     for(uint8_t i=1;i<=4;i++) {
         cr->save();
@@ -1437,7 +1418,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
         }else{
             cr->move_to(x, y);    // deplace le curseur
         };
-        if(i == 4){
+        if (i==4){
             x = x_noteoff;
             cr->line_to(x, y);      // trace une ligne
             cr->move_to(x, y);
@@ -1446,7 +1427,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
         x += ( ( x_ratio * (
             std::abs( 100.0 - (double)( (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(i)+"_"+name))->get_value() + 1.0 ) )
         ) ) ) ;
-        y = (r_point) + ( ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(i)+"_"+name))->get_value() ) * y_ratio ) /*+ line_width*/;
+        y = (r_point) + ( ( (double)(get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(i)+"_"+name))->get_value() ) * y_ratio );
         cr->line_to(x, y);      // trace une ligne
         cr->move_to(x, y);
         cr->stroke();
@@ -1473,7 +1454,7 @@ void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double 
         cr->restore();
     }else{
         std::cerr << "File not found: "<<std::endl;
-         std::cerr<<MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png"<<std::endl;
+        std::cerr<<MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png"<<std::endl;
     };
 };
 
@@ -1661,7 +1642,7 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 
 void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir){
     double half_width  = width/2.0;
-    double half_height = height /2.0;
+    double half_height = height/2.0;
     double scale_factor = (100.0 - dpth) +25 ; // +25, to get 85 at max ( 85==100 depth)
     switch (str_const_hash(type_curve.c_str())) {
         case "EXP+"_hash:{
@@ -1706,9 +1687,15 @@ void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::
 void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
     // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
-    Glib::ustring rght_curve =( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+num_op))->get_selected_item()))->get_string() ;
+    Glib::ustring rght_curve =(
+        std::dynamic_pointer_cast<Gtk::StringObject>(
+            (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+num_op))->get_selected_item())
+                               )->get_string() ;
     double rght_dpth =(double)(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+num_op))->get_value()+1 ;
-    Glib::ustring lft_curve =( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+num_op))->get_selected_item()))->get_string() ;
+    Glib::ustring lft_curve =(
+        std::dynamic_pointer_cast<Gtk::StringObject>(
+            (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+num_op))->get_selected_item())
+                              )->get_string() ;
     double lft_dpth =(double)(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+num_op))->get_value()+1 ;
 
     cr->save();
@@ -1737,7 +1724,6 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
 };
 
 void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
-    //LOG_IN();
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
@@ -1745,7 +1731,6 @@ void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int 
         draw_adsr( cr, wdth, hght, "op"+num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
     };
-    //LOG_OUT();
 };
 
 void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
@@ -1763,8 +1748,6 @@ void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, 
 void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
     LOG_IN();
     auto snum = m_selection_model->get_selected();
-    //std::cerr << "num: " << snum << std::endl;
-    //std::cerr << "name: " << m_selection_model->get_selected_item() << std::endl;
     switch ( bank_nb_sound ){
         case 32:
             bank_1_modif.sound[0]=bank_32_modif.sound[snum];
@@ -1875,10 +1858,10 @@ void Dx7interface::on_mono_poly_event(){
     u_char msg[7];                      // paremter change      message
     msg[0]=0xF0;                        // F0                   B0
     msg[1]=id_fabricant;                // 43                   7E Poly/7F Mono
-    msg[2]=sub_status & channel_send;        // 10                   00 off / 01
+    msg[2]=sub_status & channel_send;   // 10                   00 off / 01
     msg[3]=0x08;                        // 08
     msg[4]=0x40;                        // 40    / 0F / 0/1000
-                                        // 0-3 bit0=poly/mono; bit1=unison off/on
+                                        // 0-3 bit0=poly/mono; bit1=unison off/on maybe dx7s ?
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
@@ -1895,7 +1878,7 @@ void Dx7interface::on_portamento_md_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x43;                        // 43
                                         // 0-3 bit0=retain; bit1=follow
@@ -1915,7 +1898,7 @@ void Dx7interface::on_portamento_glss_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x44;                        // 44
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->get_active();
@@ -1929,7 +1912,7 @@ void Dx7interface::on_portamento_tm_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x45;                        // 44
     msg[5]=(get_gwidget<Gtk::SpinButton>("portamento_tm"))->get_value();
@@ -1943,7 +1926,7 @@ void Dx7interface::on_ptch_bnd_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x41;                        // 41
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->get_value();
@@ -1957,7 +1940,7 @@ void Dx7interface::on_ptch_bnd_stp_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x42;                        // 42
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->get_value();
@@ -1971,7 +1954,7 @@ void Dx7interface::on_md_whl_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x46;                        // 46
     msg[5]=(get_gwidget<Gtk::SpinButton>("md_whl_rng"))->get_value();
@@ -1986,7 +1969,7 @@ void Dx7interface::on_md_whl_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x47;                        // 47
     msg[5]= (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->get_active()
@@ -2003,7 +1986,7 @@ void Dx7interface::on_foot_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x48;                        // 48
     msg[5]=(get_gwidget<Gtk::SpinButton>("foot_rng"))->get_value();
@@ -2017,7 +2000,7 @@ void Dx7interface::on_foot_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x49;                        // 49
     msg[5]= (get_gwidget<Gtk::CheckButton>("foot_ptch"))->get_active()
@@ -2033,7 +2016,7 @@ void Dx7interface::on_brth_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4A;                        // 4A
     msg[5]=(get_gwidget<Gtk::SpinButton>("brth_rng"))->get_value();
@@ -2047,7 +2030,7 @@ void Dx7interface::on_brth_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4B;                        // 4B
     msg[5]= (get_gwidget<Gtk::CheckButton>("brth_ptch"))->get_active()
@@ -2063,7 +2046,7 @@ void Dx7interface::on_aftrtch_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4C;                        // 4C
     msg[5]=(get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->get_value();
@@ -2077,7 +2060,7 @@ void Dx7interface::on_aftrtch_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;       // 10
+    msg[2]=sub_status & channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4D;                        // 4D
     msg[5]= (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->get_active()
@@ -2155,13 +2138,6 @@ void Dx7interface::on_oks_event() {
 /* LFO */
 void Dx7interface::on_lfo_wav_event() {
     LOG_IN();
-    /* lfo wave form image */
-    /*Glib::ustring name = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()))->get_string();
-    if (name == "S/HOLD"){
-        name="S_HOLD";
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_lfo_wav"))->set_filename(MOD_IMG_DIRECTORY"/"+name+".png");*/
-
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -3016,7 +2992,6 @@ void Dx7interface::on_mute_hexter_op2_event() {
         (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_(" OP2 "));
         on_lvl_op2_event();
     };
-
 };
 
 /* OP2 KLS */
@@ -3341,9 +3316,7 @@ void Dx7interface::on_mute_hexter_op3_event() {
         (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_(" OP3 "));
         on_lvl_op3_event();
     };
-
 };
-
 
 /* OP3 KLS */
 void Dx7interface::on_kls_lft_curve_op3_event() {	LOG_IN();

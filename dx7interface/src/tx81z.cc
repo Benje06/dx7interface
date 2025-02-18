@@ -40,7 +40,8 @@ Tx81z::Tx81z(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODULE_NAME), Synth
     //get_gwidget()->set_title("Tx81z");
     /* MIDI */
     Synth::id_fabricant=id_fabricant;
-    Synth::channel=0xF0;
+    Synth::channel_send=0x00;
+    Synth::channel_receive=0x00;
     Synth::sub_status=0x10;
     seq_handle=get_seq_handler();
     ev=get_seq_event_handler();
