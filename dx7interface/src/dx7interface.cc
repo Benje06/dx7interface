@@ -579,7 +579,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.lft_dpth.val);
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.rght_curve.val);
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
-        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( (sound->op[j].kls.brk_pt.val / 12) );
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( ((sound->op[j].kls.brk_pt.val - 3) / 12) );
     };
     //Glib::ustring cur_title = (get_window())->get_title();
     (get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
@@ -949,9 +949,10 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op1_event));
     slot_kls_note_brk_pt_op1 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
-    auto note_brk_pt_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"));
     slot_kls_octv_brk_pt_op1 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
+    auto note_brk_pt_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"),slot_kls_octv_brk_pt_op1);
+
 
 
     /* OP2 */
@@ -1008,9 +1009,9 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op2_event));
     slot_kls_note_brk_pt_op2 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
-    auto note_brk_pt_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"));
     slot_kls_octv_brk_pt_op2 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
+    auto note_brk_pt_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"),slot_kls_octv_brk_pt_op2);
 
     /* OP3 */
     slot_ams_op3 = (get_gwidget<Gtk::Scale>("ams_op3"))->signal_value_changed().connect(
@@ -1066,10 +1067,9 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op3_event));
     slot_kls_note_brk_pt_op3 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
-    auto note_brk_pt_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"));
     slot_kls_octv_brk_pt_op3 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
-
+    auto note_brk_pt_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"),slot_kls_octv_brk_pt_op3);
 
     /* OP4 */
     slot_ams_op4 = (get_gwidget<Gtk::Scale>("ams_op4"))->signal_value_changed().connect(
@@ -1125,9 +1125,9 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op4_event));
     slot_kls_note_brk_pt_op4 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
-    auto note_brk_pt_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"));
     slot_kls_octv_brk_pt_op4 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
+    auto note_brk_pt_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"),slot_kls_octv_brk_pt_op4);
 
     /* OP5 */
     slot_ams_op5 = (get_gwidget<Gtk::Scale>("ams_op5"))->signal_value_changed().connect(
@@ -1183,9 +1183,9 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op5_event));
     slot_kls_note_brk_pt_op5 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
-    auto note_brk_pt_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"));
     slot_kls_octv_brk_pt_op5 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
+    auto note_brk_pt_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"),slot_kls_octv_brk_pt_op5);
 
     /* OP6 */
     slot_ams_op6 = (get_gwidget<Gtk::Scale>("ams_op6"))->signal_value_changed().connect(
@@ -1242,9 +1242,10 @@ void Dx7interface::attach_signals(){
 
     slot_kls_note_brk_pt_op6 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
-    auto note_brk_pt_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"));
     slot_kls_octv_brk_pt_op6 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
+    auto note_brk_pt_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"),slot_kls_octv_brk_pt_op6);
+
     //get_gwidget<gtk::algo>("algo_select")->click_on().connect(sigc::mrmçfunc(*this,&Dx7interface::on_change_algo_event))
     LOG_OUT();
 };
@@ -1724,7 +1725,6 @@ void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double widt
 
 /* EVENTS */
 void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
-    LOG_IN();
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
@@ -1733,7 +1733,6 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
         draw_keyboard( cr, wdth, hght, num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op"+num_op))->queue_draw();
     };
-    LOG_OUT();
 };
 
 void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
@@ -2743,19 +2742,25 @@ void Dx7interface::on_kls_rght_dpth_op1_event() {	LOG_IN();
 };
 
 void Dx7interface::on_kls_brk_pt_op1_event() {
-    u_char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status & channel;
-    msg[3]=0x00;
-    msg[4]=0x71;
-    msg[5]=(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->get_value())*12;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->get_selected();
+    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->get_value();
+    if(val_note < 3){
+        val_note = val_note+12;
+    };
+    char val = ((val_note) + (val_octv * 12));
+    if( val >= 0 && val <= 99 ){
+        u_char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel;
+        msg[3]=0x00;
+        msg[4]=0x71;
+        msg[5]=val;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+    };
 };
-
 
 /* OP2 */
 void Dx7interface::on_ams_op2_event() {	LOG_IN();
@@ -3071,17 +3076,24 @@ void Dx7interface::on_kls_rght_dpth_op2_event() {	LOG_IN();
 };
 
 void Dx7interface::on_kls_brk_pt_op2_event() {
-    u_char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status & channel;
-    msg[3]=0x00;
-    msg[4]=0x5C;
-    msg[5]=(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->get_value())*12;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->get_selected();
+    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->get_value();
+    if(val_note < 3){
+        val_note = val_note+12;
+    };
+    char val = ((val_note) + (val_octv * 12));
+    if( val >= 0 && val <= 99 ){
+        u_char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel;
+        msg[3]=0x00;
+        msg[4]=0x5C;
+        msg[5]=val;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+    };
 };
 
 
@@ -3390,17 +3402,24 @@ void Dx7interface::on_kls_rght_dpth_op3_event() {	LOG_IN();
 };
 
 void Dx7interface::on_kls_brk_pt_op3_event() {	LOG_IN();
-    u_char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status & channel;
-    msg[3]=0x00;
-    msg[4]=0x47;
-    msg[5]=(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->get_value())*12;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->get_selected();
+    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->get_value();
+    if(val_note < 3){
+        val_note = val_note+12;
+    };
+    char val = ((val_note) + (val_octv * 12));
+    if( val >= 0 && val <= 99 ){
+        u_char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel;
+        msg[3]=0x00;
+        msg[4]=0x47;
+        msg[5]=val;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+    };
 };
 
 
@@ -3680,7 +3699,7 @@ void Dx7interface::on_kls_rght_curve_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_lft_dpth_op4_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_dpth_op4_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -3691,10 +3710,9 @@ void Dx7interface::on_kls_lft_dpth_op4_event() {	LOG_IN();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
-    LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_dpth_op4_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_dpth_op4_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -3705,21 +3723,27 @@ void Dx7interface::on_kls_rght_dpth_op4_event() {	LOG_IN();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
-    LOG_OUT();
 };
 
-void Dx7interface::on_kls_brk_pt_op4_event() {
-    u_char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status & channel;
-    msg[3]=0x00;
-    msg[4]=0x32;
-    msg[5]=(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->get_value())*12;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+void Dx7interface::on_kls_brk_pt_op4_event(){
+    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->get_selected();
+    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->get_value();
+    if(val_note < 3){
+        val_note = val_note+12;
+    };
+    char val = ((val_note) + (val_octv * 12));
+    if( val >= 0 && val <= 99 ){
+        u_char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel;
+        msg[3]=0x00;
+        msg[4]=0x32;
+        msg[5]=val;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+    };
 };
 
 /* OP5 */
@@ -3997,7 +4021,7 @@ void Dx7interface::on_kls_rght_curve_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_lft_dpth_op5_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_dpth_op5_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -4008,10 +4032,9 @@ void Dx7interface::on_kls_lft_dpth_op5_event() {	LOG_IN();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
-    LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_dpth_op5_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_dpth_op5_event(){
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -4022,21 +4045,27 @@ void Dx7interface::on_kls_rght_dpth_op5_event() {	LOG_IN();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
-    LOG_OUT();
 };
 
 void Dx7interface::on_kls_brk_pt_op5_event() {
-    u_char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status & channel;
-    msg[3]=0x00;
-    msg[4]=0x1D;
-    msg[5]=(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->get_value())*12;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->get_selected();
+    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->get_value();
+    if(val_note < 3){
+        val_note = val_note+12;
+    };
+    char val = ((val_note) + (val_octv * 12));
+    if( val >= 0 && val <= 99 ){
+        u_char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel;
+        msg[3]=0x00;
+        msg[4]=0x1D;
+        msg[5]=val;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    };
 };
 
 /* OP6 */
@@ -4344,17 +4373,24 @@ void Dx7interface::on_kls_rght_dpth_op6_event() {	LOG_IN();
 };
 
 void Dx7interface::on_kls_brk_pt_op6_event() {
-    u_char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status & channel;
-    msg[3]=0x00;
-    msg[4]=0x08;
-    msg[5]=(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->get_selected()
-        +((get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->get_value())*12;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->get_selected();
+    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->get_value();
+    if(val_note < 3){
+        val_note = val_note+12;
+    };
+    char val = ((val_note) + (val_octv * 12));
+    if( val >= 0 && val <= 99 ){
+        u_char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel;
+        msg[3]=0x00;
+        msg[4]=0x08;
+        msg[5]=val;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+    };
 };
 
 void Dx7interface::block_all(){

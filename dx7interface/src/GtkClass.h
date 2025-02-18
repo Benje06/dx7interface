@@ -29,9 +29,9 @@ class DropDownScrollController{
     private:
         //Glib::RefPtr<Gtk::EventControllerScroll>  scroll_controller;
         bool on_scroll(double, double,Glib::RefPtr<Gtk::EventControllerScroll>);
-        bool on_scroll_kls(double, double,Glib::RefPtr<Gtk::EventControllerScroll>,Gtk::SpinButton*);
+        bool on_scroll_kls(double, double,Glib::RefPtr<Gtk::EventControllerScroll>,Gtk::SpinButton*,sigc::connection);
         //Gtk::DropDown* widget;
     public:
         DropDownScrollController(Gtk::DropDown*);
-        DropDownScrollController(Gtk::DropDown*,Gtk::SpinButton*);
+        DropDownScrollController(Gtk::DropDown*,Gtk::SpinButton*,sigc::connection);
 };
