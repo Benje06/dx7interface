@@ -56,7 +56,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
     /* set channel & sub_status */
-    Synth::channel_send=0xF0;
+    Synth::channel_send=0xF1;
     Synth::channel_receive=0xF0;
     Synth::sub_status=0x10;
     seq_handle=get_seq_handler();
@@ -542,24 +542,24 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     /* OPERATEUR j+1 */
     uint8_t mute_val=0x00;
     for ( j=0;j<6;j++){
-    /* AMS */
+        /* AMS */
         (get_gwidget<Gtk::Scale>("ams_op"+tostr<uint>(j+1)))->set_value(sound->op[j].ams.val);
-    /* FREQUENCE */
+        /* FREQUENCE */
         (get_gwidget<Gtk::DropDown>("freq_mode_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].freq_mode.val);
         (get_gwidget<Gtk::SpinButton>("freq_coarse_op"+tostr<uint>(j+1)))->set_value(sound->op[j].freq_coarse.val);
         (get_gwidget<Gtk::SpinButton>("freq_fine_op"+tostr<uint>(j+1)))->set_value(sound->op[j].freq_fine.val);
         (get_gwidget<Gtk::Scale>("dtun_op"+tostr<uint>(j+1)))->set_value(sound->op[j].dtun.val-7);
-    /* DRAWING AREA */
+        /* DRAWING AREA */
 
-    /* OP[J] EG RT[k] */
+        /* OP[J] EG RT[k] */
         for ( k = 0; k < 4 ; k++ ){
             (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(k+1)+"_op"+tostr<uint>(j+1)))->set_value(sound->op[j].eg_rt[k].val);
         };
-    /* OP[J] EG LVL[k] */
+        /* OP[J] EG LVL[k] */
         for ( k = 0; k < 4 ; k++ ){
             (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_op"+tostr<uint>(j+1)))->set_value(sound->op[j].eg_lvl[k].val);
         };
-    /* VOLUME */
+        /* VOLUME */
         /* KRS */
         (get_gwidget<Gtk::Scale>("krs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].krs.val);
         /* KVS */
@@ -571,10 +571,9 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(false);
 
         mute_val=mute_val | !((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->get_active());
-            if (i!=6){
+            if (j+1!=6){
                 mute_val=mute_val << 1;
             };
-        };
         /* KLS */
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
@@ -583,8 +582,8 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
         (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( ((sound->op[j].kls.brk_pt.val - 3) / 12) );
     };
-    // set mute status in extra struct
     sound->extra.mute.val=mute_val;
+    // set mute status in extra struct
     //Glib::ustring cur_title = (get_window())->get_title();
     (get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
     unblock_midi();

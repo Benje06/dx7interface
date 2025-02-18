@@ -77,7 +77,7 @@
         guint address;
         static const guint8 max=127;
         static const guint8 mask=0x7F;
-    }St_99;
+    }St_127;
 
     typedef struct st_kls {
         St_99 brk_pt;//  LEV SCL BRK PT 0-99
