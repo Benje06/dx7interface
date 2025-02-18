@@ -13,16 +13,12 @@ lecture/ecriture fichier(dans fonctions ?)
 reception/envoi en midi (recevie bank, receive sound, send bank(32/128), plusieurs sons)
 multiplateforme (midi/interface) drumkit, Juce ???
 
-
 # Interface
-transpose algo (C1 -> C5)
-son par defaut (son init)
-
-options des couleurs
-refonte interface( size/expand des elements)
-verification des courbes
-boutons compare/randomize/panique
 fenetre secondaires (option, module, chargement de fichier)
+refonte interface( size/expand des elements)
+son par defaut (son init)
+boutons compare/randomize/panique
+options des couleurs
 
 ### CODE
 gestion d'exceptions
@@ -34,6 +30,5 @@ verifier la récuperations des bon bit du syx(cf tableau.ods)
 # ergonomie
 drag&drop
 tooltype
-menu alacarte
 
 
