@@ -89,12 +89,6 @@ Gx_module::~Gx_module(){
         module_pointer.reset();
         delete gmodule;
     };
-    if(rootbox){
-        delete rootbox;
-    };
-    if (main_window){
-        delete main_window;
-    };
     std::cerr << mod.name << "->" << mod.desc;
 	LOG_OUT();
 };
