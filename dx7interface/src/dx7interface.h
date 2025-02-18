@@ -60,7 +60,7 @@ class Dx7interface : public Gx_module, public Synth {
         virtual ~Dx7interface();
     private:
         /*** Dx7 ***/
-        //Gtk::Window* main_window = nullptr;
+        bool compare = false;
         static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
         /* SySeX format (bank/sound/message) */
         St_dx7sysex<1> bank_1_origin;           /* bank d'origine 1 son */
@@ -180,6 +180,7 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
         void on_bind_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
+
         /* Functions */
 		void init_global_fonction_parameter();
         void on_mono_poly_event();
@@ -220,7 +221,9 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_aftrtch_mp;
         sigc::connection slot_aftrtch_gbs;
 
-
+        /* compare */
+        sigc::connection slot_btn_compare;
+        void on_compare_event();
         /* general algo */
         void on_algo_event();
         sigc::connection slot_algo;

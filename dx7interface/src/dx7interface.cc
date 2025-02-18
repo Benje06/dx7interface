@@ -733,6 +733,9 @@ void Dx7interface::attach_signals(){
     slot_aftrtch_gbs = (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_aftrtch_assgn_event));
 
+    /* Function compare */
+    slot_btn_compare = (get_gwidget<Gtk::ToggleButton>("btn_compare"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_compare_event));
 
     /* Algo */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->set_draw_func(
@@ -1444,8 +1447,15 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 };
 
 void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
-    if ( std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png")) ){
-        Cairo::RefPtr<Cairo::ImageSurface> algo_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png");
+    LOG_IN();
+    std::string img;
+    if(compare){
+        img = std::string(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_origin.sound->algo.algo.val+1)+".png");
+    }else{
+        img = std::string(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png");
+    }
+    if ( std::filesystem::exists(img) ){
+        Cairo::RefPtr<Cairo::ImageSurface> algo_image_surface = Cairo::ImageSurface::create_from_png(img);
         double scale_factor = width / algo_image_surface->get_width();
         cr->save();
         cr->scale(scale_factor,scale_factor);
@@ -1454,8 +1464,9 @@ void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double 
         cr->restore();
     }else{
         std::cerr << "File not found: "<<std::endl;
-        std::cerr<<MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_modif.sound->algo.algo.val+1)+".png"<<std::endl;
+        std::cerr<<img<<std::endl;
     };
+    LOG_OUT();
 };
 
 void Dx7interface::on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
@@ -1713,6 +1724,7 @@ void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double widt
 
 /* EVENTS */
 void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
+    LOG_IN();
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
@@ -1721,9 +1733,11 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
         draw_keyboard( cr, wdth, hght, num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op"+num_op))->queue_draw();
     };
+    LOG_OUT();
 };
 
 void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
+    LOG_IN();
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
@@ -1731,6 +1745,7 @@ void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int 
         draw_adsr( cr, wdth, hght, "op"+num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
     };
+    LOG_OUT();
 };
 
 void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
@@ -1742,24 +1757,6 @@ void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, 
         draw_adsr( cr, wdth, hght, "pitch" );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    LOG_OUT();
-};
-
-void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
-    LOG_IN();
-    auto snum = m_selection_model->get_selected();
-    switch ( bank_nb_sound ){
-        case 32:
-            bank_1_modif.sound[0]=bank_32_modif.sound[snum];
-            break;
-        case 128:
-            bank_1_modif.sound[0]=bank_128_modif.sound[snum];
-            break;
-    };
-    set_voice(&bank_1_modif.sound[0]);
-    send_voice(&bank_1_modif.sound[0]);
-    on_txt_freq_op_event();
-    redraw_all_curve();
     LOG_OUT();
 };
 
@@ -1779,6 +1776,25 @@ void Dx7interface::redraw_all_curve(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+};
+
+void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
+    LOG_IN();
+    auto snum = m_selection_model->get_selected();
+    switch ( bank_nb_sound ){
+        case 32:
+            bank_1_modif.sound[0]=bank_32_modif.sound[snum];
+            break;
+        case 128:
+            bank_1_modif.sound[0]=bank_128_modif.sound[snum];
+            break;
+    };
+    bank_1_origin.sound[0]=bank_1_modif.sound[0];
+    set_voice(&bank_1_modif.sound[0]);
+    send_voice(&bank_1_modif.sound[0]);
+    on_txt_freq_op_event();
+    redraw_all_curve();
+    LOG_OUT();
 };
 
 void Dx7interface::on_bank_select(){
@@ -1852,7 +1868,7 @@ void Dx7interface::on_bank_select(){
     LOG_OUT();
 };
 
-
+/* Functions */
 void Dx7interface::on_mono_poly_event(){
 	LOG_IN();
     u_char msg[7];                      // paremter change      message
@@ -2071,6 +2087,23 @@ void Dx7interface::on_aftrtch_assgn_event(){
     LOG_OUT();
 };
 
+/* Compare */
+void Dx7interface::on_compare_event(){
+    if ( (get_gwidget<Gtk::ToggleButton>("btn_compare"))->get_active() ) {
+        std::cout<< "compare on"<< std::endl;
+        compare=true;
+        set_voice(&bank_1_origin.sound[0]);
+        block_midi();
+        on_txt_freq_op_event();
+        redraw_all_curve();
+    }else{
+        std::cout<< "compare off"<< std::endl;
+        compare=false;
+        set_voice(&bank_1_modif.sound[0]);
+        on_txt_freq_op_event();
+        redraw_all_curve();
+    };
+};
 
 /* ALGO */
 void Dx7interface::on_algo_event() {	LOG_IN();
@@ -2166,6 +2199,7 @@ void Dx7interface::on_lfo_sync_event() {
     }
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    bank_1_modif.sound->lfo.sync.val=msg[5];
 };
 
 void Dx7interface::on_speed_event() {
@@ -2503,7 +2537,7 @@ void Dx7interface::on_eg_rt2_op1_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    bank_1_modif.sound->op[1].eg_rt[0].val=msg[5];
+    bank_1_modif.sound->op[0].eg_rt[1].val=msg[5];
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
@@ -2518,7 +2552,7 @@ void Dx7interface::on_eg_rt3_op1_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    bank_1_modif.sound->op[2].eg_rt[0].val=msg[5];
+    bank_1_modif.sound->op[0].eg_rt[2].val=msg[5];
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
@@ -2533,7 +2567,7 @@ void Dx7interface::on_eg_rt4_op1_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    bank_1_modif.sound->op[3].eg_rt[0].val=msg[5];
+    bank_1_modif.sound->op[0].eg_rt[3].val=msg[5];
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
@@ -2548,7 +2582,7 @@ void Dx7interface::on_eg_lvl1_op1_event() {	LOG_IN();
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    bank_1_modif.sound->op[0].eg_lvl[1].val=msg[5];
+    bank_1_modif.sound->op[0].eg_lvl[0].val=msg[5];
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
