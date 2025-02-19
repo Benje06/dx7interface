@@ -230,6 +230,9 @@ class Dx7interface : public Gx_module, public Synth {
         /* compare */
         sigc::connection slot_btn_compare;
         void on_compare_event();
+        /* Panic */
+        sigc::connection slot_btn_panic;
+        void on_panic_event();
 
         /* general algo */
         void on_algo_event();

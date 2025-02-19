@@ -836,7 +836,6 @@ void Dx7interface::init_global_fonction_parameter(){
 	LOG_OUT();
 };
 
-
 /* attach all signals */
 void Dx7interface::attach_signals(){
     LOG_IN();
@@ -920,9 +919,12 @@ void Dx7interface::attach_signals(){
     slot_aftrtch_gbs = (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_aftrtch_assgn_event));
 
-    /* Function compare */
+    /* compare */
     slot_btn_compare = (get_gwidget<Gtk::ToggleButton>("btn_compare"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_compare_event));
+    /* panic */
+    slot_btn_panic = (get_gwidget<Gtk::Button>("btn_panic"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_panic_event));
 
     /* Algo */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->set_draw_func(
@@ -2343,6 +2345,17 @@ void Dx7interface::on_compare_event(){
         redraw_all_curve();
     };
 };
+
+/* Panic */
+
+void Dx7interface::on_panic_event(){
+    u_char msg[3];
+    msg[0]=0xB0;
+    msg[1]=0x7B;
+    msg[3]=0x00;
+    send_midi(SND_SEQ_EVENT_CONTROLLER, 3, msg);
+};
+
 
 /* ALGO */
 void Dx7interface::on_algo_event() {	LOG_IN();
