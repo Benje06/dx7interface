@@ -2332,6 +2332,7 @@ void Dx7interface::on_compare_event(){
         get_gwidget<Gtk::ToggleButton>("btn_compare")->add_css_class("blink");
         set_voice(&bank_1_origin.sound[0]);
         block_ui(); // ?
+        send_voice(&bank_1_origin.sound[0]);
         block_midi();
         on_txt_freq_op_event();
         redraw_all_curve();
@@ -2340,6 +2341,7 @@ void Dx7interface::on_compare_event(){
         compare=false;
         get_gwidget<Gtk::ToggleButton>("btn_compare")->remove_css_class("blink");
         set_voice(&bank_1_modif.sound[0]);
+        send_voice(&bank_1_modif.sound[0]);
         unblock_ui(); // ?
         on_txt_freq_op_event();
         redraw_all_curve();

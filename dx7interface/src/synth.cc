@@ -70,7 +70,14 @@ void Synth::send_midi(char ev_type, uint size, u_char *msg){
         /* */
         snd_seq_ev_set_direct(&ev_out);
         ev_out.type = ev_type;
-        snd_seq_ev_set_variable(&ev_out, size, msg);
+        if (ev_type == SND_SEQ_EVENT_CONTROLLER ){
+            ev_out.data.control.channel = msg[0] & 0x0F;
+            ev_out.data.control.param = msg[1];
+            ev_out.data.control.value = msg[2];
+            snd_seq_ev_set_fixed(&ev_out);
+        }else{
+            snd_seq_ev_set_variable(&ev_out, size, msg);
+        }
         snd_seq_event_output(seq_handle, &ev_out);
         snd_seq_drain_output(seq_handle);
     };
