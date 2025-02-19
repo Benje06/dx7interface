@@ -4142,7 +4142,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="eg_rt3_op6">
-                                        <property name="adjustment">adj_eg_rt3_op1</property>
+                                        <property name="adjustment">adj_eg_rt3_op6</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>

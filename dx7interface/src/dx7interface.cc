@@ -847,7 +847,7 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->add_controller(controller_mouse_moove_op3);
 
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("4") ));
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("4") ));
     controller_mouse_moove_op4->signal_motion().connect(
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op4") ));
     controller_mouse_button_op4->signal_pressed().connect(
@@ -858,7 +858,7 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->add_controller(controller_mouse_moove_op4);
 
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("5") ));
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("5") ));
     controller_mouse_moove_op5->signal_motion().connect(
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op5") ));
     controller_mouse_button_op5->signal_pressed().connect(
@@ -869,7 +869,7 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->add_controller(controller_mouse_moove_op5);
 
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("6") ));
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("6") ));
     controller_mouse_moove_op6->signal_motion().connect(
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op6") ));
     controller_mouse_button_op6->signal_pressed().connect(
@@ -2141,10 +2141,11 @@ void Dx7interface::on_aftrtch_assgn_event(){
 
 /* Compare */
 void Dx7interface::on_compare_event(){
-    // TODO: mute/unmute ???
+    // TODO: add set mute/unmute from struct
     if ( (get_gwidget<Gtk::ToggleButton>("btn_compare"))->get_active() ) {
         std::cout<< "compare on"<< std::endl;
         compare=true;
+        get_gwidget<Gtk::ToggleButton>("btn_compare")->add_css_class("blink");
         set_voice(&bank_1_origin.sound[0]);
         block_all(); // ?
         block_midi();
@@ -2153,6 +2154,7 @@ void Dx7interface::on_compare_event(){
     }else{
         std::cout<< "compare off"<< std::endl;
         compare=false;
+        get_gwidget<Gtk::ToggleButton>("btn_compare")->remove_css_class("blink");
         set_voice(&bank_1_modif.sound[0]);
         unblock_all(); // ?
         on_txt_freq_op_event();
