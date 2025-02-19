@@ -145,34 +145,40 @@ class Dx7interface : public Gx_module, public Synth {
         bool Run() ;    /* Thread function  */
         /*** MIDI ***/
         void listen_midi() override;
-        /* sound bank */
+        /** SOUND BANK **/
         void load_bank(Glib::RefPtr<Gio::File>);
         void save_bank(Glib::RefPtr<Gio::File>);
         void save_bank_as(Glib::RefPtr<Gio::File>);
-        void clean_bank();                          // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
-        void clear_sound(uint8_t,St_dx7sysex_1*);    // set 0x00 to all param to voice struct "aka clear struct"
-        /* voice load  */
-        void seek_voice(uint8_t, st_dx7sysex_1*);   // set all param from file to voice struct
-        void send_voice(st_dx7sysex_1*);            // send voice to midi
-        void set_voice(st_dx7sysex_1*);             // set voice in GUI
+        void clean_bank();                            // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
+        void clear_sound(uint8_t,St_dx7sysex_1*);     // set 0x00 to all param to voice struct "aka clear struct"
+        /** VOICE  **/
+        /* seek voice value from bank file and write it to sound */
+        void seek_voice(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
+        void seek_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
+        void seek_voice_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*);
+        /* send voice over midi */
+        void send_voice(st_dx7sysex_1*);              // send voice to midi
+        void send_parameters(st_dx7sysex_1*);         // send voice to midi
+        /* set voice to interface */
+        void set_voice(st_dx7sysex_1*);               // set voice in GUI
+        void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
 
         /*** UI ***/
-
         /** EVENTS / SIGNAL **/
-        void block_all();                       /* blocage des evenements de l'interface */
-        void unblock_all();                     /* ... */
+        void block_ui();                       /* block all interface events */
+        void unblock_ui();                     /* ... */
         void attach_signals() override;
         void dettach_signals() override;
 
-        /* Drawing */
+        /** Drawing **/
         void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&, int, int);
         void on_draw_op_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
         void on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
 
-        /* events and sigc::connection slot for blocking*/
+        /** EVENTS and SIGC ::connection slot for blocking **/
+        /* bank */
         void on_bank_reveal();
         sigc::connection slot_bank_reveal;
-
         void on_bank_sound_change(uint,uint);
         sigc::connection slot_bank_sound_change;
         void on_bank_select();
@@ -181,8 +187,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
 
-        /* Functions */
-		void init_global_fonction_parameter();
+        /* Functions parameters */
+        void init_global_fonction_parameter();
         void on_mono_poly_event();
         sigc::connection slot_poly;
         void on_portamento_md_event();
@@ -224,6 +230,7 @@ class Dx7interface : public Gx_module, public Synth {
         /* compare */
         sigc::connection slot_btn_compare;
         void on_compare_event();
+
         /* general algo */
         void on_algo_event();
         sigc::connection slot_algo;
@@ -234,6 +241,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_octv_transpose;
         void on_oks_event();
         sigc::connection slot_oks;
+
         /* general lfo */
         void on_lfo_wav_event();
         sigc::connection slot_lfo_wav;
@@ -247,9 +255,9 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_pmd;
         void on_amd_event();
         sigc::connection slot_amd;
-        /* lfo modulation */
         void on_pms_event();
         sigc::connection slot_pms;
+
         /* pitch eg*/
         void on_pitch_rt1_event();
         sigc::connection slot_pitch_rt1;
@@ -267,6 +275,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_pitch_lvl3;
         void on_pitch_lvl4_event();
         sigc::connection slot_pitch_lvl4;
+
         /* mute operator for dx7*/
         void on_mute_op_event();
         sigc::connection slot_mute_op1;
@@ -275,8 +284,11 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_mute_op4;
         sigc::connection slot_mute_op5;
         sigc::connection slot_mute_op6;
+
+        /* update show freq label value */
         void on_txt_freq_op_event();
-        /* op1 */
+
+        /* OP1 */
         void on_ams_op1_event(); //frame lfo
         sigc::connection slot_ams_op1;
         void on_freq_mode_op1_event();
@@ -311,10 +323,9 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kvs_op1;
         void on_lvl_op1_event();
         sigc::connection slot_lvl_op1;
-        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        /* mute operator FOR HEXTER DX7 modeling DSSI plugin */
         void on_mute_hexter_op1_event();
         sigc::connection slot_mute_hexter_op1;
-
         /* op1 KLS*/
         void on_kls_lft_curve_op1_event();
         sigc::connection slot_kls_lft_curve_op1;
@@ -330,7 +341,7 @@ class Dx7interface : public Gx_module, public Synth {
 
         /*----------------------LES AUTRES OPERATEURS------------------------*/
 
-        /* op2 */
+        /* OP2 */
         void on_ams_op2_event(); //frame lfo
         sigc::connection slot_ams_op2;
         void on_freq_mode_op2_event();
@@ -381,7 +392,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kls_note_brk_pt_op2;
         sigc::connection slot_kls_octv_brk_pt_op2;
 
-        /* op3 */
+        /* OP3 */
         void on_ams_op3_event(); //frame lfo
         sigc::connection slot_ams_op3;
         void on_freq_mode_op3_event();
@@ -432,7 +443,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kls_note_brk_pt_op3;
         sigc::connection slot_kls_octv_brk_pt_op3;
 
-        /* op4 */
+        /* OP4 */
         void on_ams_op4_event(); //frame lfo
         sigc::connection slot_ams_op4;
         void on_freq_mode_op4_event();
@@ -483,7 +494,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kls_note_brk_pt_op4;
         sigc::connection slot_kls_octv_brk_pt_op4;
 
-        /* op5 */
+        /* OP5 */
         void on_ams_op5_event(); //frame lfo
         sigc::connection slot_ams_op5;
         void on_freq_mode_op5_event();
@@ -534,7 +545,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kls_note_brk_pt_op5;
         sigc::connection slot_kls_octv_brk_pt_op5;
 
-        /* op6 */
+        /* OP6 */
         void on_ams_op6_event(); //frame lfo
         sigc::connection slot_ams_op6;
         void on_freq_mode_op6_event();
