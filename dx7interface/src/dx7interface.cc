@@ -2352,7 +2352,7 @@ void Dx7interface::on_panic_event(){
     u_char msg[3];
     msg[0]=0xB0;
     msg[1]=0x7B;
-    msg[3]=0x00;
+    msg[2]=0x00;
     send_midi(SND_SEQ_EVENT_CONTROLLER, 3, msg);
 };
 
