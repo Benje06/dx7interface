@@ -17,7 +17,7 @@ multiplateforme (midi/interface) drumkit, Juce ???
 fenetre secondaires (option, module, chargement de fichier)
 refonte interface( size/expand des elements)
 son par defaut (son init)
-boutons compare/randomize/panique
+boutons randomize
 options des couleurs
 
 ### CODE
