@@ -5449,7 +5449,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_panique">
+                                  <object class="GtkButton" id="btn_panic">
                                     <property name="focusable">1</property>
                                     <property name="label" translatable="yes">panique</property>
                                     <property name="receives-default">1</property>
