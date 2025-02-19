@@ -615,12 +615,9 @@ void Dx7interface::send_voice(st_dx7sysex_1* sound){
 
 void Dx7interface::send_parameters(st_dx7sysex_1* sound){
     LOG_IN();
-    /* TODO : check one voice, send each parameter alone 155 bytes or as bulk format 128 bytes */
-
-    /* voice msg, index of sysex value in message, operator index, eg index */
-    uint8_t i, j,k;
-    uint msg_length = 97;
-    u_char msg[msg_length];
+    uint8_t i, j;
+    uint nb_elem = 14;
+    u_char msg[7];
 
     uint8_t val[] = {
         sound->extra.functions.poly_mono.val,
@@ -639,17 +636,19 @@ void Dx7interface::send_parameters(st_dx7sysex_1* sound){
         sound->extra.functions.aftrtch_assgn.val,
     };
 
-    for ( i=0, j=64, k=0; i<msg_length; i++,j++,k++){
-        std::cout << "char j: " << std::hex << (int)j << std::dec << std::endl;
-        std::cout << "i: " << (int)i << std::endl;
-        std::cout << "sound val: " << std::hex << (int)val[k] << std::dec << std::endl;
-        msg[i]=0xF0;
-        msg[++i]=id_fabricant;
-        msg[++i]=0x00 & channel_send;
-        msg[++i]=0x08;
-        msg[++i]=j;
-        msg[++i]=val[k];
-        msg[++i]=0xF7;
+    for ( i=0, j=64 ; i< nb_elem; i++,j++){
+        /*
+            std::cout << "char j: " << std::hex << (int)j << std::dec << std::endl;
+            std::cout << "i: " << (int)i << std::endl;
+            std::cout << "sound val: " << std::hex << (int)val[i] << std::dec << std::endl;
+        */
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status & channel_send;
+        msg[3]=0x08;
+        msg[4]=j;
+        msg[5]=val[i];
+        msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     };
     LOG_OUT();
