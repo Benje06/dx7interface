@@ -832,7 +832,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         //(get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(false);
 
         (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(mute_val & 0x01);
-        if (i!=5){
+        if (j!=5){
             mute_val=mute_val << 1;
         };
         /* KLS */
