@@ -427,6 +427,7 @@ void Dx7interface::seek_voice(uint8_t i, St_dx7sysex_1* sound){
         strm << (data_stream->read_byte());
     };
     sound->name=strm.str();
+    sound->extra.mute.val=0x00;
     /* add voice name to liststore */
     m_data_model->append(SoundBankItem::create(i,sound->name));
     //LOG_OUT();
@@ -827,11 +828,13 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         /* LVL */
         (get_gwidget<Gtk::SpinButton>("lvl_op"+tostr<uint>(j+1)))->set_value(sound->op[j].lvl.val);
         /* MUTE */
-            /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
-        (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(false);
+        /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
+        //(get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(false);
 
         (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(mute_val & 0x01);
-        mute_val << 1;
+        if (i!=5){
+            mute_val=mute_val << 1;
+        };
         /* KLS */
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
@@ -2083,13 +2086,13 @@ void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
     auto snum = m_selection_model->get_selected();
     switch ( bank_nb_sound ){
         case 32:
-            bank_1_modif.sound[0]=bank_32_modif.sound[snum];
+            bank_1_modif.sound[0]= bank_32_modif.sound[snum];
             break;
         case 128:
-            bank_1_modif.sound[0]=bank_128_modif.sound[snum];
+            bank_1_modif.sound[0]= bank_128_modif.sound[snum];
             break;
     };
-    bank_1_origin.sound[0]=bank_1_modif.sound[0];
+    bank_1_modif.sound[0]= bank_1_modif.sound[0];
     (get_gwidget<Gtk::ToggleButton>("btn_compare"))->set_active(false);
     set_voice(&bank_1_modif.sound[0]);
     send_voice(&bank_1_modif.sound[0]);
