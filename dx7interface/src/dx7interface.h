@@ -162,7 +162,7 @@ class Dx7interface : public Gx_module, public Synth {
         /* set voice to interface */
         void set_voice(st_dx7sysex_1*);               // set voice in GUI
         void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
-
+        void write_voice(st_dx7sysex_1*);
         /*** UI ***/
         /** EVENTS / SIGNAL **/
         void block_ui();                       /* block all interface events */

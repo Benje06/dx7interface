@@ -500,6 +500,119 @@ void Dx7interface::clear_sound(uint8_t i,St_dx7sysex_1* sound){
     LOG_OUT();
 };
 
+void Dx7interface::write_voice(st_dx7sysex_1* sound){
+    LOG_IN();
+    /* TODO : check one voice send each parameter alone 155 bytes or as bulk format 128 BYtes */
+    /*
+     *  11110000  F0   Status byte - start sysex
+     *  0iiiiiii  43   ID # (i=67; Yamaha)
+     *  0sssnnnn  00   Sub-status (s=0) & channel number (n=0; ch 1)
+     *  0fffffff  00   format number (f=0; 1 voice)
+     *  0bbbbbbb  01   byte count MS byte
+     *  0bbbbbbb  1B   byte count LS byte (b=155; 1 voice)
+     *  0ddddddd  **   data byte 1
+     *      |       |       |
+     *  0ddddddd  **   data byte 155
+     *  0eeeeeee  **   checksum (masked 2's complement of sum of 155 bytes)
+     *  11110111  F7   Status - end sysex
+     */
+    uint8_t voice_checksum = 0;
+    /* voice msg, index of sysex value in message, operator index, eg index */
+    uint8_t l=6, j, k;
+    u_char msg[163];
+    msg[0]=0xF0;
+    msg[1]=id_fabricant;
+    msg[2]=0x00 & channel_send;
+    msg[3]=0x00;
+    msg[4]=0x01;
+    msg[5]=0x1B;
+    /* operator j */
+    for ( j = 6; j-- != 0 ; ){
+        /* OP[J] EG RATE[k] */
+        for ( k = 0; k < 4 ; k++ ){
+            msg[l++]=sound->op[j].eg_rt[k].val;
+            voice_checksum -= msg[l-1];
+        };
+        /* OP[J] EG LVL[k] */
+        for ( k = 0; k < 4 ; k++  ){
+            msg[l++]=sound->op[j].eg_lvl[k].val;
+            voice_checksum -= msg[l-1];
+        };
+        msg[l++] = sound->op[j].kls.brk_pt.val;
+        voice_checksum -= msg[l-1];
+        msg[l++] = sound->op[j].kls.lft_dpth.val;
+        voice_checksum -= msg[l-1];
+        msg[l++] = sound->op[j].kls.rght_dpth.val;
+        voice_checksum -= msg[l-1];
+        msg[l++]= sound->op[j].kls.lft_curve.val;
+        voice_checksum -= msg[l-1];
+        msg[l++]= sound->op[j].kls.rght_curve.val;
+        voice_checksum -= msg[l-1];
+
+        msg[l++]= sound->op[j].krs.val;
+        voice_checksum -= msg[l-1];
+        msg[l++] = sound->op[j].ams.val;
+        voice_checksum -= msg[l-1];
+        msg[l++] = sound->op[j].kvs.val;
+        voice_checksum -= msg[l-1];
+
+        msg[l++] = sound->op[j].lvl.val;
+        voice_checksum -= msg[l-1];
+
+        msg[l++] = sound->op[j].freq_mode.val;
+        voice_checksum -= msg[l-1];
+        msg[l++] = sound->op[j].freq_coarse.val;
+        voice_checksum -= msg[l-1];
+        msg[l++] = sound->op[j].freq_fine.val;
+        voice_checksum -= msg[l-1];
+        msg[l++]= sound->op[j].dtun.val;
+        voice_checksum -= msg[l-1];
+    };
+    for(j=0 ; j <= 3; j++ ){
+        msg[l++] = sound->pitch.eg_rt[j].val;
+        voice_checksum -= msg[l-1];
+    };
+    for(j=0 ; j <= 3; j++ ){
+        msg[l++] = sound->pitch.eg_lvl[j].val;
+        voice_checksum -= msg[l-1];
+    };
+    msg[l++] = sound->algo.algo.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->algo.feedback.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->algo.oks.val;
+    voice_checksum -= msg[l-1];
+
+    msg[l++] = sound->lfo.speed.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->lfo.delay.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->lfo.pmd.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->lfo.amd.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->lfo.sync.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->lfo.wave.val;
+    voice_checksum -= msg[l-1];
+    msg[l++] = sound->lfo.pms.val;
+    voice_checksum -= msg[l-1];
+
+    msg[l++] = sound->algo.transpose.val;
+    voice_checksum -= msg[l-1];
+    for (uint8_t carac = 0 ; carac <= 9 ; carac++ ){
+        msg[l++] = sound->name.data()[carac];
+        voice_checksum -= msg[l-1];
+    };
+    /* compute checksum */
+    sound->sum = u_char(voice_checksum & 0x7F) ;
+    msg[161]=sound->sum;
+    msg[162]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX, 163, msg);
+
+    LOG_OUT();
+};
+
 void Dx7interface::send_voice(st_dx7sysex_1* sound){
     LOG_IN();
     /* TODO : check one voice send each parameter alone 155 bytes or as bulk format 128 BYtes */
@@ -687,7 +800,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_pitch")->set_value(sound->pitch.eg_lvl[k].val);
     };
     /* OPERATEUR j+1 */
-    uint8_t mute_val=0x00;
+    uint8_t mute_val=sound->extra.mute.val & 0x7F; // set mute status in extra struct;
     for ( j=0;j<6;j++){
         /* AMS */
         (get_gwidget<Gtk::Scale>("ams_op"+tostr<uint>(j+1)))->set_value(sound->op[j].ams.val);
@@ -717,10 +830,8 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
             /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
         (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(false);
 
-        mute_val=mute_val | !((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->get_active());
-        if (j+1!=6){
-            mute_val=mute_val << 1;
-        };
+        (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(mute_val & 0x01);
+        mute_val << 1;
         /* KLS */
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
@@ -729,7 +840,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
         (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( ((sound->op[j].kls.brk_pt.val - 3) / 12) );
     };
-    sound->extra.mute.val=mute_val; // set mute status in extra struct
+
     set_voice_parameters(sound);
 
     unblock_midi();
