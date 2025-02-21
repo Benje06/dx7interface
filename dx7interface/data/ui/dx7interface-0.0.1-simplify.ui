@@ -1344,6 +1344,17 @@
                                     </layout>
                                   </object>
                                 </child>
+                                <child>
+                                    <object class="GtkCheckButton" id="btn_send_extra_parameters">
+                                        <property name="focusable">1</property>
+                                        <property name="label" translatable="yes">Send extra param</property>
+                                        <property name="receives-default">1</property>
+                                        <layout>
+                                            <property name="column">1</property>
+                                            <property name="row">0</property>
+                                        </layout>
+                                    </object>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -2845,7 +2856,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="lvl_op3">
-                                        <property name="adjustment">adj_lvl_op1</property>
+                                        <property name="adjustment">adj_lvl_op3</property>
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="numeric">1</property>

@@ -101,7 +101,7 @@
         St_8 krs;//  osc rate scale
         St_8 kvs;// key vel sens
         St_4 ams;// amp mod sens
-        St_100 lvl;//  output lev
+        St_100 lvl;//  output level
         St_32 freq_coarse;//  freq coarse
         St_2  freq_mode;//   freq mode
         St_100 freq_fine;//  freq fine

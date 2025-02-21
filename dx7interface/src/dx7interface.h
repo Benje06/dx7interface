@@ -58,9 +58,17 @@ class Dx7interface : public Gx_module, public Synth {
     public:
         Dx7interface(Glib::ustring,uint8_t);
         virtual ~Dx7interface();
+        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
+        void on_mute_hexter_op1_event();
+        void on_mute_hexter_op2_event();
+        void on_mute_hexter_op3_event();
+        void on_mute_hexter_op4_event();
+        void on_mute_hexter_op5_event();
+        void on_mute_hexter_op6_event();
     private:
         /*** Dx7 ***/
         bool compare = false;
+        bool send_extra_parameters = false;
         static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
         /* SySeX format (bank/sound/message) */
         St_dx7sysex<1> bank_1_origin;           /* bank d'origine 1 son */
@@ -230,6 +238,9 @@ class Dx7interface : public Gx_module, public Synth {
         /* compare */
         sigc::connection slot_btn_compare;
         void on_compare_event();
+        /* send parameters */
+        sigc::connection slot_btn_send_extra_parameters;
+        void on_send_extra_parameters_event();
         /* Panic */
         sigc::connection slot_btn_panic;
         void on_panic_event();
@@ -327,8 +338,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_lvl_op1_event();
         sigc::connection slot_lvl_op1;
         /* mute operator FOR HEXTER DX7 modeling DSSI plugin */
-        void on_mute_hexter_op1_event();
-        sigc::connection slot_mute_hexter_op1;
+        //void on_mute_hexter_op1_event();
+        //sigc::connection slot_mute_hexter_op1;
         /* op1 KLS*/
         void on_kls_lft_curve_op1_event();
         sigc::connection slot_kls_lft_curve_op1;
@@ -380,8 +391,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_lvl_op2_event();
         sigc::connection slot_lvl_op2;
         //mute operator  FOR HEXTER DX7 modeling DSSI plugin
-        void on_mute_hexter_op2_event();
-        sigc::connection slot_mute_hexter_op2;
+        //void on_mute_hexter_op2_event();
+        //sigc::connection slot_mute_hexter_op2;
         /* op2 KLS*/
         void on_kls_lft_curve_op2_event();
         sigc::connection slot_kls_lft_curve_op2;
@@ -431,8 +442,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_lvl_op3_event();
         sigc::connection slot_lvl_op3;
         //mute operator  FOR HEXTER DX7 modeling DSSI plugin
-        void on_mute_hexter_op3_event();
-        sigc::connection slot_mute_hexter_op3;
+        //void on_mute_hexter_op3_event();
+        // sigc::connection slot_mute_hexter_op3;
         /* op3 KLS*/
         void on_kls_lft_curve_op3_event();
         sigc::connection slot_kls_lft_curve_op3;
@@ -482,8 +493,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_lvl_op4_event();
         sigc::connection slot_lvl_op4;
         //mute operator  FOR HEXTER DX7 modeling DSSI plugin
-        void on_mute_hexter_op4_event();
-        sigc::connection slot_mute_hexter_op4;
+        //void on_mute_hexter_op4_event();
+        //sigc::connection slot_mute_hexter_op4;
         /* op4 KLS*/
         void on_kls_lft_curve_op4_event();
         sigc::connection slot_kls_lft_curve_op4;
@@ -533,8 +544,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_lvl_op5_event();
         sigc::connection slot_lvl_op5;
         //mute operator  FOR HEXTER DX7 modeling DSSI plugin
-        void on_mute_hexter_op5_event();
-        sigc::connection slot_mute_hexter_op5;
+        //void on_mute_hexter_op5_event();
+        // sigc::connection slot_mute_hexter_op5;
         /* op5 KLS*/
         void on_kls_lft_curve_op5_event();
         sigc::connection slot_kls_lft_curve_op5;
@@ -583,9 +594,8 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kvs_op6;
         void on_lvl_op6_event();
         sigc::connection slot_lvl_op6;
-        //mute operator  FOR HEXTER DX7 modeling DSSI plugin
-        void on_mute_hexter_op6_event();
-        sigc::connection slot_mute_hexter_op6;
+
+        // sigc::connection slot_mute_hexter_op6;
         /* op6 KLS*/
         void on_kls_lft_curve_op6_event();
         sigc::connection slot_kls_lft_curve_op6;
@@ -600,3 +610,13 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kls_octv_brk_pt_op6;
 
 };
+using FunctionPtr = void (Dx7interface::*)();
+FunctionPtr mute_hexter_functions[6] = {
+    &Dx7interface::on_mute_hexter_op1_event,
+    &Dx7interface::on_mute_hexter_op2_event,
+    &Dx7interface::on_mute_hexter_op3_event,
+    &Dx7interface::on_mute_hexter_op4_event,
+    &Dx7interface::on_mute_hexter_op5_event,
+    &Dx7interface::on_mute_hexter_op6_event
+};
+
