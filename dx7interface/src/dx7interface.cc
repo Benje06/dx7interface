@@ -190,6 +190,73 @@ void Dx7interface::listen_midi(){
 };
 
 /*** BANK ***/
+void Dx7interface::on_bank_select(){
+    LOG_IN();
+    /* TODO: if (modif done)
+     *        ask save
+     */
+    try{
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+        auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
+        dialog->set_title("Select Module .la, .so or .ui");
+        dialog->set_modal(true);
+        //Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
+        //dialog->set_initial_folder(initial_folder);
+        dialog->open( *(get_window()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+            try {
+                Glib::RefPtr<Gio::File> bank_file = dialog->open_finish(result);
+                if (bank_file) {
+                    set_bank(bank_file);
+                };
+            } catch (const std::exception & ex) {
+                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                + "Reason: " + ex.what();
+                std::cerr << err_msg << std::endl;
+            };
+        }
+        ); /* end dialog open function */
+        #else
+        GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+        auto dialog = new Gtk::FileChooserDialog("Please choose a file", Gtk::FileChooser::Action::OPEN);
+        dialog->set_transient_for(*(get_window()));
+        dialog->set_modal(true);
+        dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+        dialog->add_button("_Open", Gtk::ResponseType::ACCEPT);
+        dialog->signal_response().connect([this, dialog](int response) {
+            try {
+                if (response == Gtk::ResponseType::ACCEPT) {
+                    auto bank_file = dialog->get_file();
+                    if (bank_file) {
+                        set_bank(bank_file);
+                    };
+                }
+                dialog->hide();
+            } catch (const std::exception & ex) {
+                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                + "Reason: " + ex.what();
+                std::cerr << err_msg << std::endl;
+            };
+        });
+        dialog->show();
+        #endif
+    }catch (const std::exception & ex) {
+        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
+        + "Reason: " + ex.what();
+        //throw std::runtime_error(err_msg);
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
+    clean_bank();
+    load_bank(bank_file);
+    m_selection_model->set_selected(0);
+    redraw_all_curve();
+    Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
+    Glib::ustring name = filename.substr(0,filename.find_last_of("."));
+    get_gwidget<Gtk::Button>("bank_select")->set_label(name);
+};
+
 void Dx7interface::clean_bank(){
     LOG_IN();
     // TODO clean bank_modif
@@ -202,6 +269,7 @@ void Dx7interface::clean_bank(){
     };
     LOG_OUT();
 };
+
 void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
     LOG_IN();
     /* open file */
@@ -239,6 +307,8 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
                     seek_parameters(bank_file, i, &bank_32_origin.sound[i]);
                 };
                 bank_32_modif=bank_32_origin;
+                bank_1_origin.sound[0]=bank_32_origin.sound[0];
+                bank_1_modif=bank_1_origin;
                 bank_nb_sound = 32;
                 break;
             case 16384: /* 128 voices */
@@ -247,6 +317,8 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
                     seek_parameters(bank_file, i, &bank_128_origin.sound[i]);
                 };
                 bank_128_modif=bank_128_origin;
+                bank_1_origin.sound[0]=bank_128_origin.sound[0];
+                bank_1_modif=bank_1_origin;
                 bank_nb_sound = 128;
                 break;
         };
@@ -261,7 +333,52 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
     LOG_OUT();
 };
 
-/** VOICE **/
+void Dx7interface::set_as_origin_sound(uint snum){
+    // copy original_sound in bank_1_original.sound and use it as bank_1_modif.sound
+    switch ( bank_nb_sound ){
+        case 32:
+            bank_32_modif.sound[snum] = bank_32_origin.sound[snum];
+            bank_1_origin.sound[0] = bank_32_modif.sound[snum];
+            break;
+        case 128:
+            bank_128_modif.sound[snum] = bank_128_origin.sound[snum];
+            bank_1_origin.sound[0] = bank_128_modif.sound[snum];
+            break;
+    };
+    bank_1_modif.sound[0] = bank_1_origin.sound[0];
+};
+
+void Dx7interface::on_selected_sound_change(uint num, uint nb_elmnt){
+    LOG_IN();
+    auto snum = m_selection_model->get_selected();
+    // save current modification to bank_X_modif
+    switch ( bank_nb_sound ){
+        case 32:
+            bank_32_modif.sound[old_snum]= bank_1_modif.sound[0];
+            break;
+        case 128:
+            bank_128_modif.sound[old_snum]= bank_1_modif.sound[0];
+            break;
+    };
+    switch ( bank_nb_sound ){
+        case 32:
+            bank_1_modif.sound[0]= bank_32_modif.sound[snum];
+            bank_1_origin.sound[0]= bank_32_origin.sound[snum];
+            break;
+        case 128:
+            bank_1_modif.sound[0]= bank_128_modif.sound[snum];
+            bank_1_origin.sound[0]= bank_128_origin.sound[snum];
+            break;
+    };
+    old_snum = snum;
+    (get_gwidget<Gtk::ToggleButton>("btn_compare"))->set_active(false);
+    set_voice(&bank_1_modif.sound[0]);
+    send_voice(&bank_1_modif.sound[0]);
+    redraw_all_curve();
+    LOG_OUT();
+};
+
+/*** VOICE ***/
 /* read: seek (in bank file)*/
 void Dx7interface::seek_voice(uint8_t i, St_dx7sysex_1* sound){
     //LOG_IN();
@@ -326,10 +443,25 @@ void Dx7interface::seek_voice(uint8_t i, St_dx7sysex_1* sound){
         strm << (data_stream->read_byte());
     };
     sound->name=strm.str();
-    sound->extra.mute.val=0x3F;
+    sound->extra.mute.val=0x7F;
     /* add voice name to liststore */
     m_data_model->append(SoundBankItem::create(i,sound->name));
     //LOG_OUT();
+};
+void Dx7interface::seek_parameters(Glib::RefPtr<Gio::File> basefile, uint8_t pos, St_dx7sysex_1* sound){
+    Glib::RefPtr<Gio::File> file = nullptr;
+    Glib::ustring bank_file_full = basefile->get_path();
+    Glib::ustring bank_file_base = bank_file_full.substr(0,bank_file_full.find_last_of("."));
+    Glib::ustring bank_file_path = bank_file_full.substr(0,bank_file_full.find_last_of("/")+1);
+    //std::cout << bank_file_base + "_fct.syx" << std::endl;
+    //std::cout << bank_file_path + sound->name.c_str() + "_fct.syx" << std::endl;
+    //
+    if( std::filesystem::exists( (bank_file_base+"_fct.syx").c_str() ) ){
+        file=Gio::File::create_for_path( (bank_file_base+"_fct.syx").c_str() );
+    }else if( std::filesystem::exists( (bank_file_path + sound->name.c_str() + "_fct.syx").c_str() ) ){
+        file=Gio::File::create_for_path( (bank_file_path + sound->name.c_str() + "_fct.syx").c_str() );
+    }
+    seek_voice_parameters(file, pos ,sound);
 };
 void Dx7interface::seek_voice_parameters(Glib::RefPtr<Gio::File> file, uint8_t pos, St_dx7sysex_1* sound){
     // TODO: read sound parameter at sound position (pos) in file;
@@ -414,21 +546,7 @@ void Dx7interface::seek_voice_parameters(Glib::RefPtr<Gio::File> file, uint8_t p
         sound->extra.functions.aftrtch_assgn.val = 0x00;
     };
 };
-void Dx7interface::seek_parameters(Glib::RefPtr<Gio::File> basefile, uint8_t pos, St_dx7sysex_1* sound){
-    Glib::RefPtr<Gio::File> file = nullptr;
-    Glib::ustring bank_file_full = basefile->get_path();
-    Glib::ustring bank_file_base = bank_file_full.substr(0,bank_file_full.find_last_of("."));
-    Glib::ustring bank_file_path = bank_file_full.substr(0,bank_file_full.find_last_of("/")+1);
-    //std::cout << bank_file_base + "_fct.syx" << std::endl;
-    //std::cout << bank_file_path + sound->name.c_str() + "_fct.syx" << std::endl;
-    //
-    if( std::filesystem::exists( (bank_file_base+"_fct.syx").c_str() ) ){
-        file=Gio::File::create_for_path( (bank_file_base+"_fct.syx").c_str() );
-    }else if( std::filesystem::exists( (bank_file_path + sound->name.c_str() + "_fct.syx").c_str() ) ){
-        file=Gio::File::create_for_path( (bank_file_path + sound->name.c_str() + "_fct.syx").c_str() );
-    }
-    seek_voice_parameters(file, pos ,sound);
-};
+
 /* read: set (in ui from struct) */
 void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     /* set value in each widget from modif */
@@ -463,7 +581,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_pitch")->set_value(sound->pitch.eg_lvl[k].val);
     };
     /* OPERATEUR j+1 */
-    uint8_t mute_val=sound->extra.mute.val & 0x7F; // set mute status in extra struct;
+    uint8_t mute_val=sound->extra.mute.val & 0x7F; // get mute status from extra struct;
     for ( j=0;j<6;j++){
         /* AMS */
         (get_gwidget<Gtk::Scale>("ams_op"+tostr<uint>(j+1)))->set_value(sound->op[j].ams.val);
@@ -482,31 +600,29 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         for ( k = 0; k < 4 ; k++ ){
             (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_op"+tostr<uint>(j+1)))->set_value(sound->op[j].eg_lvl[k].val);
         };
-        /* VOLUME */
-        /* TODO :set VOLUME
-         *      /* KRS */
-         (get_gwidget<Gtk::Scale>("krs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].krs.val);
-         /* KVS */
-         (get_gwidget<Gtk::Scale>("kvs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kvs.val);
-         /* LVL */
-         (get_gwidget<Gtk::SpinButton>("lvl_op"+tostr<uint>(j+1)))->set_value(sound->op[j].lvl.val);
-         /* MUTE */
-         /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
-         (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(false);
-         /* KLS */
-         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
-         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
-         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.lft_dpth.val);
-         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.rght_dpth.val);
-         (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
-         (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( ((sound->op[j].kls.brk_pt.val - 3) / 12) );
+        /* KRS */
+        (get_gwidget<Gtk::Scale>("krs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].krs.val);
+        /* KVS */
+        (get_gwidget<Gtk::Scale>("kvs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kvs.val);
+        /* LVL */
+        (get_gwidget<Gtk::SpinButton>("lvl_op"+tostr<uint>(j+1)))->set_value(sound->op[j].lvl.val);
+        /* MUTE */
+        /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
+        u_int8_t muted = mute_val;
+        muted = ( muted >> ( 5 - j ) );
+        (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(!(muted & 0x01));
+        /* KLS */
+        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
+        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
+        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.lft_dpth.val);
+        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.rght_dpth.val);
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( ((sound->op[j].kls.brk_pt.val - 3) / 12) );
     };
-
     set_voice_parameters(sound);
-    on_txt_freq_op_event();
-
     unblock_midi();
     unblock_ui();
+    on_txt_freq_op_event();
     LOG_OUT();
 };
 void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
@@ -721,13 +837,8 @@ void Dx7interface::send_voice(st_dx7sysex_1* sound){
     send_midi(SND_SEQ_EVENT_SYSEX, 163, msg);
     /* extra parameters */
     send_extra_parameters(sound);
-    /* send mute for hexter */
-    on_mute_hexter_op1_event();
-    on_mute_hexter_op2_event();
-    on_mute_hexter_op3_event();
-    on_mute_hexter_op4_event();
-    on_mute_hexter_op5_event();
-    on_mute_hexter_op6_event();
+    /* send mute for dx and hexter */
+    on_mute_op_event();
     LOG_OUT();
 };
 void Dx7interface::send_extra_parameters(st_dx7sysex_1* sound){
@@ -971,8 +1082,8 @@ void Dx7interface::attach_signals(){
     slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bank_select));
     /* Sound Select */
-    slot_bank_sound_change = m_selection_model->signal_selection_changed().connect(
-            sigc::mem_fun(*this, &Dx7interface::on_bank_sound_change));
+    slot_selected_sound_change = m_selection_model->signal_selection_changed().connect(
+            sigc::mem_fun(*this, &Dx7interface::on_selected_sound_change));
 
     //auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
@@ -1230,8 +1341,6 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op1_event));
     slot_mute_op1 = (get_gwidget<Gtk::ToggleButton>("mute_op1"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
-    /*slot_mute_hexter_op1 = (get_gwidget<Gtk::ToggleButton>("mute_op1"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_mute_hexter_op1_event));*/
     /* OP1 KLS */
     slot_kls_lft_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op1_event));
@@ -1289,8 +1398,6 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op2_event));
     slot_mute_op2 = (get_gwidget<Gtk::ToggleButton>("mute_op2"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
-    /*slot_mute_hexter_op2 = (get_gwidget<Gtk::ToggleButton>("mute_op2"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_mute_hexter_op2_event));*/
     /* OP2 KLS */
     slot_kls_lft_curve_op2 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op2_event));
@@ -1347,8 +1454,6 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op3_event));
     slot_mute_op3 = (get_gwidget<Gtk::ToggleButton>("mute_op3"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
-    /*slot_mute_hexter_op3 = (get_gwidget<Gtk::ToggleButton>("mute_op3"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_mute_hexter_op3_event));*/
     /* OP3 KLS */
     slot_kls_lft_curve_op3 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op3_event));
@@ -1405,8 +1510,6 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op4_event));
     slot_mute_op4 = (get_gwidget<Gtk::ToggleButton>("mute_op4"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
-    /*slot_mute_hexter_op4 = (get_gwidget<Gtk::ToggleButton>("mute_op4"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_mute_hexter_op4_event));*/
     /* OP4 KLS */
     slot_kls_lft_curve_op4 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op4_event));
@@ -1463,8 +1566,6 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op5_event));
     slot_mute_op5 = (get_gwidget<Gtk::ToggleButton>("mute_op5"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
-    /*slot_mute_hexter_op5 = (get_gwidget<Gtk::ToggleButton>("mute_op5"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_mute_hexter_op5_event));*/
     /* op5 KLS */
     slot_kls_lft_curve_op5 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op5_event));
@@ -1521,8 +1622,6 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op6_event));
     slot_mute_op6 = (get_gwidget<Gtk::ToggleButton>("mute_op6"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
-    /*slot_mute_hexter_op6 = (get_gwidget<Gtk::ToggleButton>("mute_op6"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_mute_hexter_op6_event));*/
     /* OP6 KLS */
     slot_kls_lft_curve_op6 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op6_event));
@@ -2084,99 +2183,6 @@ void Dx7interface::redraw_all_curve(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
 };
 
-/* Bank */
-void Dx7interface::on_bank_sound_change(uint num, uint nb_elmnt){
-    LOG_IN();
-    auto snum = m_selection_model->get_selected();
-    switch ( bank_nb_sound ){
-        case 32:
-            bank_1_origin.sound[0]= bank_32_modif.sound[snum];
-            break;
-        case 128:
-            bank_1_origin.sound[0]= bank_128_modif.sound[snum];
-            break;
-    };
-    bank_1_modif.sound[0]= bank_1_origin.sound[0];
-    (get_gwidget<Gtk::ToggleButton>("btn_compare"))->set_active(false);
-    set_voice(&bank_1_modif.sound[0]);
-    send_voice(&bank_1_modif.sound[0]);
-    on_txt_freq_op_event();
-    redraw_all_curve();
-
-    LOG_OUT();
-};
-
-void Dx7interface::on_bank_select(){
-    LOG_IN();
-    /* TODO: if (modif done)
-        ask save
-    */
-    try{
-        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
-            dialog->set_title("Select Module .la, .so or .ui");
-            dialog->set_modal(true);
-            //Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
-            //dialog->set_initial_folder(initial_folder);
-            dialog->open( *(get_window()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-                    try {
-                        Glib::RefPtr<Gio::File> bank_file = dialog->open_finish(result);
-                        if (bank_file) {
-                            block_ui();
-                            block_midi();
-                            clean_bank();
-                            load_bank(bank_file);
-                            unblock_midi();
-                            unblock_ui();
-                            m_selection_model->set_selected(0);
-                            redraw_all_curve();
-                            Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
-                            Glib::ustring name = filename.substr(0,filename.find_last_of("."));
-                            get_gwidget<Gtk::Button>("bank_select")->set_label(name);
-                        };
-                    } catch (const std::exception & ex) {
-                        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-                        + "Reason: " + ex.what();
-                        std::cout << err_msg << std::endl;
-                    };
-                }
-            ); /* end dialog open function */
-        #else
-            GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-			auto dialog = new Gtk::FileChooserDialog("Please choose a file", Gtk::FileChooser::Action::OPEN);
-			dialog->set_transient_for(*(get_window()));
-			dialog->set_modal(true);
-			dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-            dialog->add_button("_Open", Gtk::ResponseType::ACCEPT);
-            dialog->signal_response().connect([this, dialog](int response) {
-                if (response == Gtk::ResponseType::ACCEPT) {
-                    auto bank_file = dialog->get_file();
-                    if (bank_file) {
-                        block_ui();
-                        block_midi();
-                        clean_bank();
-                        load_bank(bank_file);
-                        unblock_midi();
-                        unblock_ui();
-                        m_selection_model->set_selected(0);
-                        redraw_all_curve();
-                        Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
-                        Glib::ustring name = filename.substr(0,filename.find_last_of("."));
-                        get_gwidget<Gtk::Button>("bank_select")->set_label(name);
-                    }
-                }
-                dialog->hide();
-            });
-            dialog->show();
-        #endif
-    }catch (const std::exception & ex) {
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Reason: " + ex.what();
-        //throw std::runtime_error(err_msg);
-    };
-    LOG_OUT();
-};
-
 /* Extra Functions */
 void Dx7interface::on_mono_poly_event(){
 	LOG_IN();
@@ -2441,24 +2447,22 @@ void Dx7interface::on_aftrtch_assgn_event(){
 /* Compare */
 void Dx7interface::on_compare_event(){
     // TODO: add set mute/unmute from struct
+    // BUG: compare on empty object with load
     if ( (get_gwidget<Gtk::ToggleButton>("btn_compare"))->get_active() ) {
         std::cout<< "compare on"<< std::endl;
         compare=true;
         get_gwidget<Gtk::ToggleButton>("btn_compare")->add_css_class("blink");
         set_voice(&bank_1_origin.sound[0]);
-        block_ui(); // ?
         send_voice(&bank_1_origin.sound[0]);
-        block_midi();
-        on_txt_freq_op_event();
         redraw_all_curve();
+        block_ui();
+        block_midi();
     }else{
         std::cout<< "compare off"<< std::endl;
         compare=false;
         get_gwidget<Gtk::ToggleButton>("btn_compare")->remove_css_class("blink");
         set_voice(&bank_1_modif.sound[0]);
         send_voice(&bank_1_modif.sound[0]);
-        unblock_ui(); // ?
-        on_txt_freq_op_event();
         redraw_all_curve();
     };
 };
@@ -2819,22 +2823,18 @@ void Dx7interface::on_mute_op_event() {
         &Dx7interface::on_mute_hexter_op5_event,
         &Dx7interface::on_mute_hexter_op6_event
     };
-    //typedef void (*)();
-    //int (*(functions[2]))() = {test1, test2};
 
     for(i=1; i<=6;i++){
         bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(i)))->get_active());
-        //std::cout<<"operator: " << (int)i <<std::endl;
-        //std::cout<<"bit before: "<< std::hex << (int)mute_val << std::dec <<std::endl;
-        mute_val=(mute_val | (!widget_active)) ;
-        //std::cout<<"bit after: "<< std::hex << (int)mute_val << std::dec <<std::endl;
+        mute_val=( mute_val | (!widget_active) ) ;
         if (i!=6){
             mute_val=mute_val << 1;
         };
-        //std::cout<<"bit after decalage : "<< std::hex << (int)mute_val << std::dec <<std::endl;
+        //std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) <<std::endl;
     };
-    bank_1_modif.sound->extra.mute.val=mute_val;
-    std::cout<<"extra mute val : "<< std::hex << (int)(bank_1_modif.sound->extra.mute.val) << std::dec <<std::endl;
+    if(!compare){
+        bank_1_modif.sound->extra.mute.val=mute_val;
+    };
     for(i=1; i<=6;i++){
         (this->*mute_hexter_functions[i-1])();
     };
@@ -3163,12 +3163,14 @@ void Dx7interface::on_lvl_op1_event() {	LOG_IN();
 /* OP1 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op1_event(){
     LOG_IN();
-    std::cout << "inside mute hexter" << std::endl;
-    u_char mute_val = bank_1_modif.sound->extra.mute.val;
-    std::cout << std::hex << !(int)(mute_val & 0x01) << std::dec << std::endl;
+    u_int8_t mute_val;
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
     mute_val = mute_val >>5;
     if ( !(mute_val & 0x01) ) {
-    /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active() ) { */
         (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_("/* OP1 */"));
         u_char msg[7];
         msg[0]=0xF0;
@@ -3557,10 +3559,14 @@ void Dx7interface::on_lvl_op2_event() {	LOG_IN();
 /* OP2 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op2_event() {
     LOG_IN();
-    u_char mute_val = bank_1_modif.sound->extra.mute.val;
+    u_int8_t mute_val;
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
     mute_val = mute_val >>4;
     if ( !(mute_val & 0x01) ) {
-    /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op2"))->get_active() ) {*/
         (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_("/* OP2 */"));
         u_char msg[7];
         msg[0]=0xF0;
@@ -3949,10 +3955,14 @@ void Dx7interface::on_lvl_op3_event() {	LOG_IN();
 /* OP3 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op3_event() {
     LOG_IN();
-    u_char mute_val = bank_1_modif.sound->extra.mute.val;
+    u_int8_t mute_val;
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
     mute_val = mute_val >>3;
     if ( !(mute_val & 0x01) ) {
-    /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op3"))->get_active() ) {*/
         (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_("/* OP3 */"));
         u_char msg[7];
         msg[0]=0xF0;
@@ -4342,12 +4352,14 @@ void Dx7interface::on_lvl_op4_event() {	LOG_IN();
 /* OP4 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op4_event() {
     LOG_IN();
-    std::cout << "inside mute hexter" << std::endl;
-    u_char mute_val = bank_1_modif.sound->extra.mute.val;
+    u_int8_t mute_val;
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
     mute_val = mute_val >>2;
-    std::cout << std::hex << (int)(mute_val & 0x01) << std::dec << std::endl;
     if ( !(mute_val & 0x01) ) {
-    /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op4"))->get_active() ) {*/
         (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_("/* OP4 */"));
         u_char msg[7];
         msg[0]=0xF0;
@@ -4734,10 +4746,14 @@ void Dx7interface::on_lvl_op5_event() {	LOG_IN();
 /* OP5 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op5_event() {
     LOG_IN();
-    u_char mute_val = bank_1_modif.sound->extra.mute.val;
+    u_int8_t mute_val;
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
     mute_val = mute_val >>1;
     if ( !(mute_val & 0x01) ) {
-    /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op5"))->get_active() ) {*/
         (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_("/* OP5 */"));
         u_char msg[7];
         msg[0]=0xF0;
@@ -5124,11 +5140,15 @@ void Dx7interface::on_lvl_op6_event() {	LOG_IN();
 /* OP6 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op6_event() {
     LOG_IN();
-    u_char mute_val = bank_1_modif.sound->extra.mute.val;
+    u_int8_t mute_val;
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
     if ( !(mute_val & 0x01) ) {
-    /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op6"))->get_active() ) {*/
         (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_("/* OP6 */"));
-    u_char msg[7];
+        u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status & channel_send;
@@ -5647,7 +5667,7 @@ void Dx7interface::dettach_signals(){
     LOG_IN();
     slot_bank_select.disconnect();
     /* Sound Select */
-    slot_bank_sound_change.disconnect();
+    slot_selected_sound_change.disconnect();
 
     /* Algo */
     slot_algo.disconnect();

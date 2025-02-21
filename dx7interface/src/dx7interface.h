@@ -61,10 +61,21 @@ class Dx7interface : public Gx_module, public Synth {
 
 
     private:
-        using FunctionPtr = void (Dx7interface::*)();
-        /*** Dx7 ***/
-        bool compare = false;
-        bool send_extra_params = false;
+        /**** Generic ****/
+        bool error();
+        using FunctionPtr = void (Dx7interface::*)();  /* abstract for function as array */
+
+        /*** ALSA MIDI ***/
+        snd_seq_t* seq_handle = nullptr;                /* handler */
+        snd_seq_system_info_t* info = nullptr;          /* info */
+        snd_seq_event_t* ev = nullptr;                  /* evenement */
+        size_t in_buff_size, out_buff_size;               /* buffer d'entré et de sortie */
+
+        /* */
+        bool compare = false;           /* set if compare button is activate */
+        bool send_extra_params = false; /* set if send_extra paraameter is activate */
+
+        /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
         /* SySeX format (bank/sound/message) */
         St_dx7sysex<1> bank_1_origin;           /* bank d'origine 1 son */
@@ -73,20 +84,15 @@ class Dx7interface : public Gx_module, public Synth {
         St_dx7sysex<32> bank_32_modif;          /* ... */
         St_dx7sysex<128> bank_128_origin;       /* ... */
         St_dx7sysex<128> bank_128_modif;        /* ... */
-        uint bank_nb_sound = 0;                     /* number of sound in the current loaded bank 1/32/128 */
-        Glib::RefPtr<Gio::File> bank_file;      /* pointeur de lecture de fichier */
-        Glib::RefPtr<Gio::DataInputStream> data_stream; /* pointeur de flux */
+        /* Bank */
+        uint bank_nb_sound = 0;                 /* number of sound in the current loaded bank 1/32/128 */
+        uint old_snum = 0;                      /* old selected sound number memo for set_original_sound */
+        Glib::RefPtr<Gio::File> bank_file;       /* pointeur de lecture de fichier */
+        Glib::RefPtr<Gio::DataInputStream> data_stream;           /* pointeur de flux de données */
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> m_selection_model;
         Glib::RefPtr<Gtk::SignalListItemFactory> m_factory;
 
-        /*** ALSA MIDI ***/
-        /* midi_receive;*/
-        /*snd_rawmidi_t *handle_in ,*handle_out ;*/
-        snd_seq_t* seq_handle = nullptr;                /* handler */
-        snd_seq_system_info_t* info = nullptr;          /* info */
-        snd_seq_event_t* ev = nullptr;                  /* evenement */
-        size_t in_buff_size, out_buff_size;   /* buffer d'entré et de sorti */
         /*** DRAWING ***/
         /* lines/curves */
         double line_width = 3.0;                                      // epaisseur
@@ -113,10 +119,15 @@ class Dx7interface : public Gx_module, public Synth {
         void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);        /* dessine la courbe */
         void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double,double,bool);          /* dessine un point */
         void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
+        /* Level Scaling */
+        void draw_kls(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);         /* dessine la courbe */
+        void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);    /*dessine le clavier */
+        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /*dessine le clavier */
+        void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>&,Glib::ustring, double, double, double, Glib::ustring); /* draw kls curve type */
+
         /* Mouse Gesture */
         void init_gesture_controller();
-        //std::pair<double,double> points[5];                                                      /* array of points coordinates */
-        std::map< Glib::ustring, std::pair<double,double>[5]> drawarea;
+        std::map< Glib::ustring, std::pair<double,double>[5]> drawarea;                             /* array of points coordinates */
         int p_drag = -1;                                                                            /* current index in points coordinates array */
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op1;
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op2;
@@ -135,26 +146,20 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op6;
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_pitch;
         void mouse_mooves(double, double, Glib::ustring);
-        /* Level Scaling */
-        void draw_kls(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);         /* dessine la courbe */
-        void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);    /*dessine le clavier */
-        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /*dessine le clavier */
-        void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>&,Glib::ustring, double, double, double, Glib::ustring); /* draw kls curve type */
 
-        void on_draw_algo(const Cairo::RefPtr<Cairo::Context>&, double, double);
-        void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>&, double, double);
-        /* Generic error */
-        bool error();
         /*** THREAD ***/
         bool Run() ;    /* Thread function  */
         /*** MIDI ***/
         void listen_midi() override;
+
         /** SOUND BANK **/
         void load_bank(Glib::RefPtr<Gio::File>);
+        void set_bank(Glib::RefPtr<Gio::File>);
         void save_bank(Glib::RefPtr<Gio::File>);
         void save_bank_as(Glib::RefPtr<Gio::File>);
         void clean_bank();                            // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void clear_sound(uint8_t,St_dx7sysex_1*);     // set 0x00 to all param to voice struct "aka clear struct"
+        void set_as_origin_sound(uint);                // set bank_X_modif.sound as bank_X_origin.sound
         /** VOICE  **/
         /* seek voice value from bank file and write it to sound */
         void seek_voice(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
@@ -167,6 +172,7 @@ class Dx7interface : public Gx_module, public Synth {
         void set_voice(st_dx7sysex_1*);               // set voice in GUI
         void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
         void write_voice(st_dx7sysex_1*);
+
         /*** UI ***/
         /** EVENTS / SIGNAL **/
         void block_ui();                       /* block all interface events */
@@ -175,6 +181,8 @@ class Dx7interface : public Gx_module, public Synth {
         void dettach_signals() override;
 
         /** Drawing **/
+        void on_draw_algo(const Cairo::RefPtr<Cairo::Context>&, double, double);
+        void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>&, double, double);
         void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&, int, int);
         void on_draw_op_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
         void on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
@@ -183,10 +191,11 @@ class Dx7interface : public Gx_module, public Synth {
         /** BANK **/
         void on_bank_reveal();
         sigc::connection slot_bank_reveal;
-        void on_bank_sound_change(uint,uint);
-        sigc::connection slot_bank_sound_change;
+        void on_selected_sound_change(uint,uint);
+        sigc::connection slot_selected_sound_change;
         void on_bank_select();
         sigc::connection slot_bank_select;
+        /* populate columnview */
         void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
         void on_bind_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
