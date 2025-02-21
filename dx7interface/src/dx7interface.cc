@@ -1756,7 +1756,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 };
 
 void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
-    LOG_IN();
+    // LOG_IN();
     std::string img;
     if(compare){
         img = std::string(MOD_IMG_DIRECTORY"/algo"+tostr<uint>(bank_1_origin.sound->algo.algo.val+1)+".png");
@@ -1775,11 +1775,11 @@ void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double 
         std::cerr << "File not found: "<<std::endl;
         std::cerr<<img<<std::endl;
     };
-    LOG_OUT();
+    // LOG_OUT();
 };
 
 void Dx7interface::on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
-    LOG_IN();
+    // LOG_IN();
     Glib::ustring img = ( std::dynamic_pointer_cast<Gtk::StringObject>((get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected_item()) )->get_string();
     if (img == "S/HOLD"){
         img="S_HOLD";
@@ -1796,7 +1796,7 @@ void Dx7interface::on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr, double w
         std::cerr << "File not found: "<<std::endl;
         std::cerr<<MOD_IMG_DIRECTORY"/"+img+".png"<<std::endl;
     };
-    LOG_OUT();
+    // LOG_OUT();
 };
 
 void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
@@ -2033,7 +2033,7 @@ void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double widt
 
 /* EVENTS */
 void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
-    LOG_IN();
+    // LOG_IN();
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
@@ -2042,11 +2042,11 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
         draw_keyboard( cr, wdth, hght, num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op"+num_op))->queue_draw();
     };
-    LOG_OUT();
+    // LOG_OUT();
 };
 
 void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
-    LOG_IN();
+    // LOG_IN();
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
@@ -2054,11 +2054,11 @@ void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int 
         draw_adsr( cr, wdth, hght, "op"+num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op"+num_op))->queue_draw();
     };
-    LOG_OUT();
+    // LOG_OUT();
 };
 
 void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height){
-    LOG_IN();
+    // LOG_IN();
     if (cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
@@ -2066,7 +2066,7 @@ void Dx7interface::on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr, 
         draw_adsr( cr, wdth, hght, "pitch" );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    LOG_OUT();
+    // LOG_OUT();
 };
 
 void Dx7interface::redraw_all_curve(){
@@ -2829,6 +2829,8 @@ void Dx7interface::on_mute_op_event() {
             mute_val=mute_val << 1;
         };
         //std::cout<<"bit after decalage : "<< std::hex << (int)mute_val << std::dec <<std::endl;
+    };
+    for(i=1; i<=6;i++){
         (this->*mute_hexter_functions[i-1])();
     };
     msg[0]=0xF0;
@@ -2841,6 +2843,7 @@ void Dx7interface::on_mute_op_event() {
     if (!compare){
         bank_1_modif.sound->extra.mute.val=msg[5];
     };
+    std::cout<<"extra mute val : "<< std::hex << (int)bank_1_modif.sound->extra.mute.val << std::dec <<std::endl;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
 };
 
@@ -3155,9 +3158,10 @@ void Dx7interface::on_lvl_op1_event() {	LOG_IN();
 
 /* OP1 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op1_event(){
+    LOG_IN();
     std::cout << "inside mute hexter" << std::endl;
     u_char mute_val = bank_1_modif.sound->extra.mute.val;
-    std::cout << std::hex << (int)(mute_val & 0x01) << std::dec << std::endl;
+    std::cout << std::hex << !(int)(mute_val & 0x01) << std::dec << std::endl;
     mute_val = mute_val >>5;
     if ( !(mute_val & 0x01) ) {
     /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active() ) { */
@@ -3175,6 +3179,7 @@ void Dx7interface::on_mute_hexter_op1_event(){
         (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_(" OP1 "));
         on_lvl_op1_event();
     };
+    LOG_OUT();
 };
 
 /* OP1 KLS */
@@ -3547,6 +3552,7 @@ void Dx7interface::on_lvl_op2_event() {	LOG_IN();
 
 /* OP2 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op2_event() {
+    LOG_IN();
     u_char mute_val = bank_1_modif.sound->extra.mute.val;
     mute_val = mute_val >>4;
     if ( !(mute_val & 0x01) ) {
@@ -3565,6 +3571,7 @@ void Dx7interface::on_mute_hexter_op2_event() {
         (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_(" OP2 "));
         on_lvl_op2_event();
     };
+    LOG_OUT();
 };
 
 /* OP2 KLS */
@@ -3937,6 +3944,7 @@ void Dx7interface::on_lvl_op3_event() {	LOG_IN();
 };
 /* OP3 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op3_event() {
+    LOG_IN();
     u_char mute_val = bank_1_modif.sound->extra.mute.val;
     mute_val = mute_val >>3;
     if ( !(mute_val & 0x01) ) {
@@ -3955,6 +3963,7 @@ void Dx7interface::on_mute_hexter_op3_event() {
         (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_(" OP3 "));
         on_lvl_op3_event();
     };
+    LOG_OUT();
 };
 
 /* OP3 KLS */
@@ -4328,6 +4337,8 @@ void Dx7interface::on_lvl_op4_event() {	LOG_IN();
 
 /* OP4 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op4_event() {
+    LOG_IN();
+    std::cout << "inside mute hexter" << std::endl;
     u_char mute_val = bank_1_modif.sound->extra.mute.val;
     mute_val = mute_val >>2;
     std::cout << std::hex << (int)(mute_val & 0x01) << std::dec << std::endl;
@@ -4347,6 +4358,7 @@ void Dx7interface::on_mute_hexter_op4_event() {
         (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_(" OP4 "));
         on_lvl_op4_event();
     };
+    LOG_OUT();
 };
 
 /* OP4 KLS*/
@@ -4717,6 +4729,7 @@ void Dx7interface::on_lvl_op5_event() {	LOG_IN();
 
 /* OP5 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op5_event() {
+    LOG_IN();
     u_char mute_val = bank_1_modif.sound->extra.mute.val;
     mute_val = mute_val >>1;
     if ( !(mute_val & 0x01) ) {
@@ -4735,6 +4748,7 @@ void Dx7interface::on_mute_hexter_op5_event() {
         (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_(" OP5 "));
         on_lvl_op5_event();
     };
+    LOG_OUT();
 };
 
 /* OP5 KLS */
@@ -5105,6 +5119,7 @@ void Dx7interface::on_lvl_op6_event() {	LOG_IN();
 
 /* OP6 mute for UI & Hexter */
 void Dx7interface::on_mute_hexter_op6_event() {
+    LOG_IN();
     u_char mute_val = bank_1_modif.sound->extra.mute.val;
     if ( !(mute_val & 0x01) ) {
     /*if ( (get_gwidget<Gtk::ToggleButton>("mute_op6"))->get_active() ) {*/
@@ -5122,7 +5137,7 @@ void Dx7interface::on_mute_hexter_op6_event() {
         (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_(" OP6 "));
         on_lvl_op6_event();
     };
-
+    LOG_OUT();
 };
 
 /* OP6 KLS */
