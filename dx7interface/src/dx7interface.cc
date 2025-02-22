@@ -309,20 +309,20 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
         uint file_size = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
         Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
         Glib::ustring ext = filename.substr(  filename.find_last_of(".")+1, filename.length() );
-        if ( ext == "syx" ) {
+        //if ( ext == "syx" ) {
             u_char data = data_stream->read_byte();
-            if (data == 0xF0 || data == 0xF0 ){
+            if (data == 0xF0 ){
                 for ( i=0; i < 5; i++){
                     data_stream->read_byte();
                 };
                 file_size -= 8;
-            };
-            if (data == 0x5F || data == 0x5E || data == 0x00 || data == 0x2F ){
+            }else{
+            //if (data == 0x5F || data == 0x5E || data == 0x00 || data == 0x2F ){
                 data_stream->close();
                 data_stream = Gio::DataInputStream::create(bank_file->read());
                 file_size = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
             };
-        };
+       //};
         switch ( file_size ){
             case 128: /* one voice */
                 i = 0;
