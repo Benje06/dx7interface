@@ -165,6 +165,7 @@
     template <uint i>
     struct St_dx7sysex{
         St_dx7sysex_1 sound[i];
+        Glib::ustring bank_name;
     };
 
 #endif /* dx7sysex_H */

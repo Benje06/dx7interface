@@ -73,6 +73,32 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     m_selection_model->set_autoselect(false);
     m_selection_model->set_model(m_data_model);
 
+    // Create menu
+    auto menu = Gio::Menu::create();
+    menu->append("_Save sound", "win.save_sound");
+    menu->append("_Save bank", "win.save_bank");
+    menu->append("_Restore sound", "win.restore_sound");
+    menu->append("_Restor bank", "win.restore_bank");
+
+    // Create popover menu
+    m_popover_menu = Gtk::make_managed<Gtk::PopoverMenu>();
+    m_popover_menu->set_parent(*get_gwidget<Gtk::ColumnView>("columnview_bank"));
+    m_popover_menu->set_menu_model(menu);
+    m_popover_menu->set_has_arrow(false);
+
+    // Add right-click gesture
+    auto gesture = Gtk::GestureClick::create();
+    gesture->set_button(GDK_BUTTON_SECONDARY);
+    gesture->signal_pressed().connect(sigc::mem_fun(*this, &Dx7interface::on_columnview_right_click));
+    get_gwidget<Gtk::ColumnView>("columnview_bank")->add_controller(gesture);
+
+    // Create action group
+    action_group = Gio::SimpleActionGroup::create();
+    action_group->add_action("save_sound", sigc::mem_fun(*this, &Dx7interface::on_save_sound));
+    action_group->add_action("save_bank", sigc::mem_fun(*this, &Dx7interface::on_save_bank));
+    action_group->add_action("restore_sound", sigc::mem_fun(*this, &Dx7interface::on_restore_sound));
+    action_group->add_action("restore_bank", sigc::mem_fun(*this, &Dx7interface::on_restore_bank));
+    get_gwidget<Gtk::ColumnView>("columnview_bank")->insert_action_group("win", action_group);
     /* attach GUI signals */
     attach_signals();
 	init_global_fonction_parameter();
@@ -246,7 +272,13 @@ void Dx7interface::on_bank_select(){
     };
     LOG_OUT();
 };
-
+void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
+    LOG_IN();
+        m_popover_menu->set_pointing_to(Gdk::Rectangle(x, y, 1, 1));
+        m_popover_menu->popup();
+    LOG_OUT();
+};
+/* set/load */
 void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
     clean_bank();
     load_bank(bank_file);
@@ -256,7 +288,6 @@ void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
     Glib::ustring name = filename.substr(0,filename.find_last_of("."));
     get_gwidget<Gtk::Button>("bank_select")->set_label(name);
 };
-
 void Dx7interface::clean_bank(){
     LOG_IN();
     // TODO clean bank_modif
@@ -269,7 +300,6 @@ void Dx7interface::clean_bank(){
     };
     LOG_OUT();
 };
-
 void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
     LOG_IN();
     /* open file */
@@ -332,22 +362,155 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
     };
     LOG_OUT();
 };
-
-void Dx7interface::set_as_origin_sound(uint snum){
-    // copy original_sound in bank_1_original.sound and use it as bank_1_modif.sound
+/* restore */
+void Dx7interface::on_restore_bank(){
+    LOG_IN();
+    restore_origin_bank();
+    LOG_OUT();
+};
+void Dx7interface::restore_origin_bank(){
+    // set bank_X_modif.sound[snum] in bank_X_origin.sound[snum]
+    std::cout << "Restore bank: " << bank_1_modif.bank_name << " from origin bank." << std::endl;
     switch ( bank_nb_sound ){
         case 32:
-            bank_32_modif.sound[snum] = bank_32_origin.sound[snum];
-            bank_1_origin.sound[0] = bank_32_modif.sound[snum];
+            bank_32_modif = bank_32_origin;
+            bank_1_origin.sound[0] = bank_32_origin.sound[old_snum];
             break;
         case 128:
-            bank_128_modif.sound[snum] = bank_128_origin.sound[snum];
-            bank_1_origin.sound[0] = bank_128_modif.sound[snum];
+            bank_128_modif = bank_128_origin;
+            bank_1_origin.sound[0] = bank_128_origin.sound[old_snum];
             break;
     };
-    bank_1_modif.sound[0] = bank_1_origin.sound[0];
+    bank_1_modif = bank_1_origin;
+};
+void Dx7interface::on_restore_sound(){
+    LOG_IN();
+    // TODO: get index pointed by cursor
+    restore_origin_sound();
+    LOG_OUT();
+};
+void Dx7interface::restore_origin_sound(){
+    // set bank_X_origin.sound[snum] in bank_X_modif.sound[snum] and use it
+    std::cout << "Restore voice: " << bank_1_modif.sound[0].name << " from origin bank." << std::endl;
+
+    switch ( bank_nb_sound ){
+        case 32:
+            bank_32_modif.sound[old_snum] = bank_32_origin.sound[old_snum];
+            bank_1_origin.sound[0] = bank_32_origin.sound[old_snum];
+            break;
+        case 128:
+            bank_128_modif.sound[old_snum] = bank_128_origin.sound[old_snum];
+            bank_1_origin.sound[0] = bank_128_origin.sound[old_snum];
+            break;
+    };
+    bank_1_modif = bank_1_origin;
+};
+/* save/write */
+void Dx7interface::on_save_bank(){
+    LOG_IN();
+    write_bank();
+    LOG_OUT();
+};
+void Dx7interface::write_bank(){
+    LOG_IN();
+    switch ( bank_nb_sound ){
+        case 1:
+            write_voice(&bank_1_modif.sound[0]);
+            break;
+        case 32:
+            for (uint i=0; i < bank_nb_sound; i++){
+                write_voice(&bank_32_modif.sound[i]);
+            };
+            break;
+        case 128:
+            for (uint i=0; i < bank_nb_sound; i++){
+                write_voice(&bank_128_origin.sound[i]);
+            };
+            break;
+    };
+    LOG_OUT();
+};
+void Dx7interface::on_save_sound(){
+    LOG_IN();
+    save_modif_sound();
+    write_bank();
+    LOG_OUT();
+};
+void Dx7interface::save_modif_sound(){
+    // set bank_X_modif.sound[snum] in bank_X_origin.sound[snum]
+    // TODO: set bank_1_modif.sound[0] in bank_X_modif ???
+    std::cout << "Save voice: " << bank_1_modif.sound[0].name << " in origin bank." << std::endl;
+    switch ( bank_nb_sound ){
+        case 32:
+            bank_32_modif.sound[old_snum] = bank_1_modif.sound[0];
+            bank_32_origin.sound[old_snum] = bank_32_modif.sound[old_snum];
+            bank_1_origin.sound[0] = bank_32_modif.sound[old_snum];
+            break;
+        case 128:
+            bank_128_modif.sound[old_snum] = bank_1_modif.sound[0];
+            bank_128_origin.sound[old_snum] = bank_128_modif.sound[old_snum];
+            bank_1_origin.sound[0] = bank_128_modif.sound[old_snum];
+            break;
+    };
+    bank_1_origin.sound[0] = bank_1_modif.sound[0];
+};
+void Dx7interface::write_voice(st_dx7sysex_1* sound){
+    LOG_IN();
+    write_voice_as_sysex(sound);
+    LOG_OUT();
+};
+void Dx7interface::write_voice_as_sysex(st_dx7sysex_1* sound){
+    /* TODO : check original sound format and other kind */
+    uint8_t l=0, j, k;
+    u_char msg[128];
+    /* operator j */
+    for ( j = 6; j-- != 0 ; ){
+        /* OP[J] EG RATE[k] */
+        for ( k = 0; k < 4 ; k++ ){
+            msg[l++]=sound->op[j].eg_rt[k].val & 0x7F;
+        };
+        /* OP[J] EG LVL[k] */
+        for ( k = 0; k < 4 ; k++  ){
+            msg[l++]=sound->op[j].eg_lvl[k].val & 0x7F;
+        };
+        msg[l++] = sound->op[j].kls.brk_pt.val & 0x7F;
+        msg[l++] = sound->op[j].kls.lft_dpth.val & 0x7F;
+        msg[l++] = sound->op[j].kls.rght_dpth.val & 0x7F;
+        msg[l++] = ( (sound->op[j].kls.lft_curve.val << 2) + (sound->op[j].kls.rght_curve.val & 0x03) ) & 0x0F ;
+        msg[l++] = ( (sound->op[j].dtun.val << 3) + (sound->op[j].krs.val & 0x07) ) & 0x7F;
+        msg[l++] = ( (sound->op[j].kvs.val << 2) + (sound->op[j].ams.val & 0x03) ) & 0x1F;
+        msg[l++] = sound->op[j].lvl.val & 0x7F;
+        msg[l++] = ( ( sound->op[j].freq_coarse.val << 1) + (sound->op[j].freq_mode.val & 0x01)  ) & 0x3F;
+        msg[l++] = sound->op[j].freq_fine.val & 0x7F;
+    };
+    for(j=0 ; j < 4; j++ ){
+        msg[l++] = sound->pitch.eg_rt[j].val & 0x7F;
+    };
+    for(j=0 ; j < 4; j++ ){
+        msg[l++] = sound->pitch.eg_lvl[j].val & 0x7F;
+    };
+    msg[l++] = sound->algo.algo.val & 0x1F;
+    msg[l++] = ( (sound->algo.oks.val << 3) + (sound->algo.feedback.val & 0x07) ) & 0x0F;
+
+    msg[l++] = sound->lfo.speed.val & 0x7F;
+    msg[l++] = sound->lfo.delay.val & 0x7F;
+    msg[l++] = sound->lfo.pmd.val & 0x7F;
+    msg[l++] = sound->lfo.amd.val & 0x7F;
+    msg[l++] = ( ( sound->lfo.pms.val << 4) + ( (sound->lfo.wave.val & 0x07) <<1 ) + (sound->lfo.sync.val & 0x01) ) & 0x7F;
+    msg[l++] = sound->algo.transpose.val & 0x7F;
+
+    for (uint8_t carac = 0 ; carac <= 9 ; carac++ ){
+        msg[l++] = sound->name.data()[carac];
+    };
+    std::cout << "Voice Output: ";
+    for (int i = 0 ; i < 128 ; i++){
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)(msg[i] & 0x7F)<< " " ;
+    };
+    std::cout << std::dec << std::endl;
 };
 
+
+/** **/
 void Dx7interface::on_selected_sound_change(uint num, uint nb_elmnt){
     LOG_IN();
     auto snum = m_selection_model->get_selected();
@@ -409,6 +572,7 @@ void Dx7interface::seek_voice(uint8_t i, St_dx7sysex_1* sound){
         val=data_stream->read_byte() & 0x1F;
         sound->op[j].ams.val=val & 0x03;
         sound->op[j].kvs.val=val >> 2;
+
         sound->op[j].lvl.val=data_stream->read_byte() & 0x7F;
         /* set out first 2 unused bit by mask  (addr bit 15)*/
         val=data_stream->read_byte() & 0x3F;
@@ -879,119 +1043,6 @@ void Dx7interface::send_extra_parameters(st_dx7sysex_1* sound){
             send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         };
     };
-    LOG_OUT();
-};
-/* write: to file */
-void Dx7interface::write_voice(st_dx7sysex_1* sound){
-    LOG_IN();
-    /* TODO : check one voice send each parameter alone 155 bytes or as bulk format 128 BYtes */
-    /*
-     *  11110000  F0   Status byte - start sysex
-     *  0iiiiiii  43   ID # (i=67; Yamaha)
-     *  0sssnnnn  00   Sub-status (s=0) & channel number (n=0; ch 1)
-     *  0fffffff  00   format number (f=0; 1 voice)
-     *  0bbbbbbb  01   byte count MS byte
-     *  0bbbbbbb  1B   byte count LS byte (b=155; 1 voice)
-     *  0ddddddd  **   data byte 1
-     *      |       |       |
-     *  0ddddddd  **   data byte 155
-     *  0eeeeeee  **   checksum (masked 2's complement of sum of 155 bytes)
-     *  11110111  F7   Status - end sysex
-     */
-    uint8_t voice_checksum = 0;
-    /* voice msg, index of sysex value in message, operator index, eg index */
-    uint8_t l=6, j, k;
-    u_char msg[163];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=0x00 & channel_send;
-    msg[3]=0x00;
-    msg[4]=0x01;
-    msg[5]=0x1B;
-    /* operator j */
-    for ( j = 6; j-- != 0 ; ){
-        /* OP[J] EG RATE[k] */
-        for ( k = 0; k < 4 ; k++ ){
-            msg[l++]=sound->op[j].eg_rt[k].val;
-            voice_checksum -= msg[l-1];
-        };
-        /* OP[J] EG LVL[k] */
-        for ( k = 0; k < 4 ; k++  ){
-            msg[l++]=sound->op[j].eg_lvl[k].val;
-            voice_checksum -= msg[l-1];
-        };
-        msg[l++] = sound->op[j].kls.brk_pt.val;
-        voice_checksum -= msg[l-1];
-        msg[l++] = sound->op[j].kls.lft_dpth.val;
-        voice_checksum -= msg[l-1];
-        msg[l++] = sound->op[j].kls.rght_dpth.val;
-        voice_checksum -= msg[l-1];
-        msg[l++]= sound->op[j].kls.lft_curve.val;
-        voice_checksum -= msg[l-1];
-        msg[l++]= sound->op[j].kls.rght_curve.val;
-        voice_checksum -= msg[l-1];
-
-        msg[l++]= sound->op[j].krs.val;
-        voice_checksum -= msg[l-1];
-        msg[l++] = sound->op[j].ams.val;
-        voice_checksum -= msg[l-1];
-        msg[l++] = sound->op[j].kvs.val;
-        voice_checksum -= msg[l-1];
-
-        msg[l++] = sound->op[j].lvl.val;
-        voice_checksum -= msg[l-1];
-
-        msg[l++] = sound->op[j].freq_mode.val;
-        voice_checksum -= msg[l-1];
-        msg[l++] = sound->op[j].freq_coarse.val;
-        voice_checksum -= msg[l-1];
-        msg[l++] = sound->op[j].freq_fine.val;
-        voice_checksum -= msg[l-1];
-        msg[l++]= sound->op[j].dtun.val;
-        voice_checksum -= msg[l-1];
-    };
-    for(j=0 ; j <= 3; j++ ){
-        msg[l++] = sound->pitch.eg_rt[j].val;
-        voice_checksum -= msg[l-1];
-    };
-    for(j=0 ; j <= 3; j++ ){
-        msg[l++] = sound->pitch.eg_lvl[j].val;
-        voice_checksum -= msg[l-1];
-    };
-    msg[l++] = sound->algo.algo.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->algo.feedback.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->algo.oks.val;
-    voice_checksum -= msg[l-1];
-
-    msg[l++] = sound->lfo.speed.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->lfo.delay.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->lfo.pmd.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->lfo.amd.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->lfo.sync.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->lfo.wave.val;
-    voice_checksum -= msg[l-1];
-    msg[l++] = sound->lfo.pms.val;
-    voice_checksum -= msg[l-1];
-
-    msg[l++] = sound->algo.transpose.val;
-    voice_checksum -= msg[l-1];
-    for (uint8_t carac = 0 ; carac <= 9 ; carac++ ){
-        msg[l++] = sound->name.data()[carac];
-        voice_checksum -= msg[l-1];
-    };
-    /* compute checksum */
-    sound->sum = u_char(voice_checksum & 0x7F) ;
-    msg[161]=sound->sum;
-    msg[162]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX, 163, msg);
-
     LOG_OUT();
 };
 

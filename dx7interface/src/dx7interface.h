@@ -58,7 +58,7 @@ class Dx7interface : public Gx_module, public Synth {
     public:
         Dx7interface(Glib::ustring,uint8_t);
         virtual ~Dx7interface();
-
+        void add_action();
 
     private:
         /**** Generic ****/
@@ -92,6 +92,9 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> m_selection_model;
         Glib::RefPtr<Gtk::SignalListItemFactory> m_factory;
+
+        Glib::RefPtr<Gio::SimpleActionGroup> action_group;
+        Gtk::PopoverMenu* m_popover_menu;
 
         /*** DRAWING ***/
         /* lines/curves */
@@ -153,11 +156,26 @@ class Dx7interface : public Gx_module, public Synth {
         void listen_midi() override;
 
         /** SOUND BANK **/
-        void load_bank(Glib::RefPtr<Gio::File>);
+        /* set/load */
         void set_bank(Glib::RefPtr<Gio::File>);
-        void save_bank(Glib::RefPtr<Gio::File>);
+        void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
+        void load_bank(Glib::RefPtr<Gio::File>);
+
+        /* restore */
+        void on_restore_bank();
+        void restore_origin_bank();
+        void on_restore_sound();
+        void restore_origin_sound();
+        /* save/write */
+        void on_save_bank();
+        void write_bank();
+        void on_save_sound();
+        void save_modif_sound();
+        void write_voice(st_dx7sysex_1*);
+        void write_voice_as_sysex(st_dx7sysex_1*);
+        /* */
         void save_bank_as(Glib::RefPtr<Gio::File>);
-        void clean_bank();                            // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
+
         void clear_sound(uint8_t,St_dx7sysex_1*);     // set 0x00 to all param to voice struct "aka clear struct"
         void set_as_origin_sound(uint);                // set bank_X_modif.sound as bank_X_origin.sound
         /** VOICE  **/
@@ -171,7 +189,6 @@ class Dx7interface : public Gx_module, public Synth {
         /* set voice to interface */
         void set_voice(st_dx7sysex_1*);               // set voice in GUI
         void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
-        void write_voice(st_dx7sysex_1*);
 
         /*** UI ***/
         /** EVENTS / SIGNAL **/
@@ -191,6 +208,8 @@ class Dx7interface : public Gx_module, public Synth {
         /** BANK **/
         void on_bank_reveal();
         sigc::connection slot_bank_reveal;
+        void on_columnview_right_click(int, double, double);
+        sigc::connection slot_columnview_right_click;
         void on_selected_sound_change(uint,uint);
         sigc::connection slot_selected_sound_change;
         void on_bank_select();
