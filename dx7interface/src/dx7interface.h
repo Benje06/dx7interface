@@ -27,6 +27,11 @@
 */
 #pragma once
 #define MODULE_NAME "Dx7interface"
+#define DX7_1 1
+#define DX7_32 2
+#define DX7_128 3
+#define DX7_RAW 4
+#define DX7_SYX 5
 /* sys */
 #include <memory>
 // #include <cairomm/surface.h>
@@ -77,6 +82,7 @@ class Dx7interface : public Gx_module, public Synth {
 
         /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
+
         /* SySeX format (bank/sound/message) */
         St_dx7sysex<1> bank_1_origin;           /* bank d'origine 1 son */
         St_dx7sysex<1> bank_1_modif;            /* bank modifié 1 son */
@@ -84,6 +90,8 @@ class Dx7interface : public Gx_module, public Synth {
         St_dx7sysex<32> bank_32_modif;          /* ... */
         St_dx7sysex<128> bank_128_origin;       /* ... */
         St_dx7sysex<128> bank_128_modif;        /* ... */
+        /* default write format */
+        uint export_config = DX7_128;
         /* Bank */
         uint bank_nb_sound = 0;                 /* number of sound in the current loaded bank 1/32/128 */
         uint old_snum = 0;                      /* old selected sound number memo for set_original_sound */
@@ -167,12 +175,15 @@ class Dx7interface : public Gx_module, public Synth {
         void on_restore_sound();
         void restore_origin_sound();
         /* save/write */
+        void save_modif_sound();    /* save internally on origin bank */
+        void on_save_sound();       /* save internally and write file */
         void on_save_bank();
         void write_bank();
-        void on_save_sound();
-        void save_modif_sound();
-        void write_voice(st_dx7sysex_1*);
-        void write_voice_as_sysex(st_dx7sysex_1*);
+        void write_voices(uint);
+        //void write_voices_as_sysex_bulk(uint);
+        void write_voices_as_sysex_bulk(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
+        void write_voices_as_raw();
+        void write_voices_as_n_sysex(St_dx7sysex_1*);
         /* */
         void save_bank_as(Glib::RefPtr<Gio::File>);
 

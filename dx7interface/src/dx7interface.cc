@@ -406,36 +406,6 @@ void Dx7interface::restore_origin_sound(){
     bank_1_modif = bank_1_origin;
 };
 /* save/write */
-void Dx7interface::on_save_bank(){
-    LOG_IN();
-    write_bank();
-    LOG_OUT();
-};
-void Dx7interface::write_bank(){
-    LOG_IN();
-    switch ( bank_nb_sound ){
-        case 1:
-            write_voice(&bank_1_modif.sound[0]);
-            break;
-        case 32:
-            for (uint i=0; i < bank_nb_sound; i++){
-                write_voice(&bank_32_modif.sound[i]);
-            };
-            break;
-        case 128:
-            for (uint i=0; i < bank_nb_sound; i++){
-                write_voice(&bank_128_origin.sound[i]);
-            };
-            break;
-    };
-    LOG_OUT();
-};
-void Dx7interface::on_save_sound(){
-    LOG_IN();
-    save_modif_sound();
-    write_bank();
-    LOG_OUT();
-};
 void Dx7interface::save_modif_sound(){
     // set bank_X_modif.sound[snum] in bank_X_origin.sound[snum]
     // TODO: set bank_1_modif.sound[0] in bank_X_modif ???
@@ -454,12 +424,273 @@ void Dx7interface::save_modif_sound(){
     };
     bank_1_origin.sound[0] = bank_1_modif.sound[0];
 };
-void Dx7interface::write_voice(st_dx7sysex_1* sound){
+void Dx7interface::on_save_sound(){
     LOG_IN();
-    write_voice_as_sysex(sound);
+    save_modif_sound();
+    write_bank();
     LOG_OUT();
 };
-void Dx7interface::write_voice_as_sysex(st_dx7sysex_1* sound){
+void Dx7interface::on_save_bank(){
+    LOG_IN();
+    try{
+        write_bank();
+    }catch (const std::exception & ex) {
+        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
+        + "Reason: " + ex.what();
+        //throw std::runtime_error(err_msg);
+    };
+    LOG_OUT();
+};
+void Dx7interface::write_bank(){
+    LOG_IN();
+    switch(export_config){
+        case DX7_RAW: {     /* write raw bank */
+            /* write raw bank */
+            write_voices_as_raw();
+            break;
+        }
+        case DX7_1:{        /* write bulk1 bank */
+            nvoice=0x01;
+            msb=0x01;
+            lsb=0x1B;
+            write_voices(0);
+            break;
+        }
+        case DX7_32:{       /* write bulk32 bank */
+            std::cout << " write 32 " << std::endl;
+            nvoice=0x09;
+            msb=0x20;
+            lsb=0x00;
+            write_voices(0);
+            break;
+        }
+        case DX7_128: {     /* write 4 bulk32 bank */
+            for(uint i = 0; i < 127; i=i+32){
+                nvoice=0x09;
+                msb=0x20;
+                lsb=0x00;
+                write_voices(i);
+            }
+            break;
+        }
+        case DX7_SYX:{      /* write individual sysex for each voice as send by midi */
+           // write_voices_as_n_sysex();
+            break;
+        }
+    };
+    LOG_OUT();
+
+};
+
+void Dx7interface::write_voices(uint index){
+    LOG_IN();
+    /*
+     1 1*110000  F0   Status byte - start sysex
+     0iiiiiii  43   ID # (i=67; Yamaha)
+     0SSSNNNN  00   Sub-status (s=0) & channel number (n=0; ch 1)
+     0FFFFFFF  00   format number (F=0; 1 voice)(f=9; 32 voices)
+     0BBBBBBB  01   byte count MS byte
+     0BBBBBBB  1B   byte count LS byte (b=155; 1 voice)(b=4096; 32voices)
+     0DDDDDDD  **   data byte 1
+     |       |       |
+     0DDDDDDD  **   data byte 155
+     0EEEEEEE  **   checksum (masked 2's complement of sum of 155 bytes)
+     11110111  F7   Status - end sysex
+     */
+    uint nb_voices = 1;
+    if(nvoice == 0x09){
+        nb_voices = 32;
+    };
+    uint8_t voice_checksum = 0;
+    uint l=6;
+    uint size = (155*nb_voices)+8;
+    u_char msg[size];
+    msg[0]=0xF0;
+    msg[1]=id_fabricant;
+    msg[2]=0x00 & channel_send;
+    msg[3]=nvoice;
+    msg[4]=msb;
+    msg[5]=lsb;
+    switch ( bank_nb_sound ){
+        case 1:{
+            // size 163
+            write_voices_as_sysex_bulk(&l, msg, &bank_1_origin.sound[index], &voice_checksum );
+            break;
+        }
+       case 32:{
+            // size 4968
+            for (uint i=index; i< nb_voices;i++){
+               write_voices_as_sysex_bulk(&l, msg, &bank_32_origin.sound[i], &voice_checksum );
+            };
+            break;
+       }
+       case 128:{
+           // size
+           for (uint i=index; i< (nb_voices+index);i++){
+               write_voices_as_sysex_bulk(&l, msg, &bank_128_origin.sound[i], &voice_checksum );
+           };
+           break;
+       }
+    };
+    msg[l++]=u_char(voice_checksum & 0x7F) ;
+    msg[l]=0xF7;
+    std::cout << "varaiable l: " << (int)l << std::endl ;
+    for (uint i = 0 ; i < size ; i++){
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)(msg[i] & 0xFF)<< " " ;
+    };
+    std::cout << std::dec << std::endl;
+    LOG_OUT();
+};
+
+void Dx7interface::write_voices_as_raw(){
+    St_dx7sysex_1* sound;
+    switch ( bank_nb_sound ){
+        case 1:
+            sound=&bank_1_origin.sound[0];
+            break;
+        case 32:
+            for (uint i=0; i < bank_nb_sound; i++){
+                sound=&bank_32_origin.sound[i];
+            };
+            break;
+        case 128:
+            for (uint i=0; i < bank_nb_sound; i++){
+                sound=&bank_128_origin.sound[i];
+            };
+            break;
+    };
+    /* TODO : check original sound format and other kind */
+    uint l=0, j, k;
+    u_char msg[128];
+    /* operator j */
+    for ( j = 6; j-- != 0 ; ){
+        /* OP[J] EG RATE[k] */
+        for ( k = 0; k < 4 ; k++ ){
+            msg[l++]=sound->op[j].eg_rt[k].val & 0x7F;
+        };
+        /* OP[J] EG LVL[k] */
+        for ( k = 0; k < 4 ; k++  ){
+            msg[l++]=sound->op[j].eg_lvl[k].val & 0x7F;
+        };
+        msg[l++] = sound->op[j].kls.brk_pt.val & 0x7F;
+        msg[l++] = sound->op[j].kls.lft_dpth.val & 0x7F;
+        msg[l++] = sound->op[j].kls.rght_dpth.val & 0x7F;
+        msg[l++] = ( (sound->op[j].kls.lft_curve.val << 2) + (sound->op[j].kls.rght_curve.val & 0x03) ) & 0x0F ;
+        msg[l++] = ( (sound->op[j].dtun.val << 3) + (sound->op[j].krs.val & 0x07) ) & 0x7F;
+        msg[l++] = ( (sound->op[j].kvs.val << 2) + (sound->op[j].ams.val & 0x03) ) & 0x1F;
+        msg[l++] = sound->op[j].lvl.val & 0x7F;
+        msg[l++] = ( ( sound->op[j].freq_coarse.val << 1) + (sound->op[j].freq_mode.val & 0x01)  ) & 0x3F;
+        msg[l++] = sound->op[j].freq_fine.val & 0x7F;
+    };
+    for(j=0 ; j < 4; j++ ){
+        msg[l++] = sound->pitch.eg_rt[j].val & 0x7F;
+    };
+    for(j=0 ; j < 4; j++ ){
+        msg[l++] = sound->pitch.eg_lvl[j].val & 0x7F;
+    };
+    msg[l++] = sound->algo.algo.val & 0x1F;
+    msg[l++] = ( (sound->algo.oks.val << 3) + (sound->algo.feedback.val & 0x07) ) & 0x0F;
+
+    msg[l++] = sound->lfo.speed.val & 0x7F;
+    msg[l++] = sound->lfo.delay.val & 0x7F;
+    msg[l++] = sound->lfo.pmd.val & 0x7F;
+    msg[l++] = sound->lfo.amd.val & 0x7F;
+    msg[l++] = ( ( sound->lfo.pms.val << 4) + ( (sound->lfo.wave.val & 0x07) <<1 ) + (sound->lfo.sync.val & 0x01) ) & 0x7F;
+    msg[l++] = sound->algo.transpose.val & 0x7F;
+
+    for (uint8_t carac = 0 ; carac <= 9 ; carac++ ){
+        msg[l++] = sound->name.data()[carac];
+    };
+    std::cout << "Voice Output: ";
+    for (int i = 0 ; i < 128 ; i++){
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)(msg[i] & 0x7F)<< " " ;
+    };
+    std::cout << std::dec << std::endl;
+};
+
+void Dx7interface::write_voices_as_sysex_bulk(uint* l, u_char* msg, St_dx7sysex_1* sound, uint8_t* voice_checksum){
+    /* operator j */
+    uint j, k;
+    for ( j = 6; j-- != 0 ; ){
+        /* OP[J] EG RATE[k] */
+        for ( k = 0; k < 4 ; k++ ){
+            msg[(*l)++]=sound->op[j].eg_rt[k].val;
+            *voice_checksum -= msg[(*l)-1];
+        };
+        /* OP[J] EG LVL[k] */
+        for ( k = 0; k < 4 ; k++  ){
+            msg[(*l)++]=sound->op[j].eg_lvl[k].val;
+            *voice_checksum -= msg[(*l)-1];
+        };
+        msg[(*l)++] = sound->op[j].kls.brk_pt.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->op[j].kls.lft_dpth.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->op[j].kls.rght_dpth.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++]= sound->op[j].kls.lft_curve.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++]= sound->op[j].kls.rght_curve.val;
+        *voice_checksum -= msg[(*l)-1];
+
+        msg[(*l)++]= sound->op[j].krs.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->op[j].ams.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->op[j].kvs.val;
+        *voice_checksum -= msg[(*l)-1];
+
+        msg[(*l)++] = sound->op[j].lvl.val;
+        *voice_checksum -= msg[(*l)-1];
+
+        msg[(*l)++] = sound->op[j].freq_mode.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->op[j].freq_coarse.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->op[j].freq_fine.val;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++]= sound->op[j].dtun.val;
+        *voice_checksum -= msg[(*l)-1];
+    };
+    for(j=0 ; j <= 3; j++ ){
+        msg[(*l)++] = sound->pitch.eg_rt[j].val;
+        *voice_checksum -= msg[(*l)-1];
+    };
+    for(j=0 ; j <= 3; j++ ){
+        msg[(*l)++] = sound->pitch.eg_lvl[j].val;
+        *voice_checksum -= msg[(*l)-1];
+    };
+    msg[(*l)++] = sound->algo.algo.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->algo.feedback.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->algo.oks.val;
+    *voice_checksum -= msg[(*l)-1];
+
+    msg[(*l)++] = sound->lfo.speed.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->lfo.delay.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->lfo.pmd.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->lfo.amd.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->lfo.sync.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->lfo.wave.val;
+    *voice_checksum -= msg[(*l)-1];
+    msg[(*l)++] = sound->lfo.pms.val;
+    *voice_checksum -= msg[(*l)-1];
+
+    msg[(*l)++] = sound->algo.transpose.val;
+    *voice_checksum -= msg[(*l)-1];
+    for (uint8_t carac = 0 ; carac <= 9 ; carac++ ){
+        msg[(*l)++] = sound->name.data()[carac];
+        *voice_checksum -= msg[(*l)-1];
+    };
+};
+
+void Dx7interface::write_voices_as_n_sysex(St_dx7sysex_1* sound){
     /* TODO : check original sound format and other kind */
     uint8_t l=0, j, k;
     u_char msg[128];
@@ -508,7 +739,6 @@ void Dx7interface::write_voice_as_sysex(st_dx7sysex_1* sound){
     };
     std::cout << std::dec << std::endl;
 };
-
 
 /** **/
 void Dx7interface::on_selected_sound_change(uint num, uint nb_elmnt){

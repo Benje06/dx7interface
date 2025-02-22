@@ -105,10 +105,13 @@ class Synth : public Thread {
         struct pollfd *pfd;                    /* array de file de queue du sequenceur */
 
     protected:
-        uint8_t id_fabricant = 0;              /* selected fabricant */
-        uint8_t channel_send = 0;                   /* selected channel */
-        uint8_t channel_receive = 0;                   /* selected channel */
-        uint8_t sub_status = 0;                /* selected sub_s */
+        uint8_t id_fabricant = 0x00;              /* selected fabricant */
+        uint8_t channel_send = 0x00;              /* selected channel */
+        uint8_t channel_receive = 0x00;           /* selected channel */
+        uint8_t sub_status = 0x00;                /* selected sub_s */
+        uint8_t msb=0x00;
+        uint8_t lsb=0x00;
+        uint8_t nvoice=0x00;
         /* generic error */
         bool error();
         /*** MIDI ***/
