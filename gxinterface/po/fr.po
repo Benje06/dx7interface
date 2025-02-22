@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxinterface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-18 01:36+0100\n"
+"POT-Creation-Date: 2025-02-22 10:52+0100\n"
 "PO-Revision-Date: 2025-02-17 01:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -50,28 +50,28 @@ msgid ""
 " => Cannot load : "
 msgstr ""
 
-#: ../src/gxmodule.cc:54 ../src/gxmodule.cc:71 ../src/gxmodule.cc:157
+#: ../src/gxmodule.cc:54 ../src/gxmodule.cc:71 ../src/gxmodule.cc:154
 msgid "Reason "
 msgstr ""
 
-#: ../src/gxmodule.cc:121
+#: ../src/gxmodule.cc:118
 msgid "Warning the css style file "
 msgstr ""
 
-#: ../src/gxmodule.cc:121
+#: ../src/gxmodule.cc:118
 #, fuzzy
 msgid " doesn't exist or is not readable"
 msgstr " n'existe pas !!!"
 
-#: ../src/gxmodule.cc:157
+#: ../src/gxmodule.cc:154
 msgid " Creating window failed !!!\n"
 msgstr ""
 
-#: ../src/gxmodule.cc:219
+#: ../src/gxmodule.cc:216
 msgid " Failed to load style: !!!\n"
 msgstr ""
 
-#: ../src/gxmodule.cc:219
+#: ../src/gxmodule.cc:216
 msgid "Reason => "
 msgstr ""
 
