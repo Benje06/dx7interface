@@ -147,6 +147,7 @@ class Dx7interface : public Gx_module, public Synth {
         void write_bank(Glib::RefPtr<Gio::File>, uint);
         void write_bank_as_sysex(Glib::RefPtr<Gio::File>, uint);
         void write_bank_as_raw(Glib::RefPtr<Gio::File> file, uint);
+        void on_as_raw_event();
         /* VOICE */
         void write_voice_bulk1(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
         void write_voice_bulk32(uint*, u_char*, St_dx7sysex_1*, uint8_t*);

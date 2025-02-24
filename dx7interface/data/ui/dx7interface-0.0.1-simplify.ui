@@ -6210,7 +6210,7 @@
             </object>
         </child>
         <child>
-            <object class="GtkCheckButton" id="checkbutton_bulk">
+            <object class="GtkCheckButton" id="checkbutton_as_raw">
                 <property name="label" translatable="yes">as RAW (DX7 data bulk format without the sysex header)</property>
                 <property name="active">true</property>
             </object>
