@@ -19,6 +19,7 @@ refonte interface( size/expand des elements)
 son par defaut (son init)
 boutons randomize
 options des couleurs
+drive dx7interfac par control change ( fonction assign controle change to event )
 
 ### CODE
 gestion d'exceptions
