@@ -32,6 +32,8 @@
 #define DX7_128 3
 #define DX7_RAW 4
 #define DX7_SYX 5
+#define BANK 0
+#define SOUND 1
 /* sys */
 #include <memory>
 // #include <cairomm/surface.h>
@@ -90,19 +92,86 @@ class Dx7interface : public Gx_module, public Synth {
         St_dx7sysex<32> bank_32_modif;          /* ... */
         St_dx7sysex<128> bank_128_origin;       /* ... */
         St_dx7sysex<128> bank_128_modif;        /* ... */
+
         /* default write format */
-        uint export_config = DX7_128;
+        uint export_config = DX7_32;
+        uint save_type = BANK;
+
         /* Bank */
         uint bank_nb_sound = 0;                 /* number of sound in the current loaded bank 1/32/128 */
         uint old_snum = 0;                      /* old selected sound number memo for set_original_sound */
         Glib::RefPtr<Gio::File> bank_file;       /* pointeur de lecture de fichier */
+        Glib::RefPtr<Gio::File> initial_folder;
         Glib::RefPtr<Gio::DataInputStream> data_stream;           /* pointeur de flux de données */
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> m_selection_model;
         Glib::RefPtr<Gtk::SignalListItemFactory> m_factory;
 
+        /* pop hover menu */
+        void create_popover_menu();
         Glib::RefPtr<Gio::SimpleActionGroup> action_group;
-        Gtk::PopoverMenu* m_popover_menu;
+        Gtk::PopoverMenu* m_popover_menu = nullptr;
+        /* save dialog */
+        void create_save_dialog();
+        Gtk::Dialog* dialog_save = nullptr;
+        Gtk::Button* button_save = nullptr;
+        Gtk::CheckButton* checkbutton_bulk = nullptr;
+        Glib::RefPtr<Gtk::FileDialog> file_dialog = nullptr;
+
+        void OpenFileDialog();
+        void OpenDialog(Glib::ustring,Glib::ustring);
+
+        /*** THREAD ***/
+        bool Run() ;    /* Thread function  */
+        /*** MIDI ***/
+        void listen_midi() override;
+
+        /** SOUND BANK **/
+        /* set/load */
+        void set_bank(Glib::RefPtr<Gio::File>);
+        void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
+        void load_bank(Glib::RefPtr<Gio::File>);
+        /* restore */
+        void on_restore_bank();
+        void restore_origin_bank();
+        void on_restore_sound();
+        void restore_origin_sound();
+        /* repalce/delete */
+        void on_insert_after();
+        void on_replace_sound();
+        void on_delete_sound();
+        /* save/write */
+        /* BANK */
+        void on_save_bank();
+        void write_bank(Glib::RefPtr<Gio::File>, uint);
+        void write_bank_as_sysex(Glib::RefPtr<Gio::File>, uint);
+        void write_bank_as_raw(Glib::RefPtr<Gio::File> file, uint);
+        /* VOICE */
+        void write_voice_bulk1(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
+        void write_voice_bulk32(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
+        void write_voice_as_sysex(Glib::RefPtr<Gio::File>);
+        void write_voice_as_raw(Glib::RefPtr<Gio::File>);
+        void save_modif_sound();    /* save internally on origin bank */
+        void on_save_sound();       /* save internally and write file */
+        void write_voices_as_n_sysex(St_dx7sysex_1*);
+        /* */
+        void save_bank_as(Glib::RefPtr<Gio::File>);
+        void clear_sound(uint8_t,St_dx7sysex_1*);     // set 0x00 to all param to voice struct "aka clear struct"
+        void set_as_origin_sound(uint);                // set bank_X_modif.sound as bank_X_origin.sound
+
+        /** VOICE  **/
+        /* seek voice value from bank file and write it to sound */
+        void seek_voice(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
+        void seek_voice_by_byte(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
+        void seek_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
+        void seek_voice_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*);
+        /* send voice over midi */
+        void send_voice(st_dx7sysex_1*);              // send voice to midi
+        void send_extra_parameters(st_dx7sysex_1*);         // send voice to midi
+        /* set voice to interface */
+        void set_voice(st_dx7sysex_1*);               // set voice in GUI
+        void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
+
 
         /*** DRAWING ***/
         /* lines/curves */
@@ -111,7 +180,7 @@ class Dx7interface : public Gx_module, public Synth {
         double r_point = 4.5;
         double r_point_shadow = 9.0;
         std::array<double, 4> line_color = {0.4,0.8,0.6,1.0};       // couleur des courbes ( vert Dx7 ) format rgbax
-        /* dashes */            
+        /* dashes */
         double dash_width = 0.5;                                      // epaisseur
         std::array<double, 4> dash_color = {0.4,0.8,0.6,0.8};    // couleur format rgba
         const std::vector< double > dash_pattern = {3.0, 5.0, 3.0, 5.0};  // pattern des pointillé ( lgt couleur, lgt espace , lgt couleur , lgt espace)
@@ -140,6 +209,7 @@ class Dx7interface : public Gx_module, public Synth {
         void init_gesture_controller();
         std::map< Glib::ustring, std::pair<double,double>[5]> drawarea;                             /* array of points coordinates */
         int p_drag = -1;                                                                            /* current index in points coordinates array */
+        /* Mouse click */
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op1;
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op2;
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op3;
@@ -149,6 +219,7 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_pitch;
         void mouse_click(int, double, double, Glib::ustring);
         void mouse_click_release(int, double, double, Glib::ustring);
+        /* Mouse mooves */
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op1;
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op2;
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op3;
@@ -158,56 +229,13 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_pitch;
         void mouse_mooves(double, double, Glib::ustring);
 
-        /*** THREAD ***/
-        bool Run() ;    /* Thread function  */
-        /*** MIDI ***/
-        void listen_midi() override;
-
-        /** SOUND BANK **/
-        /* set/load */
-        void set_bank(Glib::RefPtr<Gio::File>);
-        void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
-        void load_bank(Glib::RefPtr<Gio::File>);
-
-        /* restore */
-        void on_restore_bank();
-        void restore_origin_bank();
-        void on_restore_sound();
-        void restore_origin_sound();
-        /* save/write */
-        void save_modif_sound();    /* save internally on origin bank */
-        void on_save_sound();       /* save internally and write file */
-        void on_save_bank();
-        void write_bank();
-        void write_voices(uint);
-        //void write_voices_as_sysex_bulk(uint);
-        void write_voices_as_sysex_bulk(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
-        void write_voices_as_raw();
-        void write_voices_as_n_sysex(St_dx7sysex_1*);
-        /* */
-        void save_bank_as(Glib::RefPtr<Gio::File>);
-
-        void clear_sound(uint8_t,St_dx7sysex_1*);     // set 0x00 to all param to voice struct "aka clear struct"
-        void set_as_origin_sound(uint);                // set bank_X_modif.sound as bank_X_origin.sound
-        /** VOICE  **/
-        /* seek voice value from bank file and write it to sound */
-        void seek_voice(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
-        void seek_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
-        void seek_voice_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*);
-        /* send voice over midi */
-        void send_voice(st_dx7sysex_1*);              // send voice to midi
-        void send_extra_parameters(st_dx7sysex_1*);         // send voice to midi
-        /* set voice to interface */
-        void set_voice(st_dx7sysex_1*);               // set voice in GUI
-        void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
-
         /*** UI ***/
         /** EVENTS / SIGNAL **/
         void block_ui();                       /* block all interface events */
         void unblock_ui();                     /* ... */
         void attach_signals() override;
         void dettach_signals() override;
-
+        void attach_action_group_signals();
         /** Drawing **/
         void on_draw_algo(const Cairo::RefPtr<Cairo::Context>&, double, double);
         void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>&, double, double);

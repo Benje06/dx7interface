@@ -1345,15 +1345,15 @@
                                   </object>
                                 </child>
                                 <child>
-                                    <object class="GtkCheckButton" id="btn_send_extra_parameters">
-                                        <property name="focusable">1</property>
-                                        <property name="label" translatable="yes">Send extra param</property>
-                                        <property name="receives-default">1</property>
-                                        <layout>
-                                            <property name="column">1</property>
-                                            <property name="row">0</property>
-                                        </layout>
-                                    </object>
+                                  <object class="GtkCheckButton" id="btn_send_extra_parameters">
+                                    <property name="focusable">1</property>
+                                    <property name="label" translatable="yes">Send extra param</property>
+                                    <property name="receives-default">1</property>
+                                    <layout>
+                                      <property name="column">1</property>
+                                      <property name="row">0</property>
+                                    </layout>
+                                  </object>
                                 </child>
                               </object>
                             </child>
@@ -6150,5 +6150,84 @@
     <property name="page-increment">1</property>
     <property name="step-increment">1</property>
     <property name="upper">99</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_sound_start">
+      <property name="lower">0</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">96</property>
+  </object>
+  <object class="GtkDialog" id="dialog_save">
+    <child internal-child="action_area">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="halign">center</property>
+        <property name="valign">center</property>
+        <child>
+            <object class="GtkLabel" id="label_save_name"/>
+        </child>
+        <child>
+            <object class="GtkBox" id="box_save_bank">
+                <property name="orientation">horizontal</property>
+                <property name="visible">false</property>
+                <child>
+                    <object class="GtkCheckButton" id="checkbutton_128">
+                        <property name="label" translatable="yes">128 voices</property>
+                        <property name="active">true</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkFrame">
+                        <property name="child">
+                            <object class="GtkBox">
+                                <property name="orientation">horizontal</property>
+                                <child>
+                                    <object class="GtkCheckButton" id="checkbutton_32">
+                                        <property name="label" translatable="yes">32 voices</property>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkLabel">
+                                        <property name="label" translatable="yes"> from: </property>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkSpinButton" id="spinbutton_save_start">
+                                        <property name="adjustment">adj_sound_start</property>
+                                        <property name="focusable">1</property>
+                                        <property name="max-width-chars">2</property>
+                                        <property name="numeric">1</property>
+                                        <property name="text" translatable="no">0</property>
+                                        <property name="value">0</property>
+                                        <property name="width-chars">2</property>
+                                        <property name="xalign">0.5</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </property>
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="GtkCheckButton" id="checkbutton_bulk">
+                <property name="label" translatable="yes">as RAW (DX7 data bulk format without the sysex header)</property>
+                <property name="active">true</property>
+            </object>
+        </child>
+        <child>
+            <object class="GtkLabel" id="label_bulk">
+                <property name="label" translatable="yes">not using RAW, with 128 voices bank, will split it into 4x 32 voices bank to be compatible with Dx7 hardware</property>
+                <property name="wrap">true</property>
+                <property name="wrap-mode">word</property>
+            </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_save">
+            <property name="label" translatable="yes">select file</property>
+          </object>
+        </child>
+      </object>
+    </child>
   </object>
 </interface>

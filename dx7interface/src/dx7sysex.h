@@ -165,7 +165,11 @@
     template <uint i>
     struct St_dx7sysex{
         St_dx7sysex_1 sound[i];
-        Glib::ustring bank_name;
+        Glib::ustring name;
     };
+    typedef struct {
+        St_dx7sysex_1 sound[1]; // Flexible array member
+        Glib::ustring name;
+    }*Bank_ptr;
 
 #endif /* dx7sysex_H */

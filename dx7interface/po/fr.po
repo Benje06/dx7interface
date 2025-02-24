@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-22 10:49+0100\n"
+"POT-Creation-Date: 2025-02-24 06:57+0100\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,70 +17,70 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/dx7interface.cc:2651
+#: ../src/dx7interface.cc:2826
 msgid "Monophonic"
 msgstr "Monophonique"
 
-#: ../src/dx7interface.cc:2653
+#: ../src/dx7interface.cc:2828
 msgid "Polyphonic"
 msgstr "Polyphonique"
 
-#: ../src/dx7interface.cc:2709
+#: ../src/dx7interface.cc:2884
 msgid "Follow"
 msgstr ""
 
-#: ../src/dx7interface.cc:2711
+#: ../src/dx7interface.cc:2886
 msgid "Retain"
 msgstr ""
 
-#: ../src/dx7interface.cc:3622
+#: ../src/dx7interface.cc:3797
 msgid "/* OP1 */"
 msgstr "/* Operateur 1 */"
 
-#: ../src/dx7interface.cc:3633
+#: ../src/dx7interface.cc:3808
 msgid " OP1 "
 msgstr " Operateur 1 "
 
-#: ../src/dx7interface.cc:4018
+#: ../src/dx7interface.cc:4193
 msgid "/* OP2 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:4029 ../data/ui/dx7interface-0.0.1-simplify.ui.h:62
+#: ../src/dx7interface.cc:4204 ../data/ui/dx7interface-0.0.1-simplify.ui.h:62
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:59
 msgid " OP2 "
 msgstr ""
 
-#: ../src/dx7interface.cc:4414
+#: ../src/dx7interface.cc:4589
 msgid "/* OP3 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:4425
+#: ../src/dx7interface.cc:4600
 msgid " OP3 "
 msgstr ""
 
-#: ../src/dx7interface.cc:4811
+#: ../src/dx7interface.cc:4986
 msgid "/* OP4 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:4822 ../data/ui/dx7interface-0.0.1-simplify.ui.h:64
+#: ../src/dx7interface.cc:4997 ../data/ui/dx7interface-0.0.1-simplify.ui.h:64
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:61
 msgid " OP4 "
 msgstr ""
 
-#: ../src/dx7interface.cc:5205
+#: ../src/dx7interface.cc:5380
 msgid "/* OP5 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:5216 ../data/ui/dx7interface-0.0.1-simplify.ui.h:65
+#: ../src/dx7interface.cc:5391 ../data/ui/dx7interface-0.0.1-simplify.ui.h:65
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:62
 msgid " OP5 "
 msgstr ""
 
-#: ../src/dx7interface.cc:5598
+#: ../src/dx7interface.cc:5773
 msgid "/* OP6 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:5609 ../data/ui/dx7interface-0.0.1-simplify.ui.h:66
+#: ../src/dx7interface.cc:5784 ../data/ui/dx7interface-0.0.1-simplify.ui.h:66
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:63
 msgid " OP6 "
 msgstr ""
@@ -492,6 +492,32 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:86
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:84
 msgid "Op / Lvl Scl / Fct"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:87
+msgid "128 voices"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:88
+msgid "32 voices"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:89
+msgid " from: "
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:90
+msgid "as RAW (DX7 data bulk format without the sysex header)"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:91
+msgid ""
+"not using RAW, with 128 voices bank, will split it into 4x 32 voices bank to "
+"be compatible with Dx7 hardware"
+msgstr ""
+
+#: ../data/ui/dx7interface-0.0.1-simplify.ui.h:92
+msgid "select file"
 msgstr ""
 
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:46
