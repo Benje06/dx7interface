@@ -8,24 +8,25 @@ normalisation gx_module (fonction load,
 traductions
 
 # effectivité
-evenements MIDI
-lecture/ecriture fichier(dans fonctions ?)
-reception/envoi en midi (recevie bank, receive sound, send bank(32/128), plusieurs sons)
+evenements MIDI (temporisation, CC)
+ecriture fichier des extra parameters
+reception/envoi en midi (recevie bank, receive sound, send bank(32), plusieurs sons)
 multiplateforme (midi/interface) drumkit, Juce ???
 
 # Interface
-fenetre secondaires (option, module, chargement de fichier)
+insert/replace/delete/(moove)
+fenetre secondaires (option, module)
 refonte interface( size/expand des elements)
 son par defaut (son init)
 boutons randomize
 options des couleurs
-drive dx7interfac par control change ( fonction assign controle change to event )
+drive dx7interface par control change ( fonction assign controle change to event )
 
 ### CODE
 gestion d'exceptions
 filtre des variables utilisateurs ???
 evenement standard (erreur ???)
-fenetre secondaires (option, module, chargement de fichier) gxinterface
+fenetre secondaires (option, module) gxinterface
 verifier la récuperations des bon bit du syx(cf tableau.ods)
 
 # ergonomie

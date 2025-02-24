@@ -1,0 +1,1129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="algo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.508642"
+     inkscape:cx="387.65994"
+     inkscape:cy="749.80806"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:lockguides="true"
+     showgrid="true">
+    <inkscape:grid
+       id="grid39"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="0.99999998"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect34"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect24"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,25.371189,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7" />
+    </marker>
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect23"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,7.6878089,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle-8"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7-7" />
+    </marker>
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect23-9"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,7.6878089,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle-8-2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7-7-9" />
+    </marker>
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect23-1"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,7.6878089,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle-1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path7-2" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g6"
+       transform="translate(-4.0078125,-0.26458394)">
+      <rect
+         style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264584;stroke-dasharray:none;stroke-opacity:1"
+         id="rect1"
+         width="41.858948"
+         height="22.427647"
+         x="10.652342"
+         y="15.520355" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;white-space:pre;inline-size:53.0065;display:inline;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+         x="18.351562"
+         y="33.960934"
+         id="text2"
+         transform="translate(-3.4483807,-14.175952)"><tspan
+           x="18.351562"
+           y="33.960934"
+           id="tspan8">set_bank(bank_file):
+</tspan><tspan
+           x="18.351562"
+           y="37.929681"
+           id="tspan40">- clean_bank()
+</tspan><tspan
+           x="18.351562"
+           y="41.898431"
+           id="tspan42">- load_bank(bank_file)
+</tspan><tspan
+           x="18.351562"
+           y="45.867181"
+           id="tspan43">- set_selected(0)
+</tspan><tspan
+           x="18.351562"
+           y="49.835931"
+           id="tspan44">- redraw_all_curve()</tspan></text>
+    </g>
+    <g
+       id="g19"
+       transform="translate(-4.4770716,-45.158363)">
+      <g
+         id="g14"
+         transform="matrix(0.96710785,0,0,0.96683727,-48.352093,30.027811)"
+         style="stroke-width:1.03416">
+        <g
+           id="g15"
+           transform="translate(-29.831067,-123.20231)"
+           style="stroke-width:1.03416">
+          <g
+             id="g2"
+             transform="translate(0.32716749,4.7754123)">
+            <rect
+               style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.273621;stroke-dasharray:none;stroke-opacity:1"
+               id="rect1-5"
+               width="70.249527"
+               height="21.361607"
+               x="99.158188"
+               y="173.0524" />
+            <text
+               xml:space="preserve"
+               style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.27362;stroke-dasharray:none;stroke-opacity:1"
+               x="101.43014"
+               y="176.6588"
+               id="text10"><tspan
+                 sodipodi:role="line"
+                 id="tspan10"
+                 style="stroke-width:0.27362"
+                 x="101.43014"
+                 y="176.6588">load_bank(Glib::RefPtr&lt;Gio::File&gt; bank_file):</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.27362"
+                 x="101.43014"
+                 y="180.62755"
+                 id="tspan11">- seek_voice()</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.27362"
+                 x="101.43014"
+                 y="184.5963"
+                 id="tspan12">- seek_parameters()</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.27362"
+                 x="101.43014"
+                 y="188.56505"
+                 id="tspan2">- bank_X_modif = bank_X_origin</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.27362"
+                 x="101.43014"
+                 y="192.5338"
+                 id="tspan14" /></text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g17"
+       transform="translate(-100.29252,29.153802)">
+      <rect
+         style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+         id="rect1-2"
+         width="75.608948"
+         height="15.255772"
+         x="125.79532"
+         y="29.182814" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+         x="131.72279"
+         y="35.966148"
+         id="text15"><tspan
+           sodipodi:role="line"
+           id="tspan15"
+           style="stroke-width:0.264583"
+           x="131.72279"
+           y="35.966148">seek_voice(uint8_t i, St_dx7sysex_1* sound):</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583"
+           x="131.72279"
+           y="39.934898"
+           id="tspan16">- sound-&gt;param.val=read_bytes();</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583"
+           x="131.72279"
+           y="43.903648"
+           id="tspan17" /></text>
+    </g>
+    <g
+       id="g17-7"
+       transform="translate(-39.155701,18.754855)">
+      <g
+         id="g20"
+         transform="translate(-4.3052978,0.89493227)">
+        <g
+           id="g21"
+           transform="translate(-61.136823,24.759786)">
+          <rect
+             style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+             id="rect1-2-0"
+             width="136.61348"
+             height="15.255772"
+             x="130.10062"
+             y="29.182812" />
+          <text
+             xml:space="preserve"
+             style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+             x="131.88637"
+             y="33.981773"
+             id="text15-9"><tspan
+               sodipodi:role="line"
+               id="tspan15-3"
+               style="stroke-width:0.264583"
+               x="131.88637"
+               y="33.981773">seek_parameters(Glib::RefPtr&lt;Gio::File&gt; basefile, uint8_t pos, St_dx7sysex_1* sound):</tspan><tspan
+               sodipodi:role="line"
+               style="stroke-width:0.264583"
+               x="131.88637"
+               y="37.950523"
+               id="tspan16-6">- seek_voice_parameters(Glib::RefPtr&lt;Gio::File&gt; basefile, uint8_t pos, St_dx7sysex_1* sound):</tspan><tspan
+               sodipodi:role="line"
+               style="stroke-width:0.264583"
+               x="131.88637"
+               y="41.919273"
+               id="tspan21">             - sound-&gt;extra.functions=read_bytes()</tspan><tspan
+               sodipodi:role="line"
+               style="stroke-width:0.264583"
+               x="131.88637"
+               y="45.888023"
+               id="tspan20" /><tspan
+               sodipodi:role="line"
+               style="stroke-width:0.264583"
+               x="131.88637"
+               y="49.856773"
+               id="tspan17-0" /></text>
+        </g>
+      </g>
+    </g>
+    <rect
+       style="fill:#a2a2a2;stroke:#000000;stroke-width:0.273621"
+       id="rect26"
+       width="78.690483"
+       height="40.292492"
+       x="107.73701"
+       y="118.44126" />
+    <rect
+       style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-5-9"
+       width="86.633072"
+       height="37.61377"
+       x="0.13231039"
+       y="93.974884" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.07014px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+       x="1.8152205"
+       y="99.343994"
+       id="text10-2"
+       transform="scale(1.0001399,0.9998601)"><tspan
+         sodipodi:role="line"
+         id="tspan10-0"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="99.343994">on_selected_sound_change(uint num,uint nb_elmnt):</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="103.18166"
+         id="tspan6">- bank_X_modif.sound[old_snum] = bank_1_modif.sound[0]</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="107.01934"
+         id="tspan7">- bank_1_origin.sound[0]=bank_X_origin.sound[snum]</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="110.85701"
+         id="tspan11-2">- bank_1_modif.sound[0]=bank_X_modif.sound[snum]</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="114.69468"
+         id="tspan12-3">- set_voice()</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="118.53236"
+         id="tspan13-7">- send_voice()</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="122.37003"
+         id="tspan22">- on_txt_freq_op_event();</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="126.2077"
+         id="tspan23">-  redraw_all_curve();</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="1.8152205"
+         y="130.04538"
+         id="tspan14-5" /></text>
+    <g
+       id="g22"
+       transform="matrix(0.96710785,0,0,0.96683727,49.346913,-120.18208)"
+       style="stroke-width:1.03416">
+      <rect
+         style="fill:#a2a2a2;stroke:#000000;stroke-width:0.282967"
+         id="rect2"
+         width="31.12509"
+         height="23.998997"
+         x="69.555206"
+         y="144.46275" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.28344px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.282967"
+         x="74.530716"
+         y="155.3436"
+         id="text13"
+         transform="scale(0.99986011,1.0001399)"><tspan
+           sodipodi:role="line"
+           id="tspan13"
+           style="stroke-width:0.282967"
+           x="74.530716"
+           y="155.3436">Bank_X_origin</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.282967"
+           x="74.530716"
+           y="159.44789"
+           id="tspan18">X= 1,32,128</tspan></text>
+    </g>
+    <g
+       id="g18"
+       transform="matrix(0.96710785,0,0,0.96683727,-7.8171516,-69.873484)"
+       style="stroke-width:1.03416">
+      <rect
+         style="fill:#a2a2a2;stroke:#000000;stroke-width:0.282966"
+         id="rect3"
+         width="28.354502"
+         height="23.562653"
+         x="164.11574"
+         y="92.531609" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.28344px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.282967"
+         x="167.63855"
+         y="103.2065"
+         id="text13-6"
+         transform="scale(0.99986011,1.0001399)"><tspan
+           sodipodi:role="line"
+           id="tspan13-0"
+           style="stroke-width:0.282967"
+           x="167.63855"
+           y="103.2065">Bank_X_modif</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.282967"
+           x="167.63855"
+           y="107.3108"
+           id="tspan18-6">X= 1,32,128</tspan></text>
+    </g>
+    <path
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.27362px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+       d="m 6.9799005,150.26374 70.4273255,4.78039"
+       id="path22"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:path-effect="#path-effect24"
+       inkscape:original-d="m 6.9799005,150.26374 25.1979485,3.79559 45.229377,0.9848"
+       transform="matrix(0.96710785,0,0,0.96683727,41.753162,-118.81099)" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.27362px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+       d="m 92.572707,156.97996 34.066973,0.10305"
+       id="path23-9"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="css"
+       transform="matrix(0.96710785,0,0,0.96683727,42.137168,-132.28418)" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ConcaveTriangle-1)"
+       d="M 204.03718,8.9994556 179.32084,30.784316"
+       id="path23-9-0"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="css" />
+    <g
+       id="g36">
+      <rect
+         style="fill:#a2a2a2;stroke:#000000;stroke-width:0.273621"
+         id="rect2-2"
+         width="30.101318"
+         height="23.203125"
+         x="117.58124"
+         y="126.98595" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.273621"
+         x="122.383"
+         y="137.52696"
+         id="text13-3"><tspan
+           sodipodi:role="line"
+           id="tspan13-75"
+           style="stroke-width:0.273621"
+           x="122.383"
+           y="137.52696">Bank_1_origin</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.273621"
+           x="122.383"
+           y="141.49571"
+           id="tspan18-9">X= 1,32,128</tspan></text>
+    </g>
+    <g
+       id="g18-2"
+       transform="matrix(0.96710785,0,0,0.96683727,-6.8502168,37.622565)"
+       style="stroke-width:1.03416">
+      <rect
+         style="fill:#a2a2a2;stroke:#000000;stroke-width:0.282966"
+         id="rect3-2"
+         width="28.354502"
+         height="23.562653"
+         x="164.11574"
+         y="92.531609" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.28344px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.282967"
+         x="167.63855"
+         y="103.2065"
+         id="text13-6-8"
+         transform="scale(0.99986011,1.0001399)"><tspan
+           sodipodi:role="line"
+           id="tspan13-0-9"
+           style="stroke-width:0.282967"
+           x="167.63855"
+           y="103.2065">Bank_1_modif</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.282967"
+           x="167.63855"
+           y="107.3108"
+           id="tspan18-6-7">X= 1,32,128</tspan></text>
+    </g>
+    <g
+       id="g22-0"
+       transform="matrix(0.96710785,0,0,0.96683727,35.263192,-12.686027)"
+       style="stroke-width:1.03416">
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.27362px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ConcaveTriangle-8)"
+         d="M 99.680469,57.278556 100.6803,144.46275"
+         id="path24"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264582px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+       d="M 87.055686,94.276128 108.10135,116.85483"
+       id="path25"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ConcaveTriangle-8)"
+       d="m 164.6114,42.370774 0.96693,84.714796"
+       id="path26"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ConcaveTriangle-8-2)"
+       d="m 164.77954,149.14224 0.12318,37.88667"
+       id="path26-1"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g17-9"
+       transform="translate(-114.63888,102.14127)">
+      <g
+         id="g35"
+         transform="translate(5.1562523e-8,-0.49094712)">
+        <rect
+           style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264582;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1-2-2"
+           width="75.608948"
+           height="36.014351"
+           x="125.79531"
+           y="29.938337" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+           x="131.1386"
+           y="34.894676"
+           id="text15-2"><tspan
+             sodipodi:role="line"
+             id="tspan15-8"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="34.894676">set_voice(St_dx7sysex_1* sound):</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="38.863426"
+             id="tspan28">- block_ui()</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="42.832176"
+             id="tspan29">- block_midi()</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="46.800926"
+             id="tspan16-9">- (*Gtk::widget)-&gt;set_value(sound-&gt;param.val)</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="50.769676"
+             id="tspan26">- set_voice_parameters(sound);</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="54.738426"
+             id="tspan27">- on_txt_freq_op_event();</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="58.707176"
+             id="tspan24">- unblock_midi();</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="62.675926"
+             id="tspan32">- unblock_ui();</tspan><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="66.644676"
+             id="tspan33" /><tspan
+             sodipodi:role="line"
+             style="stroke-width:0.264583"
+             x="131.1386"
+             y="70.613426"
+             id="tspan17-7" /></text>
+      </g>
+    </g>
+    <g
+       id="g17-7-3"
+       transform="translate(-53.502061,112.76548)">
+      <g
+         id="g20-6"
+         transform="translate(-4.3052978,0.89493227)">
+        <g
+           id="g21-1"
+           transform="translate(-61.136823,24.759786)">
+          <g
+             id="g34">
+            <rect
+               style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+               id="rect1-2-0-2"
+               width="75.608948"
+               height="15.255772"
+               x="130.10062"
+               y="29.182812" />
+            <text
+               xml:space="preserve"
+               style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+               x="131.3148"
+               y="35.656586"
+               id="text15-9-9"><tspan
+                 sodipodi:role="line"
+                 id="tspan15-3-3"
+                 style="stroke-width:0.264583"
+                 x="131.3148"
+                 y="35.656586">set_voice_parameters(St_dx7sysex_1* sound):</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="131.3148"
+                 y="39.625336"
+                 id="tspan21-9">- (*Gtk::Widget)-&gt;set_value(sound-&gt;extra.functions);</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="131.3148"
+                 y="43.594086"
+                 id="tspan20-4" /><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="131.3148"
+                 y="47.562836"
+                 id="tspan17-0-7" /></text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g17-0"
+       transform="translate(-125.79532,-29.182814)">
+      <rect
+         style="fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+         id="rect1-2-6"
+         width="75.608948"
+         height="15.255772"
+         x="125.79532"
+         y="29.182814" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+         x="131.72279"
+         y="35.966148"
+         id="text15-26"><tspan
+           sodipodi:role="line"
+           id="tspan15-1"
+           style="stroke-width:0.264583"
+           x="131.72279"
+           y="35.966148">on_bank_select(bank_file):</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583"
+           x="131.72279"
+           y="39.934898"
+           id="tspan16-8">- set_bank(bank_file);</tspan><tspan
+           sodipodi:role="line"
+           style="stroke-width:0.264583"
+           x="131.72279"
+           y="43.903648"
+           id="tspan17-79" /></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="153.10243"
+       y="192.7718"
+       id="text30"><tspan
+         sodipodi:role="line"
+         id="tspan30"
+         style="stroke-width:0.264583"
+         x="153.10243"
+         y="192.7718">Save_sound</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="153.10243"
+         y="196.74055"
+         id="tspan35">RAW or BULK</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="153.10243"
+         y="200.7093"
+         id="tspan31" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="181.78906"
+       y="193.00162"
+       id="text30-8"><tspan
+         sodipodi:role="line"
+         id="tspan30-4"
+         style="stroke-width:0.264583"
+         x="181.78906"
+         y="193.00162">Save_bank</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="181.78906"
+         y="196.97037"
+         id="tspan35-5">RAW or BULK</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="181.78906"
+         y="200.93912"
+         id="tspan31-0" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="157.25409"
+       y="9.9017258"
+       id="text34"><tspan
+         sodipodi:role="line"
+         id="tspan34"
+         style="stroke-width:0.264583"
+         x="157.25409"
+         y="9.9017258">Restore sound</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="161.88333"
+       y="15.039715"
+       id="text34-0"><tspan
+         sodipodi:role="line"
+         id="tspan34-6"
+         style="stroke-width:0.264583"
+         x="161.88333"
+         y="15.039715">Restore bank</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 177.19654,41.166872 191.51545,188.53234"
+       id="path35"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="184.87576"
+       y="28.176481"
+       id="text30-2"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="184.87576"
+         y="28.176481"
+         id="tspan31-7">Replace_sound</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="191.50221"
+       y="23.768373"
+       id="text30-0"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="191.50221"
+         y="23.768373"
+         id="tspan31-6">Insert_after</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="191.50221"
+         y="27.737123"
+         id="tspan1" /></text>
+    <g
+       id="g59"
+       transform="translate(1.3596726,-0.23775491)">
+      <g
+         id="g66">
+        <rect
+           style="fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+           id="rect4"
+           width="41.060429"
+           height="13.265287"
+           x="3.772619"
+           y="195.37004" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;white-space:pre;inline-size:43.7888;display:inline;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+           x="4.851562"
+           y="198.28125"
+           id="text8"><tspan
+             x="4.851562"
+             y="198.28125"
+             id="tspan45">on_save_bank
+</tspan><tspan
+             x="4.851562"
+             y="202.24999"
+             id="tspan46">- write_bank():
+</tspan><tspan
+             x="4.851562"
+             y="206.21874"
+             id="tspan47">     switch(export_config): 
+</tspan><tspan
+             x="4.851562"
+             y="210.18749"
+             id="tspan52">
+</tspan><tspan
+             x="4.851562"
+             y="214.15624"
+             id="tspan53">
+</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g41"
+       transform="translate(8.4250813,31.583987)">
+      <g
+         id="g49"
+         transform="translate(-2.2148437,-17.613281)">
+        <g
+           id="g67"
+           transform="translate(3.8459786,-7.1531924)">
+          <g
+             id="g68"
+             transform="translate(1.9198608,-2.3975977e-5)">
+            <rect
+               style="fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+               id="rect5"
+               width="65.889435"
+               height="17.714516"
+               x="3.9220543"
+               y="223.18248" />
+            <text
+               xml:space="preserve"
+               style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+               x="5.6109743"
+               y="226.54114"
+               id="text9"><tspan
+                 sodipodi:role="line"
+                 id="tspan9"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="226.54114">RAW (DX7_RAW )</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="230.50989"
+                 id="tspan48">- write_bank_as_raw():</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="234.47864"
+                 id="tspan49"> bank_1                    -&gt; write_voice_bulk1</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="238.44739"
+                 id="tspan67"> bank_32 bank_128 -&gt; write_voice_bulk32</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <rect
+       style="fill:#a2a2a2;stroke:#000000;stroke-width:0.264584"
+       id="rect6"
+       width="48.203739"
+       height="21.602421"
+       x="15.898131"
+       y="208.39755" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="16.542238"
+       y="211.45789"
+       id="text39"><tspan
+         sodipodi:role="line"
+         id="tspan39"
+         style="stroke-width:0.264583"
+         x="16.542238"
+         y="211.45789">BULK (DX7_1,32,128)</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="16.542238"
+         y="215.42664"
+         id="tspan62">write_bank_as_sysex():</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="16.542238"
+         y="219.39539"
+         id="tspan50">    DX7_1 -&gt; write_voice_bulk1()</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="16.542238"
+         y="223.36414"
+         id="tspan51">  DX7_32 -&gt; write_voice_bulk32()</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="16.542238"
+         y="227.33289"
+         id="tspan59">DX7_128 -&gt; 4x DX7_32</tspan></text>
+    <g
+       id="g59-0"
+       transform="translate(89.817433,-1.6956477)">
+      <g
+         id="g66-6">
+        <rect
+           style="fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+           id="rect4-2"
+           width="41.060429"
+           height="13.265287"
+           x="3.772619"
+           y="195.37004" />
+        <text
+           xml:space="preserve"
+           style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;white-space:pre;inline-size:43.7888;display:inline;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+           x="4.851562"
+           y="198.28125"
+           id="text8-6"><tspan
+             x="4.851562"
+             y="198.28125"
+             id="tspan54">on_save_sound
+</tspan><tspan
+             x="4.851562"
+             y="202.24999"
+             id="tspan55">- write_sound():
+</tspan><tspan
+             x="4.851562"
+             y="206.21874"
+             id="tspan56">     switch(export_config): 
+</tspan><tspan
+             x="4.851562"
+             y="210.18749"
+             id="tspan57">
+</tspan><tspan
+             x="4.851562"
+             y="214.15624"
+             id="tspan58">
+</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g41-7"
+       transform="translate(96.582234,21.584011)">
+      <g
+         id="g49-9"
+         transform="translate(-2.2148437,-17.613281)">
+        <g
+           id="g67-2"
+           transform="translate(3.8459786,-7.1531924)">
+          <g
+             id="g68-0"
+             transform="translate(1.9198608,-2.3975977e-5)">
+            <rect
+               style="fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+               id="rect5-2"
+               width="65.889435"
+               height="17.714516"
+               x="3.9220543"
+               y="223.18248" />
+            <text
+               xml:space="preserve"
+               style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+               x="5.6109743"
+               y="226.54114"
+               id="text9-3"><tspan
+                 sodipodi:role="line"
+                 id="tspan9-7"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="226.54114">RAW (DX7_RAW )</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="230.50989"
+                 id="tspan48-5">- write_voices_as_raw():</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="234.47864"
+                 id="tspan49-9"> bank_1                    -&gt; write_voice_bulk1</tspan><tspan
+                 sodipodi:role="line"
+                 style="stroke-width:0.264583"
+                 x="5.6109743"
+                 y="238.44739"
+                 id="tspan67-2" /></text>
+          </g>
+        </g>
+      </g>
+    </g>
+    <rect
+       style="fill:#a2a2a2;stroke:#000000;stroke-width:0.264584"
+       id="rect6-2"
+       width="60.58918"
+       height="13.060329"
+       x="104.35589"
+       y="206.93967" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#a2a2a2;stroke:#000000;stroke-width:0.264583"
+       x="105"
+       y="210"
+       id="text39-8"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="105"
+         y="210"
+         id="tspan62-7">BULK (DX7_1,32,128)</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="105"
+         y="213.96875"
+         id="tspan68"> - write_voice_as_sysex():</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="105"
+         y="217.9375"
+         id="tspan50-3">    DX7_1,32,128 -&gt; write_voice_bulk1()</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="105"
+         y="221.90625"
+         id="tspan59-1" /></text>
+  </g>
+</svg>
