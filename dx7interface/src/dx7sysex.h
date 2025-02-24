@@ -157,7 +157,8 @@
         St_pitch pitch;
         St_algo algo;
         St_lfo lfo;
-        Glib::ustring name;
+        //Glib::ustring name;
+        std::string name;
         uint8_t sum;
         St_extra extra;
     }St_dx7sysex_1;
@@ -166,10 +167,12 @@
     struct St_dx7sysex{
         St_dx7sysex_1 sound[i];
         Glib::ustring name;
+
     };
     typedef struct {
         St_dx7sysex_1 sound[1]; // Flexible array member
-        Glib::ustring name;
+        //Glib::ustring name;
+        std::string name;
     }*Bank_ptr;
 
 #endif /* dx7sysex_H */

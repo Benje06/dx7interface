@@ -230,8 +230,8 @@ void Dx7interface::create_save_dialog() {
 
 void Dx7interface::OpenFileDialog(){
     //auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
-    file_dialog->set_title(dialog_save->get_title());
     file_dialog->set_modal(true);
+    file_dialog->set_title(dialog_save->get_title());
     Glib::ustring filename;
     uint index = 0;
     bool as_raw = get_gwidget<Gtk::CheckButton>("checkbutton_bulk")->get_active();
@@ -259,12 +259,13 @@ void Dx7interface::OpenFileDialog(){
     };
     std::cout << "base filename: " << filename << std::endl;
     std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
-    file_dialog->set_initial_folder(initial_folder);
-    file_dialog->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
+    file_dialog->set_initial_folder(initial_folder_save);
+    file_dialog->save( *dialog_save, [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
         try {
             Glib::RefPtr<Gio::File> file = file_dialog->save_finish(result);
             if (file) {
                 std::cout << "writing file: " << file->get_path() << std::endl;
+                initial_folder_open = Gio::File::create_for_path(file->get_parent()->get_path());
                 //Glib::shell_quote(filename+".dx7");
                 if(save_type == SOUND){
                     if(get_gwidget<Gtk::CheckButton>("checkbutton_bulk")->get_active()){
@@ -289,18 +290,12 @@ void Dx7interface::OpenFileDialog(){
 void Dx7interface::OpenDialog(Glib::ustring title,Glib::ustring filename){
     try{
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            dialog_save->set_transient_for(*(get_window()));
+            dialog_save->set_modal(true);
             dialog_save->set_title(title);
             dialog_save->set_default_size(20, 10);
             Glib::ustring save_label=title+": "+filename;
-            //auto label = get_gwidget<Gtk::Label>("label_save_name");
             get_gwidget<Gtk::Label>("label_save_name")->set_label(save_label);
-
-            /*auto box_save_bank = get_gwidget<Gtk::Box>("box_save_bank");
-            checkbutton_bulk = get_gwidget<Gtk::CheckButton>("checkbutton_bulk");
-            auto label_bulk = get_gwidget<Gtk::Label>("label_bulk");*/
-            /* get the spinbutton and group them */
-            /*auto checkbutton_32 = get_gwidget<Gtk::CheckButton>("checkbutton_32");
-            auto checkbutton_128 = get_gwidget<Gtk::CheckButton>("checkbutton_128");*/
             get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_32")));
 
             auto spinbutton_save_start = get_gwidget<Gtk::SpinButton>("spinbutton_save_start");
@@ -317,7 +312,6 @@ void Dx7interface::OpenDialog(Glib::ustring title,Glib::ustring filename){
                 get_gwidget<Gtk::Box>("box_save_bank")->set_visible(false);
                 get_gwidget<Gtk::Label>("label_bulk")->set_visible(false);
             };
-            dialog_save->set_transient_for(*(get_window()));
             dialog_save->present();
         #else
             GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
@@ -368,16 +362,16 @@ void Dx7interface::on_bank_select(){
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
             //auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
             auto fdialog = Gtk::FileDialog::create();
-            fdialog->set_title("Select bank");
             fdialog->set_modal(true);
+            fdialog->set_title("Select bank");
             //Glib::RefPtr<Gio::File> initial_folder = Gio::File::create_for_path("~/dev/gtk4/dx7");
-            fdialog->set_initial_folder(initial_folder);
+            fdialog->set_initial_folder(initial_folder_open);
             fdialog->open( *(get_window()), [this,fdialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
                 try {
                     Glib::RefPtr<Gio::File> bank_file = fdialog->open_finish(result);
                     if (bank_file) {
                         set_bank(bank_file);
-                        initial_folder = Gio::File::create_for_path(bank_file->get_path());
+                        initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());
                     };
                 } catch (const std::exception & ex) {
                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
@@ -426,6 +420,10 @@ void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
 };
 /* set/load */
 void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
+    old_snum=0;
+    //for (auto i : bank_file->query_info()->list_attributes())
+    ////    std::cout << i << std::endl;
+    //std::cout << bank_file->get_parent()->get_path() << std::endl;
     clean_bank();
     load_bank(bank_file);
     m_selection_model->set_selected(0);
@@ -437,9 +435,9 @@ void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
 void Dx7interface::clean_bank(){
     LOG_IN();
     // TODO clean bank_modif
-    load_bank(Gio::File::create_for_path(DATA_DIR"/reset1.syx"));
-    load_bank(Gio::File::create_for_path(DATA_DIR"/reset32.syx"));
-    load_bank(Gio::File::create_for_path(DATA_DIR"/reset128.syx"));
+    //load_bank(Gio::File::create_for_path(DATA_DIR"/reset1.syx"));
+    //load_bank(Gio::File::create_for_path(DATA_DIR"/reset32.syx"));
+    //load_bank(Gio::File::create_for_path(DATA_DIR"/reset128.syx"));
     uint n_items = m_data_model->get_n_items();
     if (n_items != 0) {
         m_data_model->remove_all();

@@ -101,7 +101,8 @@ class Dx7interface : public Gx_module, public Synth {
         uint bank_nb_sound = 0;                 /* number of sound in the current loaded bank 1/32/128 */
         uint old_snum = 0;                      /* old selected sound number memo for set_original_sound */
         Glib::RefPtr<Gio::File> bank_file;       /* pointeur de lecture de fichier */
-        Glib::RefPtr<Gio::File> initial_folder;
+        Glib::RefPtr<Gio::File> initial_folder_open= nullptr;
+        Glib::RefPtr<Gio::File> initial_folder_save= nullptr;
         Glib::RefPtr<Gio::DataInputStream> data_stream;           /* pointeur de flux de données */
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> m_selection_model;
