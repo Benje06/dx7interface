@@ -263,7 +263,7 @@ void Dx7interface::OpenFileDialog(){
         initial_folder_save=initial_folder_open;
     }
     file_dialog->set_initial_folder(initial_folder_save);
-    file_dialog->save( *dialog_save, [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
+    file_dialog->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
         try {
             Glib::RefPtr<Gio::File> file = file_dialog->save_finish(result);
             if (file) {
@@ -437,10 +437,21 @@ void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
 };
 void Dx7interface::clean_bank(){
     LOG_IN();
-    // TODO clean bank_modif
-    load_bank(Gio::File::create_for_path(DATA_DIR"/reset1.syx"));
+    int i;
+    clear_sound(&bank_1_modif.sound[0],0,false);
+    clear_sound(&bank_1_origin.sound[0],0,false);
+    for (i = 31; i >= 0; i-- ){
+        clear_sound(&bank_32_modif.sound[i],i,false);
+        clear_sound(&bank_32_origin.sound[i],i,false);
+    }
+    for (i = 127; i >= 0; i-- ){
+        clear_sound(&bank_128_modif.sound[i],i,false);
+        clear_sound(&bank_128_origin.sound[i],i,false);
+    }
+    /* by file */
+    /*load_bank(Gio::File::create_for_path(DATA_DIR"/reset1.syx"));
     load_bank(Gio::File::create_for_path(DATA_DIR"/reset32.syx"));
-    load_bank(Gio::File::create_for_path(DATA_DIR"/reset128.syx"));
+    load_bank(Gio::File::create_for_path(DATA_DIR"/reset128.syx"));*/
     uint n_items = m_data_model->get_n_items();
     if (n_items != 0) {
         m_data_model->remove_all();
@@ -1350,7 +1361,12 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.lft_dpth.val);
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.rght_dpth.val);
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
-        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( ((sound->op[j].kls.brk_pt.val - 3) / 12) );
+        int val = ((sound->op[j].kls.brk_pt.val) -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( val / 12 );
+        };
     };
     set_voice_parameters(sound);
     unblock_midi();
@@ -1391,7 +1407,7 @@ void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
     (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->set_active((val & 0x04)>>2);
 };
 /* clear (struct) */
-void Dx7interface::clear_sound(uint8_t i,St_dx7sysex_1* sound){
+void Dx7interface::clear_sound(St_dx7sysex_1* sound,uint8_t pos,bool remove){
     LOG_IN();
     uint8_t val,j,k;
     /* operator j */
@@ -1407,55 +1423,43 @@ void Dx7interface::clear_sound(uint8_t i,St_dx7sysex_1* sound){
         sound->op[j].kls.brk_pt.val=0x00 & 0x7F;
         sound->op[j].kls.lft_dpth.val=0x00 & 0x7F;
         sound->op[j].kls.rght_dpth.val=0x00 & 0x7F;
-        /* set out first 4 unused bit by mask (addr bit 11)*/
-        val=0x00 & 0x0F ;
-        /* first two bit to rc and last two bit to lc*/
-        sound->op[j].kls.lft_curve.val=val & 0x03 ;
-        sound->op[j].kls.rght_curve.val=val >> 2;
-        /* set out first 1 unused bit by mask  (addr bit 12)*/
-        val=0x00 & 0x7F;
-        sound->op[j].krs.val=val &  0x07;
-        sound->op[j].dtun.val=val >> 3 ;
-        /* set out first 3 unused bit by mask  (addr bit 13)*/
-        val=0x00 & 0x1F;
-        sound->op[j].ams.val=val &  0x03;
-        sound->op[j].kvs.val=val >> 2;
+        sound->op[j].kls.lft_curve.val=0x00 & 0x0F ;
+        sound->op[j].kls.rght_curve.val=0x00 & 0x0F;
+        sound->op[j].krs.val=0x00 & 0x0F;
+        sound->op[j].dtun.val=0x00 & 0x0F ;
+        sound->op[j].ams.val=0x00 & 0x0F;
+        sound->op[j].kvs.val=0x00 & 0x0F;
         sound->op[j].lvl.val=0x00 & 0x7F;
-        /* set out first 2 unused bit by mask  (addr bit 15)*/
-        val=0x00 & 0x3F;
-        sound->op[j].freq_mode.val=val & 0x01;
-        sound->op[j].freq_coarse.val=val >> 1;
+        sound->op[j].freq_mode.val=0x00 & 0x0F;
+        sound->op[j].freq_coarse.val=0x00 & 0x0F;
         sound->op[j].freq_fine.val=0x00 & 0x7F;
     };
-    /* addr 102 */
     for( j=0 ; j < 4; j++ ){
         sound->pitch.eg_rt[j].val=0x00 & 0x7F;
     };
     for( j=0 ; j < 4; j++ ){
         sound->pitch.eg_lvl[j].val=0x00 & 0x7F;
     };
-    /* addr 110 */
     sound->algo.algo.val=0x00 & 0x1F ;
-    val=0x00 & 0x0F;
-    sound->algo.feedback.val=val & 0x07;
-    sound->algo.oks.val=val >> 3;
+    sound->algo.feedback.val=0x00 & 0x0F;
+    sound->algo.oks.val=0x00 & 0x0F;
     sound->lfo.speed.val=0x00 & 0x7F;
     sound->lfo.delay.val=0x00 & 0x7F;
     sound->lfo.pmd.val=0x00 & 0x7F;
     sound->lfo.amd.val=0x00 & 0x7F;
-    /* (addr bit 116) */
-    val=0x00 & 0x7F;
-    sound->lfo.sync.val=val & 0x01;
-    sound->lfo.wave.val=(val >> 1)&0x07;
-    sound->lfo.pms.val=val >> 4;
+    sound->lfo.sync.val=0x00 & 0x0F;
+    sound->lfo.wave.val=0x00 & 0x0F;
+    sound->lfo.pms.val=0x00 & 0x0F;
     sound->algo.transpose.val=0x00 & 0x7F;
     std::ostringstream strm;
     for( j=0; j <= 9; j++ ){
         strm << (0x00);
     };
     sound->name=strm.str();
-    /* add voice name to liststore */
-    m_data_model->remove(i);
+    /* remove voice name from liststore */
+    if(remove){
+        m_data_model->remove(pos);
+    };
     LOG_OUT();
 };
 /* write: send (to midi) */

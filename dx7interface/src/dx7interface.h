@@ -158,7 +158,7 @@ class Dx7interface : public Gx_module, public Synth {
         void write_voices_as_n_sysex(St_dx7sysex_1*);
         /* */
         void save_bank_as(Glib::RefPtr<Gio::File>);
-        void clear_sound(uint8_t,St_dx7sysex_1*);     // set 0x00 to all param to voice struct "aka clear struct"
+        void clear_sound(St_dx7sysex_1*,uint8_t,bool);     // set 0x00 to all param to voice struct "aka clear struct"
         void set_as_origin_sound(uint);                // set bank_X_modif.sound as bank_X_origin.sound
 
         /** VOICE  **/
