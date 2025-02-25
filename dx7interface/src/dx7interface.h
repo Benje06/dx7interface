@@ -119,7 +119,7 @@ class Dx7interface : public Gx_module, public Synth {
         Gtk::PopoverMenu* m_popover_menu = nullptr;
         /* save dialog */
         void create_save_dialog();
-        Gtk::Dialog* dialog_save = nullptr;
+        Gtk::Window* dialog_save = nullptr;
         Gtk::Button* button_save = nullptr;
         Gtk::CheckButton* checkbutton_bulk = nullptr;
         Glib::RefPtr<Gtk::FileDialog> file_dialog = nullptr;

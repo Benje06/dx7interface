@@ -6157,8 +6157,8 @@
       <property name="step-increment">1</property>
       <property name="upper">96</property>
   </object>
-  <object class="GtkDialog" id="dialog_save">
-      <child internal-child="action_area">
+  <object class="GtkWindow" id="dialog_save">
+      <child>
           <object class="GtkBox">
               <property name="orientation">vertical</property>
               <property name="halign">center</property>

@@ -219,7 +219,7 @@ void Dx7interface::create_popover_menu(){
 void Dx7interface::create_save_dialog() {
     file_dialog = Gtk::FileDialog::create();
     button_save = get_gwidget<Gtk::Button>("button_save");
-    dialog_save = get_gwidget<Gtk::Dialog>("dialog_save");
+    dialog_save = get_gwidget<Gtk::Window>("dialog_save");
     dialog_save->set_default_size(20, 10);
     dialog_save->set_hide_on_close(true);
     dialog_save->set_modal(true);
@@ -851,7 +851,6 @@ void Dx7interface::write_voice_bulk1(uint* l, u_char* msg, St_dx7sysex_1* sound,
         *voice_checksum -= msg[(*l)-1];
     };
 };
-
 void Dx7interface::write_voice_bulk32(uint* l, u_char* msg, St_dx7sysex_1* sound, uint8_t* voice_checksum){
     /* TODO : check original sound format and other kind */
     uint j, k;
@@ -1410,7 +1409,7 @@ void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
 /* clear (struct) */
 void Dx7interface::clear_sound(St_dx7sysex_1* sound,uint8_t pos,bool remove){
     LOG_IN();
-    uint8_t val,j,k;
+    uint8_t j,k;
     /* operator j */
     for ( j = 6; j-- != 0 ; ){
         /* OP[J] EG RATE[k] */
