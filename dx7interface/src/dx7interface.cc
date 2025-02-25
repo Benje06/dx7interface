@@ -465,9 +465,8 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
         data_stream = Gio::DataInputStream::create(bank_file->read());
         uint file_size = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
         Glib::ustring filename = bank_file->get_path();
-
         Glib::ustring bank_file_base = filename.substr(0,filename.find_last_of("."));
-        Glib::ustring bank_name = filename.substr( bank_file_base.find_last_of("/")+1, bank_file_base.length() );
+        Glib::ustring bank_name = bank_file_base.substr( bank_file_base.find_last_of("/")+1, bank_file_base.length() );
         std::cout << "Bank name: " << bank_name << std::endl;
         u_char data = data_stream->read_byte();
         if (data == 0xF0 ){
