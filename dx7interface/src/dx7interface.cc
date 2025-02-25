@@ -532,6 +532,8 @@ void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
 void Dx7interface::on_restore_bank(){
     LOG_IN();
     restore_origin_bank();
+    set_voice(&bank_1_modif.sound[0]);
+    redraw_all_curve();
     LOG_OUT();
 };
 void Dx7interface::restore_origin_bank(){
