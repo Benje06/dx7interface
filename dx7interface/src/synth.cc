@@ -5,6 +5,7 @@ Synth::Synth(Glib::ustring name){
     caller = name;
     std::cerr << caller;
     LOG_IN();
+    init_nls();
     connect_midi(name);
     std::cerr << caller;
     LOG_OUT();
@@ -16,6 +17,15 @@ Synth::~Synth(){
     std::cerr << caller;
 };
 
+void Synth::init_nls(){
+    #ifdef ENABLE_NLS
+        //setlocale (LC_ALL, "");
+        std::locale::global(std::locale(""));
+        textdomain (GETTEXT_PACKAGE);
+        bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
+        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+    #endif
+};
 void Synth::unblock_midi(){
     block_midi_msg=false;
 };

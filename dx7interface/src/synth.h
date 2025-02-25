@@ -73,7 +73,7 @@
 #pragma once
 /* sys */
 /* app */
-#include <uchar.h>
+//#include <uchar.h>
 #include <gxinterface/0.0.1/common.h>
 #include <gxinterface/0.0.1/debug.h>
 #include <gxinterface/0.0.1/lang.h>
@@ -88,8 +88,6 @@ class Synth : public Thread {
     public:
         Synth(Glib::ustring);
         virtual ~Synth();
-        void block_midi();
-        void unblock_midi();
     private:
         bool block_midi_msg;
         Glib::ustring caller="None";
@@ -112,9 +110,12 @@ class Synth : public Thread {
         uint8_t msb=0x00;
         uint8_t lsb=0x00;
         uint8_t nvoice=0x00;
-        /* generic error */
+        /* generic  */
+        void init_nls();
         bool error();
         /*** MIDI ***/
+        void block_midi();
+        void unblock_midi();
         void print_event_info(snd_seq_event_t*);
         int get_port_out_number();
         int get_port_in_number();

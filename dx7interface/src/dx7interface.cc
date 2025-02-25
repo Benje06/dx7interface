@@ -37,13 +37,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     /*basic constructor */
     LOG_IN();
     block_midi();
-    #ifdef ENABLE_NLS
-        //setlocale (LC_ALL, "");
-        std::locale::global(std::locale(""));
-        textdomain (GETTEXT_PACKAGE);
-        bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
-        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-    #endif
+    init_nls();
     /* I/O init */
     Gio::init();
     if (index <= 0){
@@ -65,13 +59,8 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     /* UI */
     /* mouse gesture for drawing area*/
     init_gesture_controller();
-
-    /* create specific data structure model for voice bank list */
-    m_data_model = Gio::ListStore<SoundBankItem>::create();
-    /* set model to GUI */
-    m_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_bank"));
-    m_selection_model->set_autoselect(false);
-    m_selection_model->set_model(m_data_model);
+    /* create store for voices column list view */
+    create_voice_list();
     // Save dialog
     create_save_dialog();
     // Create menu
@@ -94,6 +83,14 @@ Dx7interface::~Dx7interface(){
     LOG_OUT();
 };
 
+void Dx7interface::create_voice_list(){
+    /* create specific data structure model for voice bank list */
+    m_data_model = Gio::ListStore<SoundBankItem>::create();
+    /* set model to GUI */
+    m_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_bank"));
+    m_selection_model->set_autoselect(false);
+    m_selection_model->set_model(m_data_model);
+};
 bool Dx7interface::error(){
     std::cout << "erreur fichier syx " << std::endl;
     return true;
@@ -561,6 +558,8 @@ void Dx7interface::on_restore_sound(){
     LOG_IN();
     // TODO: get index pointed by cursor
     restore_origin_sound();
+    set_voice(&bank_1_modif.sound[0]);
+    redraw_all_curve();
     LOG_OUT();
 };
 void Dx7interface::restore_origin_sound(){
@@ -3327,7 +3326,6 @@ void Dx7interface::on_pms_event() {	LOG_IN();
 
 /* PITCH EG */
 void Dx7interface::on_pitch_rt1_event() {	LOG_IN();
-
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -3467,14 +3465,6 @@ void Dx7interface::on_pitch_lvl4_event() {	LOG_IN();
 void Dx7interface::on_mute_op_event() {
     u_char msg[7];
     uint8_t i,mute_val=0x00;
-    FunctionPtr mute_hexter_functions[6] = {
-        &Dx7interface::on_mute_hexter_op1_event,
-        &Dx7interface::on_mute_hexter_op2_event,
-        &Dx7interface::on_mute_hexter_op3_event,
-        &Dx7interface::on_mute_hexter_op4_event,
-        &Dx7interface::on_mute_hexter_op5_event,
-        &Dx7interface::on_mute_hexter_op6_event
-    };
 
     for(i=1; i<=6;i++){
         bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(i)))->get_active());

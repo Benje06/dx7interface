@@ -20,13 +20,11 @@
 /*
  * TODO :
  * timer
- * write bank
  * receive sysex
- * charger/decharger synth
- * attache/detache midi one by synth
 */
 #pragma once
 #define MODULE_NAME "Dx7interface"
+/* define for export type */
 #define DX7_1 1
 #define DX7_32 2
 #define DX7_128 3
@@ -35,12 +33,10 @@
 #define BANK 0
 #define SOUND 1
 /* sys */
-#include <memory>
-// #include <cairomm/surface.h>
+//#include <memory>
 /*** APP ***/
 #include <gxinterface/0.0.1/gxmodule.h>
 #include <filesystem>
-//s#include <gdkmm-3.0/gdkmm.h>
 #include "GtkClass.h"
 /* Synth */
 #include <synth.h>
@@ -71,6 +67,14 @@ class Dx7interface : public Gx_module, public Synth {
         /**** Generic ****/
         bool error();
         using FunctionPtr = void (Dx7interface::*)();  /* abstract for function as array */
+        FunctionPtr mute_hexter_functions[6] = {
+            &Dx7interface::on_mute_hexter_op1_event,
+            &Dx7interface::on_mute_hexter_op2_event,
+            &Dx7interface::on_mute_hexter_op3_event,
+            &Dx7interface::on_mute_hexter_op4_event,
+            &Dx7interface::on_mute_hexter_op5_event,
+            &Dx7interface::on_mute_hexter_op6_event
+        };
 
         /*** ALSA MIDI ***/
         snd_seq_t* seq_handle = nullptr;                /* handler */
@@ -79,11 +83,11 @@ class Dx7interface : public Gx_module, public Synth {
         size_t in_buff_size, out_buff_size;               /* buffer d'entré et de sortie */
 
         /* */
-        bool compare = false;           /* set if compare button is activate */
-        bool send_extra_params = false; /* set if send_extra paraameter is activate */
+        bool compare = false;                   /* set if compare button is activate */
+        bool send_extra_params = false;         /* set if send_extra paraameter is activate */
 
         /*** Dx7 specific ***/
-        static const uint8_t id_fabricant=0x43;  /* static fix yamaha id */
+        static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
 
         /* SySeX format (bank/sound/message) */
         St_dx7sysex<1> bank_1_origin;           /* bank d'origine 1 son */
@@ -98,19 +102,20 @@ class Dx7interface : public Gx_module, public Synth {
         uint save_type = BANK;
 
         /* Bank */
-        uint bank_nb_sound = 0;                 /* number of sound in the current loaded bank 1/32/128 */
-        uint old_snum = 0;                      /* old selected sound number memo for set_original_sound */
-        Glib::RefPtr<Gio::File> bank_file;       /* pointeur de lecture de fichier */
-        Glib::RefPtr<Gio::File> initial_folder_open= nullptr;
-        Glib::RefPtr<Gio::File> initial_folder_save= nullptr;
-        Glib::RefPtr<Gio::DataInputStream> data_stream;           /* pointeur de flux de données */
-        Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model; /* liste des nom des sons de la banque chargé */
-        Glib::RefPtr<Gtk::SingleSelection> m_selection_model;
-        Glib::RefPtr<Gtk::SignalListItemFactory> m_factory;
+        uint bank_nb_sound = 0;                                /* number of sound in the current loaded bank 1/32/128 */
+        uint old_snum = 0;                                     /* old selected sound number memo for set_original_sound */
+        Glib::RefPtr<Gio::File> bank_file=nullptr;              /* pointeur de lecture de fichier */
+        Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
+        Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
+        void create_voice_list();
+        Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux de données */
+        Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model=nullptr; /* liste des nom des sons de la banque chargé */
+        Glib::RefPtr<Gtk::SingleSelection> m_selection_model=nullptr;
+        Glib::RefPtr<Gtk::SignalListItemFactory> m_factory=nullptr;
 
         /* pop hover menu */
         void create_popover_menu();
-        Glib::RefPtr<Gio::SimpleActionGroup> action_group;
+        Glib::RefPtr<Gio::SimpleActionGroup> action_group=nullptr;
         Gtk::PopoverMenu* m_popover_menu = nullptr;
         /* save dialog */
         void create_save_dialog();
@@ -123,7 +128,7 @@ class Dx7interface : public Gx_module, public Synth {
         void OpenDialog(Glib::ustring,Glib::ustring);
 
         /*** THREAD ***/
-        bool Run() ;    /* Thread function  */
+        bool Run();    /* Thread function  */
         /*** MIDI ***/
         void listen_midi() override;
 
