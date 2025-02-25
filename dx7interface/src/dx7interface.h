@@ -85,6 +85,7 @@ class Dx7interface : public Gx_module, public Synth {
         /* */
         bool compare = false;                   /* set if compare button is activate */
         bool send_extra_params = false;         /* set if send_extra paraameter is activate */
+        bool write_extra_params = false;         /* set if send_extra paraameter is activate */
 
         /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
@@ -108,7 +109,8 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
         void create_voice_list();
-        Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux de données */
+        Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux du fichier de données */
+        Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;     /* pointer de flux du fichier de parametres */
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model=nullptr; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> m_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> m_factory=nullptr;
@@ -147,12 +149,15 @@ class Dx7interface : public Gx_module, public Synth {
         void on_replace_sound();
         void on_delete_sound();
         /* save/write */
+        void write_file(Glib::RefPtr<Gio::File>, u_char*, uint);
+        void write_voice_extra_parameters(st_dx7sysex_1*, u_char*, uint*);
         /* BANK */
         void on_save_bank();
         void write_bank(Glib::RefPtr<Gio::File>, uint);
         void write_bank_as_sysex(Glib::RefPtr<Gio::File>, uint);
         void write_bank_as_raw(Glib::RefPtr<Gio::File> file, uint);
         void on_as_raw_event();
+        void on_extra_param_event();
         /* VOICE */
         void write_voice_bulk1(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
         void write_voice_bulk32(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
@@ -170,8 +175,8 @@ class Dx7interface : public Gx_module, public Synth {
         /* seek voice value from bank file and write it to sound */
         void seek_voice(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
         void seek_voice_by_byte(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
-        void seek_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
-        void seek_voice_parameters(Glib::RefPtr<Gio::File>, uint8_t, St_dx7sysex_1*);
+        void seek_parameters(Glib::ustring, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
+        void seek_voice_parameters(St_dx7sysex_1*);
         /* send voice over midi */
         void send_voice(st_dx7sysex_1*);              // send voice to midi
         void send_extra_parameters(st_dx7sysex_1*);         // send voice to midi
@@ -243,6 +248,7 @@ class Dx7interface : public Gx_module, public Synth {
         void attach_signals() override;
         void dettach_signals() override;
         void attach_action_group_signals();
+
         /** Drawing **/
         void on_draw_algo(const Cairo::RefPtr<Cairo::Context>&, double, double);
         void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>&, double, double);

@@ -6223,6 +6223,33 @@
                 </object>
             </child>
             <child>
+                <object class="GtkFrame">
+                    <property name="child">
+                        <object class="GtkBox">
+                            <property name="orientation">horizontal</property>
+                            <child>
+                                <object class="GtkCheckButton" id="checkbutton_add_extra_parameters">
+                                    <property name="label" translatable="yes">add extra parameters</property>
+                                </object>
+                            </child>
+                            <child>
+                                <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_bank">
+                                    <property name="label" translatable="yes">by bank</property>
+                                    <property name="active">true</property>
+                                    <property name="sensitive">false</property>
+                                </object>
+                            </child>
+                            <child>
+                                <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_sound">
+                                    <property name="label" translatable="yes">by sound</property>
+                                    <property name="sensitive">false</property>
+                                </object>
+                            </child>
+                        </object>
+                    </property>
+                </object>
+            </child>
+            <child>
                 <object class="GtkButton" id="button_save">
                     <property name="label" translatable="yes">select file</property>
                 </object>
