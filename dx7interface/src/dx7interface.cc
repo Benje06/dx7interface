@@ -375,9 +375,9 @@ void Dx7interface::on_bank_select(){
         file_dialog->set_title("Select bank");
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
             file_dialog->set_initial_folder(initial_folder_open);
-            file_dialog->open( *(get_window()), [this,fdialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+            file_dialog->open( *(get_window()), [this](const Glib::RefPtr<Gio::AsyncResult>& result ) {
                 try {
-                    Glib::RefPtr<Gio::File> bank_file = fdialog->open_finish(result);
+                    Glib::RefPtr<Gio::File> bank_file = file_dialog->open_finish(result);
                     if (bank_file) {
                         set_bank(bank_file);
                         initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());

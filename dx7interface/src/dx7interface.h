@@ -128,6 +128,7 @@ class Dx7interface : public Gx_module, public Synth {
         Gtk::CheckButton* checkbutton_bulk = nullptr;
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
             Gtk::FileDialog* file_dialog = nullptr;
+            Gtk::FileDialog* file_dialog_save = nullptr;
         #else
             Gtk::FileChooserDialog* file_dialog = nullptr;
             Gtk::FileChooserDialog* file_dialog_save = nullptr;
