@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 # tools :
-AC_PREREQ([2.72])
+AC_PREREQ([2.71])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([gxinterface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -36,7 +36,7 @@ AC_PROG_CXXCPP
 AC_PROG_CPP
 AC_PROG_AWK
 AC_PROG_LN_S
-dnl AC_PROG_RANLIB
+AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
