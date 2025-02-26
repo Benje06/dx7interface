@@ -111,6 +111,7 @@ class Dx7interface : public Gx_module, public Synth {
         void create_voice_list();
         Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux du fichier de données */
         Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;     /* pointer de flux du fichier de parametres */
+        bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model=nullptr; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> m_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> m_factory=nullptr;
@@ -123,8 +124,15 @@ class Dx7interface : public Gx_module, public Synth {
         void create_save_dialog();
         Gtk::Window* dialog_save = nullptr;
         Gtk::Button* button_save = nullptr;
+
         Gtk::CheckButton* checkbutton_bulk = nullptr;
-        Glib::RefPtr<Gtk::FileDialog> file_dialog = nullptr;
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            Gtk::FileDialog* file_dialog = nullptr;
+        #else
+            Gtk::FileChooserDialog* file_dialog = nullptr;
+            Gtk::FileChooserDialog* file_dialog_save = nullptr;
+            Gtk::Button* button_accept = nullptr;
+        #endif
 
         void OpenFileDialog();
         void OpenDialog(Glib::ustring,Glib::ustring);
