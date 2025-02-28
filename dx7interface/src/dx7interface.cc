@@ -60,7 +60,9 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     /* mouse gesture for drawing area*/
     init_gesture_controller();
     /* create store for voices column list view */
-    create_voice_list();
+    create_bank_voices_list();
+    /* create ist function */
+    create_param_list();
     // Save dialog
     create_save_dialog();
     // Create menu
@@ -83,14 +85,223 @@ Dx7interface::~Dx7interface(){
     LOG_OUT();
 };
 
-void Dx7interface::create_voice_list(){
+void Dx7interface::create_bank_voices_list(){
     /* create specific data structure model for voice bank list */
-    m_data_model = Gio::ListStore<SoundBankItem>::create();
+    bank_data_model = Gio::ListStore<SoundBankItem>::create();
     /* set model to GUI */
-    m_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_bank"));
-    m_selection_model->set_autoselect(false);
-    m_selection_model->set_model(m_data_model);
+    bank_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_bank"));
+    bank_selection_model->set_autoselect(false);
+    bank_selection_model->set_model(bank_data_model);
+    slot_selected_sound_change = bank_selection_model->signal_selection_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_selected_sound_change));
+
+    /* Bank load */
+    slot_bank_reveal = (get_gwidget<Gtk::Button>("btn_toolbar_reveal_bank"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_bank_reveal));
+    slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_bank_select));
+    /* Sound Select */
+
+    //auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_bind().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_bind_num));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_setup().connect(
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_bind().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_bind_name));
 };
+
+void Dx7interface::create_param_list(){
+    /* create specific data structure model for voice bank list */
+    param_data_model = Gio::ListStore<ParamItem>::create();
+    /* set model to GUI */
+    param_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_param"));
+    param_selection_model->set_autoselect(false);
+    param_selection_model->set_model(param_data_model);
+    //auto factory_name=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_name"));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_param"))->signal_setup().connect(
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_param_label), Gtk::Align::START));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_param"))->signal_bind().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_bind_param_name));
+    Glib::ustring param_list[169]{
+    "aftrtch_assgn_event",
+    "aftrtch_rng_event",
+    "algo_event",
+    "amd_event",
+    "ams_op1_event",
+    "ams_op2_event",
+    "ams_op3_event",
+    "ams_op4_event",
+    "ams_op5_event",
+    "ams_op6_event",
+    "brth_assgn_event",
+    "brth_rng_event",
+    "compare_event",
+    "delay_event",
+    "dtun_op1_event",
+    "dtun_op2_event",
+    "dtun_op3_event",
+    "dtun_op4_event",
+    "dtun_op5_event",
+    "dtun_op6_event",
+    "eg_lvl1_op1_event",
+    "eg_lvl1_op2_event",
+    "eg_lvl1_op3_event",
+    "eg_lvl1_op4_event",
+    "eg_lvl1_op5_event",
+    "eg_lvl1_op6_event",
+    "eg_lvl2_op1_event",
+    "eg_lvl2_op2_event",
+    "eg_lvl2_op3_event",
+    "eg_lvl2_op4_event",
+    "eg_lvl2_op5_event",
+    "eg_lvl2_op6_event",
+    "eg_lvl3_op1_event",
+    "eg_lvl3_op2_event",
+    "eg_lvl3_op3_event",
+    "eg_lvl3_op4_event",
+    "eg_lvl3_op5_event",
+    "eg_lvl3_op6_event",
+    "eg_lvl4_op1_event",
+    "eg_lvl4_op2_event",
+    "eg_lvl4_op3_event",
+    "eg_lvl4_op4_event",
+    "eg_lvl4_op5_event",
+    "eg_lvl4_op6_event",
+    "eg_rt1_op1_event",
+    "eg_rt1_op2_event",
+    "eg_rt1_op3_event",
+    "eg_rt1_op4_event",
+    "eg_rt1_op5_event",
+    "eg_rt1_op6_event",
+    "eg_rt2_op1_event",
+    "eg_rt2_op2_event",
+    "eg_rt2_op3_event",
+    "eg_rt2_op4_event",
+    "eg_rt2_op5_event",
+    "eg_rt2_op6_event",
+    "eg_rt3_op1_event",
+    "eg_rt3_op2_event",
+    "eg_rt3_op3_event",
+    "eg_rt3_op4_event",
+    "eg_rt3_op5_event",
+    "eg_rt3_op6_event",
+    "eg_rt4_op1_event",
+    "eg_rt4_op2_event",
+    "eg_rt4_op3_event",
+    "eg_rt4_op4_event",
+    "eg_rt4_op5_event",
+    "eg_rt4_op6_event",
+    "feedback_event",
+    "foot_assgn_event",
+    "foot_rng_event",
+    "freq_coarse_op1_event",
+    "freq_coarse_op2_event",
+    "freq_coarse_op3_event",
+    "freq_coarse_op4_event",
+    "freq_coarse_op5_event",
+    "freq_coarse_op6_event",
+    "freq_fine_op1_event",
+    "freq_fine_op2_event",
+    "freq_fine_op3_event",
+    "freq_fine_op4_event",
+    "freq_fine_op5_event",
+    "freq_fine_op6_event",
+    "freq_mode_op1_event",
+    "freq_mode_op2_event",
+    "freq_mode_op3_event",
+    "freq_mode_op4_event",
+    "freq_mode_op5_event",
+    "freq_mode_op6_event",
+    "kls_brk_pt_op1_event",
+    "kls_brk_pt_op2_event",
+    "kls_brk_pt_op3_event",
+    "kls_brk_pt_op4_event",
+    "kls_brk_pt_op5_event",
+    "kls_brk_pt_op6_event",
+    "kls_lft_curve_op1_event",
+    "kls_lft_curve_op2_event",
+    "kls_lft_curve_op3_event",
+    "kls_lft_curve_op4_event",
+    "kls_lft_curve_op5_event",
+    "kls_lft_curve_op6_event",
+    "kls_lft_dpth_op1_event",
+    "kls_lft_dpth_op2_event",
+    "kls_lft_dpth_op3_event",
+    "kls_lft_dpth_op4_event",
+    "kls_lft_dpth_op5_event",
+    "kls_lft_dpth_op6_event",
+    "kls_rght_curve_op1_event",
+    "kls_rght_curve_op2_event",
+    "kls_rght_curve_op3_event",
+    "kls_rght_curve_op4_event",
+    "kls_rght_curve_op5_event",
+    "kls_rght_curve_op6_event",
+    "kls_rght_dpth_op1_event",
+    "kls_rght_dpth_op2_event",
+    "kls_rght_dpth_op3_event",
+    "kls_rght_dpth_op4_event",
+    "kls_rght_dpth_op5_event",
+    "kls_rght_dpth_op6_event",
+    "krs_op1_event",
+    "krs_op2_event",
+    "krs_op3_event",
+    "krs_op4_event",
+    "krs_op5_event",
+    "krs_op6_event",
+    "kvs_op1_event",
+    "kvs_op2_event",
+    "kvs_op3_event",
+    "kvs_op4_event",
+    "kvs_op5_event",
+    "kvs_op6_event",
+    "lfo_sync_event",
+    "lfo_wav_event",
+    "lvl_op1_event",
+    "lvl_op2_event",
+    "lvl_op3_event",
+    "lvl_op4_event",
+    "lvl_op5_event",
+    "lvl_op6_event",
+    "md_whl_assgn_event",
+    "md_whl_rng_event",
+    "mono_poly_event",
+    "mute_hexter_op1_event",
+    "mute_hexter_op2_event",
+    "mute_hexter_op3_event",
+    "mute_hexter_op4_event",
+    "mute_hexter_op5_event",
+    "mute_hexter_op6_event",
+    "mute_op_event",
+    "oks_event",
+    "panic_event",
+    "pitch_lvl1_event",
+    "pitch_lvl2_event",
+    "pitch_lvl3_event",
+    "pitch_lvl4_event",
+    "pitch_rt1_event",
+    "pitch_rt2_event",
+    "pitch_rt3_event",
+    "pitch_rt4_event",
+    "pmd_event",
+    "pms_event",
+    "portamento_glss_event",
+    "portamento_md_event",
+    "portamento_tm_event",
+    "ptch_bnd_rng_event",
+    "ptch_bnd_stp_event",
+    "send_extra_parameters_event",
+    "speed_event",
+    "transpose_event"
+    };
+    midi_learned.resize(169);
+    for(int i=0; i<169; i++){
+        param_data_model->append(ParamItem::create(param_list[i]));
+    };
+};
+
 bool Dx7interface::error(){
     std::cout << "erreur fichier syx " << std::endl;
     return true;
@@ -100,6 +311,20 @@ bool Dx7interface::Run(){
     /* Thread looped function */
     listen_midi();
     return true;
+};
+
+void Dx7interface::add_midi_learned(int index, int value){
+        if( index >= static_cast<int>(midi_learned.size()) ){
+            midi_learned.resize(index + 1);
+        };
+        midi_learned[index].push_back(value);
+};
+
+void Dx7interface::rem_midi_learned(int index, int value){
+    if( index < static_cast<int>(midi_learned.size()) ){
+        auto& vec = midi_learned[index];
+        vec.erase(std::remove(vec.begin(), vec.end(), value), vec.end());
+    };
 };
 
 void Dx7interface::listen_midi(){
@@ -148,7 +373,13 @@ void Dx7interface::listen_midi(){
                 << "QC param skew value: " << (int)(ev->data.queue.param.skew.value) << " " << '\t'
                 << "QC param skew base: " << (int)(ev->data.queue.param.skew.base) << " " << '\t'
                 << std::endl;
-
+                if(midi_learn){
+                    (get_gwidget<Gtk::Entry>("entry_affect_param"))->set_text(tostr<int>(ev->data.control.param));
+                }else{
+                    if (ev->data.control.param < midi_learned.size() && !midi_learned[ev->data.control.param].empty()) {
+                        (this->*list_ui_parameters_functions[midi_learned[ev->data.control.param][0]])(ev->data.control.value);
+                    };
+                };
                 break;
             case SND_SEQ_EVENT_PITCHBEND:
                 Synth::print_event_info(ev);
@@ -168,7 +399,7 @@ void Dx7interface::listen_midi(){
                     #else
                         auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
                         adjustment->set_value((double)ev->data.control.value);
-                        m_selection_model->set_selected((uint)ev->data.control.value);
+                        bank_selection_model->set_selected((uint)ev->data.control.value);
                     #endif
                 }
                 break;
@@ -430,7 +661,7 @@ void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
     //std::cout << bank_file->get_parent()->get_path() << std::endl;
     clean_bank();
     load_bank(bank_file);
-    m_selection_model->set_selected(0);
+    bank_selection_model->set_selected(0);
     redraw_all_curve();
     Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
     Glib::ustring name = filename.substr(0,filename.find_last_of("."));
@@ -453,9 +684,9 @@ void Dx7interface::clean_bank(){
     /*load_bank(Gio::File::create_for_path(DATA_DIR"/reset1.syx"));
     load_bank(Gio::File::create_for_path(DATA_DIR"/reset32.syx"));
     load_bank(Gio::File::create_for_path(DATA_DIR"/reset128.syx"));*/
-    uint n_items = m_data_model->get_n_items();
+    uint n_items = bank_data_model->get_n_items();
     if (n_items != 0) {
-        m_data_model->remove_all();
+        bank_data_model->remove_all();
     };
     LOG_OUT();
 };
@@ -576,6 +807,7 @@ void Dx7interface::on_restore_sound(){
     redraw_all_curve();
     LOG_OUT();
 };
+
 void Dx7interface::restore_origin_sound(){
     // set bank_X_origin.sound[snum] in bank_X_modif.sound[snum] and use it
     std::cout << "Restore voice: " << bank_1_modif.sound[0].name << " from origin bank." << std::endl;
@@ -1098,7 +1330,7 @@ void Dx7interface::write_voices_as_n_sysex(St_dx7sysex_1* sound){
 /** Save current sound on bank_X_modif and load set_selected sound from bank_X_modif**/
 void Dx7interface::on_selected_sound_change(uint num, uint nb_elmnt){
     LOG_IN();
-    auto snum = m_selection_model->get_selected();
+    auto snum = bank_selection_model->get_selected();
     switch ( bank_nb_sound ){
         case 32:
             bank_32_modif.sound[old_snum]= bank_1_modif.sound[0];
@@ -1187,7 +1419,7 @@ void Dx7interface::seek_voice(uint8_t i, St_dx7sysex_1* sound){ /* BULK 32 */
     sound->name=strm.str();
     sound->extra.mute.val=0x7F;
     /* add voice name to liststore */
-    m_data_model->append(SoundBankItem::create(i,sound->name));
+    bank_data_model->append(SoundBankItem::create(i,sound->name));
     //LOG_OUT();
 };
 void Dx7interface::seek_voice_by_byte(uint8_t i, St_dx7sysex_1* sound){ /* BULK 1 */
@@ -1241,7 +1473,7 @@ void Dx7interface::seek_voice_by_byte(uint8_t i, St_dx7sysex_1* sound){ /* BULK 
     sound->name=strm.str();
     sound->extra.mute.val=0x7F;
     /* add voice name to liststore */
-    m_data_model->append(SoundBankItem::create(i,sound->name));
+    bank_data_model->append(SoundBankItem::create(i,sound->name));
     //LOG_OUT();
 };
 void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* sound){
@@ -1535,7 +1767,7 @@ void Dx7interface::clear_sound(St_dx7sysex_1* sound,uint8_t pos,bool remove){
     sound->extra.functions.aftrtch_assgn.val = 0x00;
     /* remove voice name from liststore */
     if(remove){
-        m_data_model->remove(pos);
+        bank_data_model->remove(pos);
     };
     //LOG_OUT();
 };
@@ -1723,6 +1955,73 @@ void Dx7interface::on_setup_label(const Glib::RefPtr<Gtk::ListItem>& list_item, 
     list_item->set_child(*Gtk::make_managed<Gtk::Label>("", halign));
 };
 
+void Dx7interface::on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>& list_item){
+    auto col = std::dynamic_pointer_cast<ParamItem>(list_item->get_item());
+    if (!col){ return; };
+    auto label = dynamic_cast<Gtk::Label*>(list_item->get_child());
+    if (!label){ return; };
+    label->set_text(col->get_name());
+};
+void Dx7interface::on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align halign){
+    list_item->set_child(*Gtk::make_managed<Gtk::Label>("", halign));
+};
+
+void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
+    if( (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->get_active() ){
+        midi_learn=true;
+    }else{
+        midi_learn=false;
+    };
+};
+
+void Dx7interface::add_midi_learn_param_widget(Glib::ustring param_name, Glib::ustring param_number, int selected_item){
+    /* affected param name widget */
+    auto text_fct = Gtk::make_managed<Gtk::Text>();
+    text_fct->set_name(param_name);
+    text_fct->set_name(param_name);
+    text_fct->set_text(param_name);
+    text_fct->set_editable(false);
+    /* midi param number widget */
+    auto text_param = Gtk::make_managed<Gtk::Text>();
+    text_param->set_name(param_number);
+    text_param->set_text(param_number);
+    text_param->set_editable(false);
+    /* delete button for the entry */
+    auto btn_delete = Gtk::make_managed<Gtk::Button>("delete" +param_number);
+    btn_delete->set_name("delete_" + param_number);
+    /* box to group created widget */
+    auto box_funct = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL);
+    box_funct->append(*text_fct);
+    box_funct->append(*text_param);
+    box_funct->append(*btn_delete);
+    /* ui box to attach result */
+    auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+    box->append(*box_funct);
+    /* scoped slot to be autoremove */
+    auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
+    *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
+        auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+        box_funct->remove(*text_param);
+        box_funct->remove(*text_fct);
+        box_funct->remove(*btn_delete);
+        box->remove(*box_funct);
+        int p_number = std::stoi(param_number.raw());
+        rem_midi_learned(p_number, selected_item);
+    });
+};
+
+void Dx7interface::on_add_midi_learn_event(){
+    auto selected_item = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected_item();
+    auto selected_number = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected();
+    if (selected_item) {
+        Glib::ustring param_name = (std::dynamic_pointer_cast<ParamItem>(selected_item))->get_name();
+        Glib::ustring param_number = get_gwidget<Gtk::Entry>("entry_affect_param")->get_text();
+        int p_number = std::stoi(param_number.raw());
+        add_midi_learned(p_number, selected_number);
+        add_midi_learn_param_widget(param_name, param_number, selected_number);
+    };
+};
+
 /* Init all Gesture controller */
 void Dx7interface::init_gesture_controller(){
     controller_mouse_moove_op1 = Gtk::EventControllerMotion::create();
@@ -1789,6 +2088,7 @@ void Dx7interface::on_extra_param_event(){
         get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(false);
     };
 };
+
 void Dx7interface::attach_signals(){
     LOG_IN();
     //slot_OBJECT_NAME = (je recupere l'object)->sur le signal de l'evenement.je connecte( le signal de ( la fonction ));
@@ -1813,25 +2113,11 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_extra_param_event));
 
-    /* Bank load */
-    slot_bank_reveal = (get_gwidget<Gtk::Button>("btn_toolbar_reveal_bank"))->signal_clicked().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_bank_reveal));
-    slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_bank_select));
-    /* Sound Select */
-    slot_selected_sound_change = m_selection_model->signal_selection_changed().connect(
-            sigc::mem_fun(*this, &Dx7interface::on_selected_sound_change));
-
-    //auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
-        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_bind().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_bind_num));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_setup().connect(
-        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
-    //auto factory_name=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_name"));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_bind().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_bind_name));
+    /* Midi learn */
+    (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_midi_learn_event));
+    (get_gwidget<Gtk::Button>("button_add_param"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_add_midi_learn_event));
 
     /* FUNCTIONS */
     slot_poly = (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->signal_toggled().connect(
@@ -5984,6 +6270,725 @@ void Dx7interface::on_kls_brk_pt_op6_event() {
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
     };
 };
+
+void Dx7interface::set_aftrtch_assgn_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.aftrtch_assgn.max);
+    int val = value;
+    (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->set_active(val & 0x01);
+    (get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->set_active((val & 0x02)>>1);
+    (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->set_active((val & 0x04)>>2);
+};
+void Dx7interface::set_aftrtch_rng_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.aftrtch_rng.max);
+    (get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->set_value(value);
+};
+void Dx7interface::set_algo_event(int value){
+    LOG_IN();
+    value = value*(127/bank_1_modif.sound[0].algo.algo.max);
+    (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(value);
+    LOG_OUT();
+};
+void Dx7interface::set_amd_event(int value){
+    value = value*(127/bank_1_modif.sound[0].lfo.amd.max);
+    (get_gwidget<Gtk::SpinButton>("amd"))->set_value(value);
+};
+void Dx7interface::set_ams_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].ams.max);
+    (get_gwidget<Gtk::Scale>("ams_op1"))->set_value(value);
+};
+void Dx7interface::set_ams_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].ams.max);
+    (get_gwidget<Gtk::Scale>("ams_op2"))->set_value(value);
+};
+void Dx7interface::set_ams_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].ams.max);
+    (get_gwidget<Gtk::Scale>("ams_op3"))->set_value(value);
+};
+void Dx7interface::set_ams_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].ams.max);
+    (get_gwidget<Gtk::Scale>("ams_op4"))->set_value(value);
+};
+void Dx7interface::set_ams_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].ams.max);
+    (get_gwidget<Gtk::Scale>("ams_op5"))->set_value(value);
+};
+void Dx7interface::set_ams_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].ams.max);
+    (get_gwidget<Gtk::Scale>("ams_op6"))->set_value(value);
+};
+void Dx7interface::set_brth_assgn_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.brth_assgn.max);
+    int val = value;
+    (get_gwidget<Gtk::CheckButton>("brth_ptch"))->set_active(val & 0x01);
+    (get_gwidget<Gtk::CheckButton>("brth_mp"))->set_active((val & 0x02)>>1);
+    (get_gwidget<Gtk::CheckButton>("brth_gbs"))->set_active((val & 0x04)>>2);
+};
+void Dx7interface::set_brth_rng_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.brth_rng.max);
+    (get_gwidget<Gtk::SpinButton>("brth_rng"))->set_value(value);
+};
+void Dx7interface::set_compare_event(int value){
+    //value = value*(127/bank_1_modif.sound[0].;
+};
+void Dx7interface::set_delay_event(int value){
+    value = value*(127/bank_1_modif.sound[0].lfo.delay.max);
+    (get_gwidget<Gtk::SpinButton>("delay"))->set_value(value);
+};
+void Dx7interface::set_dtun_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].dtun.max);
+    (get_gwidget<Gtk::Scale>("dtun_op1"))->set_value(value-7);
+};
+void Dx7interface::set_dtun_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].dtun.max);
+    (get_gwidget<Gtk::Scale>("dtun_op2"))->set_value(value-7);
+};
+void Dx7interface::set_dtun_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].dtun.max);
+    (get_gwidget<Gtk::Scale>("dtun_op3"))->set_value(value-7);
+};
+void Dx7interface::set_dtun_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].dtun.max);
+    (get_gwidget<Gtk::Scale>("dtun_op4"))->set_value(value-7);
+};
+void Dx7interface::set_dtun_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].dtun.max);
+    (get_gwidget<Gtk::Scale>("dtun_op5"))->set_value(value-7);
+};
+void Dx7interface::set_dtun_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].dtun.max);
+    (get_gwidget<Gtk::Scale>("dtun_op6"))->set_value(value-7);
+};
+void Dx7interface::set_eg_lvl1_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl1_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl1_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl1_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl1_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl1_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl2_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl2_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl2_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl2_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl2_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl2_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl3_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl3_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl3_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl3_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl3_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl3_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl4_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl4_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl4_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl4_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl4_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_lvl4_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->set_value(value);
+};
+void Dx7interface::set_eg_rt1_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_rt1_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_rt1_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_rt1_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->set_value(value);
+};
+void Dx7interface::set_eg_rt1_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_rt1_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[0].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->set_value(value);
+};
+void Dx7interface::set_eg_rt2_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_rt2_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_rt2_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_rt2_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_rt2_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_rt2_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[1].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->set_value(value);
+};
+void Dx7interface::set_eg_rt3_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_rt3_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_rt3_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_rt3_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->set_value(value);
+};
+void Dx7interface::set_eg_rt3_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_rt3_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[2].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->set_value(value);
+};
+void Dx7interface::set_eg_rt4_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->set_value(value);
+};
+void Dx7interface::set_eg_rt4_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->set_value(value);
+};
+void Dx7interface::set_eg_rt4_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->set_value(value);
+};
+void Dx7interface::set_eg_rt4_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->set_value(value);
+};
+void Dx7interface::set_eg_rt4_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->set_value(value);
+};
+void Dx7interface::set_eg_rt4_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[3].max);
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->set_value(value);
+};
+void Dx7interface::set_feedback_event(int value){
+    value = value*(127/bank_1_modif.sound[0].algo.feedback.max);
+    (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(value);
+};
+void Dx7interface::set_foot_assgn_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.foot_assgn.max);
+    int val = value;
+    (get_gwidget<Gtk::CheckButton>("foot_ptch"))->set_active(val & 0x01);
+    (get_gwidget<Gtk::CheckButton>("foot_mp"))->set_active((val & 0x02)>>1);
+    (get_gwidget<Gtk::CheckButton>("foot_gbs"))->set_active((val & 0x04)>>2);
+};
+void Dx7interface::set_foot_rng_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.foot_rng.max);
+    (get_gwidget<Gtk::SpinButton>("foot_rng"))->set_value(value);
+};
+void Dx7interface::set_freq_coarse_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].freq_coarse.max);
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->set_value(value);
+};
+void Dx7interface::set_freq_coarse_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].freq_coarse.max);
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->set_value(value);
+};
+void Dx7interface::set_freq_coarse_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].freq_coarse.max);
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->set_value(value);
+};
+void Dx7interface::set_freq_coarse_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].freq_coarse.max);
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->set_value(value);
+};
+void Dx7interface::set_freq_coarse_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].freq_coarse.max);
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->set_value(value);
+};
+void Dx7interface::set_freq_coarse_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].freq_coarse.max);
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->set_value(value);
+};
+void Dx7interface::set_freq_fine_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].freq_fine.max);
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->set_value(value);
+};
+void Dx7interface::set_freq_fine_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].freq_fine.max);
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->set_value(value);
+};
+void Dx7interface::set_freq_fine_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].freq_fine.max);
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->set_value(value);
+};
+void Dx7interface::set_freq_fine_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].freq_fine.max);
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->set_value(value);
+};
+void Dx7interface::set_freq_fine_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].freq_fine.max);
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->set_value(value);
+};
+void Dx7interface::set_freq_fine_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].freq_fine.max);
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->set_value(value);
+};
+void Dx7interface::set_freq_mode_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].freq_mode.max);
+    (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->set_selected(value);
+};
+void Dx7interface::set_freq_mode_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].freq_mode.max);
+    (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->set_selected(value);
+};
+void Dx7interface::set_freq_mode_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].freq_mode.max);
+    (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->set_selected(value);
+};
+void Dx7interface::set_freq_mode_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].freq_mode.max);
+    (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->set_selected(value);
+};
+void Dx7interface::set_freq_mode_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].freq_mode.max);
+    (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->set_selected(value);
+};
+void Dx7interface::set_freq_mode_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].freq_mode.max);
+    (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->set_selected(value);
+};
+void Dx7interface::set_kls_brk_pt_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].kls.brk_pt.max);
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->set_selected(value % 12);
+    int val = (value -3);
+    if(val < 0){
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->set_value( -1 );
+    }else{
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->set_value( val / 12 );
+    };
+};
+void Dx7interface::set_kls_brk_pt_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].kls.brk_pt.max);
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->set_selected(value % 12);
+    int val = (value -3);
+    if(val < 0){
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( -1 );
+    }else{
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( val / 12 );
+    };
+};
+void Dx7interface::set_kls_brk_pt_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].kls.brk_pt.max);
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->set_selected(value % 12);
+    int val = (value -3);
+    if(val < 0){
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( -1 );
+    }else{
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( val / 12 );
+    };
+};
+void Dx7interface::set_kls_brk_pt_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].kls.brk_pt.max);
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->set_selected(value % 12);
+    int val = (value -3);
+    if(val < 0){
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( -1 );
+    }else{
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( val / 12 );
+    };
+};
+void Dx7interface::set_kls_brk_pt_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].kls.brk_pt.max);
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->set_selected(value % 12);
+    int val = (value -3);
+    if(val < 0){
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( -1 );
+    }else{
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( val / 12 );
+    };
+};
+void Dx7interface::set_kls_brk_pt_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].kls.brk_pt.max);
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->set_selected(value % 12);
+    int val = (value -3);
+    if(val < 0){
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( -1 );
+    }else{
+        (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( val / 12 );
+    };
+};
+void Dx7interface::set_kls_lft_curve_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].kls.lft_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->set_selected(value);
+};
+void Dx7interface::set_kls_lft_curve_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].kls.lft_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->set_selected(value);
+};
+void Dx7interface::set_kls_lft_curve_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].kls.lft_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->set_selected(value);
+};
+void Dx7interface::set_kls_lft_curve_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].kls.lft_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->set_selected(value);
+};
+void Dx7interface::set_kls_lft_curve_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].kls.lft_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->set_selected(value);
+};
+void Dx7interface::set_kls_lft_curve_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].kls.lft_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->set_selected(value);
+};
+void Dx7interface::set_kls_lft_dpth_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].kls.lft_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->set_value(value);
+};
+void Dx7interface::set_kls_lft_dpth_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].kls.lft_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->set_value(value);
+};
+void Dx7interface::set_kls_lft_dpth_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].kls.lft_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->set_value(value);
+};
+void Dx7interface::set_kls_lft_dpth_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].kls.lft_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->set_value(value);
+};
+void Dx7interface::set_kls_lft_dpth_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].kls.lft_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->set_value(value);
+};
+void Dx7interface::set_kls_lft_dpth_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].kls.lft_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->set_value(value);
+};
+void Dx7interface::set_kls_rght_curve_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].kls.rght_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->set_selected(value);
+};
+void Dx7interface::set_kls_rght_curve_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].kls.rght_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->set_selected(value);
+};
+void Dx7interface::set_kls_rght_curve_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].kls.rght_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->set_selected(value);
+};
+void Dx7interface::set_kls_rght_curve_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].kls.rght_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->set_selected(value);
+};
+void Dx7interface::set_kls_rght_curve_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].kls.rght_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->set_selected(value);
+};
+void Dx7interface::set_kls_rght_curve_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].kls.rght_curve.max);
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->set_selected(value);
+};
+void Dx7interface::set_kls_rght_dpth_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].kls.rght_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->set_value(value);
+};
+void Dx7interface::set_kls_rght_dpth_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].kls.rght_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->set_value(value);
+};
+void Dx7interface::set_kls_rght_dpth_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].kls.rght_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->set_value(value);
+};
+void Dx7interface::set_kls_rght_dpth_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].kls.rght_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->set_value(value);
+};
+void Dx7interface::set_kls_rght_dpth_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].kls.rght_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->set_value(value);
+};
+void Dx7interface::set_kls_rght_dpth_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].kls.rght_dpth.max);
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->set_value(value);
+};
+void Dx7interface::set_krs_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].krs.max);
+    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+};
+void Dx7interface::set_krs_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].krs.max);
+    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+};
+void Dx7interface::set_krs_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].krs.max);
+    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+};
+void Dx7interface::set_krs_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].krs.max);
+    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+};
+void Dx7interface::set_krs_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].krs.max);
+    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+};
+void Dx7interface::set_krs_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].krs.max);
+    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+};
+void Dx7interface::set_kvs_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].kvs.max);
+    (get_gwidget<Gtk::Scale>("kvs_op1"))->set_value(value);
+};
+void Dx7interface::set_kvs_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].kvs.max);
+    (get_gwidget<Gtk::Scale>("kvs_op2"))->set_value(value);
+};
+void Dx7interface::set_kvs_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].kvs.max);
+    (get_gwidget<Gtk::Scale>("kvs_op3"))->set_value(value);
+};
+void Dx7interface::set_kvs_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].kvs.max);
+    (get_gwidget<Gtk::Scale>("kvs_op4"))->set_value(value);
+};
+void Dx7interface::set_kvs_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].kvs.max);
+    (get_gwidget<Gtk::Scale>("kvs_op5"))->set_value(value);
+};
+void Dx7interface::set_kvs_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].kvs.max);
+    (get_gwidget<Gtk::Scale>("kvs_op6"))->set_value(value);
+};
+void Dx7interface::set_lfo_sync_event(int value){
+    value = value*(127/bank_1_modif.sound[0].lfo.sync.max);
+    (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(value);
+};
+void Dx7interface::set_lfo_wav_event(int value){
+    value = value*(127/bank_1_modif.sound[0].lfo.wave.max);
+    (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(value);
+};
+void Dx7interface::set_lvl_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[0].lvl.max);
+    (get_gwidget<Gtk::SpinButton>("lvl_op1"))->set_value(value);
+};
+void Dx7interface::set_lvl_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[1].lvl.max);
+    (get_gwidget<Gtk::SpinButton>("lvl_op2"))->set_value(value);
+};
+void Dx7interface::set_lvl_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[2].lvl.max);
+    (get_gwidget<Gtk::SpinButton>("lvl_op3"))->set_value(value);
+};
+void Dx7interface::set_lvl_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[3].lvl.max);
+    (get_gwidget<Gtk::SpinButton>("lvl_op4"))->set_value(value);
+};
+void Dx7interface::set_lvl_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[4].lvl.max);
+    (get_gwidget<Gtk::SpinButton>("lvl_op5"))->set_value(value);
+};
+void Dx7interface::set_lvl_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].op[5].lvl.max);
+    (get_gwidget<Gtk::SpinButton>("lvl_op6"))->set_value(value);
+};
+void Dx7interface::set_md_whl_assgn_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.md_whl_assgn.max);
+    u_char val = value;
+    (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->set_active( (val & 0x01) );
+    (get_gwidget<Gtk::CheckButton>("md_whl_mp"))->set_active( (val & 0x02)>>1 );
+    (get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->set_active( (val & 0x04)>>2 );
+};
+void Dx7interface::set_md_whl_rng_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.md_whl_rng.max);
+    (get_gwidget<Gtk::SpinButton>("md_whl_rng"))->set_value(value);
+};
+void Dx7interface::set_mono_poly_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.poly_mono.max);
+    (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_active(value);
+};
+void Dx7interface::set_mute_hexter_op1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+};
+void Dx7interface::set_mute_hexter_op2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+};
+void Dx7interface::set_mute_hexter_op3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+};
+void Dx7interface::set_mute_hexter_op4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+};
+void Dx7interface::set_mute_hexter_op5_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+};
+void Dx7interface::set_mute_hexter_op6_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+};
+void Dx7interface::set_mute_op_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+};
+void Dx7interface::set_oks_event(int value){
+    value = value*(127/bank_1_modif.sound[0].algo.oks.max);
+    (get_gwidget<Gtk::CheckButton>("oks"))->set_active(value);
+};
+void Dx7interface::set_panic_event(int value){
+    //value = value*(127/bank_1_modif.sound[0].max);
+};
+void Dx7interface::set_pitch_lvl1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[0].max);
+    get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch")->set_value(value);
+};
+void Dx7interface::set_pitch_lvl2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[1].max);
+    get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch")->set_value(value);
+};
+void Dx7interface::set_pitch_lvl3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[2].max);
+    get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch")->set_value(value);
+};
+void Dx7interface::set_pitch_lvl4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[3].max);
+    get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch")->set_value(value);
+};
+void Dx7interface::set_pitch_rt1_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[0].max);
+    get_gwidget<Gtk::SpinButton>("eg_rt1_pitch")->set_value(value);
+};
+void Dx7interface::set_pitch_rt2_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[1].max);
+    get_gwidget<Gtk::SpinButton>("eg_rt2_pitch")->set_value(value);
+};
+void Dx7interface::set_pitch_rt3_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[2].max);
+    get_gwidget<Gtk::SpinButton>("eg_rt3_pitch")->set_value(value);
+};
+void Dx7interface::set_pitch_rt4_event(int value){
+    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[3].max);
+    get_gwidget<Gtk::SpinButton>("eg_rt4_pitch")->set_value(value);
+};
+void Dx7interface::set_pmd_event(int value){
+    value = value*(127/bank_1_modif.sound[0].lfo.pmd.max);
+    (get_gwidget<Gtk::SpinButton>("pmd"))->set_value(value);
+};
+void Dx7interface::set_pms_event(int value){
+    value = value*(127/bank_1_modif.sound[0].lfo.pms.max);
+    (get_gwidget<Gtk::Scale>("pms"))->set_value(value);
+};
+void Dx7interface::set_portamento_glss_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.portamento_glss.max);
+    (get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->set_active(value);
+};
+void Dx7interface::set_portamento_md_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.portamento_md.max);
+    (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_active(value);
+};
+void Dx7interface::set_portamento_tm_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.portamento_tm.max);
+    (get_gwidget<Gtk::SpinButton>("portamento_tm"))->set_value(value);
+};
+void Dx7interface::set_ptch_bnd_rng_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.ptch_bnd_rng.max);
+    (get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->set_value(value);
+};
+void Dx7interface::set_ptch_bnd_stp_event(int value){
+    value = value*(127/bank_1_modif.sound[0].extra.functions.ptch_bnd_stp.max);
+    (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->set_value(value);
+};
+void Dx7interface::set_send_extra_parameters_event(int value){
+
+};
+void Dx7interface::set_speed_event(int value){
+    value = value*(127/bank_1_modif.sound[0].lfo.speed.max);
+    (get_gwidget<Gtk::SpinButton>("speed"))->set_value(value);
+};
+void Dx7interface::set_transpose_event(int value){
+    value = value*(127/bank_1_modif.sound[0].algo.transpose.max);
+    (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (value / 12)+1 );
+    (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(value % 12);
+};
+
 
 void Dx7interface::block_ui(){
     /*** Block UI ***/

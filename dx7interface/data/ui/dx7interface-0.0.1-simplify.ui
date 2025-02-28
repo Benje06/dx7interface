@@ -5480,6 +5480,53 @@
                             </layout>
                           </object>
                         </child>
+                        <child>
+                            <object class="GtkFrame" id="frame_affect_param">
+                                <child>
+                                    <object class="GtkBox" id="box_listen_affect_param">
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                            <object class="GtkToggleButton" id="toggle_midi_learn">
+                                                <property name="halign">center</property>
+                                                <property name="label">MIDI learn</property>
+                                            </object>
+                                        </child>
+                                        <child>
+                                            <object class="GtkBox" id="box_affect_param">
+                                                <child>
+                                                    <object class="GtkDropDown" id="dropdown_affect_param">
+                                                        <property name="factory">
+                                                            <object class="GtkSignalListItemFactory" id="factory_param"/>
+                                                        </property>
+                                                        <property name="model">
+                                                            <object class="GtkSingleSelection" id="selection_param">
+                                                                <property name="model">
+                                                                    <object class="GtkSortListModel">
+                                                                        <property name="model">
+                                                                            <object class="GListStore" id="liststore_param"/>
+                                                                        </property>
+                                                                    </object>
+                                                                </property>
+                                                            </object>
+                                                        </property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkEntry" id="entry_affect_param">
+                                                        <property name="focusable">1</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkButton" id="button_add_param">
+                                                        <property name="label">add</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
                       </object>
                     </property>
                     <property name="detachable">1</property>

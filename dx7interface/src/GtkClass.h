@@ -19,11 +19,28 @@ class SoundBankItem : public Glib::Object {
         Glib::ustring get_name() { return i_name; };
 };
 
-class Factory {
+/*class Factory {
     public:
         void on_bind_num(void*, const Glib::RefPtr<Gtk::ListItem>&);
         void on_bind_name(void*, const Glib::RefPtr<Gtk::ListItem>&);
+};*/
+
+/* Class to manager Items in ListStore Sound_bank*/
+class ParamItem : public Glib::Object {
+private:
+    Glib::ustring i_name;   /*internal name*/
+    ParamItem(const Glib::ustring&);
+public:
+    static Glib::RefPtr<ParamItem> create(const Glib::ustring& name){
+        return Glib::make_refptr_for_instance<ParamItem>(new ParamItem(name));
+    };
+    Glib::ustring get_name() { return i_name; };
 };
+
+/*class FactoryParam {
+public:
+    void on_bind_name(void*, const Glib::RefPtr<Gtk::ListItem>&);
+};*/
 
 class DropDownScrollController{
     private:

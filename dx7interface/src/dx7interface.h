@@ -108,13 +108,204 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gio::File> bank_file=nullptr;              /* pointeur de lecture de fichier */
         Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
-        void create_voice_list();
+
         Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux du fichier de données */
         Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;     /* pointer de flux du fichier de parametres */
         bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
-        Glib::RefPtr<Gio::ListStore<SoundBankItem>> m_data_model=nullptr; /* liste des nom des sons de la banque chargé */
-        Glib::RefPtr<Gtk::SingleSelection> m_selection_model=nullptr;
-        Glib::RefPtr<Gtk::SignalListItemFactory> m_factory=nullptr;
+        /* bank list view */
+        void create_bank_voices_list();
+        Glib::RefPtr<Gio::ListStore<SoundBankItem>> bank_data_model=nullptr; /* liste des nom des sons de la banque chargé */
+        Glib::RefPtr<Gtk::SingleSelection> bank_selection_model=nullptr;
+        Glib::RefPtr<Gtk::SignalListItemFactory> bank_factory=nullptr;
+        /* param list view */
+        bool midi_learn=false;
+        void on_midi_learn_event();
+        void on_add_midi_learn_event();
+        void add_midi_learn_param_widget(Glib::ustring, Glib::ustring,int);
+        void attach_midi_learn_param_to_function(Glib::ustring, Glib::ustring);
+
+        void create_param_list();
+        Glib::RefPtr<Gio::ListStore<ParamItem>> param_data_model=nullptr; /* liste des nom des sons de la banque chargé */
+        Glib::RefPtr<Gtk::SingleSelection> param_selection_model=nullptr;
+        Glib::RefPtr<Gtk::SignalListItemFactory> param_factory=nullptr;
+        void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);
+        void on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
+
+        std::vector<std::vector<int>> midi_learned;
+        void add_midi_learned(int, int);
+        void rem_midi_learned(int, int);
+        using FunctionIntPtr = void (Dx7interface::*)(int);  /* abstract for function as array */
+        FunctionIntPtr list_ui_parameters_functions[169] = {
+            &Dx7interface::set_aftrtch_assgn_event,
+            &Dx7interface::set_aftrtch_rng_event,
+            &Dx7interface::set_algo_event,
+            &Dx7interface::set_amd_event,
+            &Dx7interface::set_ams_op1_event,
+            &Dx7interface::set_ams_op2_event,
+            &Dx7interface::set_ams_op3_event,
+            &Dx7interface::set_ams_op4_event,
+            &Dx7interface::set_ams_op5_event,
+            &Dx7interface::set_ams_op6_event,
+            &Dx7interface::set_brth_assgn_event,
+            &Dx7interface::set_brth_rng_event,
+            &Dx7interface::set_compare_event,
+            &Dx7interface::set_delay_event,
+            &Dx7interface::set_dtun_op1_event,
+            &Dx7interface::set_dtun_op2_event,
+            &Dx7interface::set_dtun_op3_event,
+            &Dx7interface::set_dtun_op4_event,
+            &Dx7interface::set_dtun_op5_event,
+            &Dx7interface::set_dtun_op6_event,
+            &Dx7interface::set_eg_lvl1_op1_event,
+            &Dx7interface::set_eg_lvl1_op2_event,
+            &Dx7interface::set_eg_lvl1_op3_event,
+            &Dx7interface::set_eg_lvl1_op4_event,
+            &Dx7interface::set_eg_lvl1_op5_event,
+            &Dx7interface::set_eg_lvl1_op6_event,
+            &Dx7interface::set_eg_lvl2_op1_event,
+            &Dx7interface::set_eg_lvl2_op2_event,
+            &Dx7interface::set_eg_lvl2_op3_event,
+            &Dx7interface::set_eg_lvl2_op4_event,
+            &Dx7interface::set_eg_lvl2_op5_event,
+            &Dx7interface::set_eg_lvl2_op6_event,
+            &Dx7interface::set_eg_lvl3_op1_event,
+            &Dx7interface::set_eg_lvl3_op2_event,
+            &Dx7interface::set_eg_lvl3_op3_event,
+            &Dx7interface::set_eg_lvl3_op4_event,
+            &Dx7interface::set_eg_lvl3_op5_event,
+            &Dx7interface::set_eg_lvl3_op6_event,
+            &Dx7interface::set_eg_lvl4_op1_event,
+            &Dx7interface::set_eg_lvl4_op2_event,
+            &Dx7interface::set_eg_lvl4_op3_event,
+            &Dx7interface::set_eg_lvl4_op4_event,
+            &Dx7interface::set_eg_lvl4_op5_event,
+            &Dx7interface::set_eg_lvl4_op6_event,
+            &Dx7interface::set_eg_rt1_op1_event,
+            &Dx7interface::set_eg_rt1_op2_event,
+            &Dx7interface::set_eg_rt1_op3_event,
+            &Dx7interface::set_eg_rt1_op4_event,
+            &Dx7interface::set_eg_rt1_op5_event,
+            &Dx7interface::set_eg_rt1_op6_event,
+            &Dx7interface::set_eg_rt2_op1_event,
+            &Dx7interface::set_eg_rt2_op2_event,
+            &Dx7interface::set_eg_rt2_op3_event,
+            &Dx7interface::set_eg_rt2_op4_event,
+            &Dx7interface::set_eg_rt2_op5_event,
+            &Dx7interface::set_eg_rt2_op6_event,
+            &Dx7interface::set_eg_rt3_op1_event,
+            &Dx7interface::set_eg_rt3_op2_event,
+            &Dx7interface::set_eg_rt3_op3_event,
+            &Dx7interface::set_eg_rt3_op4_event,
+            &Dx7interface::set_eg_rt3_op5_event,
+            &Dx7interface::set_eg_rt3_op6_event,
+            &Dx7interface::set_eg_rt4_op1_event,
+            &Dx7interface::set_eg_rt4_op2_event,
+            &Dx7interface::set_eg_rt4_op3_event,
+            &Dx7interface::set_eg_rt4_op4_event,
+            &Dx7interface::set_eg_rt4_op5_event,
+            &Dx7interface::set_eg_rt4_op6_event,
+            &Dx7interface::set_feedback_event,
+            &Dx7interface::set_foot_assgn_event,
+            &Dx7interface::set_foot_rng_event,
+            &Dx7interface::set_freq_coarse_op1_event,
+            &Dx7interface::set_freq_coarse_op2_event,
+            &Dx7interface::set_freq_coarse_op3_event,
+            &Dx7interface::set_freq_coarse_op4_event,
+            &Dx7interface::set_freq_coarse_op5_event,
+            &Dx7interface::set_freq_coarse_op6_event,
+            &Dx7interface::set_freq_fine_op1_event,
+            &Dx7interface::set_freq_fine_op2_event,
+            &Dx7interface::set_freq_fine_op3_event,
+            &Dx7interface::set_freq_fine_op4_event,
+            &Dx7interface::set_freq_fine_op5_event,
+            &Dx7interface::set_freq_fine_op6_event,
+            &Dx7interface::set_freq_mode_op1_event,
+            &Dx7interface::set_freq_mode_op2_event,
+            &Dx7interface::set_freq_mode_op3_event,
+            &Dx7interface::set_freq_mode_op4_event,
+            &Dx7interface::set_freq_mode_op5_event,
+            &Dx7interface::set_freq_mode_op6_event,
+            &Dx7interface::set_kls_brk_pt_op1_event,
+            &Dx7interface::set_kls_brk_pt_op2_event,
+            &Dx7interface::set_kls_brk_pt_op3_event,
+            &Dx7interface::set_kls_brk_pt_op4_event,
+            &Dx7interface::set_kls_brk_pt_op5_event,
+            &Dx7interface::set_kls_brk_pt_op6_event,
+            &Dx7interface::set_kls_lft_curve_op1_event,
+            &Dx7interface::set_kls_lft_curve_op2_event,
+            &Dx7interface::set_kls_lft_curve_op3_event,
+            &Dx7interface::set_kls_lft_curve_op4_event,
+            &Dx7interface::set_kls_lft_curve_op5_event,
+            &Dx7interface::set_kls_lft_curve_op6_event,
+            &Dx7interface::set_kls_lft_dpth_op1_event,
+            &Dx7interface::set_kls_lft_dpth_op2_event,
+            &Dx7interface::set_kls_lft_dpth_op3_event,
+            &Dx7interface::set_kls_lft_dpth_op4_event,
+            &Dx7interface::set_kls_lft_dpth_op5_event,
+            &Dx7interface::set_kls_lft_dpth_op6_event,
+            &Dx7interface::set_kls_rght_curve_op1_event,
+            &Dx7interface::set_kls_rght_curve_op2_event,
+            &Dx7interface::set_kls_rght_curve_op3_event,
+            &Dx7interface::set_kls_rght_curve_op4_event,
+            &Dx7interface::set_kls_rght_curve_op5_event,
+            &Dx7interface::set_kls_rght_curve_op6_event,
+            &Dx7interface::set_kls_rght_dpth_op1_event,
+            &Dx7interface::set_kls_rght_dpth_op2_event,
+            &Dx7interface::set_kls_rght_dpth_op3_event,
+            &Dx7interface::set_kls_rght_dpth_op4_event,
+            &Dx7interface::set_kls_rght_dpth_op5_event,
+            &Dx7interface::set_kls_rght_dpth_op6_event,
+            &Dx7interface::set_krs_op1_event,
+            &Dx7interface::set_krs_op2_event,
+            &Dx7interface::set_krs_op3_event,
+            &Dx7interface::set_krs_op4_event,
+            &Dx7interface::set_krs_op5_event,
+            &Dx7interface::set_krs_op6_event,
+            &Dx7interface::set_kvs_op1_event,
+            &Dx7interface::set_kvs_op2_event,
+            &Dx7interface::set_kvs_op3_event,
+            &Dx7interface::set_kvs_op4_event,
+            &Dx7interface::set_kvs_op5_event,
+            &Dx7interface::set_kvs_op6_event,
+            &Dx7interface::set_lfo_sync_event,
+            &Dx7interface::set_lfo_wav_event,
+            &Dx7interface::set_lvl_op1_event,
+            &Dx7interface::set_lvl_op2_event,
+            &Dx7interface::set_lvl_op3_event,
+            &Dx7interface::set_lvl_op4_event,
+            &Dx7interface::set_lvl_op5_event,
+            &Dx7interface::set_lvl_op6_event,
+            &Dx7interface::set_md_whl_assgn_event,
+            &Dx7interface::set_md_whl_rng_event,
+            &Dx7interface::set_mono_poly_event,
+            &Dx7interface::set_mute_hexter_op1_event,
+            &Dx7interface::set_mute_hexter_op2_event,
+            &Dx7interface::set_mute_hexter_op3_event,
+            &Dx7interface::set_mute_hexter_op4_event,
+            &Dx7interface::set_mute_hexter_op5_event,
+            &Dx7interface::set_mute_hexter_op6_event,
+            &Dx7interface::set_mute_op_event,
+            &Dx7interface::set_oks_event,
+            &Dx7interface::set_panic_event,
+            &Dx7interface::set_pitch_lvl1_event,
+            &Dx7interface::set_pitch_lvl2_event,
+            &Dx7interface::set_pitch_lvl3_event,
+            &Dx7interface::set_pitch_lvl4_event,
+            &Dx7interface::set_pitch_rt1_event,
+            &Dx7interface::set_pitch_rt2_event,
+            &Dx7interface::set_pitch_rt3_event,
+            &Dx7interface::set_pitch_rt4_event,
+            &Dx7interface::set_pmd_event,
+            &Dx7interface::set_pms_event,
+            &Dx7interface::set_portamento_glss_event,
+            &Dx7interface::set_portamento_md_event,
+            &Dx7interface::set_portamento_tm_event,
+            &Dx7interface::set_ptch_bnd_rng_event,
+            &Dx7interface::set_ptch_bnd_stp_event,
+            &Dx7interface::set_send_extra_parameters_event,
+            &Dx7interface::set_speed_event,
+            &Dx7interface::set_transpose_event
+        };
 
         /* pop hover menu */
         void create_popover_menu();
@@ -684,4 +875,173 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_kls_note_brk_pt_op6;
         sigc::connection slot_kls_octv_brk_pt_op6;
 
+        void set_aftrtch_assgn_event(int);
+        void set_aftrtch_rng_event(int);
+        void set_algo_event(int);
+        void set_amd_event(int);
+        void set_ams_op1_event(int);
+        void set_ams_op2_event(int);
+        void set_ams_op3_event(int);
+        void set_ams_op4_event(int);
+        void set_ams_op5_event(int);
+        void set_ams_op6_event(int);
+        void set_brth_assgn_event(int);
+        void set_brth_rng_event(int);
+        void set_compare_event(int);
+        void set_delay_event(int);
+        void set_dtun_op1_event(int);
+        void set_dtun_op2_event(int);
+        void set_dtun_op3_event(int);
+        void set_dtun_op4_event(int);
+        void set_dtun_op5_event(int);
+        void set_dtun_op6_event(int);
+        void set_eg_lvl1_op1_event(int);
+        void set_eg_lvl1_op2_event(int);
+        void set_eg_lvl1_op3_event(int);
+        void set_eg_lvl1_op4_event(int);
+        void set_eg_lvl1_op5_event(int);
+        void set_eg_lvl1_op6_event(int);
+        void set_eg_lvl2_op1_event(int);
+        void set_eg_lvl2_op2_event(int);
+        void set_eg_lvl2_op3_event(int);
+        void set_eg_lvl2_op4_event(int);
+        void set_eg_lvl2_op5_event(int);
+        void set_eg_lvl2_op6_event(int);
+        void set_eg_lvl3_op1_event(int);
+        void set_eg_lvl3_op2_event(int);
+        void set_eg_lvl3_op3_event(int);
+        void set_eg_lvl3_op4_event(int);
+        void set_eg_lvl3_op5_event(int);
+        void set_eg_lvl3_op6_event(int);
+        void set_eg_lvl4_op1_event(int);
+        void set_eg_lvl4_op2_event(int);
+        void set_eg_lvl4_op3_event(int);
+        void set_eg_lvl4_op4_event(int);
+        void set_eg_lvl4_op5_event(int);
+        void set_eg_lvl4_op6_event(int);
+        void set_eg_rt1_op1_event(int);
+        void set_eg_rt1_op2_event(int);
+        void set_eg_rt1_op3_event(int);
+        void set_eg_rt1_op4_event(int);
+        void set_eg_rt1_op5_event(int);
+        void set_eg_rt1_op6_event(int);
+        void set_eg_rt2_op1_event(int);
+        void set_eg_rt2_op2_event(int);
+        void set_eg_rt2_op3_event(int);
+        void set_eg_rt2_op4_event(int);
+        void set_eg_rt2_op5_event(int);
+        void set_eg_rt2_op6_event(int);
+        void set_eg_rt3_op1_event(int);
+        void set_eg_rt3_op2_event(int);
+        void set_eg_rt3_op3_event(int);
+        void set_eg_rt3_op4_event(int);
+        void set_eg_rt3_op5_event(int);
+        void set_eg_rt3_op6_event(int);
+        void set_eg_rt4_op1_event(int);
+        void set_eg_rt4_op2_event(int);
+        void set_eg_rt4_op3_event(int);
+        void set_eg_rt4_op4_event(int);
+        void set_eg_rt4_op5_event(int);
+        void set_eg_rt4_op6_event(int);
+        void set_feedback_event(int);
+        void set_foot_assgn_event(int);
+        void set_foot_rng_event(int);
+        void set_freq_coarse_op1_event(int);
+        void set_freq_coarse_op2_event(int);
+        void set_freq_coarse_op3_event(int);
+        void set_freq_coarse_op4_event(int);
+        void set_freq_coarse_op5_event(int);
+        void set_freq_coarse_op6_event(int);
+        void set_freq_fine_op1_event(int);
+        void set_freq_fine_op2_event(int);
+        void set_freq_fine_op3_event(int);
+        void set_freq_fine_op4_event(int);
+        void set_freq_fine_op5_event(int);
+        void set_freq_fine_op6_event(int);
+        void set_freq_mode_op1_event(int);
+        void set_freq_mode_op2_event(int);
+        void set_freq_mode_op3_event(int);
+        void set_freq_mode_op4_event(int);
+        void set_freq_mode_op5_event(int);
+        void set_freq_mode_op6_event(int);
+        void set_kls_brk_pt_op1_event(int);
+        void set_kls_brk_pt_op2_event(int);
+        void set_kls_brk_pt_op3_event(int);
+        void set_kls_brk_pt_op4_event(int);
+        void set_kls_brk_pt_op5_event(int);
+        void set_kls_brk_pt_op6_event(int);
+        void set_kls_lft_curve_op1_event(int);
+        void set_kls_lft_curve_op2_event(int);
+        void set_kls_lft_curve_op3_event(int);
+        void set_kls_lft_curve_op4_event(int);
+        void set_kls_lft_curve_op5_event(int);
+        void set_kls_lft_curve_op6_event(int);
+        void set_kls_lft_dpth_op1_event(int);
+        void set_kls_lft_dpth_op2_event(int);
+        void set_kls_lft_dpth_op3_event(int);
+        void set_kls_lft_dpth_op4_event(int);
+        void set_kls_lft_dpth_op5_event(int);
+        void set_kls_lft_dpth_op6_event(int);
+        void set_kls_rght_curve_op1_event(int);
+        void set_kls_rght_curve_op2_event(int);
+        void set_kls_rght_curve_op3_event(int);
+        void set_kls_rght_curve_op4_event(int);
+        void set_kls_rght_curve_op5_event(int);
+        void set_kls_rght_curve_op6_event(int);
+        void set_kls_rght_dpth_op1_event(int);
+        void set_kls_rght_dpth_op2_event(int);
+        void set_kls_rght_dpth_op3_event(int);
+        void set_kls_rght_dpth_op4_event(int);
+        void set_kls_rght_dpth_op5_event(int);
+        void set_kls_rght_dpth_op6_event(int);
+        void set_krs_op1_event(int);
+        void set_krs_op2_event(int);
+        void set_krs_op3_event(int);
+        void set_krs_op4_event(int);
+        void set_krs_op5_event(int);
+        void set_krs_op6_event(int);
+        void set_kvs_op1_event(int);
+        void set_kvs_op2_event(int);
+        void set_kvs_op3_event(int);
+        void set_kvs_op4_event(int);
+        void set_kvs_op5_event(int);
+        void set_kvs_op6_event(int);
+        void set_lfo_sync_event(int);
+        void set_lfo_wav_event(int);
+        void set_lvl_op1_event(int);
+        void set_lvl_op2_event(int);
+        void set_lvl_op3_event(int);
+        void set_lvl_op4_event(int);
+        void set_lvl_op5_event(int);
+        void set_lvl_op6_event(int);
+        void set_md_whl_assgn_event(int);
+        void set_md_whl_rng_event(int);
+        void set_mono_poly_event(int);
+        void set_mute_hexter_op1_event(int);
+        void set_mute_hexter_op2_event(int);
+        void set_mute_hexter_op3_event(int);
+        void set_mute_hexter_op4_event(int);
+        void set_mute_hexter_op5_event(int);
+        void set_mute_hexter_op6_event(int);
+        void set_mute_op_event(int);
+        void set_oks_event(int);
+        void set_panic_event(int);
+        void set_pitch_lvl1_event(int);
+        void set_pitch_lvl2_event(int);
+        void set_pitch_lvl3_event(int);
+        void set_pitch_lvl4_event(int);
+        void set_pitch_rt1_event(int);
+        void set_pitch_rt2_event(int);
+        void set_pitch_rt3_event(int);
+        void set_pitch_rt4_event(int);
+        void set_pmd_event(int);
+        void set_pms_event(int);
+        void set_portamento_glss_event(int);
+        void set_portamento_md_event(int);
+        void set_portamento_tm_event(int);
+        void set_ptch_bnd_rng_event(int);
+        void set_ptch_bnd_stp_event(int);
+        void set_send_extra_parameters_event(int);
+        void set_speed_event(int);
+        void set_transpose_event(int);
 };
