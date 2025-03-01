@@ -37,7 +37,7 @@ image_DATA = \
 	algo30.png\
 	algo31.png\
 	algo32.png\
-	dx7.jpg\
+	icon_dx7_interface.png\
 	keyboard.png\
 	keyboard_background.png\
 	touche_b.png\
