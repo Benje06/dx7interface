@@ -43,15 +43,19 @@ class Thread {
     private:
         int err;
         pthread_t thread;
+        pthread_t thread2;
         /* thread loop function */
         static void* T_Loop(void*);
+        static void* T_Loop2(void*);
     protected:
         /* function to define in your class, is what the thread do */
         virtual bool Run() = 0;
+        virtual bool Run2() = 0;
         /* internal start */
         virtual int S_Thread(void* (*f) (void*));
         /* thread start */
         int S_Thread();
+        int S_Thread2();
         int J_Thread();
         int T_Thread();
         /* internal constructor */

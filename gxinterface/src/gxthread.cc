@@ -44,6 +44,12 @@ void* Thread::T_Loop(void * thread) {
     return 0;
 };
 
+void* Thread::T_Loop2(void * thread) {
+    Thread * iThread = (Thread *)thread;
+    while(iThread->Run2()){};
+    return 0;
+};
+
 int Thread::S_Thread(void* (*f) (void*)) {
     if ( (err = pthread_create( &thread, nullptr, f, (void *)this)) ){
         std::cout << t_fatal  << " " << err << " : " << __func__ << "ne peux CRÉER le thread" << std::endl;
@@ -56,6 +62,7 @@ int Thread::S_Thread(void* (*f) (void*)) {
 };
 
 int Thread::S_Thread() { return S_Thread(&T_Loop); };
+int Thread::S_Thread2() { return S_Thread(&T_Loop2); };
 
 int Thread::J_Thread() {
     LOG_IN();
