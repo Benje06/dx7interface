@@ -71,7 +71,7 @@ class Tx81z : public Gx_module, public Synth {
         bool error();
         /*** THREAD ***/
         bool Run() ;    /* Thread function  */
-
+        bool Run2();    /* Thread function  */
         /*** MIDI ***/
         void listen_midi() override;
         /* sound bank */

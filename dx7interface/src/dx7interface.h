@@ -131,11 +131,14 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
 
+        bool lock=false;
+        bool lock2=false;
+        std::vector<int> midi_param{std::vector<int>(169, -1)};
         std::vector<std::vector<int>> midi_learned;
         void add_midi_learned(int, int);
         void rem_midi_learned(int, int);
         using FunctionIntPtr = void (Dx7interface::*)(int);  /* abstract for function as array */
-        FunctionIntPtr list_ui_parameters_functions[169] = {
+        FunctionIntPtr list_ui_parameters_functions[168] = {
             &Dx7interface::set_aftrtch_assgn_event,
             &Dx7interface::set_aftrtch_rng_event,
             &Dx7interface::set_algo_event,
@@ -278,13 +281,12 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::set_md_whl_assgn_event,
             &Dx7interface::set_md_whl_rng_event,
             &Dx7interface::set_mono_poly_event,
-            &Dx7interface::set_mute_hexter_op1_event,
-            &Dx7interface::set_mute_hexter_op2_event,
-            &Dx7interface::set_mute_hexter_op3_event,
-            &Dx7interface::set_mute_hexter_op4_event,
-            &Dx7interface::set_mute_hexter_op5_event,
-            &Dx7interface::set_mute_hexter_op6_event,
-            &Dx7interface::set_mute_op_event,
+            &Dx7interface::set_mute_op1_event,
+            &Dx7interface::set_mute_op2_event,
+            &Dx7interface::set_mute_op3_event,
+            &Dx7interface::set_mute_op4_event,
+            &Dx7interface::set_mute_op5_event,
+            &Dx7interface::set_mute_op6_event,
             &Dx7interface::set_oks_event,
             &Dx7interface::set_panic_event,
             &Dx7interface::set_pitch_lvl1_event,
@@ -331,6 +333,7 @@ class Dx7interface : public Gx_module, public Synth {
 
         /*** THREAD ***/
         bool Run();    /* Thread function  */
+        bool Run2();    /* Thread function  */
         /*** MIDI ***/
         void listen_midi() override;
 
@@ -450,6 +453,7 @@ class Dx7interface : public Gx_module, public Synth {
         void attach_action_group_signals();
 
         /** Drawing **/
+        void attach_drawarea_signals();
         void on_draw_algo(const Cairo::RefPtr<Cairo::Context>&, double, double);
         void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>&, double, double);
         void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&, int, int);
@@ -1017,12 +1021,12 @@ class Dx7interface : public Gx_module, public Synth {
         void set_md_whl_assgn_event(int);
         void set_md_whl_rng_event(int);
         void set_mono_poly_event(int);
-        void set_mute_hexter_op1_event(int);
-        void set_mute_hexter_op2_event(int);
-        void set_mute_hexter_op3_event(int);
-        void set_mute_hexter_op4_event(int);
-        void set_mute_hexter_op5_event(int);
-        void set_mute_hexter_op6_event(int);
+        void set_mute_op1_event(int);
+        void set_mute_op2_event(int);
+        void set_mute_op3_event(int);
+        void set_mute_op4_event(int);
+        void set_mute_op5_event(int);
+        void set_mute_op6_event(int);
         void set_mute_op_event(int);
         void set_oks_event(int);
         void set_panic_event(int);

@@ -65,7 +65,9 @@ bool Tx81z::Run(){
     listen_midi();
     return true;
 }
-
+bool Tx81z::Run2(){
+    return true;
+}
 void Tx81z::listen_midi(){
     /* TODO : use all seq event */
     snd_seq_event_input(seq_handle, &ev);

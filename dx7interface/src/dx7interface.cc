@@ -72,6 +72,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
 	init_global_fonction_parameter();
     /* start thread */
     S_Thread();
+    S_Thread2();
     unblock_midi();
     LOG_OUT();
 };
@@ -268,13 +269,12 @@ void Dx7interface::create_param_list(){
     "md_whl_assgn_event",
     "md_whl_rng_event",
     "mono_poly_event",
-    "mute_hexter_op1_event",
-    "mute_hexter_op2_event",
-    "mute_hexter_op3_event",
-    "mute_hexter_op4_event",
-    "mute_hexter_op5_event",
-    "mute_hexter_op6_event",
-    "mute_op_event",
+    "mute_op1_event",
+    "mute_op2_event",
+    "mute_op3_event",
+    "mute_op4_event",
+    "mute_op5_event",
+    "mute_op6_event",
     "oks_event",
     "panic_event",
     "pitch_lvl1_event",
@@ -334,13 +334,13 @@ void Dx7interface::listen_midi(){
     if( (int)ev->dest.client == Synth::get_client_id() && (int)ev->data.control.channel == (int)(Synth::channel_receive & 0x0F) ){
         switch (ev->type) {
             case SND_SEQ_EVENT_NOTEON:
-                Synth::print_event_info(ev);
+                //Synth::print_event_info(ev);
                 std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
                 << "value: " << int(ev->data.note.note) << std::endl;;
                 break;
             case SND_SEQ_EVENT_NOTEOFF:
                 std::cout << "Note OFF" << std::endl;
-                Synth::print_event_info(ev);
+                //Synth::print_event_info(ev);
                 std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
                 << "value: " <<  int(ev->data.note.note) << std::endl;
                 break;
@@ -354,40 +354,30 @@ void Dx7interface::listen_midi(){
                     snd_seq_connect_t connect;
                     snd_seq_result_t result;
                 } snd_seq_event_data_t;*/
-                Synth::print_event_info(ev);
+                //Synth::print_event_info(ev);
                 std::cout << "Channel: " << ( (int)(ev->data.control.channel) +1) << " " << '\t'
                 << "param: "  << ev->data.control.param << " "
                 << "value: " << int(ev->data.control.value) << std::endl;
-                std::cout << "Note channel: " << ( (int)(ev->data.note.channel) +1)  << " "
-                << "Note: "  << (int)ev->data.note.note  << " "   << std::endl;
-                std::cout << "\t" << "Velocity: " << (int)(ev->data.note.velocity) << " " << '\t'
-                << "Velocity Off: " << (int)(ev->data.note.off_velocity) << " " << '\t'
-                << "duration: " << (int)(ev->data.note.duration) << " " << '\t'
-                << std::endl;
-                std::cout << "QC queue " << (int)(ev->data.queue.queue)  << " "
-                << "QC param value: "  << (int)ev->data.queue.param.value  << " "   << std::endl;
-                std::cout << "QC param time tv_sec: " << (int)(ev->data.queue.param.time.time.tv_sec) << " " << '\t'
-                << "QC param time tv_nsec: " << (int)(ev->data.queue.param.time.time.tv_nsec) << " " << '\t'
-                << "QC param ticks: " << (int)(ev->data.queue.param.time.tick) << " " << '\t'<< std::endl;
-                std::cout << "QC param position: " << (int)(ev->data.queue.param.position) << " " << '\t'
-                << "QC param skew value: " << (int)(ev->data.queue.param.skew.value) << " " << '\t'
-                << "QC param skew base: " << (int)(ev->data.queue.param.skew.base) << " " << '\t'
-                << std::endl;
                 if(midi_learn){
                     (get_gwidget<Gtk::Entry>("entry_affect_param"))->set_text(tostr<int>(ev->data.control.param));
                 }else{
-                    if (ev->data.control.param < midi_learned.size() && !midi_learned[ev->data.control.param].empty()) {
+                    if ( ev->data.control.param < midi_learned.size() && !midi_learned[ev->data.control.param].empty()) {
+                        //while(lock && lock2){};
+                        /*lock=true;
+                        midi_param[ev->data.control.param]=ev->data.control.value;
+                        lock=false;*/
+                        //std::cout
                         (this->*list_ui_parameters_functions[midi_learned[ev->data.control.param][0]])(ev->data.control.value);
                     };
                 };
                 break;
             case SND_SEQ_EVENT_PITCHBEND:
-                Synth::print_event_info(ev);
+                //Synth::print_event_info(ev);
                 std::cout << "Channel: " << (int(ev->data.control.channel) +1)<< " " << '\t'
                 << "value: " << int(ev->data.control.value) << std::endl;
                 break;
             case SND_SEQ_EVENT_PGMCHANGE:
-                Synth::print_event_info(ev);
+                //Synth::print_event_info(ev);
                 /*event data type = snd_seq_ev_ctrl_t */
                 std::cout <<  "Channel : "  << (int(ev->data.control.channel) +1) << '\t'
                 << "param : "  << ev->data.control.param << " "
@@ -404,7 +394,7 @@ void Dx7interface::listen_midi(){
                 }
                 break;
             case SND_SEQ_EVENT_SYSEX:
-                Synth::print_event_info(ev);
+                //Synth::print_event_info(ev);
                 //SND_SEQ_EVENT_SYSEX 	system exclusive data (variable length);
                 // event data type = snd_seq_ev_ext_t
                 /*std::cout <<  "Channel : "  << (int(ev->data.control.channel) +1) << '\t'
@@ -418,6 +408,27 @@ void Dx7interface::listen_midi(){
         };
     };
     snd_seq_free_event(ev);
+};
+
+bool Dx7interface::Run2(){
+    //sleep_for(std::chrono::milliseconds(5000));
+    struct timespec ts;
+    ts.tv_sec = 0;
+    ts.tv_nsec = 1000000000;
+    nanosleep(&ts, NULL);
+    //std::cout << "coucou" << std::endl;
+    while(lock){};
+    lock=true;
+    for(ulong i=0; i < midi_param.size(); i++){
+        if ( midi_param[i] != -1) {
+            int val = midi_param[i];
+            (this->*list_ui_parameters_functions[midi_learned[i][0]])(val);
+            std::cout << " Param: " << i << " Value: " << midi_param[i] << std::endl;
+            midi_param[i] = -1;
+        };
+    };
+    lock=false;
+    return true;
 };
 
 void Dx7interface::create_popover_menu(){
@@ -482,7 +493,7 @@ void Dx7interface::OpenFileDialog(){
     write_extra_params = get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active();
     if(save_type == SOUND){
         export_config = DX7_1;
-        filename = bank_1_modif.sound[0].name;
+        filename = bank_1_modif.sound->name;
     }else if(save_type == BANK){
         filename = bank_1_modif.name;
         if(is_32){
@@ -810,7 +821,7 @@ void Dx7interface::on_restore_sound(){
 
 void Dx7interface::restore_origin_sound(){
     // set bank_X_origin.sound[snum] in bank_X_modif.sound[snum] and use it
-    std::cout << "Restore voice: " << bank_1_modif.sound[0].name << " from origin bank." << std::endl;
+    std::cout << "Restore voice: " << bank_1_modif.sound->name << " from origin bank." << std::endl;
 
     switch ( bank_nb_sound ){
         case 32:
@@ -1247,7 +1258,7 @@ void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,u_char* msg
     LOG_OUT();
 };
 void Dx7interface::save_modif_sound(){
-    std::cout << "Save voice: " << bank_1_modif.sound[0].name << " in modif bank and export file." << std::endl;
+    std::cout << "Save voice: " << bank_1_modif.sound->name << " in modif bank and export file." << std::endl;
     switch ( bank_nb_sound ){
         case 32:
             bank_32_modif.sound[old_snum] = bank_1_modif.sound[0];
@@ -1268,7 +1279,7 @@ void Dx7interface::on_save_sound(){
         save_modif_sound();
         Glib::ustring title = "Saving sound";
         save_type = SOUND;
-        OpenDialog(title, bank_1_modif.sound[0].name);
+        OpenDialog(title, bank_1_modif.sound->name);
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
@@ -2089,6 +2100,103 @@ void Dx7interface::on_extra_param_event(){
     };
 };
 
+void Dx7interface::attach_drawarea_signals(){
+
+    /* Drawing area for pitch */
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->set_draw_func(
+        sigc::mem_fun(*this, &Dx7interface::on_draw_pitch_event) );
+    controller_mouse_moove_pitch->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("pitch") ));
+    controller_mouse_button_pitch->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("pitch") ));
+    controller_mouse_button_pitch->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("pitch") )    );
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->add_controller(controller_mouse_button_pitch);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->add_controller(controller_mouse_moove_pitch);
+
+    /* Drawing area for each operator */
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("1") ));
+    controller_mouse_moove_op1->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op1") ));
+    controller_mouse_button_op1->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op1") ));
+    controller_mouse_button_op1->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op1") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->add_controller(controller_mouse_button_op1);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->add_controller(controller_mouse_moove_op1);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("2") ));
+    controller_mouse_moove_op2->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op2") ));
+    controller_mouse_button_op2->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op2") ));
+    controller_mouse_button_op2->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op2") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->add_controller(controller_mouse_button_op2);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->add_controller(controller_mouse_moove_op2);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("3") ));
+    controller_mouse_moove_op3->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op3") ));
+    controller_mouse_button_op3->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op3") ));
+    controller_mouse_button_op3->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op3") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->add_controller(controller_mouse_button_op3);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->add_controller(controller_mouse_moove_op3);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("4") ));
+    controller_mouse_moove_op4->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op4") ));
+    controller_mouse_button_op4->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op4") ));
+    controller_mouse_button_op4->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op4") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->add_controller(controller_mouse_button_op4);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->add_controller(controller_mouse_moove_op4);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("5") ));
+    controller_mouse_moove_op5->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op5") ));
+    controller_mouse_button_op5->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op5") ));
+    controller_mouse_button_op5->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op5") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->add_controller(controller_mouse_button_op5);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->add_controller(controller_mouse_moove_op5);
+
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("6") ));
+    controller_mouse_moove_op6->signal_motion().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op6") ));
+    controller_mouse_button_op6->signal_pressed().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op6") ));
+    controller_mouse_button_op6->signal_released().connect(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op6") ));
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_button_op6);
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_moove_op6);
+
+
+    /* Drawing area for keyboard scaling */
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("1") ) );
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("2") ) );
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("3") ) );
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("4") ) );
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("5") ) );
+    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->set_draw_func(
+        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("6") ) );
+};
+
 void Dx7interface::attach_signals(){
     LOG_IN();
     //slot_OBJECT_NAME = (je recupere l'object)->sur le signal de l'evenement.je connecte( le signal de ( la fonction ));
@@ -2179,491 +2287,1297 @@ void Dx7interface::attach_signals(){
     /* Algo */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->set_draw_func(
         sigc::mem_fun(*this, &Dx7interface::on_draw_algo) );
+
     slot_algo = (get_gwidget<Gtk::SpinButton>("algo_number"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_algo_event));
+    (get_gwidget<Gtk::SpinButton>("algo_number"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.algo.val;
+        (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(value + 1);
+        return true; // Return false to remove the callback after one executio
+    });
+
     slot_feedback = (get_gwidget<Gtk::SpinButton>("feedback"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_feedback_event));
+    (get_gwidget<Gtk::SpinButton>("feedback"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.feedback.val;
+        (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
+
+    auto note_transpose_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_transpose"));
+
     slot_note_transpose = (get_gwidget<Gtk::DropDown>("note_transpose"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_transpose_event));
-    auto note_transpose_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_transpose"));
+    (get_gwidget<Gtk::DropDown>("note_transpose"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (value / 12)+1 );
+        (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(value % 12);
+        return true; // Return false to remove the callback after one executio
+    });
 
     slot_octv_transpose = (get_gwidget<Gtk::SpinButton>("octv_transpose"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_transpose_event));
+    (get_gwidget<Gtk::SpinButton>("octv_transpose"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (value / 12)+1 );
+        (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(value % 12);
+        return true; // Return false to remove the callback after one executio
+    });
+
     slot_oks = (get_gwidget<Gtk::CheckButton>("oks"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_oks_event));
+    (get_gwidget<Gtk::CheckButton>("oks"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.oks.val;
+        (get_gwidget<Gtk::CheckButton>("oks"))->set_active(value);
+        return true; // Return false to remove the callback after one executio
+    });
 
     /* lfo */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_lfo_wav"))->set_draw_func(
         sigc::mem_fun(*this, &Dx7interface::on_draw_lfo) );
+
     slot_lfo_wav = (get_gwidget<Gtk::DropDown>("lfo_wav"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_wav_event));
+    (get_gwidget<Gtk::DropDown>("lfo_wav"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->lfo.wave.val;
+        (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto lfo_wav_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("lfo_wav"));
 
     slot_lfo_sync = (get_gwidget<Gtk::CheckButton>("lfo_sync"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_sync_event));
+    (get_gwidget<Gtk::CheckButton>("lfo_sync"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->lfo.sync.val;
+        (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(value);
+        return true; // Return false to remove the callback after one executio
+    });
+
     slot_speed = (get_gwidget<Gtk::SpinButton>("speed"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_speed_event));
+    (get_gwidget<Gtk::SpinButton>("speed"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->lfo.speed.val;
+        (get_gwidget<Gtk::SpinButton>("speed"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_delay = (get_gwidget<Gtk::SpinButton>("delay"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_delay_event));
+    (get_gwidget<Gtk::SpinButton>("delay"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->lfo.delay.val;
+        (get_gwidget<Gtk::SpinButton>("delay"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pmd = (get_gwidget<Gtk::SpinButton>("pmd"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pmd_event));
+    (get_gwidget<Gtk::SpinButton>("pmd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->lfo.pmd.val;
+        (get_gwidget<Gtk::SpinButton>("pmd"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
+
     slot_amd = (get_gwidget<Gtk::SpinButton>("amd"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_amd_event));
+    (get_gwidget<Gtk::SpinButton>("amd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->lfo.amd.val;
+        (get_gwidget<Gtk::SpinButton>("amd"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
+
     /* lfo modulation */
     slot_pms = (get_gwidget<Gtk::Scale>("pms"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pms_event));
+    (get_gwidget<Gtk::Scale>("pms"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->lfo.pms.val;
+        (get_gwidget<Gtk::Scale>("pms"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
 
     /* pitch eg */
     slot_pitch_rt1 = (get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_rt[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pitch_rt2 = (get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_rt[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pitch_rt3 = (get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_rt[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pitch_rt4 = (get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_rt[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pitch_lvl1 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_lvl[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pitch_lvl2 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_lvl[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pitch_lvl3 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_lvl[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_pitch_lvl4 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->pitch.eg_lvl[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
 
-    /* Drawing area for pitch */
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->set_draw_func(
-        sigc::mem_fun(*this, &Dx7interface::on_draw_pitch_event) );
-    controller_mouse_moove_pitch->signal_motion().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("pitch") ));
-    controller_mouse_button_pitch->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("pitch") ));
-    controller_mouse_button_pitch->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("pitch") )    );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->add_controller(controller_mouse_button_pitch);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->add_controller(controller_mouse_moove_pitch);
+    attach_drawarea_signals();
 
-    /* Drawing area for each operator */
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("1") ));
-    controller_mouse_moove_op1->signal_motion().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op1") ));
-    controller_mouse_button_op1->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op1") ));
-    controller_mouse_button_op1->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op1") ));
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->add_controller(controller_mouse_button_op1);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->add_controller(controller_mouse_moove_op1);
-
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("2") ));
-    controller_mouse_moove_op2->signal_motion().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op2") ));
-    controller_mouse_button_op2->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op2") ));
-    controller_mouse_button_op2->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op2") ));
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->add_controller(controller_mouse_button_op2);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->add_controller(controller_mouse_moove_op2);
-
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->set_draw_func(
-            sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("3") ));
-    controller_mouse_moove_op3->signal_motion().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op3") ));
-    controller_mouse_button_op3->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op3") ));
-    controller_mouse_button_op3->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op3") ));
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->add_controller(controller_mouse_button_op3);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->add_controller(controller_mouse_moove_op3);
-
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("4") ));
-    controller_mouse_moove_op4->signal_motion().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op4") ));
-    controller_mouse_button_op4->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op4") ));
-    controller_mouse_button_op4->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op4") ));
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->add_controller(controller_mouse_button_op4);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->add_controller(controller_mouse_moove_op4);
-
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("5") ));
-    controller_mouse_moove_op5->signal_motion().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op5") ));
-    controller_mouse_button_op5->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op5") ));
-    controller_mouse_button_op5->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op5") ));
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->add_controller(controller_mouse_button_op5);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->add_controller(controller_mouse_moove_op5);
-
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_op_event), Glib::ustring("6") ));
-    controller_mouse_moove_op6->signal_motion().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_mooves), Glib::ustring("op6") ));
-    controller_mouse_button_op6->signal_pressed().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click), Glib::ustring("op6") ));
-    controller_mouse_button_op6->signal_released().connect(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::mouse_click_release), Glib::ustring("op6") ));
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_button_op6);
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_moove_op6);
-
-
-    /* Drawing area for keyboard scaling */
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("1") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("2") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("3") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("4") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("5") ) );
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->set_draw_func(
-        sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("6") ) );
-
-    /* OP1 */
+    /* OPERATEUR 1 */
     slot_ams_op1 = (get_gwidget<Gtk::Scale>("ams_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op1_event)); //frame lfo
+    (get_gwidget<Gtk::Scale>("ams_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].ams.val;
+        (get_gwidget<Gtk::Scale>("ams_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP1 FREQUENCE */
     slot_freq_mode_op1 = (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op1_event));
+    (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].freq_mode.val;
+        (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto freq_mode_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op1"));
+
     slot_freq_coarse_op1 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op1_event));
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].freq_coarse.val;
+        (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_freq_fine_op1 = (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op1_event));
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].freq_fine.val;
+        (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_dtun_op1 = (get_gwidget<Gtk::Scale>("dtun_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op1_event));
+    (get_gwidget<Gtk::Scale>("dtun_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].dtun.val-7;
+        (get_gwidget<Gtk::Scale>("dtun_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP1 EG */
     slot_eg_rt1_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_rt[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt2_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_rt[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt3_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_rt[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt4_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_rt[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl1_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_lvl[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl2_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_lvl[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl3_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_lvl[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl4_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op1_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].eg_lvl[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP1 VOLUME */
     slot_krs_op1 = (get_gwidget<Gtk::Scale>("krs_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op1_event));
+    (get_gwidget<Gtk::Scale>("krs_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].krs.val;
+        (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kvs_op1 = (get_gwidget<Gtk::Scale>("kvs_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op1_event));
+    (get_gwidget<Gtk::Scale>("kvs_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].kvs.val;
+        (get_gwidget<Gtk::Scale>("kvs_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_lvl_op1 = (get_gwidget<Gtk::SpinButton>("lvl_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op1_event));
+    (get_gwidget<Gtk::SpinButton>("lvl_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].lvl.val;
+        (get_gwidget<Gtk::SpinButton>("lvl_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_mute_op1 = (get_gwidget<Gtk::ToggleButton>("mute_op1"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
+    (get_gwidget<Gtk::ToggleButton>("mute_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->extra.mute.val >>5;
+        (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(!(value & 0x01));
+        return true; // Return false to remove the callback after one executio
+    });
+
     /* OP1 KLS */
     slot_kls_lft_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op1_event));
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].kls.lft_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_lft_curve_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"));
+
     slot_kls_rght_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op1_event));
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].kls.rght_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_rght_curve_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"));
+
     slot_kls_lft_depth_op1 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op1_event));
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].kls.lft_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_rght_depth_op1 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op1_event));
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[0].kls.rght_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_note_brk_pt_op1 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
-    slot_kls_octv_brk_pt_op1 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
     auto note_brk_pt_op1_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"),slot_kls_octv_brk_pt_op1);
 
+    slot_kls_octv_brk_pt_op1 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
+    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
 
     /* OP2 */
     slot_ams_op2 = (get_gwidget<Gtk::Scale>("ams_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op2_event)); //frame lfo
+    (get_gwidget<Gtk::Scale>("ams_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].ams.val;
+        (get_gwidget<Gtk::Scale>("ams_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP2 FREQUENCE */
     slot_freq_mode_op2 = (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op2_event));
+    (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].freq_mode.val;
+        (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto freq_mode_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op2"));
+
     slot_freq_coarse_op2 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op2_event));
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].freq_coarse.val;
+        (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_freq_fine_op2 = (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op2_event));
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].freq_fine.val;
+        (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_dtun_op2 = (get_gwidget<Gtk::Scale>("dtun_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op2_event));
+    (get_gwidget<Gtk::Scale>("dtun_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].dtun.val-7;
+        (get_gwidget<Gtk::Scale>("dtun_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP2 EG */
     slot_eg_rt1_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_rt[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt2_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_rt[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt3_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_rt[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt4_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_rt[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl1_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_lvl[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl2_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_lvl[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl3_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_lvl[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl4_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op2_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].eg_lvl[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP2 VOLUME */
     slot_krs_op2 = (get_gwidget<Gtk::Scale>("krs_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op2_event));
+    (get_gwidget<Gtk::Scale>("krs_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].krs.val;
+        (get_gwidget<Gtk::Scale>("krs_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kvs_op2 = (get_gwidget<Gtk::Scale>("kvs_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op2_event));
+    (get_gwidget<Gtk::Scale>("kvs_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].kvs.val;
+        (get_gwidget<Gtk::Scale>("kvs_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_lvl_op2 = (get_gwidget<Gtk::SpinButton>("lvl_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op2_event));
+    (get_gwidget<Gtk::SpinButton>("lvl_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].lvl.val;
+        (get_gwidget<Gtk::SpinButton>("lvl_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_mute_op2 = (get_gwidget<Gtk::ToggleButton>("mute_op2"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
+    (get_gwidget<Gtk::ToggleButton>("mute_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->extra.mute.val >>4;
+        (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(!(value & 0x01));
+        return true; // Return false to remove the callback after one executio
+    });
+
     /* OP2 KLS */
     slot_kls_lft_curve_op2 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op2_event));
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].kls.lft_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_lft_curve_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"));
+
     slot_kls_rght_curve_op2 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op2_event));
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].kls.rght_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_rght_curve_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"));
+
     slot_kls_lft_depth_op2 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op2_event));
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].kls.lft_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_rght_depth_op2 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op2_event));
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[1].kls.rght_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_note_brk_pt_op2 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
-    slot_kls_octv_brk_pt_op2 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
     auto note_brk_pt_op2_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"),slot_kls_octv_brk_pt_op2);
 
+    slot_kls_octv_brk_pt_op2 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
+    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP3 */
     slot_ams_op3 = (get_gwidget<Gtk::Scale>("ams_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op3_event)); //frame lfo
+    (get_gwidget<Gtk::Scale>("ams_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].ams.val;
+        (get_gwidget<Gtk::Scale>("ams_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP3 FREQUENCE */
     slot_freq_mode_op3 = (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op3_event));
+    (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].freq_mode.val;
+        (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto freq_mode_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op3"));
+
     slot_freq_coarse_op3 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op3_event));
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].freq_coarse.val;
+        (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_freq_fine_op3 = (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op3_event));
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].freq_fine.val;
+        (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_dtun_op3 = (get_gwidget<Gtk::Scale>("dtun_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op3_event));
+    (get_gwidget<Gtk::Scale>("dtun_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].dtun.val-7;
+        (get_gwidget<Gtk::Scale>("dtun_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP3 EG */
     slot_eg_rt1_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_rt[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt2_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_rt[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt3_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_rt[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt4_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_rt[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl1_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_lvl[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl2_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_lvl[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl3_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_lvl[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl4_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op3_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].eg_lvl[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP3 VOLUME */
     slot_krs_op3 = (get_gwidget<Gtk::Scale>("krs_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op3_event));
+    (get_gwidget<Gtk::Scale>("krs_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].krs.val;
+        (get_gwidget<Gtk::Scale>("krs_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kvs_op3 = (get_gwidget<Gtk::Scale>("kvs_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op3_event));
+    (get_gwidget<Gtk::Scale>("kvs_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].kvs.val;
+        (get_gwidget<Gtk::Scale>("kvs_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_lvl_op3 = (get_gwidget<Gtk::SpinButton>("lvl_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op3_event));
+    (get_gwidget<Gtk::SpinButton>("lvl_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].lvl.val;
+        (get_gwidget<Gtk::SpinButton>("lvl_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_mute_op3 = (get_gwidget<Gtk::ToggleButton>("mute_op3"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
+    (get_gwidget<Gtk::ToggleButton>("mute_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->extra.mute.val >>3;
+        (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(!(value & 0x01));
+        return true; // Return false to remove the callback after one executio
+    });
+
     /* OP3 KLS */
     slot_kls_lft_curve_op3 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op3_event));
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].kls.lft_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_lft_curve_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"));
+
     slot_kls_rght_curve_op3 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op3_event));
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].kls.rght_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_rght_curve_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"));
+
     slot_kls_lft_depth_op3 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op3_event));
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].kls.lft_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_rght_depth_op3 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op3_event));
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[2].kls.rght_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_note_brk_pt_op3 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
-    slot_kls_octv_brk_pt_op3 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
     auto note_brk_pt_op3_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"),slot_kls_octv_brk_pt_op3);
 
+    slot_kls_octv_brk_pt_op3 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
+    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP4 */
     slot_ams_op4 = (get_gwidget<Gtk::Scale>("ams_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op4_event)); //frame lfo
+    (get_gwidget<Gtk::Scale>("ams_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].ams.val;
+        (get_gwidget<Gtk::Scale>("ams_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP4 FREQUENCE */
     slot_freq_mode_op4 = (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op4_event));
+    (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].freq_mode.val;
+        (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto freq_mode_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op4"));
+
     slot_freq_coarse_op4 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op4_event));
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].freq_coarse.val;
+        (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_freq_fine_op4 = (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op4_event));
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].freq_fine.val;
+        (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_dtun_op4 = (get_gwidget<Gtk::Scale>("dtun_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op4_event));
+    (get_gwidget<Gtk::Scale>("dtun_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].dtun.val;
+        (get_gwidget<Gtk::Scale>("dtun_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP4 EG */
     slot_eg_rt1_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_rt[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt2_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_rt[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt3_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_rt[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt4_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_rt[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl1_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_lvl[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl2_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_lvl[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl3_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_lvl[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl4_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op4_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].eg_lvl[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP4 VOLUME */
     slot_krs_op4 = (get_gwidget<Gtk::Scale>("krs_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op4_event));
+    (get_gwidget<Gtk::Scale>("krs_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].krs.val;
+        (get_gwidget<Gtk::Scale>("krs_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kvs_op4 = (get_gwidget<Gtk::Scale>("kvs_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op4_event));
+    (get_gwidget<Gtk::Scale>("kvs_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].kvs.val;
+        (get_gwidget<Gtk::Scale>("kvs_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_lvl_op4 = (get_gwidget<Gtk::SpinButton>("lvl_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op4_event));
+    (get_gwidget<Gtk::SpinButton>("lvl_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].lvl.val;
+        (get_gwidget<Gtk::SpinButton>("lvl_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_mute_op4 = (get_gwidget<Gtk::ToggleButton>("mute_op4"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
+    (get_gwidget<Gtk::ToggleButton>("mute_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->extra.mute.val >>2;
+        (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(!(value & 0x01));
+        return true; // Return false to remove the callback after one executio
+    });
+
     /* OP4 KLS */
     slot_kls_lft_curve_op4 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op4_event));
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].kls.lft_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_lft_curve_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"));
+
     slot_kls_rght_curve_op4 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op4_event));
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].kls.rght_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_rght_curve_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"));
+
     slot_kls_lft_depth_op4 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op4_event));
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].kls.lft_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_rght_depth_op4 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op4_event));
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[3].kls.rght_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_note_brk_pt_op4 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
+    auto note_brk_pt_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"),slot_kls_octv_brk_pt_op4);
+
     slot_kls_octv_brk_pt_op4 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
-    auto note_brk_pt_op4_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"),slot_kls_octv_brk_pt_op4);
+    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
 
     /* OP5 */
     slot_ams_op5 = (get_gwidget<Gtk::Scale>("ams_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op5_event)); //frame lfo
+    (get_gwidget<Gtk::Scale>("ams_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].ams.val;
+        (get_gwidget<Gtk::Scale>("ams_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP5 FREQUENCE */
     slot_freq_mode_op5 = (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op5_event));
+    (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].freq_mode.val;
+        (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto freq_mode_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op5"));
+
     slot_freq_coarse_op5 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op5_event));
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].freq_coarse.val;
+        (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_freq_fine_op5 = (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op5_event));
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].freq_fine.val;
+        (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_dtun_op5 = (get_gwidget<Gtk::Scale>("dtun_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op5_event));
+    (get_gwidget<Gtk::Scale>("dtun_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].dtun.val-7;
+        (get_gwidget<Gtk::Scale>("dtun_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP5 EG */
     slot_eg_rt1_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_rt[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt2_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_rt[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt3_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_rt[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt4_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_rt[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl1_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_lvl[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl2_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_lvl[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl3_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_lvl[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl4_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op5_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].eg_lvl[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP5 VOLUME */
     slot_krs_op5 = (get_gwidget<Gtk::Scale>("krs_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op5_event));
+    (get_gwidget<Gtk::Scale>("krs_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].krs.val;
+        (get_gwidget<Gtk::Scale>("krs_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kvs_op5 = (get_gwidget<Gtk::Scale>("kvs_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op5_event));
+    (get_gwidget<Gtk::Scale>("kvs_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].kvs.val;
+        (get_gwidget<Gtk::Scale>("kvs_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_lvl_op5 = (get_gwidget<Gtk::SpinButton>("lvl_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op5_event));
+    (get_gwidget<Gtk::SpinButton>("lvl_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].lvl.val;
+        (get_gwidget<Gtk::SpinButton>("lvl_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_mute_op5 = (get_gwidget<Gtk::ToggleButton>("mute_op5"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
-    /* op5 KLS */
+    (get_gwidget<Gtk::ToggleButton>("mute_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->extra.mute.val >>1;
+        (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(!(value & 0x01));
+        return true; // Return false to remove the callback after one executio
+    });
+
+    /* OP5 KLS */
     slot_kls_lft_curve_op5 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op5_event));
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].kls.lft_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_lft_curve_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"));
+
     slot_kls_rght_curve_op5 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op5_event));
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].kls.rght_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_rght_curve_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"));
+
     slot_kls_lft_depth_op5 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op5_event));
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].kls.lft_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_rght_depth_op5 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op5_event));
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[4].kls.rght_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_note_brk_pt_op5 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
+    auto note_brk_pt_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"),slot_kls_octv_brk_pt_op5);
+
     slot_kls_octv_brk_pt_op5 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
-    auto note_brk_pt_op5_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"),slot_kls_octv_brk_pt_op5);
+    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
 
     /* OP6 */
     slot_ams_op6 = (get_gwidget<Gtk::Scale>("ams_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op6_event)); //frame lfo
+    (get_gwidget<Gtk::Scale>("ams_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].ams.val;
+        (get_gwidget<Gtk::Scale>("ams_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP6 FREQUENCE */
     slot_freq_mode_op6 = (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op6_event));
+    (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].freq_mode.val;
+        (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto freq_mode_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("freq_mode_op6"));
+
     slot_freq_coarse_op6 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op6_event));
+    (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].freq_coarse.val;
+        (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_freq_fine_op6 = (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op6_event));
+    (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].freq_fine.val;
+        (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_dtun_op6 = (get_gwidget<Gtk::Scale>("dtun_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op6_event));
+    (get_gwidget<Gtk::Scale>("dtun_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].dtun.val-7;
+        (get_gwidget<Gtk::Scale>("dtun_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP6 EG */
     slot_eg_rt1_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_rt[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt2_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_rt[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt3_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_rt[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_rt4_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_rt[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl1_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_lvl[0].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl2_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_lvl[1].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl3_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_lvl[2].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_eg_lvl4_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op6_event));
+    (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].eg_lvl[3].val;
+        (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     /* OP6 VOLUME */
     slot_krs_op6 = (get_gwidget<Gtk::Scale>("krs_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op6_event));
+    (get_gwidget<Gtk::Scale>("krs_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].krs.val;
+        (get_gwidget<Gtk::Scale>("krs_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kvs_op6 = (get_gwidget<Gtk::Scale>("kvs_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op6_event));
+    (get_gwidget<Gtk::Scale>("kvs_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].kvs.val;
+        (get_gwidget<Gtk::Scale>("kvs_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_lvl_op6 = (get_gwidget<Gtk::SpinButton>("lvl_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op6_event));
+    (get_gwidget<Gtk::SpinButton>("lvl_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].lvl.val;
+        (get_gwidget<Gtk::SpinButton>("lvl_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_mute_op6 = (get_gwidget<Gtk::ToggleButton>("mute_op6"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
+    (get_gwidget<Gtk::ToggleButton>("mute_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->extra.mute.val;
+        (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(!(value & 0x01));
+        return true; // Return false to remove the callback after one executio
+    });
+
     /* OP6 KLS */
     slot_kls_lft_curve_op6 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op6_event));
+    (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].kls.lft_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_lft_curve_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"));
+
     slot_kls_rght_curve_op6 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op6_event));
+    (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].kls.rght_curve.val;
+        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->set_selected(value);
+        return true; // Return false to remove the callback after one executio
+    });
     auto kls_rght_curve_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"));
+
     slot_kls_lft_depth_op6 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op6_event));
+    (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].kls.lft_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_rght_depth_op6 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op6_event));
-
+    (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->op[5].kls.rght_dpth.val;
+        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->set_value(value);
+        return true; // Return false to remove the callback after one executio
+    });
     slot_kls_note_brk_pt_op6 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
-    slot_kls_octv_brk_pt_op6 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
+    (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
     auto note_brk_pt_op6_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"),get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"),slot_kls_octv_brk_pt_op6);
 
-    //get_gwidget<gtk::algo>("algo_select")->click_on().connect(sigc::mrmçfunc(*this,&Dx7interface::on_change_algo_event))
+    slot_kls_octv_brk_pt_op6 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
+    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        int value = bank_1_modif.sound->algo.transpose.val;
+        (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->set_selected(value % 12);
+        int val = (value -3);
+        if(val < 0){
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( -1 );
+        }else{
+            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( val / 12 );
+        };
+        return true; // Return false to remove the callback after one executio
+    });
+
     LOG_OUT();
 };
 
@@ -6272,373 +7186,820 @@ void Dx7interface::on_kls_brk_pt_op6_event() {
 };
 
 void Dx7interface::set_aftrtch_assgn_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.aftrtch_assgn.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.aftrtch_assgn.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     int val = value;
     (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->set_active(val & 0x01);
     (get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->set_active((val & 0x02)>>1);
     (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->set_active((val & 0x04)>>2);
 };
 void Dx7interface::set_aftrtch_rng_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.aftrtch_rng.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.aftrtch_rng.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->set_value(value);
 };
 void Dx7interface::set_algo_event(int value){
     LOG_IN();
-    value = value*(127/bank_1_modif.sound[0].algo.algo.max);
-    (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(value);
+    value = value/(127/bank_1_modif.sound->algo.algo.max);
+    if(value <=0){
+        value=0;
+    }else if(value > bank_1_modif.sound->algo.algo.max){
+        value=bank_1_modif.sound->algo.algo.max;
+    };
+    bank_1_modif.sound->algo.algo.val=(int)value;
+    //(get_gwidget<Gtk::SpinButton>("algo_number"))->set_value((int)value+1);
     LOG_OUT();
 };
 void Dx7interface::set_amd_event(int value){
-    value = value*(127/bank_1_modif.sound[0].lfo.amd.max);
+    value = value/(127/bank_1_modif.sound->lfo.amd.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.amd.max){
+        value=bank_1_modif.sound->lfo.amd.max;
+    };
     (get_gwidget<Gtk::SpinButton>("amd"))->set_value(value);
 };
 void Dx7interface::set_ams_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].ams.max);
-    (get_gwidget<Gtk::Scale>("ams_op1"))->set_value(value);
+    value = value/(127/bank_1_modif.sound->op[0].ams.max);
+    if(value <=0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].ams.max){
+        value=bank_1_modif.sound->op[0].ams.max;
+    };
+    bank_1_modif.sound->op[0].ams.val = (int)value;
 };
+
 void Dx7interface::set_ams_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].ams.max);
+    value = value/(127/bank_1_modif.sound->op[1].ams.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("ams_op2"))->set_value(value);
 };
 void Dx7interface::set_ams_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].ams.max);
+    value = value/(127/bank_1_modif.sound->op[2].ams.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("ams_op3"))->set_value(value);
 };
 void Dx7interface::set_ams_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].ams.max);
+    value = value/(127/bank_1_modif.sound->op[3].ams.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("ams_op4"))->set_value(value);
 };
 void Dx7interface::set_ams_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].ams.max);
+    value = value/(127/bank_1_modif.sound->op[4].ams.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("ams_op5"))->set_value(value);
 };
 void Dx7interface::set_ams_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].ams.max);
+    value = value/(127/bank_1_modif.sound->op[5].ams.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("ams_op6"))->set_value(value);
 };
 void Dx7interface::set_brth_assgn_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.brth_assgn.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.brth_assgn.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     int val = value;
     (get_gwidget<Gtk::CheckButton>("brth_ptch"))->set_active(val & 0x01);
     (get_gwidget<Gtk::CheckButton>("brth_mp"))->set_active((val & 0x02)>>1);
     (get_gwidget<Gtk::CheckButton>("brth_gbs"))->set_active((val & 0x04)>>2);
 };
 void Dx7interface::set_brth_rng_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.brth_rng.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.brth_rng.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("brth_rng"))->set_value(value);
 };
 void Dx7interface::set_compare_event(int value){
-    //value = value*(127/bank_1_modif.sound[0].;
+    //value = value/(127/bank_1_modif.sound->;
 };
 void Dx7interface::set_delay_event(int value){
-    value = value*(127/bank_1_modif.sound[0].lfo.delay.max);
+    value = value/(127/bank_1_modif.sound->lfo.delay.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("delay"))->set_value(value);
 };
 void Dx7interface::set_dtun_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].dtun.max);
+    value = value/(127/bank_1_modif.sound->op[0].dtun.max);
+    if( value < 0 ){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].dtun.max){
+        value=bank_1_modif.sound->op[0].dtun.max;
+    };
     (get_gwidget<Gtk::Scale>("dtun_op1"))->set_value(value-7);
 };
 void Dx7interface::set_dtun_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].dtun.max);
+    value = value/(127/bank_1_modif.sound->op[1].dtun.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("dtun_op2"))->set_value(value-7);
 };
 void Dx7interface::set_dtun_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].dtun.max);
+    value = value/(127/bank_1_modif.sound->op[2].dtun.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("dtun_op3"))->set_value(value-7);
 };
 void Dx7interface::set_dtun_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].dtun.max);
+    value = value/(127/bank_1_modif.sound->op[3].dtun.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("dtun_op4"))->set_value(value-7);
 };
 void Dx7interface::set_dtun_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].dtun.max);
+    value = value/(127/bank_1_modif.sound->op[4].dtun.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("dtun_op5"))->set_value(value-7);
 };
 void Dx7interface::set_dtun_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].dtun.max);
+    value = value/(127/bank_1_modif.sound->op[5].dtun.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("dtun_op6"))->set_value(value-7);
 };
 void Dx7interface::set_eg_lvl1_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[0].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl1_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[0].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl1_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[0].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl1_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[0].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl1_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[0].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl1_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[0].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl2_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[1].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl2_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[1].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl2_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[1].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl2_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[1].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl2_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[1].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl2_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[1].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl3_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[2].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl3_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[2].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl3_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[2].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl3_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[2].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl3_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[2].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl3_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[2].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl4_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_lvl[3].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl4_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_lvl[3].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl4_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_lvl[3].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl4_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_lvl[3].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl4_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_lvl[3].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_lvl4_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_lvl[3].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->set_value(value);
 };
 void Dx7interface::set_eg_rt1_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[0].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_rt[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_rt1_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[0].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_rt[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_rt1_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[0].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_rt[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_rt1_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[0].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_rt[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->set_value(value);
 };
 void Dx7interface::set_eg_rt1_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[0].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_rt[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_rt1_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[0].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_rt[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->set_value(value);
 };
 void Dx7interface::set_eg_rt2_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[1].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_rt[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_rt2_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[1].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_rt[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_rt2_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[1].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_rt[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_rt2_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[1].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_rt[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_rt2_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[1].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_rt[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_rt2_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[1].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_rt[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->set_value(value);
 };
 void Dx7interface::set_eg_rt3_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[2].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_rt[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_rt3_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[2].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_rt[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_rt3_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[2].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_rt[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_rt3_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[2].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_rt[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->set_value(value);
 };
 void Dx7interface::set_eg_rt3_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[2].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_rt[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_rt3_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[2].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_rt[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->set_value(value);
 };
 void Dx7interface::set_eg_rt4_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].eg_rt[3].max);
+    value = value/(127/bank_1_modif.sound->op[0].eg_rt[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->set_value(value);
 };
 void Dx7interface::set_eg_rt4_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].eg_rt[3].max);
+    value = value/(127/bank_1_modif.sound->op[1].eg_rt[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->set_value(value);
 };
 void Dx7interface::set_eg_rt4_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].eg_rt[3].max);
+    value = value/(127/bank_1_modif.sound->op[2].eg_rt[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->set_value(value);
 };
 void Dx7interface::set_eg_rt4_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].eg_rt[3].max);
+    value = value/(127/bank_1_modif.sound->op[3].eg_rt[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->set_value(value);
 };
 void Dx7interface::set_eg_rt4_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].eg_rt[3].max);
+    value = value/(127/bank_1_modif.sound->op[4].eg_rt[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->set_value(value);
 };
 void Dx7interface::set_eg_rt4_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].eg_rt[3].max);
+    value = value/(127/bank_1_modif.sound->op[5].eg_rt[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->set_value(value);
 };
 void Dx7interface::set_feedback_event(int value){
-    value = value*(127/bank_1_modif.sound[0].algo.feedback.max);
+    value = value/(127/bank_1_modif.sound->algo.feedback.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(value);
 };
 void Dx7interface::set_foot_assgn_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.foot_assgn.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.foot_assgn.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     int val = value;
     (get_gwidget<Gtk::CheckButton>("foot_ptch"))->set_active(val & 0x01);
     (get_gwidget<Gtk::CheckButton>("foot_mp"))->set_active((val & 0x02)>>1);
     (get_gwidget<Gtk::CheckButton>("foot_gbs"))->set_active((val & 0x04)>>2);
 };
 void Dx7interface::set_foot_rng_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.foot_rng.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.foot_rng.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("foot_rng"))->set_value(value);
 };
 void Dx7interface::set_freq_coarse_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].freq_coarse.max);
+    value = value/(127/bank_1_modif.sound->op[0].freq_coarse.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->set_value(value);
 };
 void Dx7interface::set_freq_coarse_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].freq_coarse.max);
+    value = value/(127/bank_1_modif.sound->op[1].freq_coarse.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->set_value(value);
 };
 void Dx7interface::set_freq_coarse_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].freq_coarse.max);
+    value = value/(127/bank_1_modif.sound->op[2].freq_coarse.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->set_value(value);
 };
 void Dx7interface::set_freq_coarse_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].freq_coarse.max);
+    value = value/(127/bank_1_modif.sound->op[3].freq_coarse.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->set_value(value);
 };
 void Dx7interface::set_freq_coarse_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].freq_coarse.max);
+    value = value/(127/bank_1_modif.sound->op[4].freq_coarse.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->set_value(value);
 };
 void Dx7interface::set_freq_coarse_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].freq_coarse.max);
+    value = value/(127/bank_1_modif.sound->op[5].freq_coarse.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->set_value(value);
 };
 void Dx7interface::set_freq_fine_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].freq_fine.max);
+    value = value/(127/bank_1_modif.sound->op[0].freq_fine.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->set_value(value);
 };
 void Dx7interface::set_freq_fine_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].freq_fine.max);
+    value = value/(127/bank_1_modif.sound->op[1].freq_fine.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->set_value(value);
 };
 void Dx7interface::set_freq_fine_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].freq_fine.max);
+    value = value/(127/bank_1_modif.sound->op[2].freq_fine.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->set_value(value);
 };
 void Dx7interface::set_freq_fine_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].freq_fine.max);
+    value = value/(127/bank_1_modif.sound->op[3].freq_fine.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->set_value(value);
 };
 void Dx7interface::set_freq_fine_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].freq_fine.max);
+    value = value/(127/bank_1_modif.sound->op[4].freq_fine.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->set_value(value);
 };
 void Dx7interface::set_freq_fine_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].freq_fine.max);
+    value = value/(127/bank_1_modif.sound->op[5].freq_fine.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->set_value(value);
 };
 void Dx7interface::set_freq_mode_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].freq_mode.max);
+    value = value/(127/bank_1_modif.sound->op[0].freq_mode.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].freq_mode.max){
+        value=bank_1_modif.sound->op[0].freq_mode.max;
+    };
     (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->set_selected(value);
 };
 void Dx7interface::set_freq_mode_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].freq_mode.max);
+    value = value/(127/bank_1_modif.sound->op[1].freq_mode.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->set_selected(value);
 };
 void Dx7interface::set_freq_mode_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].freq_mode.max);
+    value = value/(127/bank_1_modif.sound->op[2].freq_mode.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->set_selected(value);
 };
 void Dx7interface::set_freq_mode_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].freq_mode.max);
+    value = value/(127/bank_1_modif.sound->op[3].freq_mode.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->set_selected(value);
 };
 void Dx7interface::set_freq_mode_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].freq_mode.max);
+    value = value/(127/bank_1_modif.sound->op[4].freq_mode.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->set_selected(value);
 };
 void Dx7interface::set_freq_mode_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].freq_mode.max);
+    value = value/(127/bank_1_modif.sound->op[5].freq_mode.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->set_selected(value);
 };
 void Dx7interface::set_kls_brk_pt_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].kls.brk_pt.max);
+    value = value/(127/bank_1_modif.sound->op[0].kls.brk_pt.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->set_selected(value % 12);
     int val = (value -3);
     if(val < 0){
@@ -6648,7 +8009,12 @@ void Dx7interface::set_kls_brk_pt_op1_event(int value){
     };
 };
 void Dx7interface::set_kls_brk_pt_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].kls.brk_pt.max);
+    value = value/(127/bank_1_modif.sound->op[1].kls.brk_pt.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->set_selected(value % 12);
     int val = (value -3);
     if(val < 0){
@@ -6658,7 +8024,12 @@ void Dx7interface::set_kls_brk_pt_op2_event(int value){
     };
 };
 void Dx7interface::set_kls_brk_pt_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].kls.brk_pt.max);
+    value = value/(127/bank_1_modif.sound->op[2].kls.brk_pt.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->set_selected(value % 12);
     int val = (value -3);
     if(val < 0){
@@ -6668,7 +8039,12 @@ void Dx7interface::set_kls_brk_pt_op3_event(int value){
     };
 };
 void Dx7interface::set_kls_brk_pt_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].kls.brk_pt.max);
+    value = value/(127/bank_1_modif.sound->op[3].kls.brk_pt.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->set_selected(value % 12);
     int val = (value -3);
     if(val < 0){
@@ -6678,7 +8054,12 @@ void Dx7interface::set_kls_brk_pt_op4_event(int value){
     };
 };
 void Dx7interface::set_kls_brk_pt_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].kls.brk_pt.max);
+    value = value/(127/bank_1_modif.sound->op[4].kls.brk_pt.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->set_selected(value % 12);
     int val = (value -3);
     if(val < 0){
@@ -6688,7 +8069,12 @@ void Dx7interface::set_kls_brk_pt_op5_event(int value){
     };
 };
 void Dx7interface::set_kls_brk_pt_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].kls.brk_pt.max);
+    value = value/(127/bank_1_modif.sound->op[5].kls.brk_pt.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->set_selected(value % 12);
     int val = (value -3);
     if(val < 0){
@@ -6698,293 +8084,652 @@ void Dx7interface::set_kls_brk_pt_op6_event(int value){
     };
 };
 void Dx7interface::set_kls_lft_curve_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].kls.lft_curve.max);
+    value = value/(127/bank_1_modif.sound->op[0].kls.lft_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].kls.lft_curve.max){
+        value=bank_1_modif.sound->op[0].kls.lft_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->set_selected(value);
 };
 void Dx7interface::set_kls_lft_curve_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].kls.lft_curve.max);
+    value = value/(127/bank_1_modif.sound->op[1].kls.lft_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[1].kls.lft_curve.max){
+        value=bank_1_modif.sound->op[1].kls.lft_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->set_selected(value);
 };
 void Dx7interface::set_kls_lft_curve_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].kls.lft_curve.max);
+    value = value/(127/bank_1_modif.sound->op[2].kls.lft_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[2].kls.lft_curve.max){
+        value=bank_1_modif.sound->op[2].kls.lft_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->set_selected(value);
 };
 void Dx7interface::set_kls_lft_curve_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].kls.lft_curve.max);
+    value = value/(127/bank_1_modif.sound->op[3].kls.lft_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[3].kls.lft_curve.max){
+        value=bank_1_modif.sound->op[3].kls.lft_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->set_selected(value);
 };
 void Dx7interface::set_kls_lft_curve_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].kls.lft_curve.max);
+    value = value/(127/bank_1_modif.sound->op[4].kls.lft_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[4].kls.lft_curve.max){
+        value=bank_1_modif.sound->op[4].kls.lft_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->set_selected(value);
 };
 void Dx7interface::set_kls_lft_curve_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].kls.lft_curve.max);
+    value = value/(127/bank_1_modif.sound->op[5].kls.lft_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[5].kls.lft_curve.max){
+        value=bank_1_modif.sound->op[5].kls.lft_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->set_selected(value);
 };
 void Dx7interface::set_kls_lft_dpth_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].kls.lft_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[0].kls.lft_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].kls.lft_dpth.max){
+        value=bank_1_modif.sound->op[0].kls.lft_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->set_value(value);
 };
 void Dx7interface::set_kls_lft_dpth_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].kls.lft_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[1].kls.lft_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[1].kls.lft_dpth.max){
+        value=bank_1_modif.sound->op[1].kls.lft_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->set_value(value);
 };
 void Dx7interface::set_kls_lft_dpth_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].kls.lft_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[2].kls.lft_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[2].kls.lft_dpth.max){
+        value=bank_1_modif.sound->op[2].kls.lft_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->set_value(value);
 };
 void Dx7interface::set_kls_lft_dpth_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].kls.lft_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[3].kls.lft_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[3].kls.lft_dpth.max){
+        value=bank_1_modif.sound->op[3].kls.lft_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->set_value(value);
 };
 void Dx7interface::set_kls_lft_dpth_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].kls.lft_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[4].kls.lft_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[4].kls.lft_dpth.max){
+        value=bank_1_modif.sound->op[4].kls.lft_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->set_value(value);
 };
 void Dx7interface::set_kls_lft_dpth_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].kls.lft_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[5].kls.lft_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[5].kls.lft_dpth.max){
+        value=bank_1_modif.sound->op[5].kls.lft_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->set_value(value);
 };
 void Dx7interface::set_kls_rght_curve_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].kls.rght_curve.max);
+    value = value/(127/bank_1_modif.sound->op[0].kls.rght_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].kls.rght_curve.max){
+        value=bank_1_modif.sound->op[0].kls.rght_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->set_selected(value);
 };
 void Dx7interface::set_kls_rght_curve_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].kls.rght_curve.max);
+    value = value/(127/bank_1_modif.sound->op[1].kls.rght_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[1].kls.rght_curve.max){
+        value=bank_1_modif.sound->op[1].kls.rght_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->set_selected(value);
 };
 void Dx7interface::set_kls_rght_curve_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].kls.rght_curve.max);
+    value = value/(127/bank_1_modif.sound->op[2].kls.rght_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[2].kls.rght_curve.max){
+        value=bank_1_modif.sound->op[2].kls.rght_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->set_selected(value);
 };
 void Dx7interface::set_kls_rght_curve_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].kls.rght_curve.max);
+    value = value/(127/bank_1_modif.sound->op[3].kls.rght_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[3].kls.rght_curve.max){
+        value=bank_1_modif.sound->op[3].kls.rght_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->set_selected(value);
 };
 void Dx7interface::set_kls_rght_curve_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].kls.rght_curve.max);
+    value = value/(127/bank_1_modif.sound->op[4].kls.rght_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[4].kls.rght_curve.max){
+        value=bank_1_modif.sound->op[4].kls.rght_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->set_selected(value);
 };
 void Dx7interface::set_kls_rght_curve_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].kls.rght_curve.max);
+    value = value/(127/bank_1_modif.sound->op[5].kls.rght_curve.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[5].kls.rght_curve.max){
+        value=bank_1_modif.sound->op[5].kls.rght_curve.max;
+    };
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->set_selected(value);
 };
 void Dx7interface::set_kls_rght_dpth_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].kls.rght_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[0].kls.rght_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].kls.rght_dpth.max){
+        value=bank_1_modif.sound->op[0].kls.rght_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->set_value(value);
 };
 void Dx7interface::set_kls_rght_dpth_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].kls.rght_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[1].kls.rght_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[1].kls.rght_dpth.max){
+        value=bank_1_modif.sound->op[1].kls.rght_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->set_value(value);
 };
 void Dx7interface::set_kls_rght_dpth_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].kls.rght_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[2].kls.rght_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[2].kls.rght_dpth.max){
+        value=bank_1_modif.sound->op[2].kls.rght_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->set_value(value);
 };
 void Dx7interface::set_kls_rght_dpth_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].kls.rght_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[3].kls.rght_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[3].kls.rght_dpth.max){
+        value=bank_1_modif.sound->op[3].kls.rght_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->set_value(value);
 };
 void Dx7interface::set_kls_rght_dpth_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].kls.rght_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[4].kls.rght_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[4].kls.rght_dpth.max){
+        value=bank_1_modif.sound->op[4].kls.rght_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->set_value(value);
 };
 void Dx7interface::set_kls_rght_dpth_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].kls.rght_dpth.max);
+    value = value/(127/bank_1_modif.sound->op[5].kls.rght_dpth.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[5].kls.rght_dpth.max){
+        value=bank_1_modif.sound->op[5].kls.rght_dpth.max;
+    };
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->set_value(value);
 };
 void Dx7interface::set_krs_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].krs.max);
+    value = value/(127/bank_1_modif.sound->op[0].krs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].krs.max){
+        value=bank_1_modif.sound->op[0].krs.max;
+    };
     (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
 };
 void Dx7interface::set_krs_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].krs.max);
-    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+    value = value/(127/bank_1_modif.sound->op[1].krs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[1].krs.max){
+        value=bank_1_modif.sound->op[1].krs.max;
+    };
+    (get_gwidget<Gtk::Scale>("krs_op2"))->set_value(value);
 };
 void Dx7interface::set_krs_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].krs.max);
-    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+    value = value/(127/bank_1_modif.sound->op[2].krs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[2].krs.max){
+        value=bank_1_modif.sound->op[2].krs.max;
+    };
+    (get_gwidget<Gtk::Scale>("krs_op3"))->set_value(value);
 };
 void Dx7interface::set_krs_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].krs.max);
-    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+    value = value/(127/bank_1_modif.sound->op[3].krs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[3].krs.max){
+        value=bank_1_modif.sound->op[3].krs.max;
+    };
+    (get_gwidget<Gtk::Scale>("krs_op4"))->set_value(value);
 };
 void Dx7interface::set_krs_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].krs.max);
-    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+    value = value/(127/bank_1_modif.sound->op[4].krs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[4].krs.max){
+        value=bank_1_modif.sound->op[4].krs.max;
+    };
+    (get_gwidget<Gtk::Scale>("krs_op5"))->set_value(value);
 };
 void Dx7interface::set_krs_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].krs.max);
-    (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
+    value = value/(127/bank_1_modif.sound->op[5].krs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[5].krs.max){
+        value=bank_1_modif.sound->op[5].krs.max;
+    };
+    bank_1_modif.sound->op[5].krs.val = value;
 };
 void Dx7interface::set_kvs_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].kvs.max);
+    value = value/(127/bank_1_modif.sound->op[0].kvs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[0].kvs.max){
+        value=bank_1_modif.sound->op[0].kvs.max;
+    };
     (get_gwidget<Gtk::Scale>("kvs_op1"))->set_value(value);
 };
 void Dx7interface::set_kvs_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].kvs.max);
+    value = value/(127/bank_1_modif.sound->op[1].kvs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[1].kvs.max){
+        value=bank_1_modif.sound->op[1].kvs.max;
+    };
     (get_gwidget<Gtk::Scale>("kvs_op2"))->set_value(value);
 };
 void Dx7interface::set_kvs_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].kvs.max);
+    value = value/(127/bank_1_modif.sound->op[2].kvs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[2].kvs.max){
+        value=bank_1_modif.sound->op[2].kvs.max;
+    };
     (get_gwidget<Gtk::Scale>("kvs_op3"))->set_value(value);
 };
 void Dx7interface::set_kvs_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].kvs.max);
+    value = value/(127/bank_1_modif.sound->op[3].kvs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[3].kvs.max){
+        value=bank_1_modif.sound->op[3].kvs.max;
+    };
     (get_gwidget<Gtk::Scale>("kvs_op4"))->set_value(value);
 };
 void Dx7interface::set_kvs_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].kvs.max);
+    value = value/(127/bank_1_modif.sound->op[4].kvs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[4].kvs.max){
+        value=bank_1_modif.sound->op[4].kvs.max;
+    };
     (get_gwidget<Gtk::Scale>("kvs_op5"))->set_value(value);
 };
 void Dx7interface::set_kvs_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].kvs.max);
+    value = value/(127/bank_1_modif.sound->op[5].kvs.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->op[5].kvs.max){
+        value=bank_1_modif.sound->op[5].kvs.max;
+    };
     (get_gwidget<Gtk::Scale>("kvs_op6"))->set_value(value);
 };
 void Dx7interface::set_lfo_sync_event(int value){
-    value = value*(127/bank_1_modif.sound[0].lfo.sync.max);
+    value = value/(127/bank_1_modif.sound->lfo.sync.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.sync.max){
+        value=bank_1_modif.sound->lfo.sync.max;
+    };
     (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(value);
 };
 void Dx7interface::set_lfo_wav_event(int value){
-    value = value*(127/bank_1_modif.sound[0].lfo.wave.max);
+    value = value/(127/bank_1_modif.sound->lfo.wave.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.wave.max){
+        value=bank_1_modif.sound->lfo.wave.max;
+    };
     (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(value);
 };
 void Dx7interface::set_lvl_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[0].lvl.max);
+    value = value/(127/bank_1_modif.sound->op[0].lvl.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("lvl_op1"))->set_value(value);
 };
 void Dx7interface::set_lvl_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[1].lvl.max);
+    value = value/(127/bank_1_modif.sound->op[1].lvl.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("lvl_op2"))->set_value(value);
 };
 void Dx7interface::set_lvl_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[2].lvl.max);
+    value = value/(127/bank_1_modif.sound->op[2].lvl.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("lvl_op3"))->set_value(value);
 };
 void Dx7interface::set_lvl_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[3].lvl.max);
+    value = value/(127/bank_1_modif.sound->op[3].lvl.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("lvl_op4"))->set_value(value);
 };
 void Dx7interface::set_lvl_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[4].lvl.max);
+    value = value/(127/bank_1_modif.sound->op[4].lvl.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("lvl_op5"))->set_value(value);
 };
 void Dx7interface::set_lvl_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].op[5].lvl.max);
+    value = value/(127/bank_1_modif.sound->op[5].lvl.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("lvl_op6"))->set_value(value);
 };
 void Dx7interface::set_md_whl_assgn_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.md_whl_assgn.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.md_whl_assgn.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     u_char val = value;
     (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->set_active( (val & 0x01) );
     (get_gwidget<Gtk::CheckButton>("md_whl_mp"))->set_active( (val & 0x02)>>1 );
     (get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->set_active( (val & 0x04)>>2 );
 };
 void Dx7interface::set_md_whl_rng_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.md_whl_rng.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.md_whl_rng.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("md_whl_rng"))->set_value(value);
 };
 void Dx7interface::set_mono_poly_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.poly_mono.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.poly_mono.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_active(value);
 };
-void Dx7interface::set_mute_hexter_op1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+
+void Dx7interface::set_mute_op1_event(int value){
+    if( (value >= 63 && ( (bank_1_modif.sound->extra.mute.val >> 5) & 0x01 )) || (value < 63  && !( (bank_1_modif.sound->extra.mute.val >> 5) & 0x01 ) ) ){
+        value=0x20;
+    }else{
+        value=0x00;
+    };
+    bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
-void Dx7interface::set_mute_hexter_op2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+void Dx7interface::set_mute_op2_event(int value){
+    if( (value >= 63 && ( (bank_1_modif.sound->extra.mute.val >> 4) & 0x01 )) || (value < 63  && !( (bank_1_modif.sound->extra.mute.val >> 4) & 0x01 ) ) ){
+        value=0x10;
+    }else{
+        value=0x00;
+    };
+    bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
-void Dx7interface::set_mute_hexter_op3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+void Dx7interface::set_mute_op3_event(int value){
+    if( (value >= 63 && ( (bank_1_modif.sound->extra.mute.val >> 3) & 0x01 )) || (value < 63  && !( (bank_1_modif.sound->extra.mute.val >> 3) & 0x01 ) ) ){
+        value=0x08;
+    }else{
+        value=0x00;
+    };
+    bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
-void Dx7interface::set_mute_hexter_op4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+void Dx7interface::set_mute_op4_event(int value){
+    if( (value >= 63 && ( (bank_1_modif.sound->extra.mute.val >> 2) & 0x01 )) || (value < 63  && !( (bank_1_modif.sound->extra.mute.val >> 2) & 0x01 ) ) ){
+        value=0x04;
+    }else{
+        value=0x00;
+    };
+    bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^(value << 2);
 };
-void Dx7interface::set_mute_hexter_op5_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+void Dx7interface::set_mute_op5_event(int value){
+    if( (value >= 63 && ( (bank_1_modif.sound->extra.mute.val >> 1) & 0x01 )) || (value < 63  && !( (bank_1_modif.sound->extra.mute.val >> 1) & 0x01 ) ) ){
+        value=0x02;
+    }else{
+        value=0x00;
+    };
+    bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ (value << 1);
 };
-void Dx7interface::set_mute_hexter_op6_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
+void Dx7interface::set_mute_op6_event(int value){
+    if( (value >= 63 && ( (bank_1_modif.sound->extra.mute.val) & 0x01 )) || (value < 63  && !( (bank_1_modif.sound->extra.mute.val) & 0x01 ) ) ){
+        value=0x01;
+    }else{
+        value=0x00;
+    };
+    bank_1_modif.sound->extra.mute.val = bank_1_modif.sound->extra.mute.val ^ value;
 };
-void Dx7interface::set_mute_op_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.mute.max);
-};
+
 void Dx7interface::set_oks_event(int value){
-    value = value*(127/bank_1_modif.sound[0].algo.oks.max);
+    value = value/(127/bank_1_modif.sound->algo.oks.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::CheckButton>("oks"))->set_active(value);
 };
 void Dx7interface::set_panic_event(int value){
-    //value = value*(127/bank_1_modif.sound[0].max);
+    //value = value/(127/bank_1_modif.sound->max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
 };
 void Dx7interface::set_pitch_lvl1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[0].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch")->set_value(value);
 };
 void Dx7interface::set_pitch_lvl2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[1].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch")->set_value(value);
 };
 void Dx7interface::set_pitch_lvl3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[2].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch")->set_value(value);
 };
 void Dx7interface::set_pitch_lvl4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_lvl[3].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch")->set_value(value);
 };
 void Dx7interface::set_pitch_rt1_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[0].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_rt[0].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     get_gwidget<Gtk::SpinButton>("eg_rt1_pitch")->set_value(value);
 };
 void Dx7interface::set_pitch_rt2_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[1].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_rt[1].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     get_gwidget<Gtk::SpinButton>("eg_rt2_pitch")->set_value(value);
 };
 void Dx7interface::set_pitch_rt3_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[2].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_rt[2].max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     get_gwidget<Gtk::SpinButton>("eg_rt3_pitch")->set_value(value);
 };
 void Dx7interface::set_pitch_rt4_event(int value){
-    value = value*(127/bank_1_modif.sound[0].pitch.eg_rt[3].max);
+    value = value/(127/bank_1_modif.sound->pitch.eg_rt[3].max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->pitch.eg_rt[3].max){
+        value=bank_1_modif.sound->pitch.eg_rt[3].max;
+    };
     get_gwidget<Gtk::SpinButton>("eg_rt4_pitch")->set_value(value);
 };
 void Dx7interface::set_pmd_event(int value){
-    value = value*(127/bank_1_modif.sound[0].lfo.pmd.max);
+    value = value/(127/bank_1_modif.sound->lfo.pmd.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.pmd.max){
+        value=bank_1_modif.sound->lfo.pmd.max;
+    };
     (get_gwidget<Gtk::SpinButton>("pmd"))->set_value(value);
 };
 void Dx7interface::set_pms_event(int value){
-    value = value*(127/bank_1_modif.sound[0].lfo.pms.max);
+    value = value/(127/bank_1_modif.sound->lfo.pms.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.pms.max){
+        value=bank_1_modif.sound->lfo.pms.max;
+    };
     (get_gwidget<Gtk::Scale>("pms"))->set_value(value);
 };
 void Dx7interface::set_portamento_glss_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.portamento_glss.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.portamento_glss.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->set_active(value);
 };
 void Dx7interface::set_portamento_md_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.portamento_md.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.portamento_md.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_active(value);
 };
 void Dx7interface::set_portamento_tm_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.portamento_tm.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.portamento_tm.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("portamento_tm"))->set_value(value);
 };
 void Dx7interface::set_ptch_bnd_rng_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.ptch_bnd_rng.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.ptch_bnd_rng.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->set_value(value);
 };
 void Dx7interface::set_ptch_bnd_stp_event(int value){
-    value = value*(127/bank_1_modif.sound[0].extra.functions.ptch_bnd_stp.max);
+    value = value/(127/bank_1_modif.sound->extra.functions.ptch_bnd_stp.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->set_value(value);
 };
 void Dx7interface::set_send_extra_parameters_event(int value){
 
 };
 void Dx7interface::set_speed_event(int value){
-    value = value*(127/bank_1_modif.sound[0].lfo.speed.max);
+    value = value/(127/bank_1_modif.sound->lfo.speed.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("speed"))->set_value(value);
 };
 void Dx7interface::set_transpose_event(int value){
-    value = value*(127/bank_1_modif.sound[0].algo.transpose.max);
+    value = value/(127/bank_1_modif.sound->algo.transpose.max);
+    if(value <0){
+        value=0;
+    }else if(value > 127){
+        value=127;
+    };
     (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (value / 12)+1 );
     (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(value % 12);
 };
