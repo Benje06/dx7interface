@@ -83,6 +83,7 @@ class Dx7interface : public Gx_module, public Synth {
         size_t in_buff_size, out_buff_size;               /* buffer d'entré et de sortie */
 
         /* */
+        bool lock = false;
         bool compare = false;                   /* set if compare button is activate */
         bool send_extra_params = false;         /* set if send_extra paraameter is activate */
         bool write_extra_params = false;         /* set if send_extra paraameter is activate */
@@ -117,6 +118,7 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> bank_data_model=nullptr; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> bank_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> bank_factory=nullptr;
+
         /* param list view */
         bool midi_learn=false;
         void on_midi_learn_event();
@@ -131,8 +133,6 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
 
-        bool lock=false;
-        bool lock2=false;
         std::vector<int> midi_param{std::vector<int>(169, -1)};
         std::vector<std::vector<int>> midi_learned;
         void add_midi_learned(int, int);
@@ -339,6 +339,7 @@ class Dx7interface : public Gx_module, public Synth {
 
         /** SOUND BANK **/
         /* set/load */
+        void set_default_values();
         void set_bank(Glib::RefPtr<Gio::File>);
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void load_bank(Glib::RefPtr<Gio::File>);
