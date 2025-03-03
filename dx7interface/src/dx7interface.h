@@ -478,6 +478,12 @@ class Dx7interface : public Gx_module, public Synth {
 
         /** Functions parameters **/
         void init_global_fonction_parameter();
+
+        void on_midi_channel_send_event();
+        sigc::connection slot_midi_channel_send;
+        void on_midi_channel_receive_event();
+        sigc::connection slot_midi_channel_receive;
+
         void on_mono_poly_event();
         sigc::connection slot_poly;
         void on_portamento_md_event();

@@ -1356,6 +1356,34 @@
                                     </layout>
                                   </object>
                                 </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="midi_channel_send">
+                                    <property name="adjustment">adj_midi_channel_send</property>
+                                    <property name="focusable">1</property>
+                                    <property name="numeric">1</property>
+                                    <property name="text" translatable="yes">0</property>
+                                    <property name="width-chars">2</property>
+                                    <property name="wrap">1</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="row">1</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="midi_channel_receive">
+                                    <property name="adjustment">adj_midi_channel_receive</property>
+                                    <property name="focusable">1</property>
+                                    <property name="numeric">1</property>
+                                    <property name="text" translatable="yes">0</property>
+                                    <property name="width-chars">2</property>
+                                    <property name="wrap">1</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="row">2</property>
+                                    </layout>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -6143,6 +6171,20 @@
     <property name="page-increment">1</property>
     <property name="step-increment">1</property>
     <property name="upper">5</property>
+    <property name="value">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_midi_channel_send">
+    <property name="lower">1</property>
+    <property name="page-increment">1</property>
+    <property name="step-increment">1</property>
+    <property name="upper">16</property>
+    <property name="value">1</property>
+  </object>
+  <object class="GtkAdjustment" id="adj_midi_channel_receive">
+    <property name="lower">1</property>
+    <property name="page-increment">1</property>
+    <property name="step-increment">1</property>
+    <property name="upper">16</property>
     <property name="value">1</property>
   </object>
   <object class="GtkAdjustment" id="adj_pitch_lvl1">

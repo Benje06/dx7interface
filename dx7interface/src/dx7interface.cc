@@ -50,8 +50,8 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
     /* set channel & sub_status */
-    Synth::channel_send=0xF1;
-    Synth::channel_receive=0xF0;
+    Synth::channel_send=0x00;
+    Synth::channel_receive=0x00;
     Synth::sub_status=0x10;
     seq_handle=get_seq_handler();
     ev=get_seq_event_handler();
@@ -391,7 +391,13 @@ void Dx7interface::listen_midi(){
                 << std::endl;
                 if ( ev->data.control.param == 0 && ( (uint)ev->data.control.value < bank_nb_sound ) ){
                     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 12)
-                        get_gwidget<Gtk::ColumnView>("columnview_bank")->scroll_to((uint)ev->data.control.value,{},Gtk::ListScrollFlags::SELECT,NULL);
+                        // get_gwidget<Gtk::ColumnView>("columnview_bank")->scroll_to((uint)ev->data.control.value,nullptr,Gtk::ListScrollFlags::SELECT);
+                       // bank_selection_model->set_selected((uint)ev->data.control.value);
+                         uint value = (uint)ev->data.control.value;
+                        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this,value](const Glib::RefPtr<Gdk::FrameClock>&) {
+                            (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((uint)value,nullptr,Gtk::ListScrollFlags::SELECT);
+                            return false; // Return false to remove the callback after one executio
+                        });
                     #else
                         auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
                         adjustment->set_value((double)ev->data.control.value);
@@ -951,7 +957,7 @@ void Dx7interface::write_bank_as_sysex(Glib::RefPtr<Gio::File> file,uint index){
         u_char msg[msg_size];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=0x00 & channel_send;
+        msg[2]=0x00 + channel_send;
         msg[3]=format_nb;
         msg[4]=msb;
         msg[5]=lsb;
@@ -1195,7 +1201,7 @@ void Dx7interface::write_voice_as_sysex(Glib::RefPtr<Gio::File> file){
         u_char msg[msg_size];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=0x00 & channel_send;
+        msg[2]=0x00 + channel_send;
         msg[3]=0x00;
         msg[4]=0x01;
         msg[5]=0x1B;
@@ -1251,7 +1257,7 @@ void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,u_char* msg
                  */
                 msg[(*index)++]=0xF0;
                 msg[(*index)++]=id_fabricant;
-                msg[(*index)++]=sub_status & channel_send;
+                msg[(*index)++]=sub_status + channel_send;
                 msg[(*index)++]=0x08;
                 msg[(*index)++]=j;
                 msg[(*index)++]=val[i];
@@ -1610,7 +1616,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     /* general */
     block_ui();
     block_midi();
-    (get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
+    //(get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
     /* ALGO */
     (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(sound->algo.algo.val+1);
     (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(sound->algo.feedback.val);
@@ -1811,7 +1817,7 @@ void Dx7interface::send_voice(st_dx7sysex_1* sound){
     u_char msg[163];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=0x00 & channel_send;
+    msg[2]=0x00 + channel_send;
     msg[3]=0x00;
     msg[4]=0x01;
     msg[5]=0x1B;
@@ -1934,7 +1940,7 @@ void Dx7interface::send_extra_parameters(st_dx7sysex_1* sound){
             */
             msg[0]=0xF0;
             msg[1]=id_fabricant;
-            msg[2]=sub_status & channel_send;
+            msg[2]=sub_status + channel_send;
             msg[3]=0x08;
             msg[4]=j;
             msg[5]=val[i];
@@ -2235,6 +2241,12 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_midi_learn_event));
     (get_gwidget<Gtk::Button>("button_add_param"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_add_midi_learn_event));
+
+    slot_midi_channel_send = (get_gwidget<Gtk::SpinButton>("midi_channel_send"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_midi_channel_send_event));
+    slot_midi_channel_receive = (get_gwidget<Gtk::SpinButton>("midi_channel_receive"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_midi_channel_receive_event));
+
 
     /* FUNCTIONS */
     slot_poly = (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->signal_toggled().connect(
@@ -4130,12 +4142,24 @@ void Dx7interface::redraw_all_curve(){
 };
 
 /* Extra Functions */
+
+void Dx7interface::on_midi_channel_send_event(){
+    LOG_IN();
+    channel_send = (get_gwidget<Gtk::SpinButton>("midi_channel_send"))->get_value()-1;
+    LOG_OUT();
+};
+void Dx7interface::on_midi_channel_receive_event(){
+    LOG_IN();
+    channel_receive = (get_gwidget<Gtk::SpinButton>("midi_channel_receive"))->get_value()-1;
+    LOG_OUT();
+};
+
 void Dx7interface::on_mono_poly_event(){
 	LOG_IN();
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x40;                        // 40
                                         // bit0 0=poly/bit0 1=mono
@@ -4158,7 +4182,7 @@ void Dx7interface::on_ptch_bnd_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x41;                        // 41
                                         // 0111 1000
@@ -4176,7 +4200,7 @@ void Dx7interface::on_ptch_bnd_stp_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x42;                        // 42
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->get_value();
@@ -4193,7 +4217,7 @@ void Dx7interface::on_portamento_md_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x43;                        // 43
                                         // 0-3 bit0=retain; bit1=follow
@@ -4216,7 +4240,7 @@ void Dx7interface::on_portamento_glss_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x44;                        // 44
                                         // 0-3 bit 0= 1=gliss ???
@@ -4234,7 +4258,7 @@ void Dx7interface::on_portamento_tm_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x45;                        // 45
     msg[5]=(get_gwidget<Gtk::SpinButton>("portamento_tm"))->get_value();
@@ -4251,7 +4275,7 @@ void Dx7interface::on_md_whl_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x46;                        // 46
     msg[5]=(get_gwidget<Gtk::SpinButton>("md_whl_rng"))->get_value();
@@ -4268,7 +4292,7 @@ void Dx7interface::on_md_whl_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x47;                        // 47
     msg[5]= (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->get_active()
@@ -4287,7 +4311,7 @@ void Dx7interface::on_foot_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x48;                        // 48
     msg[5]=(get_gwidget<Gtk::SpinButton>("foot_rng"))->get_value();
@@ -4304,7 +4328,7 @@ void Dx7interface::on_foot_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x49;                        // 49
     msg[5]= (get_gwidget<Gtk::CheckButton>("foot_ptch"))->get_active()
@@ -4323,7 +4347,7 @@ void Dx7interface::on_brth_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4A;                        // 4A
     msg[5]=(get_gwidget<Gtk::SpinButton>("brth_rng"))->get_value();
@@ -4340,7 +4364,7 @@ void Dx7interface::on_brth_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4B;                        // 4B
     msg[5]= (get_gwidget<Gtk::CheckButton>("brth_ptch"))->get_active()
@@ -4359,7 +4383,7 @@ void Dx7interface::on_aftrtch_rng_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4C;                        // 4C
     msg[5]=(get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->get_value();
@@ -4376,7 +4400,7 @@ void Dx7interface::on_aftrtch_assgn_event(){
     u_char msg[7];                      // paremter change
     msg[0]=0xF0;                        // F0
     msg[1]=id_fabricant;                // 43
-    msg[2]=sub_status & channel_send;   // 10
+    msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x4D;                        // 4D
     msg[5]= (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->get_active()
@@ -4436,7 +4460,7 @@ void Dx7interface::on_algo_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x06;
     msg[5]=(get_gwidget<Gtk::SpinButton>("algo_number"))->get_value()-1;
@@ -4453,7 +4477,7 @@ void Dx7interface::on_feedback_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x07;
     msg[5]=(get_gwidget<Gtk::SpinButton>("feedback"))->get_value();
@@ -4471,7 +4495,7 @@ void Dx7interface::on_transpose_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x01;
         msg[4]=0x10;
         msg[5]=val;
@@ -4487,7 +4511,7 @@ void Dx7interface::on_oks_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x08;
     if ( (get_gwidget<Gtk::CheckButton>("oks"))->get_active() ) {
@@ -4508,7 +4532,7 @@ void Dx7interface::on_lfo_wav_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x0E;
     msg[5]=(get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected();
@@ -4525,7 +4549,7 @@ void Dx7interface::on_lfo_sync_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x0D;
     if ( (get_gwidget<Gtk::CheckButton>("lfo_sync"))->get_active() ) {
@@ -4544,7 +4568,7 @@ void Dx7interface::on_lfo_speed_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x09;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_speed"))->get_value();
@@ -4559,7 +4583,7 @@ void Dx7interface::on_lfo_delay_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x0A;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_delay"))->get_value();
@@ -4574,7 +4598,7 @@ void Dx7interface::on_lfo_pmd_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x0B;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_pmd"))->get_value();
@@ -4590,7 +4614,7 @@ void Dx7interface::on_lfo_amd_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x0C;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_amd"))->get_value();
@@ -4607,7 +4631,7 @@ void Dx7interface::on_pms_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x0F;
     msg[5]=(get_gwidget<Gtk::Scale>("pms"))->get_value();
@@ -4624,7 +4648,7 @@ void Dx7interface::on_pitch_rt1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x7E;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->get_value();
@@ -4641,7 +4665,7 @@ void Dx7interface::on_pitch_rt2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x7F;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->get_value();
@@ -4658,7 +4682,7 @@ void Dx7interface::on_pitch_rt3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x00;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->get_value();
@@ -4675,7 +4699,7 @@ void Dx7interface::on_pitch_rt4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x01;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->get_value();
@@ -4692,7 +4716,7 @@ void Dx7interface::on_pitch_lvl1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x02;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->get_value();
@@ -4709,7 +4733,7 @@ void Dx7interface::on_pitch_lvl2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x03;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->get_value();
@@ -4726,7 +4750,7 @@ void Dx7interface::on_pitch_lvl3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x04;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->get_value();
@@ -4743,7 +4767,7 @@ void Dx7interface::on_pitch_lvl4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x05;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->get_value();
@@ -4777,7 +4801,7 @@ void Dx7interface::on_mute_op_event() {
     };
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x01;
     msg[4]=0x1B;
     msg[5]=mute_val;
@@ -4826,7 +4850,7 @@ void Dx7interface::on_ams_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x77;
     msg[5]=(get_gwidget<Gtk::Scale>("ams_op1"))->get_value();
@@ -4843,7 +4867,7 @@ void Dx7interface::on_freq_mode_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x7A;
     msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op1"))->get_selected();
@@ -4860,7 +4884,7 @@ void Dx7interface::on_freq_coarse_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x7B;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->get_value();
@@ -4877,7 +4901,7 @@ void Dx7interface::on_freq_fine_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x7C;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->get_value();
@@ -4894,7 +4918,7 @@ void Dx7interface::on_dtun_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x7D;
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op1"))->get_value()+7;
@@ -4911,7 +4935,7 @@ void Dx7interface::on_eg_rt1_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x69;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->get_value();
@@ -4928,7 +4952,7 @@ void Dx7interface::on_eg_rt2_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x6A;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->get_value();
@@ -4945,7 +4969,7 @@ void Dx7interface::on_eg_rt3_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x6B;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->get_value();
@@ -4962,7 +4986,7 @@ void Dx7interface::on_eg_rt4_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x6C;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->get_value();
@@ -4979,7 +5003,7 @@ void Dx7interface::on_eg_lvl1_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x6D;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->get_value();
@@ -4996,7 +5020,7 @@ void Dx7interface::on_eg_lvl2_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x6E;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->get_value();
@@ -5013,7 +5037,7 @@ void Dx7interface::on_eg_lvl3_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x6F;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->get_value();
@@ -5030,7 +5054,7 @@ void Dx7interface::on_eg_lvl4_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x70;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->get_value();
@@ -5048,7 +5072,7 @@ void Dx7interface::on_krs_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x76;
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op1"))->get_value();
@@ -5064,7 +5088,7 @@ void Dx7interface::on_kvs_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x78;
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op1"))->get_value();
@@ -5080,7 +5104,7 @@ void Dx7interface::on_lvl_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x79;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op1"))->get_value();
@@ -5112,7 +5136,7 @@ void Dx7interface::on_mute_hexter_op1_event(){
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x79;
         msg[5]=0x00;
@@ -5130,7 +5154,7 @@ void Dx7interface::on_kls_lft_curve_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x74;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->get_selected();
@@ -5147,7 +5171,7 @@ void Dx7interface::on_kls_rght_curve_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x75;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->get_selected();
@@ -5164,7 +5188,7 @@ void Dx7interface::on_kls_lft_dpth_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x72;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->get_value();
@@ -5181,7 +5205,7 @@ void Dx7interface::on_kls_rght_dpth_op1_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x73;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->get_value();
@@ -5205,7 +5229,7 @@ void Dx7interface::on_kls_brk_pt_op1_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x71;
         msg[5]=val;
@@ -5223,7 +5247,7 @@ void Dx7interface::on_ams_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x62;
     msg[5]=(get_gwidget<Gtk::Scale>("ams_op2"))->get_value();
@@ -5240,7 +5264,7 @@ void Dx7interface::on_freq_mode_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x65;
     msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op2"))->get_selected();
@@ -5257,7 +5281,7 @@ void Dx7interface::on_freq_coarse_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x66;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->get_value();
@@ -5274,7 +5298,7 @@ void Dx7interface::on_freq_fine_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x67;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->get_value();
@@ -5291,7 +5315,7 @@ void Dx7interface::on_dtun_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x68;
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op2"))->get_value()+7;
@@ -5308,7 +5332,7 @@ void Dx7interface::on_eg_rt1_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x54;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->get_value();
@@ -5325,7 +5349,7 @@ void Dx7interface::on_eg_rt2_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x55;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->get_value();
@@ -5342,7 +5366,7 @@ void Dx7interface::on_eg_rt3_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x56;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->get_value();
@@ -5359,7 +5383,7 @@ void Dx7interface::on_eg_rt4_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x57;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->get_value();
@@ -5376,7 +5400,7 @@ void Dx7interface::on_eg_lvl1_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x58;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->get_value();
@@ -5393,7 +5417,7 @@ void Dx7interface::on_eg_lvl2_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x59;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->get_value();
@@ -5410,7 +5434,7 @@ void Dx7interface::on_eg_lvl3_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x5A;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->get_value();
@@ -5427,7 +5451,7 @@ void Dx7interface::on_eg_lvl4_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x5B;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->get_value();
@@ -5445,7 +5469,7 @@ void Dx7interface::on_krs_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x61;
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op2"))->get_value();
@@ -5461,7 +5485,7 @@ void Dx7interface::on_kvs_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x63;
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op2"))->get_value();
@@ -5477,7 +5501,7 @@ void Dx7interface::on_lvl_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x64;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op2"))->get_value();
@@ -5508,7 +5532,7 @@ void Dx7interface::on_mute_hexter_op2_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x64;
         msg[5]=0x00;
@@ -5526,7 +5550,7 @@ void Dx7interface::on_kls_lft_curve_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x5F;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->get_selected();
@@ -5543,7 +5567,7 @@ void Dx7interface::on_kls_rght_curve_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x60;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->get_selected();
@@ -5560,7 +5584,7 @@ void Dx7interface::on_kls_lft_dpth_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x5D;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->get_value();
@@ -5577,7 +5601,7 @@ void Dx7interface::on_kls_rght_dpth_op2_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x5E;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->get_value();
@@ -5601,7 +5625,7 @@ void Dx7interface::on_kls_brk_pt_op2_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x5C;
         msg[5]=val;
@@ -5620,7 +5644,7 @@ void Dx7interface::on_ams_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x4D;
     msg[5]=(get_gwidget<Gtk::Scale>("ams_op3"))->get_value();
@@ -5637,7 +5661,7 @@ void Dx7interface::on_freq_mode_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x50;
     msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op3"))->get_selected();
@@ -5654,7 +5678,7 @@ void Dx7interface::on_freq_coarse_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x51;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->get_value();
@@ -5671,7 +5695,7 @@ void Dx7interface::on_freq_fine_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x52;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->get_value();
@@ -5688,7 +5712,7 @@ void Dx7interface::on_dtun_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x53;
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op3"))->get_value()+7;
@@ -5705,7 +5729,7 @@ void Dx7interface::on_eg_rt1_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x3F;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->get_value();
@@ -5722,7 +5746,7 @@ void Dx7interface::on_eg_rt2_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x40;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->get_value();
@@ -5739,7 +5763,7 @@ void Dx7interface::on_eg_rt3_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x41;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->get_value();
@@ -5756,7 +5780,7 @@ void Dx7interface::on_eg_rt4_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x42;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->get_value();
@@ -5773,7 +5797,7 @@ void Dx7interface::on_eg_lvl1_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x43;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->get_value();
@@ -5790,7 +5814,7 @@ void Dx7interface::on_eg_lvl2_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x44;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->get_value();
@@ -5807,7 +5831,7 @@ void Dx7interface::on_eg_lvl3_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x45;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->get_value();
@@ -5824,7 +5848,7 @@ void Dx7interface::on_eg_lvl4_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x46;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->get_value();
@@ -5842,7 +5866,7 @@ void Dx7interface::on_krs_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x4C;
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op3"))->get_value();
@@ -5858,7 +5882,7 @@ void Dx7interface::on_kvs_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x4E;
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op3"))->get_value();
@@ -5874,7 +5898,7 @@ void Dx7interface::on_lvl_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x4F;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op3"))->get_value();
@@ -5904,7 +5928,7 @@ void Dx7interface::on_mute_hexter_op3_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x4F;
         msg[5]=0x00;
@@ -5922,7 +5946,7 @@ void Dx7interface::on_kls_lft_curve_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x4A;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->get_selected();
@@ -5939,7 +5963,7 @@ void Dx7interface::on_kls_rght_curve_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x4B;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->get_selected();
@@ -5956,7 +5980,7 @@ void Dx7interface::on_kls_lft_dpth_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x48;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->get_value();
@@ -5973,7 +5997,7 @@ void Dx7interface::on_kls_rght_dpth_op3_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x49;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->get_value();
@@ -5997,7 +6021,7 @@ void Dx7interface::on_kls_brk_pt_op3_event() {	LOG_IN();
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x47;
         msg[5]=val;
@@ -6016,7 +6040,7 @@ void Dx7interface::on_ams_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x38;
     msg[5]=(get_gwidget<Gtk::Scale>("ams_op4"))->get_value();
@@ -6033,7 +6057,7 @@ void Dx7interface::on_freq_mode_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x3B;
     msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op4"))->get_selected();
@@ -6050,7 +6074,7 @@ void Dx7interface::on_freq_coarse_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x3C;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->get_value();
@@ -6067,7 +6091,7 @@ void Dx7interface::on_freq_fine_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x3D;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->get_value();
@@ -6084,7 +6108,7 @@ void Dx7interface::on_dtun_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x3E;
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op4"))->get_value()+7;
@@ -6101,7 +6125,7 @@ void Dx7interface::on_eg_rt1_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x2A;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->get_value();
@@ -6118,7 +6142,7 @@ void Dx7interface::on_eg_rt2_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x2B;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->get_value();
@@ -6135,7 +6159,7 @@ void Dx7interface::on_eg_rt3_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x2C;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->get_value();
@@ -6152,7 +6176,7 @@ void Dx7interface::on_eg_rt4_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x2D;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->get_value();
@@ -6169,7 +6193,7 @@ void Dx7interface::on_eg_lvl1_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x2E;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->get_value();
@@ -6186,7 +6210,7 @@ void Dx7interface::on_eg_lvl2_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x2F;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->get_value();
@@ -6203,7 +6227,7 @@ void Dx7interface::on_eg_lvl3_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x30;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->get_value();
@@ -6220,7 +6244,7 @@ void Dx7interface::on_eg_lvl4_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x31;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->get_value();
@@ -6239,7 +6263,7 @@ void Dx7interface::on_krs_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x37;
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op4"))->get_value();
@@ -6255,7 +6279,7 @@ void Dx7interface::on_kvs_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x39;
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op4"))->get_value();
@@ -6271,7 +6295,7 @@ void Dx7interface::on_lvl_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x3A;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op4"))->get_value();
@@ -6301,7 +6325,7 @@ void Dx7interface::on_mute_hexter_op4_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x3A;
         msg[5]=0x00;
@@ -6319,7 +6343,7 @@ void Dx7interface::on_kls_lft_curve_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x35;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->get_selected();
@@ -6336,7 +6360,7 @@ void Dx7interface::on_kls_rght_curve_op4_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x36;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->get_selected();
@@ -6353,7 +6377,7 @@ void Dx7interface::on_kls_lft_dpth_op4_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x33;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->get_value();
@@ -6369,7 +6393,7 @@ void Dx7interface::on_kls_rght_dpth_op4_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x34;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->get_value();
@@ -6392,7 +6416,7 @@ void Dx7interface::on_kls_brk_pt_op4_event(){
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x32;
         msg[5]=val;
@@ -6410,7 +6434,7 @@ void Dx7interface::on_ams_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x23;
     msg[5]=(get_gwidget<Gtk::Scale>("ams_op5"))->get_value();
@@ -6427,7 +6451,7 @@ void Dx7interface::on_freq_mode_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x26;
     msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op5"))->get_selected();
@@ -6444,7 +6468,7 @@ void Dx7interface::on_freq_coarse_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x27;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->get_value();
@@ -6461,7 +6485,7 @@ void Dx7interface::on_freq_fine_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x28;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->get_value();
@@ -6478,7 +6502,7 @@ void Dx7interface::on_dtun_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x29;
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op5"))->get_value()+7;
@@ -6495,7 +6519,7 @@ void Dx7interface::on_eg_rt1_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x15;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->get_value();
@@ -6512,7 +6536,7 @@ void Dx7interface::on_eg_rt2_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x16;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->get_value();
@@ -6529,7 +6553,7 @@ void Dx7interface::on_eg_rt3_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x17;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->get_value();
@@ -6546,7 +6570,7 @@ void Dx7interface::on_eg_rt4_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x18;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->get_value();
@@ -6563,7 +6587,7 @@ void Dx7interface::on_eg_lvl1_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x19;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->get_value();
@@ -6580,7 +6604,7 @@ void Dx7interface::on_eg_lvl2_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x1A;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->get_value();
@@ -6597,7 +6621,7 @@ void Dx7interface::on_eg_lvl3_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x1B;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->get_value();
@@ -6614,7 +6638,7 @@ void Dx7interface::on_eg_lvl4_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x1C;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->get_value();
@@ -6632,7 +6656,7 @@ void Dx7interface::on_krs_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x22;
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op5"))->get_value();
@@ -6648,7 +6672,7 @@ void Dx7interface::on_kvs_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x24;
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op5"))->get_value();
@@ -6664,7 +6688,7 @@ void Dx7interface::on_lvl_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x25;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op5"))->get_value();
@@ -6695,7 +6719,7 @@ void Dx7interface::on_mute_hexter_op5_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x25;
         msg[5]=0x00;
@@ -6713,7 +6737,7 @@ void Dx7interface::on_kls_lft_curve_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x20;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->get_selected();
@@ -6730,7 +6754,7 @@ void Dx7interface::on_kls_rght_curve_op5_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x21;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->get_selected();
@@ -6747,7 +6771,7 @@ void Dx7interface::on_kls_lft_dpth_op5_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x1E;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->get_value();
@@ -6763,7 +6787,7 @@ void Dx7interface::on_kls_rght_dpth_op5_event(){
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x1F;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->get_value();
@@ -6786,7 +6810,7 @@ void Dx7interface::on_kls_brk_pt_op5_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x1D;
         msg[5]=val;
@@ -6804,7 +6828,7 @@ void Dx7interface::on_ams_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x0E;
     msg[5]=(get_gwidget<Gtk::Scale>("ams_op6"))->get_value();
@@ -6821,7 +6845,7 @@ void Dx7interface::on_freq_mode_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x11;
     msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op6"))->get_selected();
@@ -6838,7 +6862,7 @@ void Dx7interface::on_freq_coarse_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x12;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->get_value();
@@ -6855,7 +6879,7 @@ void Dx7interface::on_freq_fine_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x13;
     msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->get_value();
@@ -6872,7 +6896,7 @@ void Dx7interface::on_dtun_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x14;
     msg[5]=(get_gwidget<Gtk::Scale>("dtun_op6"))->get_value()+7;
@@ -6889,7 +6913,7 @@ void Dx7interface::on_eg_rt1_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x00;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->get_value();
@@ -6906,7 +6930,7 @@ void Dx7interface::on_eg_rt2_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x01;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->get_value();
@@ -6923,7 +6947,7 @@ void Dx7interface::on_eg_rt3_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x02;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->get_value();
@@ -6940,7 +6964,7 @@ void Dx7interface::on_eg_rt4_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x03;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->get_value();
@@ -6957,7 +6981,7 @@ void Dx7interface::on_eg_lvl1_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x04;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->get_value();
@@ -6974,7 +6998,7 @@ void Dx7interface::on_eg_lvl2_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x05;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->get_value();
@@ -6991,7 +7015,7 @@ void Dx7interface::on_eg_lvl3_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x06;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->get_value();
@@ -7008,7 +7032,7 @@ void Dx7interface::on_eg_lvl4_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x07;
     msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->get_value();
@@ -7026,7 +7050,7 @@ void Dx7interface::on_krs_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x0D;
     msg[5]=(get_gwidget<Gtk::Scale>("krs_op6"))->get_value();
@@ -7042,7 +7066,7 @@ void Dx7interface::on_kvs_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x0F;
     msg[5]=(get_gwidget<Gtk::Scale>("kvs_op6"))->get_value();
@@ -7058,7 +7082,7 @@ void Dx7interface::on_lvl_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x10;
     msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op6"))->get_value();
@@ -7088,7 +7112,7 @@ void Dx7interface::on_mute_hexter_op6_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x10;
         msg[5]=0x00;
@@ -7106,7 +7130,7 @@ void Dx7interface::on_kls_lft_curve_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x0B;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->get_selected();
@@ -7123,7 +7147,7 @@ void Dx7interface::on_kls_rght_curve_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x0C;
     msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->get_selected();
@@ -7140,7 +7164,7 @@ void Dx7interface::on_kls_lft_dpth_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x09;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->get_value();
@@ -7157,7 +7181,7 @@ void Dx7interface::on_kls_rght_dpth_op6_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
-    msg[2]=sub_status & channel_send;
+    msg[2]=sub_status + channel_send;
     msg[3]=0x00;
     msg[4]=0x0A;
     msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->get_value();
@@ -7181,7 +7205,7 @@ void Dx7interface::on_kls_brk_pt_op6_event() {
         u_char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
-        msg[2]=sub_status & channel_send;
+        msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x08;
         msg[5]=val;
