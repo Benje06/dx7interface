@@ -142,7 +142,6 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::set_aftrtch_assgn_event,
             &Dx7interface::set_aftrtch_rng_event,
             &Dx7interface::set_algo_event,
-            &Dx7interface::set_amd_event,
             &Dx7interface::set_ams_op1_event,
             &Dx7interface::set_ams_op2_event,
             &Dx7interface::set_ams_op3_event,
@@ -152,7 +151,6 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::set_brth_assgn_event,
             &Dx7interface::set_brth_rng_event,
             &Dx7interface::set_compare_event,
-            &Dx7interface::set_delay_event,
             &Dx7interface::set_dtun_op1_event,
             &Dx7interface::set_dtun_op2_event,
             &Dx7interface::set_dtun_op3_event,
@@ -270,6 +268,10 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::set_kvs_op4_event,
             &Dx7interface::set_kvs_op5_event,
             &Dx7interface::set_kvs_op6_event,
+            &Dx7interface::set_lfo_amd_event,
+            &Dx7interface::set_lfo_delay_event,
+            &Dx7interface::set_lfo_pmd_event,
+            &Dx7interface::set_lfo_speed_event,
             &Dx7interface::set_lfo_sync_event,
             &Dx7interface::set_lfo_wav_event,
             &Dx7interface::set_lvl_op1_event,
@@ -297,7 +299,6 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::set_pitch_rt2_event,
             &Dx7interface::set_pitch_rt3_event,
             &Dx7interface::set_pitch_rt4_event,
-            &Dx7interface::set_pmd_event,
             &Dx7interface::set_pms_event,
             &Dx7interface::set_portamento_glss_event,
             &Dx7interface::set_portamento_md_event,
@@ -305,7 +306,6 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::set_ptch_bnd_rng_event,
             &Dx7interface::set_ptch_bnd_stp_event,
             &Dx7interface::set_send_extra_parameters_event,
-            &Dx7interface::set_speed_event,
             &Dx7interface::set_transpose_event
         };
 
@@ -541,14 +541,14 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_lfo_wav;
         void on_lfo_sync_event();
         sigc::connection slot_lfo_sync;
-        void on_speed_event();
-        sigc::connection slot_speed;
-        void on_delay_event();
-        sigc::connection slot_delay;
-        void on_pmd_event();
-        sigc::connection slot_pmd;
-        void on_amd_event();
-        sigc::connection slot_amd;
+        void on_lfo_speed_event();
+        sigc::connection slot_lfo_speed;
+        void on_lfo_delay_event();
+        sigc::connection slot_lfo_delay;
+        void on_lfo_pmd_event();
+        sigc::connection slot_lfo_pmd;
+        void on_lfo_amd_event();
+        sigc::connection slot_lfo_amd;
         void on_pms_event();
         sigc::connection slot_pms;
 
@@ -882,7 +882,6 @@ class Dx7interface : public Gx_module, public Synth {
         void set_aftrtch_assgn_event(int);
         void set_aftrtch_rng_event(int);
         void set_algo_event(int);
-        void set_amd_event(int);
         void set_ams_op1_event(int);
         void set_ams_op2_event(int);
         void set_ams_op3_event(int);
@@ -892,7 +891,6 @@ class Dx7interface : public Gx_module, public Synth {
         void set_brth_assgn_event(int);
         void set_brth_rng_event(int);
         void set_compare_event(int);
-        void set_delay_event(int);
         void set_dtun_op1_event(int);
         void set_dtun_op2_event(int);
         void set_dtun_op3_event(int);
@@ -1010,6 +1008,10 @@ class Dx7interface : public Gx_module, public Synth {
         void set_kvs_op4_event(int);
         void set_kvs_op5_event(int);
         void set_kvs_op6_event(int);
+        void set_lfo_amd_event(int);
+        void set_lfo_delay_event(int);
+        void set_lfo_pmd_event(int);
+        void set_lfo_speed_event(int);
         void set_lfo_sync_event(int);
         void set_lfo_wav_event(int);
         void set_lvl_op1_event(int);
@@ -1038,7 +1040,6 @@ class Dx7interface : public Gx_module, public Synth {
         void set_pitch_rt2_event(int);
         void set_pitch_rt3_event(int);
         void set_pitch_rt4_event(int);
-        void set_pmd_event(int);
         void set_pms_event(int);
         void set_portamento_glss_event(int);
         void set_portamento_md_event(int);
@@ -1046,6 +1047,5 @@ class Dx7interface : public Gx_module, public Synth {
         void set_ptch_bnd_rng_event(int);
         void set_ptch_bnd_stp_event(int);
         void set_send_extra_parameters_event(int);
-        void set_speed_event(int);
         void set_transpose_event(int);
 };

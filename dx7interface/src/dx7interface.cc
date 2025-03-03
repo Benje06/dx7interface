@@ -132,7 +132,6 @@ void Dx7interface::create_param_list(){
     "aftrtch_assgn_event",
     "aftrtch_rng_event",
     "algo_event",
-    "amd_event",
     "ams_op1_event",
     "ams_op2_event",
     "ams_op3_event",
@@ -142,7 +141,6 @@ void Dx7interface::create_param_list(){
     "brth_assgn_event",
     "brth_rng_event",
     "compare_event",
-    "delay_event",
     "dtun_op1_event",
     "dtun_op2_event",
     "dtun_op3_event",
@@ -260,6 +258,10 @@ void Dx7interface::create_param_list(){
     "kvs_op4_event",
     "kvs_op5_event",
     "kvs_op6_event",
+    "lfo_amd_event",
+    "lfo_delay_event",
+    "lfo_pmd_event",
+    "lfo_speed_event",
     "lfo_sync_event",
     "lfo_wav_event",
     "lvl_op1_event",
@@ -287,7 +289,6 @@ void Dx7interface::create_param_list(){
     "pitch_rt2_event",
     "pitch_rt3_event",
     "pitch_rt4_event",
-    "pmd_event",
     "pms_event",
     "portamento_glss_event",
     "portamento_md_event",
@@ -295,7 +296,6 @@ void Dx7interface::create_param_list(){
     "ptch_bnd_rng_event",
     "ptch_bnd_stp_event",
     "send_extra_parameters_event",
-    "speed_event",
     "transpose_event"
     };
     midi_learned.resize(169);
@@ -1619,10 +1619,10 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
 
     /*set image */
     (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(sound->lfo.sync.val);
-    (get_gwidget<Gtk::SpinButton>("speed"))->set_value(sound->lfo.speed.val);
-    (get_gwidget<Gtk::SpinButton>("delay"))->set_value(sound->lfo.delay.val);
-    (get_gwidget<Gtk::SpinButton>("pmd"))->set_value(sound->lfo.pmd.val);
-    (get_gwidget<Gtk::SpinButton>("amd"))->set_value(sound->lfo.amd.val);
+    (get_gwidget<Gtk::SpinButton>("lfo_speed"))->set_value(sound->lfo.speed.val);
+    (get_gwidget<Gtk::SpinButton>("lfo_delay"))->set_value(sound->lfo.delay.val);
+    (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->set_value(sound->lfo.pmd.val);
+    (get_gwidget<Gtk::SpinButton>("lfo_amd"))->set_value(sound->lfo.amd.val);
     /* LFO modulation */
     (get_gwidget<Gtk::Scale>("pms"))->set_value(sound->lfo.pms.val);
     /* PITCH EG */
@@ -1981,9 +1981,12 @@ void Dx7interface::on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>& list_
 
 void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
     if( (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->get_active() ){
-        midi_learn=true;
+        (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->add_css_class("blink");
+         midi_learn=true;
+
     }else{
-        midi_learn=false;
+        (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->remove_css_class("blink");
+         midi_learn=false;
     };
 };
 
@@ -2355,33 +2358,33 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });
 
-    slot_speed = (get_gwidget<Gtk::SpinButton>("speed"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_speed_event));
-    (get_gwidget<Gtk::SpinButton>("speed"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+    slot_lfo_speed = (get_gwidget<Gtk::SpinButton>("lfo_speed"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_lfo_speed_event));
+    (get_gwidget<Gtk::SpinButton>("lfo_speed"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value = bank_1_modif.sound->lfo.speed.val;
-        (get_gwidget<Gtk::SpinButton>("speed"))->set_value(value);
+        (get_gwidget<Gtk::SpinButton>("lfo_speed"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
-    slot_delay = (get_gwidget<Gtk::SpinButton>("delay"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_delay_event));
-    (get_gwidget<Gtk::SpinButton>("delay"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+    slot_lfo_delay = (get_gwidget<Gtk::SpinButton>("lfo_delay"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_lfo_delay_event));
+    (get_gwidget<Gtk::SpinButton>("lfo_delay"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value = bank_1_modif.sound->lfo.delay.val;
-        (get_gwidget<Gtk::SpinButton>("delay"))->set_value(value);
+        (get_gwidget<Gtk::SpinButton>("lfo_delay"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
-    slot_pmd = (get_gwidget<Gtk::SpinButton>("pmd"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_pmd_event));
-    (get_gwidget<Gtk::SpinButton>("pmd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+    slot_lfo_pmd = (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_lfo_pmd_event));
+    (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value = bank_1_modif.sound->lfo.pmd.val;
-        (get_gwidget<Gtk::SpinButton>("pmd"))->set_value(value);
+        (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
 
-    slot_amd = (get_gwidget<Gtk::SpinButton>("amd"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_amd_event));
-    (get_gwidget<Gtk::SpinButton>("amd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+    slot_lfo_amd = (get_gwidget<Gtk::SpinButton>("lfo_amd"))->signal_value_changed().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_lfo_amd_event));
+    (get_gwidget<Gtk::SpinButton>("lfo_amd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value = bank_1_modif.sound->lfo.amd.val;
-        (get_gwidget<Gtk::SpinButton>("amd"))->set_value(value);
+        (get_gwidget<Gtk::SpinButton>("lfo_amd"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
 
@@ -4533,14 +4536,14 @@ void Dx7interface::on_lfo_sync_event() {
     };
 };
 
-void Dx7interface::on_speed_event() {
+void Dx7interface::on_lfo_speed_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
     msg[2]=sub_status & channel_send;
     msg[3]=0x01;
     msg[4]=0x09;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("speed"))->get_value();
+    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_speed"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
@@ -4548,14 +4551,14 @@ void Dx7interface::on_speed_event() {
     };
 };
 
-void Dx7interface::on_delay_event() {
+void Dx7interface::on_lfo_delay_event() {
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
     msg[2]=sub_status & channel_send;
     msg[3]=0x01;
     msg[4]=0x0A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("delay"))->get_value();
+    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_delay"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
@@ -4563,14 +4566,14 @@ void Dx7interface::on_delay_event() {
     };
 };
 
-void Dx7interface::on_pmd_event() {	LOG_IN();
+void Dx7interface::on_lfo_pmd_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
     msg[2]=sub_status & channel_send;
     msg[3]=0x01;
     msg[4]=0x0B;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("pmd"))->get_value();
+    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_pmd"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
@@ -4579,14 +4582,14 @@ void Dx7interface::on_pmd_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_amd_event() {	LOG_IN();
+void Dx7interface::on_lfo_amd_event() {	LOG_IN();
     u_char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
     msg[2]=sub_status & channel_send;
     msg[3]=0x01;
     msg[4]=0x0C;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("amd"))->get_value();
+    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_amd"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
@@ -7220,15 +7223,6 @@ void Dx7interface::set_algo_event(int value){
     //(get_gwidget<Gtk::SpinButton>("algo_number"))->set_value((int)value+1);
     LOG_OUT();
 };
-void Dx7interface::set_amd_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.amd.max);
-    if(value <0){
-        value=0;
-    }else if(value > bank_1_modif.sound->lfo.amd.max){
-        value=bank_1_modif.sound->lfo.amd.max;
-    };
-    (get_gwidget<Gtk::SpinButton>("amd"))->set_value(value);
-};
 void Dx7interface::set_ams_op1_event(int value){
     value = value/(127/bank_1_modif.sound->op[0].ams.max);
     if(value <=0){
@@ -7308,15 +7302,7 @@ void Dx7interface::set_brth_rng_event(int value){
 void Dx7interface::set_compare_event(int value){
     //value = value/(127/bank_1_modif.sound->;
 };
-void Dx7interface::set_delay_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.delay.max);
-    if(value <0){
-        value=0;
-    }else if(value > bank_1_modif.sound->lfo.delay.max){
-        value=bank_1_modif.sound->lfo.delay.max;
-    };
-    (get_gwidget<Gtk::SpinButton>("delay"))->set_value(value);
-};
+
 void Dx7interface::set_dtun_op1_event(int value){
     value = value/(127/bank_1_modif.sound->op[0].dtun.max);
     if( value < 0 ){
@@ -8418,6 +8404,42 @@ void Dx7interface::set_kvs_op6_event(int value){
     };
     (get_gwidget<Gtk::Scale>("kvs_op6"))->set_value(value);
 };
+void Dx7interface::set_lfo_amd_event(int value){
+    value = value/(127/bank_1_modif.sound->lfo.amd.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.amd.max){
+        value=bank_1_modif.sound->lfo.amd.max;
+    };
+    bank_1_modif.sound->lfo.amd.val = (int)value;
+};
+void Dx7interface::set_lfo_delay_event(int value){
+    value = value/(127/bank_1_modif.sound->lfo.delay.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.delay.max){
+        value=bank_1_modif.sound->lfo.delay.max;
+    };
+    bank_1_modif.sound->lfo.delay.val=(int)value;
+};
+void Dx7interface::set_lfo_pmd_event(int value){
+    value = value/(127/bank_1_modif.sound->lfo.pmd.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.pmd.max){
+        value=bank_1_modif.sound->lfo.pmd.max;
+    };
+    bank_1_modif.sound->lfo.pmd.val=(int)value;
+};
+void Dx7interface::set_lfo_speed_event(int value){
+    value = value/(127/bank_1_modif.sound->lfo.speed.max);
+    if(value <0){
+        value=0;
+    }else if(value > bank_1_modif.sound->lfo.speed.max){
+        value=bank_1_modif.sound->lfo.speed.max;
+    };
+    bank_1_modif.sound->lfo.speed.val=(int)value;
+};
 void Dx7interface::set_lfo_sync_event(int value){
     value = value/(127/bank_1_modif.sound->lfo.sync.max);
     if(value <0){
@@ -8425,7 +8447,7 @@ void Dx7interface::set_lfo_sync_event(int value){
     }else if(value > bank_1_modif.sound->lfo.sync.max){
         value=bank_1_modif.sound->lfo.sync.max;
     };
-    (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(value);
+     bank_1_modif.sound->lfo.sync.val=value;
 };
 void Dx7interface::set_lfo_wav_event(int value){
     value = value/(127/bank_1_modif.sound->lfo.wave.max);
@@ -8434,7 +8456,7 @@ void Dx7interface::set_lfo_wav_event(int value){
     }else if(value > bank_1_modif.sound->lfo.wave.max){
         value=bank_1_modif.sound->lfo.wave.max;
     };
-    (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(value);
+     bank_1_modif.sound->lfo.wave.val=(int)value;
 };
 void Dx7interface::set_lvl_op1_event(int value){
     value = value/(127/bank_1_modif.sound->op[0].lvl.max);
@@ -8452,7 +8474,7 @@ void Dx7interface::set_lvl_op2_event(int value){
     }else if(value > bank_1_modif.sound->op[1].lvl.max){
         value=bank_1_modif.sound->op[1].lvl.max;
     };
-    (get_gwidget<Gtk::SpinButton>("lvl_op2"))->set_value(value);
+    bank_1_modif.sound->op[1].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op3_event(int value){
     value = value/(127/bank_1_modif.sound->op[2].lvl.max);
@@ -8461,7 +8483,7 @@ void Dx7interface::set_lvl_op3_event(int value){
     }else if(value > bank_1_modif.sound->op[2].lvl.max){
         value=bank_1_modif.sound->op[2].lvl.max;
     };
-    (get_gwidget<Gtk::SpinButton>("lvl_op3"))->set_value(value);
+    bank_1_modif.sound->op[2].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op4_event(int value){
     value = value/(127/bank_1_modif.sound->op[3].lvl.max);
@@ -8470,7 +8492,7 @@ void Dx7interface::set_lvl_op4_event(int value){
     }else if(value > bank_1_modif.sound->op[3].lvl.max){
         value=bank_1_modif.sound->op[3].lvl.max;
     };
-    (get_gwidget<Gtk::SpinButton>("lvl_op4"))->set_value(value);
+    bank_1_modif.sound->op[3].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op5_event(int value){
     value = value/(127/bank_1_modif.sound->op[4].lvl.max);
@@ -8479,7 +8501,7 @@ void Dx7interface::set_lvl_op5_event(int value){
     }else if(value > bank_1_modif.sound->op[4].lvl.max){
         value=bank_1_modif.sound->op[4].lvl.max;
     };
-    (get_gwidget<Gtk::SpinButton>("lvl_op5"))->set_value(value);
+    bank_1_modif.sound->op[4].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op6_event(int value){
     value = value/(127/bank_1_modif.sound->op[5].lvl.max);
@@ -8488,7 +8510,7 @@ void Dx7interface::set_lvl_op6_event(int value){
     }else if(value > bank_1_modif.sound->op[5].lvl.max){
         value=bank_1_modif.sound->op[5].lvl.max;
     };
-    (get_gwidget<Gtk::SpinButton>("lvl_op6"))->set_value(value);
+    bank_1_modif.sound->op[5].lvl.val=(int)value;
 };
 void Dx7interface::set_md_whl_assgn_event(int value){
     value = value/(127/bank_1_modif.sound->extra.functions.md_whl_assgn.max);
@@ -8606,7 +8628,7 @@ void Dx7interface::set_pitch_lvl1_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[0].max){
         value=bank_1_modif.sound->pitch.eg_lvl[0].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_pitch_lvl2_event(int value){
     value = value/(127/bank_1_modif.sound->pitch.eg_lvl[1].max);
@@ -8615,7 +8637,7 @@ void Dx7interface::set_pitch_lvl2_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[1].max){
         value=bank_1_modif.sound->pitch.eg_lvl[1].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_pitch_lvl3_event(int value){
     value = value/(127/bank_1_modif.sound->pitch.eg_lvl[2].max);
@@ -8624,7 +8646,7 @@ void Dx7interface::set_pitch_lvl3_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[2].max){
         value=bank_1_modif.sound->pitch.eg_lvl[2].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_pitch_lvl4_event(int value){
     value = value/(127/bank_1_modif.sound->pitch.eg_lvl[3].max);
@@ -8633,7 +8655,7 @@ void Dx7interface::set_pitch_lvl4_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[3].max){
         value=bank_1_modif.sound->pitch.eg_lvl[3].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_pitch_rt1_event(int value){
     value = value/(127/bank_1_modif.sound->pitch.eg_rt[0].max);
@@ -8642,7 +8664,7 @@ void Dx7interface::set_pitch_rt1_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_rt[0].max){
         value=bank_1_modif.sound->pitch.eg_rt[0].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_rt1_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_pitch_rt2_event(int value){
     value = value/(127/bank_1_modif.sound->pitch.eg_rt[1].max);
@@ -8651,7 +8673,7 @@ void Dx7interface::set_pitch_rt2_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_rt[1].max){
         value=bank_1_modif.sound->pitch.eg_rt[1].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_rt2_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_pitch_rt3_event(int value){
     value = value/(127/bank_1_modif.sound->pitch.eg_rt[2].max);
@@ -8660,7 +8682,7 @@ void Dx7interface::set_pitch_rt3_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_rt[2].max){
         value=bank_1_modif.sound->pitch.eg_rt[2].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_rt3_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_pitch_rt4_event(int value){
     value = value/(127/bank_1_modif.sound->pitch.eg_rt[3].max);
@@ -8669,17 +8691,9 @@ void Dx7interface::set_pitch_rt4_event(int value){
     }else if(value > bank_1_modif.sound->pitch.eg_rt[3].max){
         value=bank_1_modif.sound->pitch.eg_rt[3].max;
     };
-    get_gwidget<Gtk::SpinButton>("eg_rt4_pitch")->set_value(value);
+    bank_1_modif.sound->pitch.eg_rt[3].val=(int)value;
 };
-void Dx7interface::set_pmd_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.pmd.max);
-    if(value <0){
-        value=0;
-    }else if(value > bank_1_modif.sound->lfo.pmd.max){
-        value=bank_1_modif.sound->lfo.pmd.max;
-    };
-    (get_gwidget<Gtk::SpinButton>("pmd"))->set_value(value);
-};
+
 void Dx7interface::set_pms_event(int value){
     value = value/(127/bank_1_modif.sound->lfo.pms.max);
     if(value <0){
@@ -8687,7 +8701,7 @@ void Dx7interface::set_pms_event(int value){
     }else if(value > bank_1_modif.sound->lfo.pms.max){
         value=bank_1_modif.sound->lfo.pms.max;
     };
-    (get_gwidget<Gtk::Scale>("pms"))->set_value(value);
+    bank_1_modif.sound->lfo.pms.val=(int)value;
 };
 void Dx7interface::set_portamento_glss_event(int value){
     value = value/(127/bank_1_modif.sound->extra.functions.portamento_glss.max);
@@ -8735,17 +8749,8 @@ void Dx7interface::set_ptch_bnd_stp_event(int value){
     (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->set_value(value);
 };
 void Dx7interface::set_send_extra_parameters_event(int value){
+};
 
-};
-void Dx7interface::set_speed_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.speed.max);
-    if(value <0){
-        value=0;
-    }else if(value > bank_1_modif.sound->lfo.speed.max){
-        value=bank_1_modif.sound->lfo.speed.max;
-    };
-    (get_gwidget<Gtk::SpinButton>("speed"))->set_value(value);
-};
 void Dx7interface::set_transpose_event(int value){
     value = value/(127/bank_1_modif.sound->algo.transpose.max);
     if(value <0){
@@ -8769,10 +8774,10 @@ void Dx7interface::block_ui(){
     /* general lfo */
     slot_lfo_wav.block(true);
     slot_lfo_sync.block(true);
-    slot_speed.block(true);
-    slot_delay.block(true);
-    slot_pmd.block(true);
-    slot_amd.block(true);
+    slot_lfo_speed.block(true);
+    slot_lfo_delay.block(true);
+    slot_lfo_pmd.block(true);
+    slot_lfo_amd.block(true);
     /* lfo modulation */
     slot_pms.block(true);
     /* pitch eg*/
@@ -8972,10 +8977,10 @@ void Dx7interface::unblock_ui(){
     /* general lfo */
     slot_lfo_wav.unblock();
     slot_lfo_sync.unblock();
-    slot_speed.unblock();
-    slot_delay.unblock();
-    slot_pmd.unblock();
-    slot_amd.unblock();
+    slot_lfo_speed.unblock();
+    slot_lfo_delay.unblock();
+    slot_lfo_pmd.unblock();
+    slot_lfo_amd.unblock();
     /* lfo modulation */
     slot_pms.unblock();
     /* pitch eg*/
@@ -9180,10 +9185,10 @@ void Dx7interface::dettach_signals(){
     /* lfo */
     slot_lfo_wav.disconnect();
     slot_lfo_sync.disconnect();
-    slot_speed.disconnect();
-    slot_delay.disconnect();
-    slot_pmd.disconnect();
-    slot_amd.disconnect();
+    slot_lfo_speed.disconnect();
+    slot_lfo_delay.disconnect();
+    slot_lfo_pmd.disconnect();
+    slot_lfo_amd.disconnect();
     /* lfo modulation */
     slot_pms.disconnect();
 

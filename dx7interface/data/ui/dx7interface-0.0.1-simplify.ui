@@ -528,7 +528,7 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="label_speed">
+                                      <object class="GtkLabel" id="label_lfo_speed">
                                         <property name="hexpand">1</property>
                                         <property name="label" translatable="yes">SPEED</property>
                                         <layout>
@@ -538,8 +538,8 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="speed">
-                                        <property name="adjustment">adj_speed</property>
+                                      <object class="GtkSpinButton" id="lfo_speed">
+                                        <property name="adjustment">adj_lfo_speed</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
@@ -553,7 +553,7 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="label_delay">
+                                      <object class="GtkLabel" id="label_lfo_delay">
                                         <property name="hexpand">1</property>
                                         <property name="label" translatable="yes">DELAY</property>
                                         <layout>
@@ -563,8 +563,8 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="delay">
-                                        <property name="adjustment">adj_delay</property>
+                                      <object class="GtkSpinButton" id="lfo_delay">
+                                        <property name="adjustment">adj_lfo_delay</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
@@ -578,7 +578,7 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="label_amd">
+                                      <object class="GtkLabel" id="label_lfo_amd">
                                         <property name="hexpand">1</property>
                                         <property name="label" translatable="yes">AMD</property>
                                         <layout>
@@ -588,8 +588,8 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="amd">
-                                        <property name="adjustment">adj_amd</property>
+                                      <object class="GtkSpinButton" id="lfo_amd">
+                                        <property name="adjustment">adj_lfo_amd</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
@@ -603,7 +603,7 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="label_pmd">
+                                      <object class="GtkLabel" id="label_lfo_pmd">
                                         <property name="hexpand">1</property>
                                         <property name="label" translatable="yes">PMD</property>
                                         <layout>
@@ -613,8 +613,8 @@
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="pmd">
-                                        <property name="adjustment">adj_pmd</property>
+                                      <object class="GtkSpinButton" id="lfo_pmd">
+                                        <property name="adjustment">adj_lfo_pmd</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
                                         <property name="text" translatable="yes">0</property>
@@ -5566,7 +5566,7 @@
     <property name="upper">32</property>
     <property name="value">1</property>
   </object>
-  <object class="GtkAdjustment" id="adj_amd">
+  <object class="GtkAdjustment" id="adj_lfo_amd">
     <property name="page-increment">1</property>
     <property name="step-increment">1</property>
     <property name="upper">99</property>
@@ -5601,7 +5601,7 @@
     <property name="step-increment">1</property>
     <property name="upper">3</property>
   </object>
-  <object class="GtkAdjustment" id="adj_delay">
+  <object class="GtkAdjustment" id="adj_lfo_delay">
     <property name="page-increment">1</property>
     <property name="step-increment">1</property>
     <property name="upper">99</property>
@@ -6185,7 +6185,7 @@
     <property name="step-increment">1</property>
     <property name="upper">99</property>
   </object>
-  <object class="GtkAdjustment" id="adj_pmd">
+  <object class="GtkAdjustment" id="adj_lfo_pmd">
     <property name="page-increment">1</property>
     <property name="step-increment">1</property>
     <property name="upper">99</property>
@@ -6195,7 +6195,7 @@
     <property name="step-increment">1</property>
     <property name="upper">7</property>
   </object>
-  <object class="GtkAdjustment" id="adj_speed">
+  <object class="GtkAdjustment" id="adj_lfo_speed">
     <property name="page-increment">1</property>
     <property name="step-increment">1</property>
     <property name="upper">99</property>
