@@ -3661,7 +3661,6 @@ int* Dx7interface::get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>& cr, 
 };
 /* ADSR */
 void Dx7interface::draw_background(const Cairo::RefPtr<Cairo::Context>& cr){
-    // TODO set value in a var to be changed by interface
     //LOG_IN();
     cr->save();
     cr->set_source_rgba(bg_color[0], bg_color[1], bg_color[2], bg_color[3]);
@@ -3697,7 +3696,6 @@ void Dx7interface::draw_grid(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 };
 
 void Dx7interface::draw_point(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,double width,bool orange){
-    // TODO set value in a var to be changed by interface
     //LOG_IN();
     double r,g,b;
     r=line_color[0];
@@ -3744,7 +3742,6 @@ void Dx7interface::draw_note_off(const Cairo::RefPtr<Cairo::Context>& cr,double 
 };
 
 void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring name){
-    // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
     //set origin to bottom left
     cr->translate(0, height);
@@ -3758,8 +3755,6 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     width-=2.0*r_point;
     double x_ratio=( (width ) /400.0);
     double y_ratio=( (height) /99.0);
-    // TODO: global output lvl scale the distance
-    // put key on key off mark
 
     /* Draw curve */
     bool r_flag = false;      //draw_point flag for First and last point switch color
@@ -3803,7 +3798,6 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 };
 /* KLS */
 void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
-    // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
     /* key touch */
     if (std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/touche_b.png"))
@@ -3939,7 +3933,6 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
 };
 
 void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height){
-    // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
     double x=(width/2.0), y=(height/2.0);
     //set origin to bottom left
@@ -4009,7 +4002,6 @@ void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::
 };
 
 void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
-    // TODO : get sound from bank_1_modif.sound
     //LOG_IN();
     Glib::ustring rght_curve =(
         std::dynamic_pointer_cast<Gtk::StringObject>(
@@ -4400,8 +4392,8 @@ void Dx7interface::on_aftrtch_assgn_event(){
     msg[3]=0x08;                        // 08
     msg[4]=0x4D;                        // 4D
     msg[5]= (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->get_active()
-    +((get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->get_active()*2)
-    +((get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->get_active()*4);
+          +((get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->get_active()*2)
+          +((get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     if(!compare){
@@ -4828,7 +4820,6 @@ void Dx7interface::on_txt_freq_op_event()   {
                 case 3: freq_val *=  1000;
                     break;
             };
-
         }else{
             (get_gwidget<Gtk::Label>("label_view_freq_op"+tostr<uint>(i)))->set_label("Rate");
             if (fc==0) {
