@@ -75,7 +75,7 @@ void Gx_interface::on_activate(){
         };
         if(itype == Glib::ustring("module")) {
             // Create your window here
-            module_manager=new Gemod(iname,0);
+            module_manager=new Gemod(iname,0,argv,argc);
             if(module_manager){
                 if(module_manager->get_window()){
                     add_window(*module_manager->get_window());
@@ -94,8 +94,8 @@ void Gx_interface::on_activate(){
 
 int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line){
     LOG_IN();
-    int argc;
-    char** argv = command_line->get_arguments(argc);
+    //argc;
+    argv = command_line->get_arguments(argc);
     int i;
     /* TODO: use C++ getopts */
     /* analyse argument of command line */

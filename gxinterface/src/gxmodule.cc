@@ -56,13 +56,24 @@ Gx_module::Gx_module(Glib::ustring filename,Glib::ustring caller){
     };
 };
 
+void Gx_module::analyse_param(char** argv, int argc){
+    for ( int i = 1; i <= argc; i++) {
+        if ( (argv[i] != NULL) && ( Glib::ustring(argv[i]) == "-c" || (Glib::ustring(argv[i]) == "-c") )
+            && (argv[i+1] != NULL) && ( Glib::ustring(argv[i+1]) != "" )
+        ){  // -i and interface filename as argument
+            mod.color = Glib::ustring(argv[i+1]);
+        };
+    };
+};
+
 /* gx module as .la */
-Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller) {
+Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller,char** argv,int argc) {
     std::cerr << caller; 
 	LOG_IN();
     mod.desc=caller;
     mod.name=filename;
     try{
+        analyse_param(argv,argc);
         load(filename,index);
         std::cerr << caller << " ";
         LOG_OUT();
@@ -199,15 +210,26 @@ void Gx_module::apply_style_to_screen(){
     try{
         if(cssfile != ""){
             auto css = Gtk::CssProvider::create();
+            auto custom_provider = Gtk::CssProvider::create();
             css->load_from_path(cssfile);
+            if(mod.color != ""){
+                custom_provider->load_from_data("title { background-color: " + mod.color + "; }");
+            };
             #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
                 auto display = Gdk::Display::get_default();
                 if (display) {
                     Gtk::StyleProvider::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                    if(mod.color != ""){
+                        Gtk::StyleProvider::add_provider_for_display(display, custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                    };
                 };
+
             #else
                 auto ctx = main_window->get_style_context();
                 ctx->add_provider(css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                if(mod.color != ""){
+                    ctx->add_provider(custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                };
             #endif
         };
     } catch (const std::exception& ex) {

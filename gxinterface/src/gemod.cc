@@ -55,7 +55,7 @@ Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
 /*
 * Gemod as module call if type=module
 */
-Gemod::Gemod(Glib::ustring module_name, uint8_t index) : Gx_module(module_name,index,"Gemod"){
+Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : Gx_module(module_name,index,"Gemod",argv,argc){
 	LOG_IN();
 	try{
 		nb_mod=0;
@@ -79,7 +79,7 @@ Gemod::Gemod(Glib::ustring module_name, uint8_t index) : Gx_module(module_name,i
 /* 
 * Gemod as module with specified numbers of module
 */
-Gemod::Gemod(Glib::ustring module_name, uint8_t index, uint8_t max_mod) : Gx_module(module_name, index,"Gemod"){ 
+Gemod::Gemod(Glib::ustring module_name, uint8_t index, uint8_t max_mod, char** argv, int argc) : Gx_module(module_name, index,"Gemod",argv, argc){
 	LOG_IN();
 	nb_mod=0;
 	max_modules=max_mod;
@@ -292,7 +292,7 @@ bool Gemod::del_module(Glib::ustring module_name){
 		if ( nb_mod > 0 && get_module_count(module_name) != 0 ){
 			//(get_gwidget<Gtk::Notebook>("notebook_main"))->pages().remove( *(get_module_root(get_module_index(module_name)))  );
 			//modules[get_module_index(module_name)].unset_mod();
-			//del_menu(module_name);					
+			//del_menu(module_name);
 			nb_mod--;
 			LOG_OUT(); return true;
 		}else{

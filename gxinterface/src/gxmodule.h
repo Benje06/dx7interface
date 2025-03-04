@@ -43,6 +43,7 @@ class Gx_module {
 			Glib::ustring type;
 			Glib::ustring cat;
 			Glib::ustring desc;
+            Glib::ustring color="";
 			uint8_t index;
 		} mod;
 
@@ -76,7 +77,7 @@ class Gx_module {
         void apply_style_to(widgetType*);
 		template <class widgetType>
 		void clear_style_of(widgetType*);
-
+        void analyse_param(char**, int);
 
 	protected: 
 		/* prototype fonction of module call */
@@ -115,7 +116,7 @@ class Gx_module {
 		/* gx_module as .ui */
 		Gx_module(Glib::ustring,Glib::ustring);
 		/* gx_module as .la */
-		Gx_module(Glib::ustring, uint8_t, Glib::ustring);
+		Gx_module(Glib::ustring, uint8_t, Glib::ustring,char**,int);
 		/* for array of gx module */
 		Gx_module();
 		virtual ~Gx_module();

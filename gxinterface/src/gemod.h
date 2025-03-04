@@ -88,13 +88,13 @@ class Gemod : public Gx_module {
 		* ustring : the module_name, name of the .la
 		* guint : index of the module in the module manager
 		*/
-		Gemod(Glib::ustring,uint8_t);
+		Gemod(Glib::ustring,uint8_t,char**,int);
 		/* for gemod as module with specified number of modules 
 		* ustring : the module_name, name of the .la
 		* guint : index of the module in the module manager
 		* guint : number of module in the module
 		*/
-		Gemod(Glib::ustring,uint8_t,uint8_t);
+		Gemod(Glib::ustring,uint8_t,uint8_t,char**,int);
 		/*Gemod();	*/
 		virtual ~Gemod();
 };
