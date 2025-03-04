@@ -1993,7 +1993,6 @@ void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
     if( (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->get_active() ){
         (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->add_css_class("blink");
          midi_learn=true;
-
     }else{
         (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->remove_css_class("blink");
          midi_learn=false;
@@ -2003,7 +2002,6 @@ void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
 void Dx7interface::add_midi_learn_param_widget(Glib::ustring param_name, Glib::ustring param_number, int selected_item){
     /* affected param name widget */
     auto text_fct = Gtk::make_managed<Gtk::Text>();
-    text_fct->set_name(param_name);
     text_fct->set_name(param_name);
     text_fct->set_text(param_name);
     text_fct->set_editable(false);
@@ -2108,9 +2106,9 @@ void Dx7interface::on_as_raw_event(){
 void Dx7interface::on_extra_param_event(){
     if(get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active()){
         get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(true);
-         get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(true);
+        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(true);
     }else{
-         get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(false);
+        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(false);
         get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(false);
     };
 };
@@ -2196,7 +2194,6 @@ void Dx7interface::attach_drawarea_signals(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_button_op6);
     (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->add_controller(controller_mouse_moove_op6);
 
-
     /* Drawing area for keyboard scaling */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->set_draw_func(
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("1") ) );
@@ -2246,7 +2243,6 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_midi_channel_send_event));
     slot_midi_channel_receive = (get_gwidget<Gtk::SpinButton>("midi_channel_receive"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_midi_channel_receive_event));
-
 
     /* FUNCTIONS */
     slot_poly = (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->signal_toggled().connect(
