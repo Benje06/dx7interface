@@ -10,8 +10,8 @@ ACLOCAL_AMFLAGS = \
         ${ACLOCAL_FLAGS}
 
 lib_LTLIBRARIES = \
-        dx7interface-0.0.1.la\
-        tx81zinterface-0.0.1.la
+        dx7interface-0.0.1.la
+##        tx81zinterface-0.0.1.la
 
 ### LIB DX7 ####
 dx7interface_0_0_1_la_SOURCES = \
@@ -42,28 +42,28 @@ dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
 ##        dx7sysex.h
 
 #### LIB tx81z ####
-tx81zinterface_0_0_1_la_SOURCES = \
-        tx81z.h tx81z.cc\
-        synth.h synth.cc\
-	GtkClass.h GtkClass.cc\
-        tx81zsysex.h
+## tx81zinterface_0_0_1_la_SOURCES = \
+##        tx81z.h tx81z.cc\
+##        synth.h synth.cc\
+##	GtkClass.h GtkClass.cc\
+##        tx81zsysex.h
 
 ## Lib DX7 interface for sysex editing as module
-tx81zinterface_0_0_1_la_LDFLAGS = \
-        -version-info $(SO_VERSION) \
-        -module -Wl,--export-dynamic -rdynamics -no-undefined
+##  tx81zinterface_0_0_1_la_LDFLAGS = \
+####        -version-info $(SO_VERSION) \
+##       -module -Wl,--export-dynamic -rdynamics -no-undefined
 
-tx81zinterface_0_0_1_la_CPPFLAGS =\
-        $(DEPS_CFLAGS) $(GTKMM_CFLAGS)\
-        -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
-        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
-        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
-        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+####tx81zinterface_0_0_1_la_CPPFLAGS =\
+####        $(DEPS_CFLAGS) $(GTKMM_CFLAGS)\
+##        -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
+##        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
+####        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
+####        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+##        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 
-tx81zinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
+#### tx81zinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
 
-tx81zinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
+## tx81zinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 ##library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
 ##library_include_HEADERS = \
 ##        tx81z.h\

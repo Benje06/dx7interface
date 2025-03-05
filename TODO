@@ -15,6 +15,7 @@ multiplateforme (midi/interface) drumkit, Juce ???
 
 # Interface
 insert/replace/delete/(moove)
+garder fonction parameter quelque soit le son (à cocher)
 fenetre secondaires (option, module)
 refonte interface( size/expand des elements)
 son par defaut (son init)
