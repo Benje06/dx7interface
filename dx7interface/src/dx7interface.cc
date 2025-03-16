@@ -3066,7 +3066,7 @@ void Dx7interface::attach_signals(){
     slot_dtun_op4 = (get_gwidget<Gtk::Scale>("dtun_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op4_event));
     (get_gwidget<Gtk::Scale>("dtun_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].dtun.val;
+        int value = bank_1_modif.sound->op[3].dtun.val-7;
         (get_gwidget<Gtk::Scale>("dtun_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
