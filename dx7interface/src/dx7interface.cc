@@ -2344,7 +2344,12 @@ void Dx7interface::attach_signals(){
     slot_note_transpose = (get_gwidget<Gtk::DropDown>("note_transpose"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_transpose_event));
     (get_gwidget<Gtk::DropDown>("note_transpose"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->algo.transpose.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->algo.transpose.val;
+        }else{
+            value = bank_1_modif.sound->algo.transpose.val;
+        };
         (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (value / 12)+1 );
         (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(value % 12);
         return true; // Return false to remove the callback after one executio
@@ -2353,7 +2358,12 @@ void Dx7interface::attach_signals(){
     slot_octv_transpose = (get_gwidget<Gtk::SpinButton>("octv_transpose"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_transpose_event));
     (get_gwidget<Gtk::SpinButton>("octv_transpose"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->algo.transpose.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->algo.transpose.val;
+        }else{
+            value = bank_1_modif.sound->algo.transpose.val;
+        };
         (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (value / 12)+1 );
         (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(value % 12);
         return true; // Return false to remove the callback after one executio
@@ -2362,7 +2372,12 @@ void Dx7interface::attach_signals(){
     slot_oks = (get_gwidget<Gtk::CheckButton>("oks"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_oks_event));
     (get_gwidget<Gtk::CheckButton>("oks"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->algo.oks.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->algo.oks.val;
+        }else{
+            value = bank_1_modif.sound->algo.oks.val;
+        };
         (get_gwidget<Gtk::CheckButton>("oks"))->set_active(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2374,7 +2389,12 @@ void Dx7interface::attach_signals(){
     slot_lfo_wav = (get_gwidget<Gtk::DropDown>("lfo_wav"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_wav_event));
     (get_gwidget<Gtk::DropDown>("lfo_wav"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->lfo.wave.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->lfo.wave.val;
+        }else{
+            value = bank_1_modif.sound->lfo.wave.val;
+        };
         (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2383,7 +2403,12 @@ void Dx7interface::attach_signals(){
     slot_lfo_sync = (get_gwidget<Gtk::CheckButton>("lfo_sync"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_sync_event));
     (get_gwidget<Gtk::CheckButton>("lfo_sync"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->lfo.sync.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->lfo.sync.val;
+        }else{
+            value = bank_1_modif.sound->lfo.sync.val;
+        };
         (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2391,21 +2416,36 @@ void Dx7interface::attach_signals(){
     slot_lfo_speed = (get_gwidget<Gtk::SpinButton>("lfo_speed"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_speed_event));
     (get_gwidget<Gtk::SpinButton>("lfo_speed"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->lfo.speed.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->lfo.speed.val;
+        }else{
+            value = bank_1_modif.sound->lfo.speed.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lfo_speed"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lfo_delay = (get_gwidget<Gtk::SpinButton>("lfo_delay"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_delay_event));
     (get_gwidget<Gtk::SpinButton>("lfo_delay"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->lfo.delay.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->lfo.delay.val;
+        }else{
+            value = bank_1_modif.sound->lfo.delay.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lfo_delay"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lfo_pmd = (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_pmd_event));
     (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->lfo.pmd.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->lfo.pmd.val;
+        }else{
+            value = bank_1_modif.sound->lfo.pmd.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2413,7 +2453,12 @@ void Dx7interface::attach_signals(){
     slot_lfo_amd = (get_gwidget<Gtk::SpinButton>("lfo_amd"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lfo_amd_event));
     (get_gwidget<Gtk::SpinButton>("lfo_amd"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->lfo.amd.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->lfo.amd.val;
+        }else{
+            value = bank_1_modif.sound->lfo.amd.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lfo_amd"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2422,7 +2467,12 @@ void Dx7interface::attach_signals(){
     slot_pms = (get_gwidget<Gtk::Scale>("pms"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pms_event));
     (get_gwidget<Gtk::Scale>("pms"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->lfo.pms.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->lfo.pms.val;
+        }else{
+            value = bank_1_modif.sound->lfo.pms.val;
+        };
         (get_gwidget<Gtk::Scale>("pms"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2431,56 +2481,96 @@ void Dx7interface::attach_signals(){
     slot_pitch_rt1 = (get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt1_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_rt[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_rt[0].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_rt[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_pitch_rt2 = (get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt2_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_rt[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_rt[1].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_rt[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_pitch_rt3 = (get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt3_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_rt[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_rt[2].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_rt[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_pitch_rt4 = (get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_rt4_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_rt[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_rt[3].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_rt[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_pitch_lvl1 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl1_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_lvl[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_lvl[0].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_lvl[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_pitch_lvl2 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl2_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_lvl[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_lvl[1].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_lvl[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_pitch_lvl3 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl3_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_lvl[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_lvl[2].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_lvl[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_pitch_lvl4 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_pitch_lvl4_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->pitch.eg_lvl[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->pitch.eg_lvl[3].val;
+        }else{
+            value = bank_1_modif.sound->pitch.eg_lvl[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2491,7 +2581,12 @@ void Dx7interface::attach_signals(){
     slot_ams_op1 = (get_gwidget<Gtk::Scale>("ams_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op1_event)); //frame lfo
     (get_gwidget<Gtk::Scale>("ams_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].ams.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].ams.val;
+        }else{
+            value = bank_1_modif.sound->op[0].ams.val;
+        };
         (get_gwidget<Gtk::Scale>("ams_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2499,7 +2594,12 @@ void Dx7interface::attach_signals(){
     slot_freq_mode_op1 = (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op1_event));
     (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].freq_mode.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].freq_mode.val;
+        }else{
+            value = bank_1_modif.sound->op[0].freq_mode.val;
+        };
         (get_gwidget<Gtk::DropDown>("freq_mode_op1"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2508,21 +2608,36 @@ void Dx7interface::attach_signals(){
     slot_freq_coarse_op1 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op1_event));
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].freq_coarse.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].freq_coarse.val;
+        }else{
+            value = bank_1_modif.sound->op[0].freq_coarse.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_freq_fine_op1 = (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op1_event));
     (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].freq_fine.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].freq_fine.val;
+        }else{
+            value = bank_1_modif.sound->op[0].freq_fine.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_dtun_op1 = (get_gwidget<Gtk::Scale>("dtun_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op1_event));
     (get_gwidget<Gtk::Scale>("dtun_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].dtun.val-7;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].dtun.val-7;
+        }else{
+            value = bank_1_modif.sound->op[0].dtun.val-7;
+        };
         (get_gwidget<Gtk::Scale>("dtun_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2530,56 +2645,96 @@ void Dx7interface::attach_signals(){
     slot_eg_rt1_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_rt[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_rt[0].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_rt[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt2_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_rt[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_rt[1].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_rt[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt3_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_rt[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_rt[2].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_rt[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt4_op1 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_rt[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_rt[3].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_rt[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl1_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_lvl[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_lvl[0].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_lvl[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl2_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_lvl[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_lvl[1].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_lvl[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl3_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_lvl[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_lvl[2].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_lvl[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl4_op1 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op1_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].eg_lvl[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].eg_lvl[3].val;
+        }else{
+            value = bank_1_modif.sound->op[0].eg_lvl[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2587,28 +2742,48 @@ void Dx7interface::attach_signals(){
     slot_krs_op1 = (get_gwidget<Gtk::Scale>("krs_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op1_event));
     (get_gwidget<Gtk::Scale>("krs_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].krs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].krs.val;
+        }else{
+            value = bank_1_modif.sound->op[0].krs.val;
+        };
         (get_gwidget<Gtk::Scale>("krs_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kvs_op1 = (get_gwidget<Gtk::Scale>("kvs_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op1_event));
     (get_gwidget<Gtk::Scale>("kvs_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].kvs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].kvs.val;
+        }else{
+            value = bank_1_modif.sound->op[0].kvs.val;
+        };
         (get_gwidget<Gtk::Scale>("kvs_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op1 = (get_gwidget<Gtk::SpinButton>("lvl_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op1_event));
     (get_gwidget<Gtk::SpinButton>("lvl_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].lvl.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].lvl.val;
+        }else{
+            value = bank_1_modif.sound->op[0].lvl.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lvl_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_mute_op1 = (get_gwidget<Gtk::ToggleButton>("mute_op1"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->extra.mute.val >>5;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->extra.mute.val >>5;
+        }else{
+            value = bank_1_modif.sound->extra.mute.val >>5;
+        };
         (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(!(value & 0x01));
         return true; // Return false to remove the callback after one executio
     });
@@ -2617,7 +2792,12 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op1_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].kls.lft_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].kls.lft_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[0].kls.lft_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2626,7 +2806,12 @@ void Dx7interface::attach_signals(){
     slot_kls_rght_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op1_event));
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].kls.rght_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].kls.rght_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[0].kls.rght_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2635,21 +2820,36 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_depth_op1 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op1_event));
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].kls.lft_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].kls.lft_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[0].kls.lft_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_rght_depth_op1 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op1_event));
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].kls.rght_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].kls.rght_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[0].kls.rght_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_note_brk_pt_op1 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op1_event));
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[0].kls.brk_pt.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[0].kls.brk_pt.val;
+        }else{
+            value = bank_1_modif.sound->op[0].kls.brk_pt.val;
+        };
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->set_selected(value % 12);
         int val = (value -3);
         if(val < 0){
@@ -2675,11 +2875,16 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });*/
 
-    /* OP2 */
+    /* OPERATEUR 2 */
     slot_ams_op2 = (get_gwidget<Gtk::Scale>("ams_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op2_event)); //frame lfo
     (get_gwidget<Gtk::Scale>("ams_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].ams.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].ams.val;
+        }else{
+            value = bank_1_modif.sound->op[1].ams.val;
+        };
         (get_gwidget<Gtk::Scale>("ams_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2687,7 +2892,12 @@ void Dx7interface::attach_signals(){
     slot_freq_mode_op2 = (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op2_event));
     (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].freq_mode.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].freq_mode.val;
+        }else{
+            value = bank_1_modif.sound->op[1].freq_mode.val;
+        };
         (get_gwidget<Gtk::DropDown>("freq_mode_op2"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2696,21 +2906,36 @@ void Dx7interface::attach_signals(){
     slot_freq_coarse_op2 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op2_event));
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].freq_coarse.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].freq_coarse.val;
+        }else{
+            value = bank_1_modif.sound->op[1].freq_coarse.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_freq_fine_op2 = (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op2_event));
     (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].freq_fine.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].freq_fine.val;
+        }else{
+            value = bank_1_modif.sound->op[1].freq_fine.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_dtun_op2 = (get_gwidget<Gtk::Scale>("dtun_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op2_event));
     (get_gwidget<Gtk::Scale>("dtun_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].dtun.val-7;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].dtun.val-7;
+        }else{
+            value = bank_1_modif.sound->op[1].dtun.val-7;
+        };
         (get_gwidget<Gtk::Scale>("dtun_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2718,56 +2943,96 @@ void Dx7interface::attach_signals(){
     slot_eg_rt1_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_rt[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_rt[0].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_rt[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt2_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_rt[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_rt[1].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_rt[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt3_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_rt[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_rt[2].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_rt[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt4_op2 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_rt[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_rt[3].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_rt[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl1_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_lvl[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_lvl[0].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_lvl[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl2_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_lvl[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_lvl[1].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_lvl[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl3_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_lvl[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_lvl[2].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_lvl[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl4_op2 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op2_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].eg_lvl[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].eg_lvl[3].val;
+        }else{
+            value = bank_1_modif.sound->op[1].eg_lvl[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2775,28 +3040,48 @@ void Dx7interface::attach_signals(){
     slot_krs_op2 = (get_gwidget<Gtk::Scale>("krs_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op2_event));
     (get_gwidget<Gtk::Scale>("krs_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].krs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].krs.val;
+        }else{
+            value = bank_1_modif.sound->op[1].krs.val;
+        };
         (get_gwidget<Gtk::Scale>("krs_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kvs_op2 = (get_gwidget<Gtk::Scale>("kvs_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op2_event));
     (get_gwidget<Gtk::Scale>("kvs_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].kvs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].kvs.val;
+        }else{
+            value = bank_1_modif.sound->op[1].kvs.val;
+        };
         (get_gwidget<Gtk::Scale>("kvs_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op2 = (get_gwidget<Gtk::SpinButton>("lvl_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op2_event));
     (get_gwidget<Gtk::SpinButton>("lvl_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].lvl.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].lvl.val;
+        }else{
+            value = bank_1_modif.sound->op[1].lvl.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lvl_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_mute_op2 = (get_gwidget<Gtk::ToggleButton>("mute_op2"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->extra.mute.val >>4;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->extra.mute.val >>4;
+        }else{
+            value = bank_1_modif.sound->extra.mute.val >>4;
+        };
         (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(!(value & 0x01));
         return true; // Return false to remove the callback after one executio
     });
@@ -2805,7 +3090,12 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_curve_op2 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op2_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].kls.lft_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].kls.lft_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[1].kls.lft_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2814,7 +3104,12 @@ void Dx7interface::attach_signals(){
     slot_kls_rght_curve_op2 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op2_event));
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].kls.rght_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].kls.rght_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[1].kls.rght_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2823,21 +3118,36 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_depth_op2 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op2_event));
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].kls.lft_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].kls.lft_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[1].kls.lft_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_rght_depth_op2 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op2_event));
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].kls.rght_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].kls.rght_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[1].kls.rght_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_note_brk_pt_op2 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].kls.brk_pt.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[1].kls.brk_pt.val;
+        }else{
+            value = bank_1_modif.sound->op[1].kls.brk_pt.val;
+        };
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->set_selected(value % 12);
         int val = (value -3);
         if(val < 0){
@@ -2851,22 +3161,18 @@ void Dx7interface::attach_signals(){
 
     slot_kls_octv_brk_pt_op2 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op2_event));
-    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[1].kls.brk_pt.val;
-        (get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->set_selected(value % 12);
-        int val = (value -3);
-        if(val < 0){
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( -1 );
-        }else{
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->set_value( val / 12 );
-        };
-        return true; // Return false to remove the callback after one executio
-    });
-    /* OP3 */
+
+
+    /* OPERATEUR 3 */
     slot_ams_op3 = (get_gwidget<Gtk::Scale>("ams_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op3_event)); //frame lfo
     (get_gwidget<Gtk::Scale>("ams_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].ams.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].ams.val;
+        }else{
+            value = bank_1_modif.sound->op[2].ams.val;
+        };
         (get_gwidget<Gtk::Scale>("ams_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2874,7 +3180,12 @@ void Dx7interface::attach_signals(){
     slot_freq_mode_op3 = (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op3_event));
     (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].freq_mode.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].freq_mode.val;
+        }else{
+            value = bank_1_modif.sound->op[2].freq_mode.val;
+        };
         (get_gwidget<Gtk::DropDown>("freq_mode_op3"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2883,21 +3194,36 @@ void Dx7interface::attach_signals(){
     slot_freq_coarse_op3 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op3_event));
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].freq_coarse.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].freq_coarse.val;
+        }else{
+            value = bank_1_modif.sound->op[2].freq_coarse.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_freq_fine_op3 = (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op3_event));
     (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].freq_fine.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].freq_fine.val;
+        }else{
+            value = bank_1_modif.sound->op[2].freq_fine.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_dtun_op3 = (get_gwidget<Gtk::Scale>("dtun_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op3_event));
     (get_gwidget<Gtk::Scale>("dtun_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].dtun.val-7;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].dtun.val-7;
+        }else{
+            value = bank_1_modif.sound->op[2].dtun.val-7;
+        };
         (get_gwidget<Gtk::Scale>("dtun_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2905,56 +3231,96 @@ void Dx7interface::attach_signals(){
     slot_eg_rt1_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_rt[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_rt[0].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_rt[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt2_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_rt[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_rt[1].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_rt[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt3_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_rt[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_rt[2].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_rt[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt4_op3 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_rt[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_rt[3].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_rt[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl1_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_lvl[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_lvl[0].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_lvl[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl2_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_lvl[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_lvl[1].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_lvl[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl3_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_lvl[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_lvl[2].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_lvl[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl4_op3 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op3_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].eg_lvl[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].eg_lvl[3].val;
+        }else{
+            value = bank_1_modif.sound->op[2].eg_lvl[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -2962,28 +3328,48 @@ void Dx7interface::attach_signals(){
     slot_krs_op3 = (get_gwidget<Gtk::Scale>("krs_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op3_event));
     (get_gwidget<Gtk::Scale>("krs_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].krs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].krs.val;
+        }else{
+            value = bank_1_modif.sound->op[2].krs.val;
+        };
         (get_gwidget<Gtk::Scale>("krs_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kvs_op3 = (get_gwidget<Gtk::Scale>("kvs_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op3_event));
     (get_gwidget<Gtk::Scale>("kvs_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].kvs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].kvs.val;
+        }else{
+            value = bank_1_modif.sound->op[2].kvs.val;
+        };
         (get_gwidget<Gtk::Scale>("kvs_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op3 = (get_gwidget<Gtk::SpinButton>("lvl_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op3_event));
     (get_gwidget<Gtk::SpinButton>("lvl_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].lvl.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].lvl.val;
+        }else{
+            value = bank_1_modif.sound->op[2].lvl.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lvl_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_mute_op3 = (get_gwidget<Gtk::ToggleButton>("mute_op3"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->extra.mute.val >>3;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->extra.mute.val >>3;
+        }else{
+            value = bank_1_modif.sound->extra.mute.val >>3;
+        };
         (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(!(value & 0x01));
         return true; // Return false to remove the callback after one executio
     });
@@ -2992,7 +3378,12 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_curve_op3 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op3_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].kls.lft_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].kls.lft_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[2].kls.lft_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3001,7 +3392,12 @@ void Dx7interface::attach_signals(){
     slot_kls_rght_curve_op3 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op3_event));
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].kls.rght_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].kls.rght_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[2].kls.rght_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3010,21 +3406,36 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_depth_op3 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op3_event));
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].kls.lft_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].kls.lft_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[2].kls.lft_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_rght_depth_op3 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op3_event));
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].kls.rght_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].kls.rght_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[2].kls.rght_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_note_brk_pt_op3 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].kls.brk_pt.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[2].kls.brk_pt.val;
+        }else{
+            value = bank_1_modif.sound->op[2].kls.brk_pt.val;
+        };
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->set_selected(value % 12);
         int val = (value -3);
         if(val < 0){
@@ -3038,22 +3449,18 @@ void Dx7interface::attach_signals(){
 
     slot_kls_octv_brk_pt_op3 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op3_event));
-    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[2].kls.brk_pt.val;
-        (get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->set_selected(value % 12);
-        int val = (value -3);
-        if(val < 0){
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( -1 );
-        }else{
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->set_value( val / 12 );
-        };
-        return true; // Return false to remove the callback after one executio
-    });
-    /* OP4 */
+
+
+    /* OPERATEUR 4 */
     slot_ams_op4 = (get_gwidget<Gtk::Scale>("ams_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op4_event)); //frame lfo
     (get_gwidget<Gtk::Scale>("ams_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].ams.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].ams.val;
+        }else{
+            value = bank_1_modif.sound->op[3].ams.val;
+        };
         (get_gwidget<Gtk::Scale>("ams_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3061,7 +3468,12 @@ void Dx7interface::attach_signals(){
     slot_freq_mode_op4 = (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op4_event));
     (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].freq_mode.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].freq_mode.val;
+        }else{
+            value = bank_1_modif.sound->op[3].freq_mode.val;
+        };
         (get_gwidget<Gtk::DropDown>("freq_mode_op4"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3070,21 +3482,36 @@ void Dx7interface::attach_signals(){
     slot_freq_coarse_op4 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op4_event));
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].freq_coarse.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].freq_coarse.val;
+        }else{
+            value = bank_1_modif.sound->op[3].freq_coarse.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_freq_fine_op4 = (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op4_event));
     (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].freq_fine.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].freq_fine.val;
+        }else{
+            value = bank_1_modif.sound->op[3].freq_fine.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_dtun_op4 = (get_gwidget<Gtk::Scale>("dtun_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op4_event));
     (get_gwidget<Gtk::Scale>("dtun_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].dtun.val-7;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].dtun.val-7;
+        }else{
+            value = bank_1_modif.sound->op[3].dtun.val-7;
+        };
         (get_gwidget<Gtk::Scale>("dtun_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3092,56 +3519,96 @@ void Dx7interface::attach_signals(){
     slot_eg_rt1_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_rt[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_rt[0].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_rt[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt2_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_rt[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_rt[1].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_rt[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt3_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_rt[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_rt[2].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_rt[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt4_op4 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_rt[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_rt[3].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_rt[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl1_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_lvl[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_lvl[0].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_lvl[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl2_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_lvl[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_lvl[1].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_lvl[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl3_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_lvl[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_lvl[2].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_lvl[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl4_op4 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op4_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].eg_lvl[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].eg_lvl[3].val;
+        }else{
+            value = bank_1_modif.sound->op[3].eg_lvl[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3149,28 +3616,48 @@ void Dx7interface::attach_signals(){
     slot_krs_op4 = (get_gwidget<Gtk::Scale>("krs_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op4_event));
     (get_gwidget<Gtk::Scale>("krs_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].krs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].krs.val;
+        }else{
+            value = bank_1_modif.sound->op[3].krs.val;
+        };
         (get_gwidget<Gtk::Scale>("krs_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kvs_op4 = (get_gwidget<Gtk::Scale>("kvs_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op4_event));
     (get_gwidget<Gtk::Scale>("kvs_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].kvs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].kvs.val;
+        }else{
+            value = bank_1_modif.sound->op[3].kvs.val;
+        };
         (get_gwidget<Gtk::Scale>("kvs_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op4 = (get_gwidget<Gtk::SpinButton>("lvl_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op4_event));
     (get_gwidget<Gtk::SpinButton>("lvl_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].lvl.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].lvl.val;
+        }else{
+            value = bank_1_modif.sound->op[3].lvl.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lvl_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_mute_op4 = (get_gwidget<Gtk::ToggleButton>("mute_op4"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->extra.mute.val >>2;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->extra.mute.val >>2;
+        }else{
+            value = bank_1_modif.sound->extra.mute.val >>2;
+        };
         (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(!(value & 0x01));
         return true; // Return false to remove the callback after one executio
     });
@@ -3179,7 +3666,12 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_curve_op4 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op4_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].kls.lft_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].kls.lft_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[3].kls.lft_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3188,7 +3680,12 @@ void Dx7interface::attach_signals(){
     slot_kls_rght_curve_op4 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op4_event));
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].kls.rght_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].kls.rght_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[3].kls.rght_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3197,21 +3694,36 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_depth_op4 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op4_event));
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].kls.lft_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].kls.lft_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[3].kls.lft_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_rght_depth_op4 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op4_event));
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].kls.rght_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].kls.rght_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[3].kls.rght_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_note_brk_pt_op4 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].kls.brk_pt.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[3].kls.brk_pt.val;
+        }else{
+            value = bank_1_modif.sound->op[3].kls.brk_pt.val;
+        };
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->set_selected(value % 12);
         int val = (value -3);
         if(val < 0){
@@ -3225,23 +3737,18 @@ void Dx7interface::attach_signals(){
 
     slot_kls_octv_brk_pt_op4 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op4_event));
-    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[3].kls.brk_pt.val;
-        (get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->set_selected(value % 12);
-        int val = (value -3);
-        if(val < 0){
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( -1 );
-        }else{
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->set_value( val / 12 );
-        };
-        return true; // Return false to remove the callback after one executio
-    });
 
-    /* OP5 */
+
+    /* OPERATEUR 5 */
     slot_ams_op5 = (get_gwidget<Gtk::Scale>("ams_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op5_event)); //frame lfo
     (get_gwidget<Gtk::Scale>("ams_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].ams.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].ams.val;
+        }else{
+            value = bank_1_modif.sound->op[4].ams.val;
+        };
         (get_gwidget<Gtk::Scale>("ams_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3249,7 +3756,12 @@ void Dx7interface::attach_signals(){
     slot_freq_mode_op5 = (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op5_event));
     (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].freq_mode.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].freq_mode.val;
+        }else{
+            value = bank_1_modif.sound->op[4].freq_mode.val;
+        };
         (get_gwidget<Gtk::DropDown>("freq_mode_op5"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3258,21 +3770,36 @@ void Dx7interface::attach_signals(){
     slot_freq_coarse_op5 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op5_event));
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].freq_coarse.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].freq_coarse.val;
+        }else{
+            value = bank_1_modif.sound->op[4].freq_coarse.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_freq_fine_op5 = (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op5_event));
     (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].freq_fine.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].freq_fine.val;
+        }else{
+            value = bank_1_modif.sound->op[4].freq_fine.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_dtun_op5 = (get_gwidget<Gtk::Scale>("dtun_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op5_event));
     (get_gwidget<Gtk::Scale>("dtun_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].dtun.val-7;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].dtun.val-7;
+        }else{
+            value = bank_1_modif.sound->op[4].dtun.val-7;
+        };
         (get_gwidget<Gtk::Scale>("dtun_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3280,56 +3807,96 @@ void Dx7interface::attach_signals(){
     slot_eg_rt1_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_rt[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_rt[0].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_rt[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt2_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_rt[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_rt[1].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_rt[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt3_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_rt[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_rt[2].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_rt[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt4_op5 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_rt[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_rt[3].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_rt[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl1_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_lvl[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_lvl[0].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_lvl[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl2_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_lvl[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_lvl[1].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_lvl[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl3_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_lvl[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_lvl[2].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_lvl[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl4_op5 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op5_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].eg_lvl[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].eg_lvl[3].val;
+        }else{
+            value = bank_1_modif.sound->op[4].eg_lvl[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3337,28 +3904,48 @@ void Dx7interface::attach_signals(){
     slot_krs_op5 = (get_gwidget<Gtk::Scale>("krs_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op5_event));
     (get_gwidget<Gtk::Scale>("krs_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].krs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].krs.val;
+        }else{
+            value = bank_1_modif.sound->op[4].krs.val;
+        };
         (get_gwidget<Gtk::Scale>("krs_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kvs_op5 = (get_gwidget<Gtk::Scale>("kvs_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op5_event));
     (get_gwidget<Gtk::Scale>("kvs_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].kvs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].kvs.val;
+        }else{
+            value = bank_1_modif.sound->op[4].kvs.val;
+        };
         (get_gwidget<Gtk::Scale>("kvs_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op5 = (get_gwidget<Gtk::SpinButton>("lvl_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op5_event));
     (get_gwidget<Gtk::SpinButton>("lvl_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].lvl.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].lvl.val;
+        }else{
+            value = bank_1_modif.sound->op[4].lvl.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lvl_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_mute_op5 = (get_gwidget<Gtk::ToggleButton>("mute_op5"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->extra.mute.val >>1;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->extra.mute.val >>1;
+        }else{
+            value = bank_1_modif.sound->extra.mute.val >>1;
+        };
         (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(!(value & 0x01));
         return true; // Return false to remove the callback after one executio
     });
@@ -3367,7 +3954,12 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_curve_op5 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op5_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].kls.lft_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].kls.lft_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[4].kls.lft_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3376,7 +3968,12 @@ void Dx7interface::attach_signals(){
     slot_kls_rght_curve_op5 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op5_event));
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].kls.rght_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].kls.rght_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[4].kls.rght_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3385,21 +3982,36 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_depth_op5 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op5_event));
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].kls.lft_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].kls.lft_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[4].kls.lft_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_rght_depth_op5 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op5_event));
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].kls.rght_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].kls.rght_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[4].kls.rght_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_note_brk_pt_op5 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].kls.brk_pt.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[4].kls.brk_pt.val;
+        }else{
+            value = bank_1_modif.sound->op[4].kls.brk_pt.val;
+        };
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->set_selected(value % 12);
         int val = (value -3);
         if(val < 0){
@@ -3413,23 +4025,18 @@ void Dx7interface::attach_signals(){
 
     slot_kls_octv_brk_pt_op5 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op5_event));
-    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[4].kls.brk_pt.val;
-        (get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->set_selected(value % 12);
-        int val = (value -3);
-        if(val < 0){
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( -1 );
-        }else{
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->set_value( val / 12 );
-        };
-        return true; // Return false to remove the callback after one executio
-    });
 
-    /* OP6 */
+
+    /* OPERATEUR 6 */
     slot_ams_op6 = (get_gwidget<Gtk::Scale>("ams_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ams_op6_event)); //frame lfo
     (get_gwidget<Gtk::Scale>("ams_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].ams.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].ams.val;
+        }else{
+            value = bank_1_modif.sound->op[5].ams.val;
+        };
         (get_gwidget<Gtk::Scale>("ams_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3437,7 +4044,12 @@ void Dx7interface::attach_signals(){
     slot_freq_mode_op6 = (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_mode_op6_event));
     (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].freq_mode.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].freq_mode.val;
+        }else{
+            value = bank_1_modif.sound->op[5].freq_mode.val;
+        };
         (get_gwidget<Gtk::DropDown>("freq_mode_op6"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3446,21 +4058,36 @@ void Dx7interface::attach_signals(){
     slot_freq_coarse_op6 = (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_coarse_op6_event));
     (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].freq_coarse.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].freq_coarse.val;
+        }else{
+            value = bank_1_modif.sound->op[5].freq_coarse.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_freq_fine_op6 = (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_freq_fine_op6_event));
     (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].freq_fine.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].freq_fine.val;
+        }else{
+            value = bank_1_modif.sound->op[5].freq_fine.val;
+        };
         (get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_dtun_op6 = (get_gwidget<Gtk::Scale>("dtun_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op6_event));
     (get_gwidget<Gtk::Scale>("dtun_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].dtun.val-7;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].dtun.val-7;
+        }else{
+            value = bank_1_modif.sound->op[5].dtun.val-7;
+        };
         (get_gwidget<Gtk::Scale>("dtun_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3468,56 +4095,96 @@ void Dx7interface::attach_signals(){
     slot_eg_rt1_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt1_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_rt[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_rt[0].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_rt[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt2_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt2_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_rt[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_rt[1].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_rt[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt3_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt3_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_rt[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_rt[2].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_rt[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_rt4_op6 = (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_rt4_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_rt[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_rt[3].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_rt[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl1_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl1_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_lvl[0].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_lvl[0].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_lvl[0].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl2_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl2_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_lvl[1].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_lvl[1].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_lvl[1].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl3_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl3_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_lvl[2].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_lvl[2].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_lvl[2].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_eg_lvl4_op6 = (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_eg_lvl4_op6_event));
     (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].eg_lvl[3].val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].eg_lvl[3].val;
+        }else{
+            value = bank_1_modif.sound->op[5].eg_lvl[3].val;
+        };
         (get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3525,28 +4192,48 @@ void Dx7interface::attach_signals(){
     slot_krs_op6 = (get_gwidget<Gtk::Scale>("krs_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_krs_op6_event));
     (get_gwidget<Gtk::Scale>("krs_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].krs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].krs.val;
+        }else{
+            value = bank_1_modif.sound->op[5].krs.val;
+        };
         (get_gwidget<Gtk::Scale>("krs_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kvs_op6 = (get_gwidget<Gtk::Scale>("kvs_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kvs_op6_event));
     (get_gwidget<Gtk::Scale>("kvs_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].kvs.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].kvs.val;
+        }else{
+            value = bank_1_modif.sound->op[5].kvs.val;
+        };
         (get_gwidget<Gtk::Scale>("kvs_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op6 = (get_gwidget<Gtk::SpinButton>("lvl_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_lvl_op6_event));
     (get_gwidget<Gtk::SpinButton>("lvl_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].lvl.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].lvl.val;
+        }else{
+            value = bank_1_modif.sound->op[5].lvl.val;
+        };
         (get_gwidget<Gtk::SpinButton>("lvl_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_mute_op6 = (get_gwidget<Gtk::ToggleButton>("mute_op6"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->extra.mute.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->extra.mute.val;
+        }else{
+            value = bank_1_modif.sound->extra.mute.val;
+        };
         (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(!(value & 0x01));
         return true; // Return false to remove the callback after one executio
     });
@@ -3555,7 +4242,12 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_curve_op6 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op6_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].kls.lft_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].kls.lft_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[5].kls.lft_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3564,7 +4256,12 @@ void Dx7interface::attach_signals(){
     slot_kls_rght_curve_op6 = (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_curve_op6_event));
     (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].kls.rght_curve.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].kls.rght_curve.val;
+        }else{
+            value = bank_1_modif.sound->op[5].kls.rght_curve.val;
+        };
         (get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->set_selected(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -3573,21 +4270,36 @@ void Dx7interface::attach_signals(){
     slot_kls_lft_depth_op6 = (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_dpth_op6_event));
     (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].kls.lft_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].kls.lft_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[5].kls.lft_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_rght_depth_op6 = (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_rght_dpth_op6_event));
     (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].kls.rght_dpth.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].kls.rght_dpth.val;
+        }else{
+            value = bank_1_modif.sound->op[5].kls.rght_dpth.val;
+        };
         (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     slot_kls_note_brk_pt_op6 = (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
     (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].kls.brk_pt.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->op[5].kls.brk_pt.val;
+        }else{
+            value = bank_1_modif.sound->op[5].kls.brk_pt.val;
+        };
         (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->set_selected(value % 12);
         int val = (value -3);
         if(val < 0){
@@ -3601,17 +4313,6 @@ void Dx7interface::attach_signals(){
 
     slot_kls_octv_brk_pt_op6 = (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_brk_pt_op6_event));
-    (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->op[5].kls.brk_pt.val;
-        (get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->set_selected(value % 12);
-        int val = (value -3);
-        if(val < 0){
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( -1 );
-        }else{
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->set_value( val / 12 );
-        };
-        return true; // Return false to remove the callback after one executio
-    });
 
     LOG_OUT();
 };
