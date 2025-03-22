@@ -87,6 +87,7 @@ class Dx7interface : public Gx_module, public Synth {
         bool compare = false;                   /* set if compare button is activate */
         bool send_extra_params = false;         /* set if send_extra paraameter is activate */
         bool write_extra_params = false;         /* set if send_extra paraameter is activate */
+        bool mode_tf1 = false;                   /* mode tf1 = fonction parameter by sound */
 
         /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
@@ -362,6 +363,7 @@ class Dx7interface : public Gx_module, public Synth {
         void write_bank_as_raw(Glib::RefPtr<Gio::File> file, uint);
         void on_as_raw_event();
         void on_extra_param_event();
+
         /* VOICE */
         void write_voice_bulk1(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
         void write_voice_bulk32(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
@@ -528,6 +530,9 @@ class Dx7interface : public Gx_module, public Synth {
         /* send parameters */
         sigc::connection slot_btn_send_extra_parameters;
         void on_send_extra_parameters_event();
+        sigc::connection slot_btn_mode_tf1;
+        void on_mode_tf1_event();
+
         /* Panic */
         sigc::connection slot_btn_panic;
         void on_panic_event();

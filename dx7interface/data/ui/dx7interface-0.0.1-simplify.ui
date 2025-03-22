@@ -1352,6 +1352,17 @@
                                   </object>
                                 </child>
                                 <child>
+                                  <object class="GtkCheckButton" id="btn_mode_tf1">
+                                    <property name="focusable">1</property>
+                                    <property name="label" translatable="yes">Mode TF1</property>
+                                    <property name="receives-default">1</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="row">2</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
                                   <object class="GtkSeparator" id="separator_compare">
                                     <property name="valign">center</property>
                                     <layout>

@@ -839,12 +839,10 @@ void Dx7interface::restore_origin_sound(){
         case 32:
             bank_32_modif.sound[old_snum] = bank_32_origin.sound[old_snum];
             bank_1_origin.sound[0] = bank_32_origin.sound[old_snum];
-            bank_1_modif.sound[0] = bank_32_origin.sound[old_snum];
             break;
         case 128:
             bank_128_modif.sound[old_snum] = bank_128_origin.sound[old_snum];
             bank_1_origin.sound[0] = bank_128_origin.sound[old_snum];
-            bank_1_modif.sound[0] = bank_128_origin.sound[old_snum];
             break;
     };
     bank_1_modif = bank_1_origin;
@@ -1693,6 +1691,8 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     LOG_OUT();
 };
 void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
+    if (mode_tf1) {
+
     (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_active(sound->extra.functions.poly_mono.val);
     (get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->set_value(sound->extra.functions.ptch_bnd_rng.val);
     (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->set_value(sound->extra.functions.ptch_bnd_stp.val);
@@ -1723,6 +1723,7 @@ void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
     (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->set_active(val & 0x01);
     (get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->set_active((val & 0x02)>>1);
     (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->set_active((val & 0x04)>>2);
+    }
 };
 /* clear (struct) */
 void Dx7interface::clear_sound(St_dx7sysex_1* sound,uint8_t pos,bool remove){
@@ -2040,9 +2041,11 @@ void Dx7interface::on_add_midi_learn_event(){
     if (selected_item) {
         Glib::ustring param_name = (std::dynamic_pointer_cast<ParamItem>(selected_item))->get_name();
         Glib::ustring param_number = get_gwidget<Gtk::Entry>("entry_affect_param")->get_text();
-        int p_number = std::stoi(param_number.raw());
-        add_midi_learned(p_number, selected_number);
-        add_midi_learn_param_widget(param_name, param_number, selected_number);
+        if (param_number != "") {
+            int p_number = std::stoi(param_number.raw());
+            add_midi_learned(p_number, selected_number);
+            add_midi_learn_param_widget(param_name, param_number, selected_number);
+        };
     };
 };
 
@@ -2297,6 +2300,9 @@ void Dx7interface::attach_signals(){
     /* send_extra_parameters */
     slot_btn_send_extra_parameters = (get_gwidget<Gtk::CheckButton>("btn_send_extra_parameters"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_send_extra_parameters_event));
+    slot_btn_mode_tf1 = (get_gwidget<Gtk::CheckButton>("btn_mode_tf1"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_mode_tf1_event));
+
     /* panic */
     slot_btn_panic = (get_gwidget<Gtk::Button>("btn_panic"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_panic_event));
@@ -2307,8 +2313,15 @@ void Dx7interface::attach_signals(){
 
     slot_algo = (get_gwidget<Gtk::SpinButton>("algo_number"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_algo_event));
+
+
     (get_gwidget<Gtk::SpinButton>("algo_number"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->algo.algo.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->algo.algo.val;
+        }else{
+            value = bank_1_modif.sound->algo.algo.val;
+        };
         (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(value + 1);
         return true; // Return false to remove the callback after one executio
     });
@@ -2316,7 +2329,12 @@ void Dx7interface::attach_signals(){
     slot_feedback = (get_gwidget<Gtk::SpinButton>("feedback"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_feedback_event));
     (get_gwidget<Gtk::SpinButton>("feedback"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value = bank_1_modif.sound->algo.feedback.val;
+        int value;
+        if (compare) {
+            value = bank_1_origin.sound->algo.feedback.val;
+        }else{
+            value = bank_1_modif.sound->algo.feedback.val;
+        };
         (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
@@ -4431,6 +4449,15 @@ void Dx7interface::on_send_extra_parameters_event(){
         send_extra_params=true;
     }else{
         send_extra_params=false;
+    };
+};
+
+void Dx7interface::on_mode_tf1_event(){
+    if ( (get_gwidget<Gtk::CheckButton>("btn_mode_tf1"))->get_active() ) {
+        mode_tf1=true;
+        set_voice_parameters(&bank_1_modif.sound[0]);
+    }else{
+        mode_tf1=false;
     };
 };
 
