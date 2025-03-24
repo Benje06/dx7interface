@@ -566,7 +566,9 @@ void Dx7interface::on_midi_learn_param_save(){
         if(initial_folder_save_param==nullptr){
             initial_folder_save_param=initial_folder_open_param;
         }
-        file_dialog_param_save->set_initial_folder(initial_folder_save_param);
+        if(initial_folder_save_param!=nullptr){
+            file_dialog_param_save->set_initial_folder(initial_folder_save_param);
+        }
         file_dialog_param_save->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
             try {
                 Glib::RefPtr<Gio::File> file = file_dialog_param_save->save_finish(result);
@@ -586,7 +588,9 @@ void Dx7interface::on_midi_learn_param_save(){
         if(initial_folder_save_param==nullptr){
             initial_folder_save_param=initial_folder_open_param;
         }
-        file_dialog_param_save->set_current_folder(initial_folder_save_param);
+        if(initial_folder_save_param!=nullptr){
+            file_dialog_param_save->set_current_folder(initial_folder_save_param);
+        };
         file_dialog_param_save->signal_response().connect([this,index](int response) {
             try {
                 if (response == Gtk::ResponseType::ACCEPT) {
@@ -2051,16 +2055,35 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
     auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
     box->append(*box_funct);
     /* scoped slot to be autoremove */
-    auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
-    *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
-        auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
-        box_funct->remove(*text_param);
-        box_funct->remove(*text_fct);
-        box_funct->remove(*btn_delete);
-        box->remove(*box_funct);
-        int p_number = std::stoi(param_number.raw());
-        rem_midi_learned(p_number, selected_item);
-    });
+    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+        auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
+        *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
+            auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+            box_funct->remove(*text_param);
+            box_funct->remove(*text_fct);
+            box_funct->remove(*btn_delete);
+            box->remove(*box_funct);
+            int p_number = std::stoi(param_number.raw());
+            rem_midi_learned(p_number, selected_item);
+        });
+    #else
+        auto slot_btn_delete_params = std::make_shared<sigc::connection>();
+        *slot_btn_delete_params = btn_delete->signal_clicked().connect(
+            [this, box_funct, text_fct, text_param, btn_delete, selected_item, param_number, slot_btn_delete_params]() {
+                auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+                box_funct->remove(*text_param);
+                box_funct->remove(*text_fct);
+                box_funct->remove(*btn_delete);
+                box->remove(*box_funct);
+                int p_number = std::stoi(param_number.raw());
+                rem_midi_learned(p_number, selected_item);
+                if (slot_btn_delete_params->connected()) {
+                    slot_btn_delete_params->disconnect();
+                }
+            }
+        );
+    #endif
+
 };
 
 void Dx7interface::on_add_midi_learn_event(){
