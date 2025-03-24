@@ -59,7 +59,7 @@
         /* CR+LF */
         #define EOL ('\r\n')
     #endif
-    #ifdef G_OS_LIN
+    #ifdef __linux__
         /* LF */
         #define EOL ('\n')
         /* directory separator */
@@ -80,7 +80,6 @@
         #define EOL ('\r')
         #define DS ('/')
     #endif
-    #define DS ('/')
 
     #ifdef ENABLE_NLS
         #include <libintl.h>
