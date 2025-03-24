@@ -172,13 +172,14 @@ void Dx7interface::clean_midi_learn(){
         Gtk::Widget* child = parent->get_first_child();
         int p_number, selected_item;
         Glib::RefPtr<Glib::Regex> regex_box= Glib::Regex::create("^box_midi_param.*");
+        Glib::RefPtr<Glib::Regex> regex_param = Glib::Regex::create("^\\d+$");
+        Glib::RefPtr<Glib::Regex> regex_function = Glib::Regex::create("^delete.*");
+        Glib::ustring name;
         while (child){
             Gtk::Widget* subchild = child->get_first_child();
             if(regex_box->match(child->get_name())){
                 while (subchild){
-                    Glib::ustring name = subchild->get_name();
-                    Glib::RefPtr<Glib::Regex> regex_param = Glib::Regex::create("^\\d+$");
-                    Glib::RefPtr<Glib::Regex> regex_function = Glib::Regex::create("^delete.*");
+                    name = subchild->get_name();
                     if(regex_param->match(name)){
                         p_number = std::stoi(name);
                     }else if(! regex_function->match(name)){
@@ -291,9 +292,13 @@ void Dx7interface::listen_midi(){
                 << "param: "  << ev->data.control.param << " "
                 << "value: " << int(ev->data.control.value) << std::endl;
                 if(midi_learn){
-                    (get_gwidget<Gtk::Entry>("entry_affect_param"))->set_text(tostr<int>(ev->data.control.param));
+                    auto param = std::make_shared<int>(ev->data.control.param);
+                    (get_gwidget<Gtk::Entry>("entry_affect_param"))->add_tick_callback([this,param](const Glib::RefPtr<Gdk::FrameClock>&) {
+                        (get_gwidget<Gtk::Entry>("entry_affect_param"))->set_text(std::to_string(*param));
+                        return false;
+                    });
                 }else{
-                    if ( ev->data.control.param < midi_learned.size() && !midi_learned[ev->data.control.param].empty()) {
+                    if ( ev->data.control.param < max_param_nb && !midi_learned[ev->data.control.param].empty()) {
                         (this->*list_ui_parameters_functions[midi_learned[ev->data.control.param][0]])(ev->data.control.value);
                     };
                 };
