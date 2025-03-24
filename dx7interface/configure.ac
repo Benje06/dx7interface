@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 # tools :
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.72])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([dx7interface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -191,7 +191,7 @@ PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
 PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]
 ],[
 PROGRAMNAME_LOCALEDIR=[${datadir}/locale/]
-PROGRAMNAME_DATA_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/data]
+PROGRAMNAME_DATA_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/data/]
 PROGRAMNAME_IMG_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/images/]
 PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
 PROGRAMNAME_MOD_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
