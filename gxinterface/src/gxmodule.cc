@@ -209,6 +209,7 @@ void Gx_module::apply_style_to_screen(){
     LOG_IN();
     try{
         if(cssfile != ""){
+            auto settings = Gtk::Settings::get_default();
             auto css = Gtk::CssProvider::create();
             auto custom_provider = Gtk::CssProvider::create();
             css->load_from_path(cssfile);
@@ -225,11 +226,13 @@ void Gx_module::apply_style_to_screen(){
                 };
 
             #else
-                auto ctx = main_window->get_style_context();
+                /*auto ctx = main_window->get_style_context();
                 ctx->add_provider(css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
                 if(mod.color != ""){
                     ctx->add_provider(custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-                };
+                };*/
+                auto display = Gdk::Display::get_default();
+                Gtk::StyleContext::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             #endif
         };
     } catch (const std::exception& ex) {
