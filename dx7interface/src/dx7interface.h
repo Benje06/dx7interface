@@ -35,6 +35,7 @@
 /* sys */
 //#include <memory>
 /*** APP ***/
+#include <gxinterface/0.0.1/common.h>
 #include <gxinterface/0.0.1/gxmodule.h>
 #include <filesystem>
 #include "GtkClass.h"
@@ -110,6 +111,8 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gio::File> bank_file=nullptr;              /* pointeur de lecture de fichier */
         Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
+        Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
+        Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;
 
         Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux du fichier de données */
         Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;     /* pointer de flux du fichier de parametres */
@@ -120,12 +123,199 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::SingleSelection> bank_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> bank_factory=nullptr;
 
+        /* midi learn */
         /* param list view */
         bool midi_learn=false;
+        static const int max_param_nb = 168;
+        std::vector<int> midi_param{std::vector<int>(max_param_nb, -1)};
+        std::vector<std::vector<int>> midi_learned;
+
+        /* read and write midi learn config file */
+        void read_midi_learned_param(Glib::RefPtr<Gio::File>);
+        void save_midi_learned_param(Glib::RefPtr<Gio::File>);
+        void clean_midi_learn();
+        sigc::connection slot_midi_learn_load;
+        void on_midi_learn_param_select();
+        sigc::connection slot_midi_learn_save;
+        void on_midi_learn_param_save();
+
+        /* manage midi learn event */
         void on_midi_learn_event();
         void on_add_midi_learn_event();
+        void add_midi_learned(int, int);
         void add_midi_learn_param_widget(Glib::ustring, Glib::ustring,int);
-        void attach_midi_learn_param_to_function(Glib::ustring, Glib::ustring);
+        void rem_midi_learned(int, int);
+
+        Glib::ustring function_list[max_param_nb]{
+            "aftrtch_assgn_event",
+            "aftrtch_rng_event",
+            "algo_event",
+            "ams_op1_event",
+            "ams_op2_event",
+            "ams_op3_event",
+            "ams_op4_event",
+            "ams_op5_event",
+            "ams_op6_event",
+            "brth_assgn_event",
+            "brth_rng_event",
+            "compare_event",
+            "dtun_op1_event",
+            "dtun_op2_event",
+            "dtun_op3_event",
+            "dtun_op4_event",
+            "dtun_op5_event",
+            "dtun_op6_event",
+            "eg_lvl1_op1_event",
+            "eg_lvl1_op2_event",
+            "eg_lvl1_op3_event",
+            "eg_lvl1_op4_event",
+            "eg_lvl1_op5_event",
+            "eg_lvl1_op6_event",
+            "eg_lvl2_op1_event",
+            "eg_lvl2_op2_event",
+            "eg_lvl2_op3_event",
+            "eg_lvl2_op4_event",
+            "eg_lvl2_op5_event",
+            "eg_lvl2_op6_event",
+            "eg_lvl3_op1_event",
+            "eg_lvl3_op2_event",
+            "eg_lvl3_op3_event",
+            "eg_lvl3_op4_event",
+            "eg_lvl3_op5_event",
+            "eg_lvl3_op6_event",
+            "eg_lvl4_op1_event",
+            "eg_lvl4_op2_event",
+            "eg_lvl4_op3_event",
+            "eg_lvl4_op4_event",
+            "eg_lvl4_op5_event",
+            "eg_lvl4_op6_event",
+            "eg_rt1_op1_event",
+            "eg_rt1_op2_event",
+            "eg_rt1_op3_event",
+            "eg_rt1_op4_event",
+            "eg_rt1_op5_event",
+            "eg_rt1_op6_event",
+            "eg_rt2_op1_event",
+            "eg_rt2_op2_event",
+            "eg_rt2_op3_event",
+            "eg_rt2_op4_event",
+            "eg_rt2_op5_event",
+            "eg_rt2_op6_event",
+            "eg_rt3_op1_event",
+            "eg_rt3_op2_event",
+            "eg_rt3_op3_event",
+            "eg_rt3_op4_event",
+            "eg_rt3_op5_event",
+            "eg_rt3_op6_event",
+            "eg_rt4_op1_event",
+            "eg_rt4_op2_event",
+            "eg_rt4_op3_event",
+            "eg_rt4_op4_event",
+            "eg_rt4_op5_event",
+            "eg_rt4_op6_event",
+            "feedback_event",
+            "foot_assgn_event",
+            "foot_rng_event",
+            "freq_coarse_op1_event",
+            "freq_coarse_op2_event",
+            "freq_coarse_op3_event",
+            "freq_coarse_op4_event",
+            "freq_coarse_op5_event",
+            "freq_coarse_op6_event",
+            "freq_fine_op1_event",
+            "freq_fine_op2_event",
+            "freq_fine_op3_event",
+            "freq_fine_op4_event",
+            "freq_fine_op5_event",
+            "freq_fine_op6_event",
+            "freq_mode_op1_event",
+            "freq_mode_op2_event",
+            "freq_mode_op3_event",
+            "freq_mode_op4_event",
+            "freq_mode_op5_event",
+            "freq_mode_op6_event",
+            "kls_brk_pt_op1_event",
+            "kls_brk_pt_op2_event",
+            "kls_brk_pt_op3_event",
+            "kls_brk_pt_op4_event",
+            "kls_brk_pt_op5_event",
+            "kls_brk_pt_op6_event",
+            "kls_lft_curve_op1_event",
+            "kls_lft_curve_op2_event",
+            "kls_lft_curve_op3_event",
+            "kls_lft_curve_op4_event",
+            "kls_lft_curve_op5_event",
+            "kls_lft_curve_op6_event",
+            "kls_lft_dpth_op1_event",
+            "kls_lft_dpth_op2_event",
+            "kls_lft_dpth_op3_event",
+            "kls_lft_dpth_op4_event",
+            "kls_lft_dpth_op5_event",
+            "kls_lft_dpth_op6_event",
+            "kls_rght_curve_op1_event",
+            "kls_rght_curve_op2_event",
+            "kls_rght_curve_op3_event",
+            "kls_rght_curve_op4_event",
+            "kls_rght_curve_op5_event",
+            "kls_rght_curve_op6_event",
+            "kls_rght_dpth_op1_event",
+            "kls_rght_dpth_op2_event",
+            "kls_rght_dpth_op3_event",
+            "kls_rght_dpth_op4_event",
+            "kls_rght_dpth_op5_event",
+            "kls_rght_dpth_op6_event",
+            "krs_op1_event",
+            "krs_op2_event",
+            "krs_op3_event",
+            "krs_op4_event",
+            "krs_op5_event",
+            "krs_op6_event",
+            "kvs_op1_event",
+            "kvs_op2_event",
+            "kvs_op3_event",
+            "kvs_op4_event",
+            "kvs_op5_event",
+            "kvs_op6_event",
+            "lfo_amd_event",
+            "lfo_delay_event",
+            "lfo_pmd_event",
+            "lfo_speed_event",
+            "lfo_sync_event",
+            "lfo_wav_event",
+            "lvl_op1_event",
+            "lvl_op2_event",
+            "lvl_op3_event",
+            "lvl_op4_event",
+            "lvl_op5_event",
+            "lvl_op6_event",
+            "md_whl_assgn_event",
+            "md_whl_rng_event",
+            "mono_poly_event",
+            "mute_op1_event",
+            "mute_op2_event",
+            "mute_op3_event",
+            "mute_op4_event",
+            "mute_op5_event",
+            "mute_op6_event",
+            "oks_event",
+            "panic_event",
+            "pitch_lvl1_event",
+            "pitch_lvl2_event",
+            "pitch_lvl3_event",
+            "pitch_lvl4_event",
+            "pitch_rt1_event",
+            "pitch_rt2_event",
+            "pitch_rt3_event",
+            "pitch_rt4_event",
+            "pms_event",
+            "portamento_glss_event",
+            "portamento_md_event",
+            "portamento_tm_event",
+            "ptch_bnd_rng_event",
+            "ptch_bnd_stp_event",
+            "send_extra_parameters_event",
+            "transpose_event"
+        };
 
         void create_param_list();
         Glib::RefPtr<Gio::ListStore<ParamItem>> param_data_model=nullptr; /* liste des nom des sons de la banque chargé */
@@ -134,12 +324,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
 
-        std::vector<int> midi_param{std::vector<int>(169, -1)};
-        std::vector<std::vector<int>> midi_learned;
-        void add_midi_learned(int, int);
-        void rem_midi_learned(int, int);
         using FunctionIntPtr = void (Dx7interface::*)(int);  /* abstract for function as array */
-        FunctionIntPtr list_ui_parameters_functions[168] = {
+        FunctionIntPtr list_ui_parameters_functions[max_param_nb] = {
             &Dx7interface::set_aftrtch_assgn_event,
             &Dx7interface::set_aftrtch_rng_event,
             &Dx7interface::set_algo_event,
@@ -316,21 +502,25 @@ class Dx7interface : public Gx_module, public Synth {
         Gtk::PopoverMenu* m_popover_menu = nullptr;
         /* save dialog */
         void create_save_dialog();
-        Gtk::Window* dialog_save = nullptr;
-        Gtk::Button* button_save = nullptr;
+        Gtk::Window* dialog_bank_save = nullptr;
+        Gtk::Button* button_bank_save = nullptr;
 
         Gtk::CheckButton* checkbutton_bulk = nullptr;
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            Gtk::FileDialog* file_dialog = nullptr;
-            Gtk::FileDialog* file_dialog_save = nullptr;
+            Gtk::FileDialog* file_dialog_bank_select = nullptr;
+            Gtk::FileDialog* file_dialog_bank_save = nullptr;
+            Gtk::FileDialog* file_dialog_param_select = nullptr;
+            Gtk::FileDialog* file_dialog_param_save = nullptr;
         #else
-            Gtk::FileChooserDialog* file_dialog = nullptr;
-            Gtk::FileChooserDialog* file_dialog_save = nullptr;
+            Gtk::FileChooserDialog* file_dialog_bank_select = nullptr;
+            Gtk::FileChooserDialog* file_dialog_bank_save = nullptr;
+            Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
+            Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
             Gtk::Button* button_accept = nullptr;
         #endif
 
-        void OpenFileDialog();
-        void OpenDialog(Glib::ustring,Glib::ustring);
+        void OpenFileSaveDialog();
+        void OpenFileSelectDialog(Glib::ustring,Glib::ustring);
 
         /*** THREAD ***/
         bool Run();    /* Thread function  */

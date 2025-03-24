@@ -90,6 +90,8 @@ Dx7interface::~Dx7interface(){
 void Dx7interface::set_default_values(){
     bank_1_modif.sound->extra.mute.val=0x7F; // all unmuted
     bank_1_origin.sound->extra.mute.val=0x7F;
+    Glib::RefPtr<Gio::File> param_file = Gio::File::create_for_path( DATA_DIR"midi_learn_default_config.cfg" );
+    read_midi_learned_param(param_file);
 }
 
 void Dx7interface::create_bank_voices_list(){
@@ -132,179 +134,10 @@ void Dx7interface::create_param_list(){
         sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_param_label), Gtk::Align::START));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_param"))->signal_bind().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bind_param_name));
-    Glib::ustring param_list[169]{
-    "aftrtch_assgn_event",
-    "aftrtch_rng_event",
-    "algo_event",
-    "ams_op1_event",
-    "ams_op2_event",
-    "ams_op3_event",
-    "ams_op4_event",
-    "ams_op5_event",
-    "ams_op6_event",
-    "brth_assgn_event",
-    "brth_rng_event",
-    "compare_event",
-    "dtun_op1_event",
-    "dtun_op2_event",
-    "dtun_op3_event",
-    "dtun_op4_event",
-    "dtun_op5_event",
-    "dtun_op6_event",
-    "eg_lvl1_op1_event",
-    "eg_lvl1_op2_event",
-    "eg_lvl1_op3_event",
-    "eg_lvl1_op4_event",
-    "eg_lvl1_op5_event",
-    "eg_lvl1_op6_event",
-    "eg_lvl2_op1_event",
-    "eg_lvl2_op2_event",
-    "eg_lvl2_op3_event",
-    "eg_lvl2_op4_event",
-    "eg_lvl2_op5_event",
-    "eg_lvl2_op6_event",
-    "eg_lvl3_op1_event",
-    "eg_lvl3_op2_event",
-    "eg_lvl3_op3_event",
-    "eg_lvl3_op4_event",
-    "eg_lvl3_op5_event",
-    "eg_lvl3_op6_event",
-    "eg_lvl4_op1_event",
-    "eg_lvl4_op2_event",
-    "eg_lvl4_op3_event",
-    "eg_lvl4_op4_event",
-    "eg_lvl4_op5_event",
-    "eg_lvl4_op6_event",
-    "eg_rt1_op1_event",
-    "eg_rt1_op2_event",
-    "eg_rt1_op3_event",
-    "eg_rt1_op4_event",
-    "eg_rt1_op5_event",
-    "eg_rt1_op6_event",
-    "eg_rt2_op1_event",
-    "eg_rt2_op2_event",
-    "eg_rt2_op3_event",
-    "eg_rt2_op4_event",
-    "eg_rt2_op5_event",
-    "eg_rt2_op6_event",
-    "eg_rt3_op1_event",
-    "eg_rt3_op2_event",
-    "eg_rt3_op3_event",
-    "eg_rt3_op4_event",
-    "eg_rt3_op5_event",
-    "eg_rt3_op6_event",
-    "eg_rt4_op1_event",
-    "eg_rt4_op2_event",
-    "eg_rt4_op3_event",
-    "eg_rt4_op4_event",
-    "eg_rt4_op5_event",
-    "eg_rt4_op6_event",
-    "feedback_event",
-    "foot_assgn_event",
-    "foot_rng_event",
-    "freq_coarse_op1_event",
-    "freq_coarse_op2_event",
-    "freq_coarse_op3_event",
-    "freq_coarse_op4_event",
-    "freq_coarse_op5_event",
-    "freq_coarse_op6_event",
-    "freq_fine_op1_event",
-    "freq_fine_op2_event",
-    "freq_fine_op3_event",
-    "freq_fine_op4_event",
-    "freq_fine_op5_event",
-    "freq_fine_op6_event",
-    "freq_mode_op1_event",
-    "freq_mode_op2_event",
-    "freq_mode_op3_event",
-    "freq_mode_op4_event",
-    "freq_mode_op5_event",
-    "freq_mode_op6_event",
-    "kls_brk_pt_op1_event",
-    "kls_brk_pt_op2_event",
-    "kls_brk_pt_op3_event",
-    "kls_brk_pt_op4_event",
-    "kls_brk_pt_op5_event",
-    "kls_brk_pt_op6_event",
-    "kls_lft_curve_op1_event",
-    "kls_lft_curve_op2_event",
-    "kls_lft_curve_op3_event",
-    "kls_lft_curve_op4_event",
-    "kls_lft_curve_op5_event",
-    "kls_lft_curve_op6_event",
-    "kls_lft_dpth_op1_event",
-    "kls_lft_dpth_op2_event",
-    "kls_lft_dpth_op3_event",
-    "kls_lft_dpth_op4_event",
-    "kls_lft_dpth_op5_event",
-    "kls_lft_dpth_op6_event",
-    "kls_rght_curve_op1_event",
-    "kls_rght_curve_op2_event",
-    "kls_rght_curve_op3_event",
-    "kls_rght_curve_op4_event",
-    "kls_rght_curve_op5_event",
-    "kls_rght_curve_op6_event",
-    "kls_rght_dpth_op1_event",
-    "kls_rght_dpth_op2_event",
-    "kls_rght_dpth_op3_event",
-    "kls_rght_dpth_op4_event",
-    "kls_rght_dpth_op5_event",
-    "kls_rght_dpth_op6_event",
-    "krs_op1_event",
-    "krs_op2_event",
-    "krs_op3_event",
-    "krs_op4_event",
-    "krs_op5_event",
-    "krs_op6_event",
-    "kvs_op1_event",
-    "kvs_op2_event",
-    "kvs_op3_event",
-    "kvs_op4_event",
-    "kvs_op5_event",
-    "kvs_op6_event",
-    "lfo_amd_event",
-    "lfo_delay_event",
-    "lfo_pmd_event",
-    "lfo_speed_event",
-    "lfo_sync_event",
-    "lfo_wav_event",
-    "lvl_op1_event",
-    "lvl_op2_event",
-    "lvl_op3_event",
-    "lvl_op4_event",
-    "lvl_op5_event",
-    "lvl_op6_event",
-    "md_whl_assgn_event",
-    "md_whl_rng_event",
-    "mono_poly_event",
-    "mute_op1_event",
-    "mute_op2_event",
-    "mute_op3_event",
-    "mute_op4_event",
-    "mute_op5_event",
-    "mute_op6_event",
-    "oks_event",
-    "panic_event",
-    "pitch_lvl1_event",
-    "pitch_lvl2_event",
-    "pitch_lvl3_event",
-    "pitch_lvl4_event",
-    "pitch_rt1_event",
-    "pitch_rt2_event",
-    "pitch_rt3_event",
-    "pitch_rt4_event",
-    "pms_event",
-    "portamento_glss_event",
-    "portamento_md_event",
-    "portamento_tm_event",
-    "ptch_bnd_rng_event",
-    "ptch_bnd_stp_event",
-    "send_extra_parameters_event",
-    "transpose_event"
-    };
-    midi_learned.resize(169);
-    for(int i=0; i<169; i++){
-        param_data_model->append(ParamItem::create(param_list[i]));
+
+    midi_learned.resize(max_param_nb);
+    for(int i=0; i<max_param_nb; i++){
+        param_data_model->append(ParamItem::create(function_list[i]));
     };
 };
 
@@ -319,18 +152,111 @@ bool Dx7interface::Run(){
     return true;
 };
 
-void Dx7interface::add_midi_learned(int index, int value){
-        if( index >= static_cast<int>(midi_learned.size()) ){
-            midi_learned.resize(index + 1);
+void Dx7interface::add_midi_learned(int param_number, int function_index){
+        if( param_number >= static_cast<int>(midi_learned.size()) ){
+            midi_learned.resize(param_number + 1);
         };
-        midi_learned[index].push_back(value);
+        midi_learned[param_number].push_back(function_index);
 };
 
-void Dx7interface::rem_midi_learned(int index, int value){
-    if( index < static_cast<int>(midi_learned.size()) ){
-        auto& vec = midi_learned[index];
-        vec.erase(std::remove(vec.begin(), vec.end(), value), vec.end());
+void Dx7interface::rem_midi_learned(int param_number, int function_index){
+    if( param_number < static_cast<int>(midi_learned.size()) ){
+        auto& vec = midi_learned[param_number];
+        vec.erase(std::remove(vec.begin(), vec.end(), function_index), vec.end());
     };
+};
+
+void Dx7interface::clean_midi_learn(){
+    try{
+        Gtk::Box* parent = get_gwidget<Gtk::Box>("box_listen_affect_param");
+        Gtk::Widget* child = parent->get_first_child();
+        int p_number, selected_item;
+        Glib::RefPtr<Glib::Regex> regex_box= Glib::Regex::create("^box_midi_param.*");
+        while (child){
+            Gtk::Widget* subchild = child->get_first_child();
+            if(regex_box->match(child->get_name())){
+                while (subchild){
+                    Glib::ustring name = subchild->get_name();
+                    Glib::RefPtr<Glib::Regex> regex_param = Glib::Regex::create("^\\d+$");
+                    Glib::RefPtr<Glib::Regex> regex_function = Glib::Regex::create("^delete.*");
+                    if(regex_param->match(name)){
+                        p_number = std::stoi(name);
+                    }else if(! regex_function->match(name)){
+                        for( int function_index = 0 ; function_index < max_param_nb; function_index++){
+                            if( function_list[function_index] == name ){
+                                selected_item = function_index;
+                                break;
+                            };
+                        };
+                    };
+                    Gtk::Widget* nsubchild = subchild->get_next_sibling();
+                    Gtk::Box* box = dynamic_cast<Gtk::Box*>(child);
+                    box->remove(*subchild);
+                    subchild=nsubchild;
+                    rem_midi_learned(p_number, selected_item);
+                }
+                Gtk::Widget* nchild = child->get_next_sibling();
+                parent->remove(*child);
+                child=nchild;
+            }else{
+                child=child->get_next_sibling();
+            };
+        };
+    }catch (const std::exception & ex) {
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
+    }
+}
+void Dx7interface::read_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
+    clean_midi_learn();
+    data_stream = Gio::DataInputStream::create(param_file->read());
+    std::string line;
+    Glib::ustring function;
+    Glib::ustring midi_param_number;
+    data_stream->read_line(line);
+    while(data_stream->read_line(line)){
+        function = line.substr(0,line.find_last_of(","));
+        midi_param_number = line.substr(line.find_last_of(",")+1,line.length());
+        std::regex pattern("[^0-9]+");
+        midi_param_number = std::regex_replace(midi_param_number.c_str(), pattern, "");
+        if( midi_param_number != "" ){
+            for( int function_index = 0 ; function_index < max_param_nb; function_index++){
+                if( function_list[function_index] == function ){
+                    int midi_param_value = std::stoi(midi_param_number.raw());
+                    add_midi_learned(midi_param_value, function_index);
+                    add_midi_learn_param_widget(function, midi_param_number, function_index);
+                    break;
+                };
+            };
+        };
+    };
+    data_stream->close();
+};
+
+void Dx7interface::save_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
+    auto output_stream = param_file->replace();
+    auto data_stream = Gio::DataOutputStream::create(output_stream);
+    std::string line;
+    Glib::ustring function;
+    Glib::ustring midi_param_number;
+    Glib::ustring first_line = "# Function, midi controller number";
+    line = first_line + EOL;
+    data_stream->put_string(line);
+    for( int function_index = 0 ; function_index < max_param_nb; function_index++){
+        midi_param_number = "";
+        function = function_list[function_index];
+        for(int param_number = 0; param_number < 128; param_number++){
+            if( !midi_learned[param_number].empty() && midi_learned[param_number][0] == function_index ){
+                midi_param_number = std::to_string(param_number);
+            };
+        };
+        line = function + "," + midi_param_number + EOL;
+        data_stream->put_string(line);
+    };
+    data_stream->flush();
+    data_stream->close();
+    output_stream->close();
 };
 
 void Dx7interface::listen_midi(){
@@ -368,11 +294,6 @@ void Dx7interface::listen_midi(){
                     (get_gwidget<Gtk::Entry>("entry_affect_param"))->set_text(tostr<int>(ev->data.control.param));
                 }else{
                     if ( ev->data.control.param < midi_learned.size() && !midi_learned[ev->data.control.param].empty()) {
-                        //while(lock && lock2){};
-                        /*lock=true;
-                        midi_param[ev->data.control.param]=ev->data.control.value;
-                        lock=false;*/
-                        //std::cout
                         (this->*list_ui_parameters_functions[midi_learned[ev->data.control.param][0]])(ev->data.control.value);
                     };
                 };
@@ -472,31 +393,44 @@ void Dx7interface::create_popover_menu(){
 
 void Dx7interface::create_save_dialog() {
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-        file_dialog = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
-        file_dialog_save = get_gwidget<Gtk::FileDialog>("FileDialog_bank_save");
+        file_dialog_bank_select = get_gwidget<Gtk::FileDialog>("FileDialog_bank_select");
+        file_dialog_bank_save = get_gwidget<Gtk::FileDialog>("FileDialog_bank_save");
+        file_dialog_param_save = get_gwidget<Gtk::FileDialog>("FileDialog_param_save");
+        file_dialog_param_select = get_gwidget<Gtk::FileDialog>("FileDialog_param_select");
     #else
-        file_dialog = get_gwidget<Gtk::FileChooserDialog>("FileDialog_bank_save");
-        file_dialog->add_button("_Open", Gtk::ResponseType::ACCEPT);
-        file_dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-        file_dialog->set_action(Gtk::FileChooser::Action::OPEN);
-        file_dialog_save = get_gwidget<Gtk::FileChooserDialog>("FileDialog_bank_select");
-        file_dialog_save->add_button("_Save", Gtk::ResponseType::ACCEPT);
-        file_dialog_save->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-        file_dialog_save->set_action(Gtk::FileChooser::Action::SAVE);
+        file_dialog_bank_select = get_gwidget<Gtk::FileChooserDialog>("FileDialog_bank_select");
+        file_dialog_bank_select->add_button("_Open", Gtk::ResponseType::ACCEPT);
+        file_dialog_bank_select->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+        file_dialog_bank_select->set_action(Gtk::FileChooser::Action::OPEN);
+        file_dialog_bank_save = get_gwidget<Gtk::FileChooserDialog>("FileDialog_bank_save");
+        file_dialog_bank_save->add_button("_Save", Gtk::ResponseType::ACCEPT);
+        file_dialog_bank_save->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+        file_dialog_bank_save->set_action(Gtk::FileChooser::Action::SAVE);
+
+        file_dialog_param_select = get_gwidget<Gtk::FileChooserDialog>("FileDialog_param_select");
+        file_dialog_param_select->add_button("_Open", Gtk::ResponseType::ACCEPT);
+        file_dialog_param_select->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+        file_dialog_param_select->set_action(Gtk::FileChooser::Action::OPEN);
+        file_dialog_param_save = get_gwidget<Gtk::FileChooserDialog>("FileDialog_param_save");
+        file_dialog_param_save->add_button("_Save", Gtk::ResponseType::ACCEPT);
+        file_dialog_param_save->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+        file_dialog_param_save->set_action(Gtk::FileChooser::Action::SAVE);
     #endif
-    button_save = get_gwidget<Gtk::Button>("button_save");
-    dialog_save = get_gwidget<Gtk::Window>("dialog_save");
-    dialog_save->set_default_size(20, 10);
-    dialog_save->set_hide_on_close(true);
-    dialog_save->set_modal(true);
-    file_dialog->set_modal(true);
-    file_dialog_save->set_modal(true);
+    button_bank_save = get_gwidget<Gtk::Button>("btn_bank_save");
+    dialog_bank_save = get_gwidget<Gtk::Window>("dialog_bank_save");
+    dialog_bank_save->set_default_size(20, 10);
+    dialog_bank_save->set_hide_on_close(true);
+    dialog_bank_save->set_modal(true);
+    file_dialog_bank_select->set_modal(true);
+    file_dialog_bank_save->set_modal(true);
+    file_dialog_param_select->set_modal(true);
+    file_dialog_param_save->set_modal(true);
     get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_32")));
     get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")));
 };
 
-void Dx7interface::OpenFileDialog(){
-    file_dialog_save->set_title(dialog_save->get_title());
+void Dx7interface::OpenFileSaveDialog(){
+    file_dialog_bank_save->set_title(dialog_bank_save->get_title());
     Glib::ustring filename;
     uint index = 0;
     bool as_raw = get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active();
@@ -519,20 +453,20 @@ void Dx7interface::OpenFileDialog(){
     };
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
         if(as_raw){
-            file_dialog_save->set_initial_name(filename+".dx7");
+            file_dialog_bank_save->set_initial_name(filename+".dx7");
             export_config = DX7_RAW;
         }else{
-            file_dialog_save->set_initial_name(filename+".syx");
+            file_dialog_bank_save->set_initial_name(filename+".syx");
         };
         std::cout << "base filename: " << filename << std::endl;
         std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
         if(initial_folder_save==nullptr){
             initial_folder_save=initial_folder_open;
         }
-        file_dialog_save->set_initial_folder(initial_folder_save);
-        file_dialog_save->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
+        file_dialog_bank_save->set_initial_folder(initial_folder_save);
+        file_dialog_bank_save->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
             try {
-                Glib::RefPtr<Gio::File> file = file_dialog_save->save_finish(result);
+                Glib::RefPtr<Gio::File> file = file_dialog_bank_save->save_finish(result);
                 if (file) {
                     std::cout << "writing file: " << file->get_path() << std::endl;
                     initial_folder_save = Gio::File::create_for_path(file->get_parent()->get_path());
@@ -554,23 +488,23 @@ void Dx7interface::OpenFileDialog(){
             }
         });
     #else
-        file_dialog_save->set_transient_for(*(get_window()));
+        file_dialog_bank_save->set_transient_for(*(get_window()));
         if(as_raw){
-            file_dialog_save->set_current_name(filename+".dx7");
+            file_dialog_bank_save->set_current_name(filename+".dx7");
             export_config = DX7_RAW;
         }else{
-            file_dialog_save->set_current_name(filename+".syx");
+            file_dialog_bank_save->set_current_name(filename+".syx");
         };
         std::cout << "base filename: " << filename << std::endl;
         std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
         if(initial_folder_save==nullptr){
             initial_folder_save=initial_folder_open;
         }
-        file_dialog_save->set_current_folder(initial_folder_save);
-        file_dialog_save->signal_response().connect([this,index](int response) {
+        file_dialog_bank_save->set_current_folder(initial_folder_save);
+        file_dialog_bank_save->signal_response().connect([this,index](int response) {
             try {
                 if (response == Gtk::ResponseType::ACCEPT) {
-                    auto file = file_dialog_save->get_file();
+                    auto file = file_dialog_bank_save->get_file();
                     if (file) {
                         if(save_type == SOUND){
                             if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
@@ -583,21 +517,21 @@ void Dx7interface::OpenFileDialog(){
                         };
                     };
                 }
-                file_dialog_save->hide();
+                file_dialog_bank_save->hide();
             } catch (const std::exception & ex) {
                 std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                 + "Reason: " + ex.what();
                 std::cerr << err_msg << std::endl;
             };
         });
-        file_dialog_save->show();
+        file_dialog_bank_save->show();
     #endif
 };
 
-void Dx7interface::OpenDialog(Glib::ustring title,Glib::ustring filename){
+void Dx7interface::OpenFileSelectDialog(Glib::ustring title,Glib::ustring filename){
     try{
-        dialog_save->set_transient_for(*(get_window()));
-        dialog_save->set_title(title);
+        dialog_bank_save->set_transient_for(*(get_window()));
+        dialog_bank_save->set_title(title);
         Glib::ustring save_label=title+": "+filename;
         get_gwidget<Gtk::Label>("label_save_name")->set_label(save_label);
         auto spinbutton_save_start = get_gwidget<Gtk::SpinButton>("spinbutton_save_start");
@@ -614,7 +548,7 @@ void Dx7interface::OpenDialog(Glib::ustring title,Glib::ustring filename){
             get_gwidget<Gtk::Box>("box_save_bank")->set_visible(false);
             get_gwidget<Gtk::Label>("label_bulk")->set_visible(false);
         };
-        dialog_save->present();
+        dialog_bank_save->present();
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
@@ -622,16 +556,115 @@ void Dx7interface::OpenDialog(Glib::ustring title,Glib::ustring filename){
     };
 };
 
+
+void Dx7interface::on_midi_learn_param_save(){
+    file_dialog_param_save->set_title("Select file");
+    Glib::ustring filename;
+    uint index = 0;
+    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+        file_dialog_param_save->set_initial_name("midi_learn_config.cfg");
+        if(initial_folder_save_param==nullptr){
+            initial_folder_save_param=initial_folder_open_param;
+        }
+        file_dialog_param_save->set_initial_folder(initial_folder_save_param);
+        file_dialog_param_save->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
+            try {
+                Glib::RefPtr<Gio::File> file = file_dialog_param_save->save_finish(result);
+                if (file) {
+                    initial_folder_save_param = Gio::File::create_for_path(file->get_parent()->get_path());
+                    save_midi_learned_param(file);
+                };
+            } catch (const std::exception & ex) {
+                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+                " Reason: " + ex.what();
+                std::cerr << err_msg << std::endl;
+            }
+        });
+    #else
+        file_dialog_param_save->set_transient_for(*(get_window()));
+        file_dialog_param_save->set_current_name("midi_learn_config.cfg");
+        if(initial_folder_save_param==nullptr){
+            initial_folder_save_param=initial_folder_open_param;
+        }
+        file_dialog_param_save->set_current_folder(initial_folder_save_param);
+        file_dialog_param_save->signal_response().connect([this,index](int response) {
+            try {
+                if (response == Gtk::ResponseType::ACCEPT) {
+                    auto file = file_dialog_param_save->get_file();
+                    if (file) {
+                        initial_folder_save_param = Gio::File::create_for_path(file->get_parent()->get_path());
+                        save_midi_learned_param(file);
+                    };
+                }
+                file_dialog_param_save->hide();
+            } catch (const std::exception & ex) {
+                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                + "Reason: " + ex.what();
+                std::cerr << err_msg << std::endl;
+            };
+        });
+        file_dialog_param_save->show();
+    #endif
+};
+
+void Dx7interface::on_midi_learn_param_select(){
+    LOG_IN();
+    try{
+        file_dialog_param_select->set_title("Select config");
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            file_dialog_param_select->set_initial_folder(initial_folder_open_param);
+            file_dialog_param_select->open( *(get_window()), [this](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+                try {
+                    Glib::RefPtr<Gio::File> config_file = file_dialog_param_select->open_finish(result);
+                    if (config_file) {
+                        read_midi_learned_param(config_file);
+                        initial_folder_open_param = Gio::File::create_for_path(config_file->get_parent()->get_path());
+                    };
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                    + "Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
+                };
+            }
+            ); /* end dialog open function */
+        #else
+            file_dialog_param_select->set_transient_for(*(get_window()));
+            file_dialog_param_select->signal_response().connect([this](int response) {
+                try {
+                    if (response == Gtk::ResponseType::ACCEPT) {
+                        auto config_file = file_dialog_param_select->get_file();
+                        if (config_file) {
+                            read_midi_learned_param(config_file);
+                            initial_folder_open_param= Gio::File::create_for_path(config_file->get_path());;
+                        };
+                    };
+                    file_dialog_param_select->hide();
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                    + "Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
+                };
+            });
+            file_dialog_param_select->show();
+        #endif
+    }catch (const std::exception & ex) {
+        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
+        + "Reason: " + ex.what();
+        //throw std::runtime_error(err_msg);
+    };
+    LOG_OUT();
+};
+
 /*** BANK ***/
 void Dx7interface::on_bank_select(){
     LOG_IN();
     try{
-        file_dialog->set_title("Select bank");
+        file_dialog_bank_select->set_title("Select bank");
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            file_dialog->set_initial_folder(initial_folder_open);
-            file_dialog->open( *(get_window()), [this](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+            file_dialog_bank_select->set_initial_folder(initial_folder_open);
+            file_dialog_bank_select->open( *(get_window()), [this](const Glib::RefPtr<Gio::AsyncResult>& result ) {
                 try {
-                    Glib::RefPtr<Gio::File> bank_file = file_dialog->open_finish(result);
+                    Glib::RefPtr<Gio::File> bank_file = file_dialog_bank_select->open_finish(result);
                     if (bank_file) {
                         set_bank(bank_file);
                         initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());
@@ -644,24 +677,24 @@ void Dx7interface::on_bank_select(){
             }
             ); /* end dialog open function */
         #else
-            file_dialog->set_transient_for(*(get_window()));
-            file_dialog->signal_response().connect([this](int response) {
+            file_dialog_bank_select->set_transient_for(*(get_window()));
+            file_dialog_bank_select->signal_response().connect([this](int response) {
                 try {
                     if (response == Gtk::ResponseType::ACCEPT) {
-                        auto bank_file = file_dialog->get_file();
+                        auto bank_file = file_dialog_bank_select->get_file();
                         if (bank_file) {
                             set_bank(bank_file);
                             initial_folder_open= Gio::File::create_for_path(bank_file->get_path());;
                         };
                     };
-                    file_dialog->hide();
+                    file_dialog_bank_select->hide();
                 } catch (const std::exception & ex) {
                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                     + "Reason: " + ex.what();
                     std::cerr << err_msg << std::endl;
                 };
             });
-            file_dialog->show();
+            file_dialog_bank_select->show();
         #endif
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
@@ -670,6 +703,7 @@ void Dx7interface::on_bank_select(){
     };
     LOG_OUT();
 };
+
 void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
     LOG_IN();
         m_popover_menu->set_pointing_to(Gdk::Rectangle(x, y, 1, 1));
@@ -679,9 +713,6 @@ void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
 /* set/load */
 void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
     old_snum=0;
-    //for (auto i : bank_file->query_info()->list_attributes())
-    ////    std::cout << i << std::endl;
-    //std::cout << bank_file->get_parent()->get_path() << std::endl;
     clean_bank();
     load_bank(bank_file);
     bank_selection_model->set_selected(0);
@@ -703,10 +734,6 @@ void Dx7interface::clean_bank(){
         clear_sound(&bank_128_modif.sound[i],i,false);
         clear_sound(&bank_128_origin.sound[i],i,false);
     }
-    /* by file */
-    /*load_bank(Gio::File::create_for_path(DATA_DIR"/reset1.syx"));
-    load_bank(Gio::File::create_for_path(DATA_DIR"/reset32.syx"));
-    load_bank(Gio::File::create_for_path(DATA_DIR"/reset128.syx"));*/
     uint n_items = bank_data_model->get_n_items();
     if (n_items != 0) {
         bank_data_model->remove_all();
@@ -803,7 +830,6 @@ void Dx7interface::on_restore_bank(){
     LOG_OUT();
 };
 void Dx7interface::restore_origin_bank(){
-    // set bank_X_modif.sound[snum] in bank_X_origin.sound[snum]
     switch ( bank_nb_sound ){
         case 1:
             std::cout << "Restore bank: " << bank_1_modif.name << " from origin bank." << std::endl;
@@ -872,7 +898,7 @@ void Dx7interface::on_save_bank(){
         Glib::ustring title = "Saving Bank";
         save_type = BANK;
         save_modif_sound();
-        OpenDialog(title, bank_1_modif.name);
+        OpenFileSelectDialog(title, bank_1_modif.name);
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
@@ -880,6 +906,7 @@ void Dx7interface::on_save_bank(){
     };
     LOG_OUT();
 };
+
 void Dx7interface::write_bank(Glib::RefPtr<Gio::File> file, uint index){
     LOG_IN();
     switch(export_config){
@@ -1289,7 +1316,7 @@ void Dx7interface::on_save_sound(){
         save_modif_sound();
         Glib::ustring title = "Saving sound";
         save_type = SOUND;
-        OpenDialog(title, bank_1_modif.sound->name);
+        OpenFileSelectDialog(title, bank_1_modif.sound->name);
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
@@ -2000,11 +2027,11 @@ void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
     };
 };
 
-void Dx7interface::add_midi_learn_param_widget(Glib::ustring param_name, Glib::ustring param_number, int selected_item){
+void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib::ustring param_number, int selected_item){
     /* affected param name widget */
     auto text_fct = Gtk::make_managed<Gtk::Text>();
-    text_fct->set_name(param_name);
-    text_fct->set_text(param_name);
+    text_fct->set_name(function_name);
+    text_fct->set_text(function_name);
     text_fct->set_editable(false);
     /* midi param number widget */
     auto text_param = Gtk::make_managed<Gtk::Text>();
@@ -2016,6 +2043,7 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring param_name, Glib::u
     btn_delete->set_name("delete_" + param_number);
     /* box to group created widget */
     auto box_funct = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL);
+    box_funct->set_name("box_midi_param"+param_number);
     box_funct->append(*text_fct);
     box_funct->append(*text_param);
     box_funct->append(*btn_delete);
@@ -2036,15 +2064,15 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring param_name, Glib::u
 };
 
 void Dx7interface::on_add_midi_learn_event(){
-    auto selected_item = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected_item();
-    auto selected_number = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected();
+    auto selected_item = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected_item(); // return selected item
+    auto selected_function = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected(); // return index of selected item
     if (selected_item) {
-        Glib::ustring param_name = (std::dynamic_pointer_cast<ParamItem>(selected_item))->get_name();
-        Glib::ustring param_number = get_gwidget<Gtk::Entry>("entry_affect_param")->get_text();
-        if (param_number != "") {
-            int p_number = std::stoi(param_number.raw());
-            add_midi_learned(p_number, selected_number);
-            add_midi_learn_param_widget(param_name, param_number, selected_number);
+        Glib::ustring function_name = (std::dynamic_pointer_cast<ParamItem>(selected_item))->get_name();
+        Glib::ustring st_midi_param_number = get_gwidget<Gtk::Entry>("entry_affect_param")->get_text();
+        if ( st_midi_param_number != "") {
+            int param_value = std::stoi(st_midi_param_number.raw());
+            add_midi_learned(param_value, selected_function);
+            add_midi_learn_param_widget(function_name, st_midi_param_number, selected_function);
         };
     };
 };
@@ -2229,10 +2257,17 @@ void Dx7interface::attach_signals(){
     /* menu bank view */
     attach_action_group_signals();
     /* save dialog */
-    button_save->signal_clicked().connect([this]() {
-        OpenFileDialog();
-        dialog_save->close();
+    button_bank_save->signal_clicked().connect([this]() {
+        OpenFileSaveDialog();
+        dialog_bank_save->close();
     });
+
+    slot_midi_learn_load = (get_gwidget<Gtk::Button>("btn_midi_learn_load"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_midi_learn_param_select));
+
+    slot_midi_learn_save = (get_gwidget<Gtk::Button>("btn_midi_learn_save"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_midi_learn_param_save));
+
     (get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_extra_param_event));
 
@@ -4343,6 +4378,7 @@ void Dx7interface::mouse_mooves(double x, double y, Glib::ustring name){
         (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<int>(p_drag)+"_"+name))->set_value(val_y);
     };
 };
+
 void Dx7interface::mouse_click(int n_press, double x, double y, Glib::ustring name){
     //double width = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_width();
     double height = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_height();

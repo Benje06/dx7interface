@@ -6,6 +6,8 @@
   <requires lib="gtk" version="4.16"/>
   <object class="GtkFileDialog" id="FileDialog_bank_select"/>
   <object class="GtkFileDialog" id="FileDialog_bank_save"/>
+  <object class="GtkFileDialog" id="FileDialog_param_select"/>
+  <object class="GtkFileDialog" id="FileDialog_param_save"/>
   <object class="GtkBox" id="box_main">
     <property name="baseline-position">top</property>
     <property name="hexpand">1</property>
@@ -5502,6 +5504,23 @@
                               <object class="GtkBox" id="box_listen_affect_param">
                                 <property name="orientation">vertical</property>
                                 <child>
+                                    <object class="GtkBox" id="box_listen_affect_param_file">
+                                        <property name="orientation">horizontal</property>
+                                        <child>
+                                            <object class="GtkButton" id="btn_midi_learn_load">
+                                                <property name="halign">center</property>
+                                                <property name="label">Load</property>
+                                            </object>
+                                        </child>
+                                        <child>
+                                            <object class="GtkButton" id="btn_midi_learn_save">
+                                                <property name="halign">center</property>
+                                                <property name="label">Save</property>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                                <child>
                                   <object class="GtkToggleButton" id="toggle_midi_learn">
                                     <property name="halign">center</property>
                                     <property name="label">MIDI learn</property>
@@ -6301,7 +6320,7 @@
     <property name="step-increment">1</property>
     <property name="upper">96</property>
   </object>
-  <object class="GtkWindow" id="dialog_save">
+  <object class="GtkWindow" id="dialog_bank_save">
     <child>
       <object class="GtkBox">
         <property name="halign">center</property>
@@ -6394,7 +6413,16 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="button_save">
+            <object class="GtkFrame">
+                <property name="child">
+                    <object class="GtkCheckButton" id="checkbutton_add_midi_learn_parameters">
+                        <property name="label" translatable="yes">Save midi learn configuration</property>
+                    </object>
+                </property>
+            </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_bank_save">
             <property name="label" translatable="yes">select file</property>
           </object>
         </child>
