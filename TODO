@@ -1,5 +1,6 @@
 ### DOC
 doc d'utilisation*
+page html
 normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
 normalisation gx_module (fonction load,
@@ -8,22 +9,20 @@ normalisation gx_module (fonction load,
 traductions
 
 # effectivité
-evenements MIDI (temporisation, CC)
-ecriture fichier des extra parameters
-reception/envoi en midi (recevie bank, receive sound, send bank(32), plusieurs sons)
+evenements MIDI (temporisation)
+ecriture fichier des extra parameters( compatible tf1)
+* reception/envoi en midi (recevie bank, receive sound, send bank(32), plusieurs sons)
 multiplateforme (midi/interface) drumkit, Juce ???
 
 # Interface
-insert/replace/delete/(moove)
-garder fonction parameter quelque soit le son (à cocher)
+* insert/replace/delete/(moove)
 fenetre secondaires (option, module)
 refonte interface( size/expand des elements)
-son par defaut (son init)
+* son par defaut (son init)
 boutons randomize
-options des couleurs
-drive dx7interface par control change ( fonction assign controle change to event )
 
 ### CODE
+synth generique (voir avec marc)
 gestion d'exceptions
 filtre des variables utilisateurs ???
 evenement standard (erreur ???)

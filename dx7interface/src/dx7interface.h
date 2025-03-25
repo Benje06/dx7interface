@@ -40,7 +40,7 @@
 #include <filesystem>
 #include "GtkClass.h"
 /* Synth */
-#include <synth.h>
+#include "synth.h"
 /* sysex */
 #include "dx7sysex.h"
 
