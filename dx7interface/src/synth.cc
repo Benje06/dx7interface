@@ -143,6 +143,7 @@ void Synth::print_event_info(snd_seq_event_t* ev){
     << "time: " << int(ev->time.time.tv_sec) << std::endl;
     std::cout << "source: " << int( ev->source.client) << " " << '\t'
     << "dest: " << int(ev->dest.client) << std::endl;
+    std::cout << "channel: " << int(ev->data.control.channel)+1 << std::endl;
 };
 
 void Synth::listen_midi(){

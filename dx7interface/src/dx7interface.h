@@ -82,13 +82,16 @@ class Dx7interface : public Gx_module, public Synth {
         snd_seq_system_info_t* info = nullptr;          /* info */
         snd_seq_event_t* ev = nullptr;                  /* evenement */
         size_t in_buff_size, out_buff_size;               /* buffer d'entré et de sortie */
+        std::vector<uint8_t> sysex_buffer;               // Buffer to store SysEx fragments
 
-        /* */
+        /* Boolean */
         bool lock = false;
         bool compare = false;                   /* set if compare button is activate */
         bool send_extra_params = false;         /* set if send_extra paraameter is activate */
         bool write_extra_params = false;         /* set if send_extra paraameter is activate */
         bool mode_tf1 = false;                   /* mode tf1 = fonction parameter by sound */
+        bool receive = false;                    // set if receive mode is activate
+        bool uncomplete = false;                 // bool for uncomplete sysex message
 
         /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
@@ -531,9 +534,13 @@ class Dx7interface : public Gx_module, public Synth {
         /** SOUND BANK **/
         /* set/load */
         void set_default_values();
-        void set_bank(Glib::RefPtr<Gio::File>);
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
+        void set_bank(Glib::RefPtr<Gio::File>);
         void load_bank(Glib::RefPtr<Gio::File>);
+        void receive_bank(std::vector<uint8_t>);
+        void receive_voice(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
+        void receive_voice_by_byte(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
+        void receive_paramters(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);
         /* restore */
         void on_restore_bank();
         void restore_origin_bank();
