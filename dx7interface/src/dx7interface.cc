@@ -1679,7 +1679,7 @@ void Dx7interface::receive_voice(uint8_t sound_index, St_dx7sysex_1* sound, std:
         };
         sound->name=strm.str();
         sound->extra.mute.val=0x7F;
-        sound->extra.functions.poly_mono.val = 0x00;
+        /*sound->extra.functions.poly_mono.val = 0x00;
         sound->extra.functions.ptch_bnd_rng.val = 0x00;
         sound->extra.functions.ptch_bnd_stp.val = 0x00;
         sound->extra.functions.portamento_md.val = 0x00;
@@ -1692,7 +1692,7 @@ void Dx7interface::receive_voice(uint8_t sound_index, St_dx7sysex_1* sound, std:
         sound->extra.functions.brth_rng.val = 0x00;
         sound->extra.functions.brth_assgn.val = 0x00;
         sound->extra.functions.aftrtch_rng.val = 0x00;
-        sound->extra.functions.aftrtch_assgn.val = 0x00;
+        sound->extra.functions.aftrtch_assgn.val = 0x00;*/
         /* add voice name to liststore */
         bank_data_model->append(SoundBankItem::create(sound_index,sound->name));
     //LOG_OUT();
