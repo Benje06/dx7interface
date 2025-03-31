@@ -269,6 +269,7 @@ void Dx7interface::listen_midi(){
     /* TODO : use all seq event */
     snd_seq_event_input(seq_handle, &ev);
     Synth::print_event_info(ev);
+     int length_mask;
     if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && (int)ev->data.control.channel == (int)(Synth::channel_receive & 0x0F)) ){
         switch (ev->type) {
             case SND_SEQ_EVENT_NOTEON:
@@ -347,6 +348,14 @@ void Dx7interface::listen_midi(){
                 // 09 32 SoundBankItem
                 // 02 32 son + function
                 receive = true;
+                length_mask = ev->type & SND_SEQ_EVENT_LENGTH_MASK;
+                if (length_mask == SND_SEQ_EVENT_LENGTH_FIXED) {
+                    std::cout << "Event has fixed length." << std::endl;
+                } else if (length_mask == SND_SEQ_EVENT_LENGTH_VARIABLE) {
+                    std::cout << "Event has variable length." << std::endl;
+                } else {
+                    std::cout << "Unknown length mask." << std::endl;
+                }
                 std::cout << "Length:" << (int(ev->data.ext.len)) << std::endl;
                 if( (ev->data.ext.len > 8 || uncomplete) && receive ){
                     uncomplete = true;
@@ -854,7 +863,6 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     old_snum=0;
     int i;
     Glib::ustring bank_name = "Received";
-    clean_bank();
     std::cout << "Buffer size: " << sysex_buffer.size() << std::endl;
     /*for (uint8_t byte : sysex_buffer) {
      *      std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
@@ -862,6 +870,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     switch(sysex_buffer.size()){
         case 136:
             i = 0;
+            clean_bank();
             receive_voice(i, &bank_1_origin.sound[i], sysex_buffer);
             bank_1_origin.name = bank_name;
             bank_1_modif=bank_1_origin;
@@ -869,6 +878,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
             break;
         case 163:
             i = 0;
+            clean_bank();
             receive_voice_by_byte(i, &bank_1_origin.sound[i], sysex_buffer);
             bank_1_origin.name = bank_name;
             bank_1_modif=bank_1_origin;
@@ -876,6 +886,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
             break;
         case 4104:
             if( sysex_buffer[3] == 0x09 ){
+                clean_bank();
                 for (i = 0; i < 32; i++){
                     receive_voice(i, &bank_32_origin.sound[i], sysex_buffer);
                 };
