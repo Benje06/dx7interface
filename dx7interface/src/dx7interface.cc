@@ -30,7 +30,8 @@ extern "C" {
     };
 }
 
-Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME)  {
+Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME),
+midi_learned(max_param_nb, std::vector<int>(max_param_nb, -1))  {
     /*basic constructor */
     LOG_IN();
     block_midi();
@@ -270,7 +271,7 @@ void Dx7interface::listen_midi(){
     snd_seq_event_input(seq_handle, &ev);
     Synth::print_event_info(ev);
      int length_mask;
-    if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && (int)ev->data.control.channel == (int)(Synth::channel_receive & 0x0F)) ){
+    if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && ((int)(ev->data.control.channel) +1) == Synth::channel_receive ) ) {
         switch (ev->type) {
             case SND_SEQ_EVENT_NOTEON:
                 //Synth::print_event_info(ev);
@@ -1709,113 +1710,79 @@ void Dx7interface::receive_voice(uint8_t sound_index, St_dx7sysex_1* sound, std:
     //LOG_OUT();
 };
 
-void Dx7interface::receive_voice_by_byte(uint8_t i, St_dx7sysex_1* sound, std::vector<uint8_t> data){ /* BULK 1 */
+void Dx7interface::receive_voice_by_byte(uint8_t sound_index, St_dx7sysex_1* sound, std::vector<uint8_t> data){ /* BULK 1 */
     //LOG_IN();
     uint8_t j,k;
+    int i = 6 ;
     /* operator j */
     for ( j = 6; j-- != 0 ; ){
         /* OP[J] EG RATE[k] */
         for ( k = 0; k < 4 ; k++ ){
-            sound->op[j].eg_rt[k].val=data_stream->read_byte() & 0x7F;
+            sound->op[j].eg_rt[k].val=data[i++] & 0x7F;
         };
         /* OP[J] EG LVL[k] */
         for ( k = 0; k < 4 ; k++  ){
-            sound->op[j].eg_lvl[k].val=data_stream->read_byte() & 0x7F;
+            sound->op[j].eg_lvl[k].val=data[i++] & 0x7F;
         };
-        sound->op[j].kls.brk_pt.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].kls.lft_dpth.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].kls.rght_dpth.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].kls.lft_curve.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].kls.rght_curve.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].krs.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].ams.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].kvs.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].lvl.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].freq_mode.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].freq_coarse.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].freq_fine.val=data_stream->read_byte() & 0x7F;
-        sound->op[j].dtun.val=data_stream->read_byte() & 0x7F;
+        sound->op[j].kls.brk_pt.val=data[i++] & 0x7F;
+        sound->op[j].kls.lft_dpth.val=data[i++] & 0x7F;
+        sound->op[j].kls.rght_dpth.val=data[i++] & 0x7F;
+        sound->op[j].kls.lft_curve.val=data[i++] & 0x7F;
+        sound->op[j].kls.rght_curve.val=data[i++] & 0x7F;
+        sound->op[j].krs.val=data[i++] & 0x7F;
+        sound->op[j].ams.val=data[i++] & 0x7F;
+        sound->op[j].kvs.val=data[i++] & 0x7F;
+        sound->op[j].lvl.val=data[i++] & 0x7F;
+        sound->op[j].freq_mode.val=data[i++] & 0x7F;
+        sound->op[j].freq_coarse.val=data[i++] & 0x7F;
+        sound->op[j].freq_fine.val=data[i++] & 0x7F;
+        sound->op[j].dtun.val=data[i++] & 0x7F;
     };
     for( j=0 ; j < 4; j++ ){
-        sound->pitch.eg_rt[j].val=data_stream->read_byte() & 0x7F;
+        sound->pitch.eg_rt[j].val=data[i++] & 0x7F;
     };
     for( j=0 ; j < 4; j++ ){
-        sound->pitch.eg_lvl[j].val=data_stream->read_byte() & 0x7F;
+        sound->pitch.eg_lvl[j].val=data[i++] & 0x7F;
     };
-    sound->algo.algo.val=data_stream->read_byte() & 0x7F ;
-    sound->algo.feedback.val=data_stream->read_byte() & 0x7F;
-    sound->algo.oks.val=data_stream->read_byte() & 0x7F;
-    sound->lfo.speed.val=data_stream->read_byte() & 0x7F;
-    sound->lfo.delay.val=data_stream->read_byte() & 0x7F;
-    sound->lfo.pmd.val=data_stream->read_byte() & 0x7F;
-    sound->lfo.amd.val=data_stream->read_byte() & 0x7F;
-    sound->lfo.sync.val=data_stream->read_byte() & 0x7F;
-    sound->lfo.wave.val=data_stream->read_byte() & 0x7F;
-    sound->lfo.pms.val=data_stream->read_byte() & 0x7F;
-    sound->algo.transpose.val=data_stream->read_byte() & 0x7F;
+    sound->algo.algo.val=data[i++] & 0x7F ;
+    sound->algo.feedback.val=data[i++] & 0x7F;
+    sound->algo.oks.val=data[i++] & 0x7F;
+    sound->lfo.speed.val=data[i++] & 0x7F;
+    sound->lfo.delay.val=data[i++] & 0x7F;
+    sound->lfo.pmd.val=data[i++] & 0x7F;
+    sound->lfo.amd.val=data[i++] & 0x7F;
+    sound->lfo.sync.val=data[i++] & 0x7F;
+    sound->lfo.wave.val=data[i++] & 0x7F;
+    sound->lfo.pms.val=data[i++] & 0x7F;
+    sound->algo.transpose.val=data[i++] & 0x7F;
     std::ostringstream strm;
     for( j=0; j <= 9; j++ ){
-        strm << (data_stream->read_byte());
+        strm << (data[i++]);
     };
     sound->name=strm.str();
     sound->extra.mute.val=0x7F;
     /* add voice name to liststore */
-    bank_data_model->append(SoundBankItem::create(i,sound->name));
+    bank_data_model->append(SoundBankItem::create(sound_index,sound->name));
     //LOG_OUT();
 };
 
 void Dx7interface::receive_paramters(uint8_t sound_index, St_dx7sysex_1* sound, std::vector<uint8_t> data){
-
-    /*for(uint8_t i=0; i<14; i++){
-        for(uint8_t j=0; j<4; j++){
-            data_stream_param->read_byte();
-        };
-        switch(data_stream_param->read_byte()){
-            case 0x40:
-                sound->extra.functions.poly_mono.val = data_stream_param->read_byte() & sound->extra.functions.poly_mono.mask;
-                break;
-            case 0x41:
-                sound->extra.functions.ptch_bnd_rng.val = data_stream_param->read_byte() & sound->extra.functions.ptch_bnd_rng.mask;
-                break;
-            case 0x42:
-                sound->extra.functions.ptch_bnd_stp.val = data_stream_param->read_byte() & sound->extra.functions.ptch_bnd_stp.mask;
-                break;
-            case 0x43:
-                sound->extra.functions.portamento_md.val = data_stream_param->read_byte() & sound->extra.functions.portamento_md.mask;
-                break;
-            case 0x44:
-                sound->extra.functions.portamento_glss.val = data_stream_param->read_byte() & sound->extra.functions.portamento_glss.mask;
-                break;
-            case 0x45:
-                sound->extra.functions.portamento_tm.val = data_stream_param->read_byte() & sound->extra.functions.portamento_tm.mask;
-                break;
-            case 0x46:
-                sound->extra.functions.md_whl_rng.val = data_stream_param->read_byte() & sound->extra.functions.md_whl_rng.mask;
-                break;
-            case 0x47:
-                sound->extra.functions.md_whl_assgn.val = data_stream_param->read_byte() & sound->extra.functions.md_whl_assgn.mask;
-                break;
-            case 0x48:
-                sound->extra.functions.foot_rng.val = data_stream_param->read_byte() & sound->extra.functions.foot_rng.mask;
-                break;
-            case 0x49:
-                sound->extra.functions.foot_assgn.val = data_stream_param->read_byte() & sound->extra.functions.foot_assgn.mask;
-                break;
-            case 0x4A:
-                sound->extra.functions.brth_rng.val = data_stream_param->read_byte() & sound->extra.functions.brth_rng.mask;
-                break;
-            case 0x4B:
-                sound->extra.functions.brth_assgn.val = data_stream_param->read_byte() & sound->extra.functions.brth_assgn.mask;
-                break;
-            case 0x4C:
-                sound->extra.functions.aftrtch_rng.val = data_stream_param->read_byte() & sound->extra.functions.aftrtch_rng.mask;
-                break;
-            case 0x4D:
-                sound->extra.functions.aftrtch_assgn.val = data_stream_param->read_byte() & sound->extra.functions.aftrtch_assgn.mask;
-                break;
-        };
-        data_stream_param->read_byte();
-    };*/
+        int i;
+        i=6 + (64 * sound_index);
+        sound->extra.functions.poly_mono.val = (data[i++]>>6) & sound->extra.functions.poly_mono.mask;
+        sound->extra.functions.ptch_bnd_rng.val = (data[i]) & sound->extra.functions.ptch_bnd_rng.mask;
+        sound->extra.functions.ptch_bnd_stp.val = (data[i++]>>4) & sound->extra.functions.ptch_bnd_stp.mask;
+        sound->extra.functions.portamento_tm.val = (data[i++]) & sound->extra.functions.portamento_tm.mask;
+        sound->extra.functions.portamento_glss.val = (data[i]) & sound->extra.functions.portamento_glss.mask;
+        sound->extra.functions.portamento_md.val = (data[i++]>>1) & sound->extra.functions.portamento_md.mask;
+        sound->extra.functions.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.functions.md_whl_assgn.val = (data[i++]>>4) & sound->extra.functions.md_whl_assgn.mask;
+        sound->extra.functions.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.functions.foot_assgn.val = (data[i++]>>4) & sound->extra.functions.foot_assgn.mask;
+        sound->extra.functions.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.functions.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.functions.aftrtch_assgn.mask;
+        sound->extra.functions.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.functions.brth_assgn.val = (data[i++]>>4) & sound->extra.functions.brth_assgn.mask;
 };
 
 bool Dx7interface::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& stream) {
@@ -1908,84 +1875,88 @@ void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
 /* read: set (in ui from struct) */
 void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     /* set value in each widget from modif */
-    uint8_t j,k;
     /* general */
     block_ui();
     block_midi();
     //(get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
-    /* ALGO */
-    (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(sound->algo.algo.val+1);
-    (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(sound->algo.feedback.val);
-    /*	[0-11] + (([1-5]-1)*12)	*/
-    (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(sound->algo.transpose.val % 12);
-    (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (sound->algo.transpose.val / 12)+1 );
-    (get_gwidget<Gtk::CheckButton>("oks"))->set_active(sound->algo.oks.val);
-    /* LFO */
-    (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(sound->lfo.wave.val);
+    (get_window())->add_tick_callback([this,sound] (const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+        uint8_t j,k;
+        /* ALGO */
+        (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(sound->algo.algo.val+1);
+        (get_gwidget<Gtk::SpinButton>("feedback"))->set_value(sound->algo.feedback.val);
+        /*	[0-11] + (([1-5]-1)*12)	*/
+        (get_gwidget<Gtk::DropDown>("note_transpose"))->set_selected(sound->algo.transpose.val % 12);
+        (get_gwidget<Gtk::SpinButton>("octv_transpose"))->set_value( (sound->algo.transpose.val / 12)+1 );
+        (get_gwidget<Gtk::CheckButton>("oks"))->set_active(sound->algo.oks.val);
+        /* LFO */
+        (get_gwidget<Gtk::DropDown>("lfo_wav"))->set_selected(sound->lfo.wave.val);
 
-    /*set image */
-    (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(sound->lfo.sync.val);
-    (get_gwidget<Gtk::SpinButton>("lfo_speed"))->set_value(sound->lfo.speed.val);
-    (get_gwidget<Gtk::SpinButton>("lfo_delay"))->set_value(sound->lfo.delay.val);
-    (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->set_value(sound->lfo.pmd.val);
-    (get_gwidget<Gtk::SpinButton>("lfo_amd"))->set_value(sound->lfo.amd.val);
-    /* LFO modulation */
-    (get_gwidget<Gtk::Scale>("pms"))->set_value(sound->lfo.pms.val);
-    /* PITCH EG */
-    for ( k = 0; k < 4 ; k++ ){
-        get_gwidget<Gtk::SpinButton>("eg_rt" + tostr<uint>(k+1) + "_pitch")->set_value(sound->pitch.eg_rt[k].val);
-    };
-    for ( k = 0; k < 4 ; k++ ){
-        get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_pitch")->set_value(sound->pitch.eg_lvl[k].val);
-    };
-    /* OPERATEUR j+1 */
-    uint8_t mute_val=sound->extra.mute.val & 0x7F; // get mute status from extra struct;
-    for ( j=0;j<6;j++){
-        /* AMS */
-        (get_gwidget<Gtk::Scale>("ams_op"+tostr<uint>(j+1)))->set_value(sound->op[j].ams.val);
-        /* FREQUENCE */
-        (get_gwidget<Gtk::DropDown>("freq_mode_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].freq_mode.val);
-        (get_gwidget<Gtk::SpinButton>("freq_coarse_op"+tostr<uint>(j+1)))->set_value(sound->op[j].freq_coarse.val);
-        (get_gwidget<Gtk::SpinButton>("freq_fine_op"+tostr<uint>(j+1)))->set_value(sound->op[j].freq_fine.val);
-        (get_gwidget<Gtk::Scale>("dtun_op"+tostr<uint>(j+1)))->set_value(sound->op[j].dtun.val-7);
-        /* DRAWING AREA */
+        /*set image */
+        (get_gwidget<Gtk::CheckButton>("lfo_sync"))->set_active(sound->lfo.sync.val);
+        (get_gwidget<Gtk::SpinButton>("lfo_speed"))->set_value(sound->lfo.speed.val);
+        (get_gwidget<Gtk::SpinButton>("lfo_delay"))->set_value(sound->lfo.delay.val);
+        (get_gwidget<Gtk::SpinButton>("lfo_pmd"))->set_value(sound->lfo.pmd.val);
+        (get_gwidget<Gtk::SpinButton>("lfo_amd"))->set_value(sound->lfo.amd.val);
+        /* LFO modulation */
+        (get_gwidget<Gtk::Scale>("pms"))->set_value(sound->lfo.pms.val);
+        /* PITCH EG */
+        for ( k = 0; k < 4 ; k++ ){
+            get_gwidget<Gtk::SpinButton>("eg_rt" + tostr<uint>(k+1) + "_pitch")->set_value(sound->pitch.eg_rt[k].val);
+        };
+        for ( k = 0; k < 4 ; k++ ){
+            get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_pitch")->set_value(sound->pitch.eg_lvl[k].val);
+        };
+        /* OPERATEUR j+1 */
+        uint8_t mute_val=sound->extra.mute.val & 0x7F; // get mute status from extra struct;
+        for ( j=0;j<6;j++){
+            /* AMS */
+            (get_gwidget<Gtk::Scale>("ams_op"+tostr<uint>(j+1)))->set_value(sound->op[j].ams.val);
+            /* FREQUENCE */
+            (get_gwidget<Gtk::DropDown>("freq_mode_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].freq_mode.val);
+            (get_gwidget<Gtk::SpinButton>("freq_coarse_op"+tostr<uint>(j+1)))->set_value(sound->op[j].freq_coarse.val);
+            (get_gwidget<Gtk::SpinButton>("freq_fine_op"+tostr<uint>(j+1)))->set_value(sound->op[j].freq_fine.val);
+            (get_gwidget<Gtk::Scale>("dtun_op"+tostr<uint>(j+1)))->set_value(sound->op[j].dtun.val-7);
+            /* DRAWING AREA */
 
-        /* OP[J] EG RT[k] */
-        for ( k = 0; k < 4 ; k++ ){
-            (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(k+1)+"_op"+tostr<uint>(j+1)))->set_value(sound->op[j].eg_rt[k].val);
+            /* OP[J] EG RT[k] */
+            for ( k = 0; k < 4 ; k++ ){
+                (get_gwidget<Gtk::SpinButton>("eg_rt"+tostr<uint>(k+1)+"_op"+tostr<uint>(j+1)))->set_value(sound->op[j].eg_rt[k].val);
+            };
+            /* OP[J] EG LVL[k] */
+            for ( k = 0; k < 4 ; k++ ){
+                (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_op"+tostr<uint>(j+1)))->set_value(sound->op[j].eg_lvl[k].val);
+            };
+            /* KRS */
+            (get_gwidget<Gtk::Scale>("krs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].krs.val);
+            /* KVS */
+            (get_gwidget<Gtk::Scale>("kvs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kvs.val);
+            /* LVL */
+            (get_gwidget<Gtk::SpinButton>("lvl_op"+tostr<uint>(j+1)))->set_value(sound->op[j].lvl.val);
+            /* MUTE */
+            /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
+            u_int8_t muted = mute_val;
+            muted = ( muted >> ( 5 - j ) );
+            (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(!(muted & 0x01));
+            /* KLS */
+            (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
+            (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
+            (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.lft_dpth.val);
+            (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.rght_dpth.val);
+            (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
+            int val = ((sound->op[j].kls.brk_pt.val) -3);
+            if(val < 0){
+                (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( -1 );
+            }else{
+                (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( val / 12 );
+            };
         };
-        /* OP[J] EG LVL[k] */
-        for ( k = 0; k < 4 ; k++ ){
-            (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<uint>(k+1)+"_op"+tostr<uint>(j+1)))->set_value(sound->op[j].eg_lvl[k].val);
-        };
-        /* KRS */
-        (get_gwidget<Gtk::Scale>("krs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].krs.val);
-        /* KVS */
-        (get_gwidget<Gtk::Scale>("kvs_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kvs.val);
-        /* LVL */
-        (get_gwidget<Gtk::SpinButton>("lvl_op"+tostr<uint>(j+1)))->set_value(sound->op[j].lvl.val);
-        /* MUTE */
-        /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
-        u_int8_t muted = mute_val;
-        muted = ( muted >> ( 5 - j ) );
-        (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<uint>(j+1)))->set_active(!(muted & 0x01));
-        /* KLS */
-        (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
-        (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
-        (get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.lft_dpth.val);
-        (get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op"+tostr<uint>(j+1)))->set_value(sound->op[j].kls.rght_dpth.val);
-        (get_gwidget<Gtk::DropDown>("note_brk_pt_op"+tostr<uint>(j+1)))->set_selected(sound->op[j].kls.brk_pt.val % 12);
-        int val = ((sound->op[j].kls.brk_pt.val) -3);
-        if(val < 0){
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( -1 );
-        }else{
-            (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<uint>(j+1)))->set_value( val / 12 );
-        };
-    };
-    set_voice_parameters(sound);
-    unblock_midi();
-    unblock_ui();
-    on_txt_freq_op_event();
+        set_voice_parameters(sound);
+        unblock_midi();
+        unblock_ui();
+        on_txt_freq_op_event();
+        return false; // Remove the tick callback after execution
+    });
+
     LOG_OUT();
 };
 void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
@@ -2320,7 +2291,12 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
     box_funct->append(*btn_delete);
     /* ui box to attach result */
     auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
-    box->append(*box_funct);
+    box->queue_draw();
+    box->add_tick_callback([box, box_funct](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+        box->append(*box_funct);
+        return false; // Remove the tick callback after execution
+    });
+
     /* scoped slot to be autoremove */
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
         auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
@@ -2350,7 +2326,6 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
             }
         );
     #endif
-
 };
 
 void Dx7interface::on_add_midi_learn_event(){
