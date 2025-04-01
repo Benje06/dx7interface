@@ -135,7 +135,7 @@ std::string Synth::get_event_name(int value) {
 void Synth::print_event_info(snd_seq_event_t* ev){
     std::cout << std::endl;
     std::cout << "event: " << get_event_name(int(ev->type)) << " "
-    << "type: " << int(ev->type)<< std::endl;
+    << "type: " << int(ev->type) << std::endl;
     std::cout << "flags: " << int(ev->flags) << " "
     << "tag: " << int( ev->tag) << '\t'
     << "queue: " << int(ev->queue) << std::endl;

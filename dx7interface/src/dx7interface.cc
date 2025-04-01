@@ -30,8 +30,7 @@ extern "C" {
     };
 }
 
-Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME),
-midi_learned(max_param_nb, std::vector<int>(max_param_nb, -1))  {
+Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME) {
     /*basic constructor */
     LOG_IN();
     block_midi();
@@ -282,9 +281,9 @@ void Dx7interface::listen_midi(){
     /* TODO : use all seq event */
     snd_seq_event_input(seq_handle, &ev);
     Synth::print_event_info(ev);
-     int length_mask;
+    int length_mask;
     //if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && ((int)(ev->data.control.channel) +1) == (int)Synth::channel_receive ) ) {
-     if( uncomplete || (int)ev->dest.client == Synth::get_client_id() ) {
+    if( uncomplete || (int)ev->dest.client == Synth::get_client_id() ) {
         switch (ev->type) {
             case SND_SEQ_EVENT_NOTEON:
                 //Synth::print_event_info(ev);
@@ -1784,7 +1783,7 @@ void Dx7interface::receive_paramters(uint8_t sound_index, St_dx7sysex_1* sound, 
         i=6 + (64 * sound_index);
         sound->extra.functions.poly_mono.val = (data[i++]>>6) & sound->extra.functions.poly_mono.mask;
         sound->extra.functions.ptch_bnd_rng.val = (data[i]) & sound->extra.functions.ptch_bnd_rng.mask;
-        sound->extra.functions.ptch_bnd_stp.val = (data[i++]>>4) & sound->extra.functions.ptch_bnd_stp.mask;
+        sound->extra.functions.ptch_bnd_stp.val = ( (data[i++]>>4) + ((data[i+13]>>6)<<3) ) & sound->extra.functions.ptch_bnd_stp.mask;
         sound->extra.functions.portamento_tm.val = (data[i++]) & sound->extra.functions.portamento_tm.mask;
         sound->extra.functions.portamento_glss.val = (data[i]) & sound->extra.functions.portamento_glss.mask;
         sound->extra.functions.portamento_md.val = (data[i++]>>1) & sound->extra.functions.portamento_md.mask;
