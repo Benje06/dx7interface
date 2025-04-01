@@ -283,7 +283,8 @@ void Dx7interface::listen_midi(){
     snd_seq_event_input(seq_handle, &ev);
     Synth::print_event_info(ev);
      int length_mask;
-    if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && ((int)(ev->data.control.channel) +1) == Synth::channel_receive ) ) {
+    //if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && ((int)(ev->data.control.channel) +1) == (int)Synth::channel_receive ) ) {
+     if( uncomplete || (int)ev->dest.client == Synth::get_client_id() ) {
         switch (ev->type) {
             case SND_SEQ_EVENT_NOTEON:
                 //Synth::print_event_info(ev);
