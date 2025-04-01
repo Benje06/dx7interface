@@ -193,7 +193,6 @@ void Dx7interface::clean_midi_learn(){
                             };
                         };
                     };
-                    subchild->queue_draw(); // Request a redraw
                     subchild->add_tick_callback([this, subchild, p_number, selected_item](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
                         LOG_IN();
                         subchild->unparent(); // Remove the widget from its parent
@@ -201,20 +200,19 @@ void Dx7interface::clean_midi_learn(){
                         LOG_OUT();
                         return false; // Remove the tick callback after execution
                     });
-                    Gtk::Widget* nsubchild = subchild->get_next_sibling();
-                    subchild=nsubchild;
+                    subchild->queue_draw(); // Request a redraw
+                    subchild = subchild->get_next_sibling();
                 };
-                child->queue_draw(); // Request a redraw
                 child->add_tick_callback([parent, child](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
                     LOG_IN();
                     parent->remove(*child); // Remove the child from its parent
                     LOG_OUT();
                     return false; // Remove the tick callback after execution
                 });
-                Gtk::Widget* nchild = child->get_next_sibling();
-                child=nchild;
+                child->queue_draw(); // Request a redraw
+                child = child->get_next_sibling();
             }else{
-                child=child->get_next_sibling();
+                child = child->get_next_sibling();
             };
         };
     }catch (const std::exception & ex) {
@@ -2283,6 +2281,7 @@ void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
 
 void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib::ustring param_number, int selected_item){
     LOG_IN();
+    // TODO: check param_number is a numeric
     /* affected param name widget */
     auto text_fct = Gtk::make_managed<Gtk::Text>();
     text_fct->set_name(function_name);
@@ -2304,26 +2303,37 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
     box_funct->append(*btn_delete);
     /* ui box to attach result */
     auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
-    box->queue_draw();
     box->add_tick_callback([box, box_funct](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
         LOG_IN();
         box->append(*box_funct);
         LOG_OUT();
         return false; // Remove the tick callback after execution
     });
-
+    box->queue_draw();
     /* scoped slot to be autoremove */
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
         auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
         *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
             LOG_IN();
-            auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
-            box_funct->remove(*text_param);
-            box_funct->remove(*text_fct);
-            box_funct->remove(*btn_delete);
-            box->remove(*box_funct);
             int p_number = std::stoi(param_number.raw());
             rem_midi_learned(p_number, selected_item);
+            auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+            box_funct->add_tick_callback([box_funct,text_param,text_fct,btn_delete](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+                LOG_IN();
+                box_funct->remove(*text_param);
+                box_funct->remove(*text_fct);
+                box_funct->remove(*btn_delete);
+                LOG_OUT();
+                return false; // Remove the tick callback after execution
+            });
+            box_funct->queue_draw();
+            box->add_tick_callback([box, box_funct](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+                LOG_IN();
+                box->remove(*box_funct);
+                LOG_OUT();
+                return false; // Remove the tick callback after execution
+            });
+            box->queue_draw();
             LOG_OUT();
         });
     #else
@@ -2331,13 +2341,13 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
         *slot_btn_delete_params = btn_delete->signal_clicked().connect(
             [this, box_funct, text_fct, text_param, btn_delete, selected_item, param_number, slot_btn_delete_params]() {
                 LOG_IN();
+                int p_number = std::stoi(param_number.raw());
+                rem_midi_learned(p_number, selected_item);
                 auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
                 box_funct->remove(*text_param);
                 box_funct->remove(*text_fct);
                 box_funct->remove(*btn_delete);
                 box->remove(*box_funct);
-                int p_number = std::stoi(param_number.raw());
-                rem_midi_learned(p_number, selected_item);
                 if (slot_btn_delete_params->connected()) {
                     slot_btn_delete_params->disconnect();
                 }
