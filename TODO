@@ -11,7 +11,7 @@ traductions
 # effectivité
 evenements MIDI (temporisation)
 ecriture fichier des extra parameters( compatible tf1)
-* reception/envoi en midi (recevie bank, receive sound, send bank(32), plusieurs sons)
+* reception/envoi en midi (send bank(32), ?plusieurs sons?)
 multiplateforme (midi/interface) drumkit, Juce ???
 
 # Interface

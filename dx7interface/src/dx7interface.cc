@@ -358,6 +358,7 @@ void Dx7interface::listen_midi(){
                 << std::endl;*/
                 // 09 32 SoundBankItem
                 // 02 32 son + function
+                //TODO: to review
                 receive = true;
                 length_mask = ev->type & SND_SEQ_EVENT_LENGTH_MASK;
                 if (length_mask == SND_SEQ_EVENT_LENGTH_FIXED) {
@@ -377,7 +378,6 @@ void Dx7interface::listen_midi(){
                         receive_bank(sysex_buffer);
                         sysex_buffer.clear();
                     };
-                    std::cout << std::dec << std::endl;
                 };
                 break;
             case SND_SEQ_EVENT_SENSING:
