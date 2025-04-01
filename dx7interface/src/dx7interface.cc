@@ -152,20 +152,25 @@ bool Dx7interface::Run(){
 };
 
 void Dx7interface::add_midi_learned(int param_number, int function_index){
+        LOG_IN();
         if( param_number >= static_cast<int>(midi_learned.size()) ){
             midi_learned.resize(param_number + 1);
         };
         midi_learned[param_number].push_back(function_index);
+        LOG_OUT();
 };
 
 void Dx7interface::rem_midi_learned(int param_number, int function_index){
+    LOG_IN();
     if( param_number < static_cast<int>(midi_learned.size()) ){
         auto& vec = midi_learned[param_number];
         vec.erase(std::remove(vec.begin(), vec.end(), function_index), vec.end());
     };
+    LOG_OUT();
 };
 
 void Dx7interface::clean_midi_learn(){
+    LOG_IN();
     try{
         Gtk::Box* parent = get_gwidget<Gtk::Box>("box_listen_affect_param");
         Gtk::Widget* child = parent->get_first_child();
@@ -189,21 +194,25 @@ void Dx7interface::clean_midi_learn(){
                             };
                         };
                     };
-                    Gtk::Widget* nsubchild = subchild->get_next_sibling();
                     subchild->queue_draw(); // Request a redraw
-                    subchild->add_tick_callback([this,subchild, p_number, selected_item](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+                    subchild->add_tick_callback([this, subchild, p_number, selected_item](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+                        LOG_IN();
                         subchild->unparent(); // Remove the widget from its parent
                         this->rem_midi_learned(p_number, selected_item); // Perform cleanup
+                        LOG_OUT();
                         return false; // Remove the tick callback after execution
                     });
+                    Gtk::Widget* nsubchild = subchild->get_next_sibling();
                     subchild=nsubchild;
                 };
-                Gtk::Widget* nchild = child->get_next_sibling();
                 child->queue_draw(); // Request a redraw
                 child->add_tick_callback([parent, child](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+                    LOG_IN();
                     parent->remove(*child); // Remove the child from its parent
+                    LOG_OUT();
                     return false; // Remove the tick callback after execution
                 });
+                Gtk::Widget* nchild = child->get_next_sibling();
                 child=nchild;
             }else{
                 child=child->get_next_sibling();
@@ -213,9 +222,11 @@ void Dx7interface::clean_midi_learn(){
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
         std::cerr << err_msg << std::endl;
-    }
-}
+    };
+    LOG_OUT();
+};
 void Dx7interface::read_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
+    LOG_IN();
     clean_midi_learn();
     data_stream = Gio::DataInputStream::create(param_file->read());
     std::string line;
@@ -239,6 +250,7 @@ void Dx7interface::read_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
         };
     };
     data_stream->close();
+    LOG_OUT();
 };
 
 void Dx7interface::save_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
@@ -2270,6 +2282,7 @@ void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
 };
 
 void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib::ustring param_number, int selected_item){
+    LOG_IN();
     /* affected param name widget */
     auto text_fct = Gtk::make_managed<Gtk::Text>();
     text_fct->set_name(function_name);
@@ -2293,7 +2306,9 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
     auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
     box->queue_draw();
     box->add_tick_callback([box, box_funct](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+        LOG_IN();
         box->append(*box_funct);
+        LOG_OUT();
         return false; // Remove the tick callback after execution
     });
 
@@ -2301,6 +2316,7 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
         auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
         *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
+            LOG_IN();
             auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
             box_funct->remove(*text_param);
             box_funct->remove(*text_fct);
@@ -2308,11 +2324,13 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
             box->remove(*box_funct);
             int p_number = std::stoi(param_number.raw());
             rem_midi_learned(p_number, selected_item);
+            LOG_OUT();
         });
     #else
         auto slot_btn_delete_params = std::make_shared<sigc::connection>();
         *slot_btn_delete_params = btn_delete->signal_clicked().connect(
             [this, box_funct, text_fct, text_param, btn_delete, selected_item, param_number, slot_btn_delete_params]() {
+                LOG_IN();
                 auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
                 box_funct->remove(*text_param);
                 box_funct->remove(*text_fct);
@@ -2323,9 +2341,11 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
                 if (slot_btn_delete_params->connected()) {
                     slot_btn_delete_params->disconnect();
                 }
+                LOG_OUT();
             }
         );
     #endif
+    LOG_OUT();
 };
 
 void Dx7interface::on_add_midi_learn_event(){
