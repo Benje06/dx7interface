@@ -213,10 +213,11 @@ void Gx_module::apply_style_to_screen(){
             auto css = Gtk::CssProvider::create();
             auto custom_provider = Gtk::CssProvider::create();
             css->load_from_path(cssfile);
-            if(mod.color != ""){
-                custom_provider->load_from_data("title { background-color: " + mod.color + "; }");
-            };
+
             #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+                if(mod.color != ""){
+                    custom_provider->load_from_string("title { background-color: " + mod.color + "; }");
+                };
                 auto display = Gdk::Display::get_default();
                 if (display) {
                     Gtk::StyleProvider::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -226,11 +227,9 @@ void Gx_module::apply_style_to_screen(){
                 };
 
             #else
-                /*auto ctx = main_window->get_style_context();
-                ctx->add_provider(css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
                 if(mod.color != ""){
-                    ctx->add_provider(custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-                };*/
+                    custom_provider->load_from_data("title { background-color: " + mod.color + "; }");
+                };
                 auto display = Gdk::Display::get_default();
                 Gtk::StyleContext::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             #endif
