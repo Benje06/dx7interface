@@ -20,7 +20,7 @@
 
     typedef struct st_2{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=1;
         static const uint8_t mask=0x01;
     }St_2;
@@ -39,49 +39,49 @@
 
     typedef struct st_8{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=7;
         static const uint8_t mask=0x07;
     }St_8;
 
     typedef struct st_14{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=13;
         static const uint8_t mask=0x0F;
     }St_14;
 
     typedef struct st_15{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=14;
         static const uint8_t mask=0x0F;
     }St_15;
 
     typedef struct st_32{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=31;
         static const uint8_t mask=0x1F;
     }St_32;
 
     typedef struct st_49{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=48;
         static const uint8_t mask=0x3F;
     }St_49;
 
     typedef struct st_100{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=99;
         static const uint8_t mask=0x7F;
     }St_100;
 
     typedef struct st_128{
         uint8_t val;
-        uint address;
+        unsigned int address;
         static const uint8_t max=127;
         static const uint8_t mask=0x7F;
     }St_128;
@@ -163,7 +163,7 @@
         St_extra extra;
     }St_dx7sysex_1;
 
-    template <uint i>
+    template <unsigned int i>
     struct St_dx7sysex{
         St_dx7sysex_1 sound[i];
         Glib::ustring name;

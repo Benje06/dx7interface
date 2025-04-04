@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 # tools :
-AC_PREREQ([2.71])
+AC_PREREQ([2.72])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([gxinterface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -10,8 +10,23 @@ dnl ================================================================
 AC_SUBST([SO_VERSION], [1:0:0])
 AC_SUBST([API_VERSION], [1.0.0])
 AC_SUBST([LIB_VERSION], [0.0.1])
-
 AC_CONFIG_AUX_DIR([config])
+AC_CANONICAL_HOST
+AS_CASE([$host_os],
+    [linux*], [
+        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48"
+        AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
+        platform_win32=no
+    ],
+    [mingw*|windows*|pw32*|cygwin*], [
+        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48"
+        AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
+        platform_win32=yes
+    ],
+    [*], [
+        AC_MSG_ERROR([Unsupported operating system: $host_os])
+    ]
+)
 
 dnl ================================================================
 dnl checks for programs
@@ -27,7 +42,12 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 m4_ifdef([AC_PROG_AR], [AC_PROG_AR])
 
 LT_PREREQ([1.0.0])
-LT_INIT
+
+ifdef('lt_option',
+    [LT_INIT([lt_option])],
+    [LT_INIT])
+
+
 AC_LANG([C++])
 
 AC_PROG_CC
@@ -40,21 +60,32 @@ AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
+dnl CXXFLAGS="$CXXFLAGS -fexceptions -std=c++17 -Wall -Wextra"
+AC_SUBST(CXXFLAGS)
+
 dnl ================================================================
 dnl Check for libraries
 dnl ================================================================
-AC_SEARCH_LIBS([strerror],[cposix])
+dnl AC_SEARCH_LIBS([strerror],[cposix])
+dnl AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([POSIX threads library not found])])
+dnl AC_CHECK_LIB([intl], [libintl_fprintf], [], [AC_MSG_ERROR([GNU gettext library not found])])
+dnl PTHREAD_LIBS="-lpthread"
+dnl AC_SUBST(PTHREAD_LIBS)
+dnl INTLLIBS="-lintl"
+dnl AC_SUBST(INTLLIBS)
+
 dnl AX_PTHREAD
 dnl ================================================================
 dnl checks for header files
 dnl ================================================================
 AC_CHECK_INCLUDES_DEFAULT
-
-
+AC_PROG_EGREP
 
 AC_CHECK_HEADERS([iostream])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([libintl.h])
+AC_CHECK_HEADERS([fcntl.h])
+AC_CHECK_HEADERS([unistd.h])
 
 dnl ================================================================
 dnl checks for types
@@ -73,12 +104,10 @@ AC_LANG_COMPILER_REQUIRE
 dnl ================================================================
 dnl checks for library functions
 dnl ================================================================
-#LT_INIT([dlopen],[win32-dll])
-AC_FUNC_ALLOCA
 
+AC_FUNC_ALLOCA
 AC_FUNC_ERROR_AT_LINE
 
-pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48"
 PKG_CHECK_MODULES([DEPS], [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_CPPFLAGS)
@@ -106,9 +135,6 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",[$GETTEXT_PACKAGE])
 AM_XGETTEXT_OPTION([--from-code=utf-8])
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.2])
-
-PROGRAMNAME_LOCALEDIR=[${datadir}/locale]
-AC_SUBST(PROGRAMNAME_LOCALEDIR)
 
 dnl ================================================================
 dnl Develloper stuff
@@ -141,13 +167,17 @@ PROGRAMNAME_IMG_DIR=[${datadir}/pixmaps/$PACKAGE_NAME/]
 AC_SUBST([PROGRAMNAME_LOCALEDIR])
 AC_SUBST(PROGRAMNAME_UI_DIR)
 AC_SUBST(PROGRAMNAME_MOD_DIR)
-dnl FOR Modules
 AC_SUBST(PROGRAMNAME_IMG_DIR)
 AC_SUBST(PROGRAMNAME_DATA_DIR)
 
 dnl ================================================================
 dnl Flags
 dnl ================================================================
+
+dnl Set the correct libdir
+dnl AC_PREFIX_DEFAULT(/usr/local)
+dnl AC_SUBST(prefix)
+dnl AC_SUBST(libdir)
 
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_CFLAGS])
@@ -177,13 +207,17 @@ Configuration:
   CFLAGS:  ${CFLAGS}
   CPPFLAGS: ${CPPFLAGS}
   CXXFLAGS: ${CXXFLAGS}
+  DEPS_LIBS: ${DEPS_LIBS}
   LDFLAGS: ${LDFLAGS}
+  
+  GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}
+    
   PROGRAMNAME_LOCALEDIR: ${PROGRAMNAME_LOCALEDIR}
   PROGRAMNAME_UI_DIR: ${PROGRAMNAME_UI_DIR}
   PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
   PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
   PROGRAMNAME_DATA_DIR: ${PROGRAMNAME_DATA_DIR}
-
+  
 "
 
 : variables='

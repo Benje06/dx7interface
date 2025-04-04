@@ -4,6 +4,14 @@ srcdir=`dirname $0`
 test -z "$srcdir" && srcdir='.'
 DIE=0
 
+#function check_system(){
+    if [[ ${MSYSTEM} == "UCRT64" ]]; then
+        prefix_path="/ucrt64"
+    else
+        prefix_path="/usr"
+    fi
+#}
+
 if test "x`cd "${srcdir}" 2>/dev/null && pwd`" != "x`pwd`"
 #`cd "${srcdir}" 2>/dev/null && pwd` != `pwd` ]]
 then
@@ -16,7 +24,7 @@ rm -f config.cache acconfig.h
 (test -d "${srcdir}/m4")||{
 	mkdir "${srcdir}/m4"
 	echo "copy all m4 file from /usr/share/aclocal/ to m4 directory"
-	cp /usr/share/aclocal/* "${srcdir}/m4"
+    cp ${prefix_path}/share/aclocal/* "${srcdir}/m4"
 }
 
 (test -d "${srcdir}/config")||{
@@ -25,8 +33,8 @@ rm -f config.cache acconfig.h
 
 rep=`pwd`
 pname=${rep##/*/}
-ACLOCAL_FLAGS="-I /usr/share/aclocal $ACLOCAL_FLAGS"
-
+#ACLOCAL_FLAGS="-I /usr/share/aclocal $ACLOCAL_FLAGS"
+ACLOCAL_FLAGS="-I ${prefix_path}/share/aclocal $ACLOCAL_FLAGS"
 (test -f $srcdir/configure.ac) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level package directory"

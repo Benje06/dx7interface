@@ -11,13 +11,57 @@ dnl ================================================================
 AC_SUBST([SO_VERSION], [1:0:0])
 AC_SUBST([API_VERSION], [1.0.0])
 AC_SUBST([LIB_VERSION], [0.0.1])
+
 AC_SUBST([MASTER_LOADER], [gxinterface])
 AC_SUBST([MASTER_LOADER_VERSION], [1.0.0])
 PROGRAMNAME_LIBDIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
 AC_SUBST([libdir],[$PROGRAMNAME_LIBDIR])
-
-
 AC_CONFIG_AUX_DIR([config])
+AC_CANONICAL_HOST
+
+AC_ARG_ENABLE([rtmidi],
+[  --enable-rtmidi    enable rtmidi for windows],
+[case "${enableval}" in
+  yes) rtmidi=true ;;
+  no)  rtmidi=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-rtmidi]) ;;
+esac],[rtmidi=false])
+AM_CONDITIONAL([RTMIDI], [test x$rtmidi = xtrue])
+AM_COND_IF([RTMIDI],[
+AC_DEFINE([__RtMidi__], [1], [Define __RtMidi__ for RtMidi-specific code])
+pkg_modules="rtmidi"
+])
+
+AC_ARG_ENABLE([juce],
+[  --enable-juce    enable juce for windows],
+[case "${enableval}" in
+  yes) juce=true ;;
+  no)  juce=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-juce]) ;;
+esac],[juce=false])
+AM_CONDITIONAL([JUCE], [test x$juce = xtrue])
+AM_COND_IF([JUCE],[
+AC_DEFINE([__JUCE__], [1], [Define __JUCE__ for JUCE-specific code])
+pkg_modules="juce"
+])
+
+AS_CASE([$host_os],
+    [linux*], [
+        pkg_modules="alsa glibmm-2.68 gtkmm-4.0 gthread-2.0 gxinterface cairomm-1.16"
+        AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
+        platform_win32=no
+    ],
+    [mingw*|windows*|pw32*|cygwin*], [
+        pkg_modules="$pkg_modules glibmm-2.68 gtkmm-4.0 gthread-2.0 gxinterface cairomm-1.16"
+        AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
+        platform_win32=yes
+        m4_define([lt_option], [win32-dll])
+    ],
+    [*], [
+        AC_MSG_ERROR([Unsupported operating system: $host_os])
+    ]
+)
+
 
 dnl ================================================================
 dnl checks for programs
@@ -33,7 +77,10 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 m4_ifdef([AC_PROG_AR], [AC_PROG_AR])
 
 LT_PREREQ([1.0.0])
-LT_INIT
+ifdef('lt_option',
+    [LT_INIT([lt_option])],
+    [LT_INIT])
+
 AC_LANG([C++])
 
 AC_PROG_CC
@@ -61,6 +108,8 @@ AC_PROG_EGREP
 AC_CHECK_HEADERS([iostream])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([libintl.h])
+AC_CHECK_HEADERS([fcntl.h])
+AC_CHECK_HEADERS([unistd.h])
 
 dnl ================================================================
 dnl checks for types
@@ -79,12 +128,10 @@ AC_LANG_COMPILER_REQUIRE
 dnl ================================================================
 dnl checks for library functions
 dnl ================================================================
-#LT_INIT([dlopen],[win32-dll])
 AC_FUNC_ALLOCA
-AC_CHECK_FUNCS([pow])
 AC_FUNC_ERROR_AT_LINE
+AC_CHECK_FUNCS([pow])
 
-pkg_modules="alsa glibmm-2.68 gtkmm-4.0 gthread-2.0 gxinterface cairomm-1.16"
 PKG_CHECK_MODULES(DEPS, [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_CPPFLAGS)
@@ -96,14 +143,6 @@ dnl ================================================================
 dnl ================================================================
 dnl Check for windows
 dnl ================================================================
-case $host_os in
-  *mingw* | pw32* | cygwin*)
-    platform_win32=yes
-    ;;
-  *)
-    platform_win32=no
-    ;;
-esac
 AM_CONDITIONAL(PLATFORM_WIN32, test x"$platform_win32" = "xyes")
 
 case $host_os in
@@ -182,7 +221,6 @@ AC_ARG_ENABLE([dev],
 esac],[dev=false])
 AM_CONDITIONAL([DEV], [test x$dev = xtrue])
 
-
 AM_COND_IF([DEV],[
 PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/po]
 PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/]
@@ -206,6 +244,11 @@ AC_SUBST([PROGRAMNAME_DATA_DIR])
 dnl ================================================================
 dnl Flags
 dnl ================================================================
+
+dnl Set the correct libdir
+dnl AC_PREFIX_DEFAULT(/usr/local)
+dnl AC_SUBST(prefix)
+dnl AC_SUBST(libdir)
 
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_CFLAGS])
@@ -234,14 +277,20 @@ Configuration:
       CFLAGS:  ${CFLAGS}
       CPPFLAGS: ${CPPFLAGS}
       CXXFLAGS: ${CXXFLAGS}
+      DEPS_LIBS: ${DEPS_LIBS}
       LDFLAGS: ${LDFLAGS}
 
+      GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}
+      
       PROGRAMNAME_LOCALEDIR: ${PROGRAMNAME_LOCALEDIR}
       PROGRAMNAME_UI_DIR: ${PROGRAMNAME_UI_DIR}
       PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
       PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
       PROGRAMNAME_DATA_DIR: ${PROGRAMNAME_DATA_DIR}
-      GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}
+      
+      Midi:
+        JUCE: ${juce}
+        RtMidi: ${rtmidi}
 
 "
 

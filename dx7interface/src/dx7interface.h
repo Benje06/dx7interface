@@ -76,14 +76,14 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::on_mute_hexter_op5_event,
             &Dx7interface::on_mute_hexter_op6_event
         };
-
-        /*** ALSA MIDI ***/
-        snd_seq_t* seq_handle = nullptr;                /* handler */
-        snd_seq_system_info_t* info = nullptr;          /* info */
-        snd_seq_event_t* ev = nullptr;                  /* evenement */
-        size_t in_buff_size, out_buff_size;               /* buffer d'entré et de sortie */
-        std::vector<uint8_t> sysex_buffer;               // Buffer to store SysEx fragments
-
+        #ifdef __linux__ 
+                /*** ALSA MIDI ***/
+                snd_seq_t* seq_handle = nullptr;                /* handler */
+                snd_seq_system_info_t* info = nullptr;          /* info */
+                snd_seq_event_t* ev = nullptr;                  /* evenement */
+                size_t in_buff_size, out_buff_size;             /* buffer d'entré et de sortie */
+                std::vector<uint8_t> sysex_buffer;              // Buffer to store SysEx fragments
+        #endif
         /* Boolean */
         bool lock = false;
         bool compare = false;                   /* set if compare button is activate */
@@ -105,12 +105,12 @@ class Dx7interface : public Gx_module, public Synth {
         St_dx7sysex<128> bank_128_modif;        /* ... */
 
         /* default write format */
-        uint export_config = DX7_32;
-        uint save_type = BANK;
+        unsigned int export_config = DX7_32;
+        unsigned int save_type = BANK;
 
         /* Bank */
-        uint bank_nb_sound = 0;                                /* number of sound in the current loaded bank 1/32/128 */
-        uint old_snum = 0;                                     /* old selected sound number memo for set_original_sound */
+        unsigned int bank_nb_sound = 0;                                /* number of sound in the current loaded bank 1/32/128 */
+        unsigned int old_snum = 0;                                     /* old selected sound number memo for set_original_sound */
         Glib::RefPtr<Gio::File> bank_file=nullptr;              /* pointeur de lecture de fichier */
         Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
@@ -529,8 +529,12 @@ class Dx7interface : public Gx_module, public Synth {
         bool Run();    /* Thread function  */
         bool Run2();    /* Thread function  */
         /*** MIDI ***/
-        void listen_midi() override;
-
+        #ifdef __linux__
+                void listen_midi() override;
+        #endif
+        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+                void listen_midi(double timestamp, std::vector<unsigned char>* _message, void* userData) override;
+        #endif
         /** SOUND BANK **/
         /* set/load */
         void set_default_values();
@@ -551,19 +555,19 @@ class Dx7interface : public Gx_module, public Synth {
         void on_replace_sound();
         void on_delete_sound();
         /* save/write */
-        void write_file(Glib::RefPtr<Gio::File>, u_char*, uint);
-        void write_voice_extra_parameters(st_dx7sysex_1*, u_char*, uint*);
+        void write_file(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
+        void write_voice_extra_parameters(st_dx7sysex_1*, unsigned char*, unsigned int*);
         /* BANK */
         void on_save_bank();
-        void write_bank(Glib::RefPtr<Gio::File>, uint);
-        void write_bank_as_sysex(Glib::RefPtr<Gio::File>, uint);
-        void write_bank_as_raw(Glib::RefPtr<Gio::File> file, uint);
+        void write_bank(Glib::RefPtr<Gio::File>, unsigned int);
+        void write_bank_as_sysex(Glib::RefPtr<Gio::File>, unsigned int);
+        void write_bank_as_raw(Glib::RefPtr<Gio::File> file, unsigned int);
         void on_as_raw_event();
         void on_extra_param_event();
 
         /* VOICE */
-        void write_voice_bulk1(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
-        void write_voice_bulk32(uint*, u_char*, St_dx7sysex_1*, uint8_t*);
+        void write_voice_bulk1(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
+        void write_voice_bulk32(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
         void write_voice_as_sysex(Glib::RefPtr<Gio::File>);
         void write_voice_as_raw(Glib::RefPtr<Gio::File>);
         void save_modif_sound();    /* save internally on origin bank */
@@ -572,7 +576,7 @@ class Dx7interface : public Gx_module, public Synth {
         /* */
         void save_bank_as(Glib::RefPtr<Gio::File>);
         void clear_sound(St_dx7sysex_1*,uint8_t,bool);     // set 0x00 to all param to voice struct "aka clear struct"
-        void set_as_origin_sound(uint);                // set bank_X_modif.sound as bank_X_origin.sound
+        void set_as_origin_sound(unsigned int);                // set bank_X_modif.sound as bank_X_origin.sound
 
         /** VOICE  **/
         /* seek voice value from bank file and write it to sound */
@@ -666,7 +670,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_bank_reveal;
         void on_columnview_right_click(int, double, double);
         sigc::connection slot_columnview_right_click;
-        void on_selected_sound_change(uint,uint);
+        void on_selected_sound_change(unsigned int,unsigned int);
         sigc::connection slot_selected_sound_change;
         void on_bank_select();
         sigc::connection slot_bank_select;

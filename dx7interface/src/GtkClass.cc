@@ -4,7 +4,7 @@
 */
 #include "GtkClass.h"
 
-SoundBankItem::SoundBankItem(uint number,const Glib::ustring& name) : i_number(number),  i_name(name) {};
+SoundBankItem::SoundBankItem(unsigned int number,const Glib::ustring& name) : i_number(number),  i_name(name) {};
 
 /*void Factory::on_bind_num(void*, const Glib::RefPtr<Gtk::ListItem>& list_item){
     auto col = std::dynamic_pointer_cast<SoundBankItem>(list_item->get_item());

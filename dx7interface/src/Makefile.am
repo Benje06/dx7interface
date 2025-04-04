@@ -16,17 +16,16 @@ lib_LTLIBRARIES = \
 
 ### LIB DX7 ####
 dx7interface_0_0_1_la_SOURCES = \
-        dx7interface.h dx7interface.cc\
         synth.h synth.cc\
         GtkClass.h GtkClass.cc\
-        dx7sysex.h
+        dx7sysex.h dx7interface.h dx7interface.cc
 
 dx7interface_0_0_1_la_LDFLAGS = \
         -version-info $(SO_VERSION) \
-        -module -Wl,--export-dynamic -rdynamics
+        -module -rdynamics -no-undefined -Wl,--no-undefined,--export-dynamic 
 
 dx7interface_0_0_1_la_CPPFLAGS = \
-        $(DEPS_CFLAGS) $(GTKMM_CFLAGS) \
+        $(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) \
         -DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"\
         -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
         -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\

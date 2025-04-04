@@ -1,0 +1,58 @@
+add path set PATH=d:\gxinterface\package\ucrt64\share\dx7interface\1.0.0;%PATH
+D:\gxinterface\package>ucrt64\bin\gxinterface.exe -m ucrt64\share\dx7interface\1.0.0\dx7interface-0.0.1.la
+libdir='ucrt64\share\dx7interface\1.0.0'
+
+libgxinterface_0_0_1_la_LDFLAGS = \
+	-rdynamic -no-undefined -Wl,--no-undefined,--export-all-symbols
+
+
+
+
+
+
+gxinterface_LDFLAGS = 
+	--static ( --static -no-undefined -Wl,--no-undefined,--export-all-symbols )
+		-> link against static lib
+	 libtool: link: x86_64-w64-mingw32-g++ -g -O2 -fexceptions -std=c++17 -Wall -Wextra --static -Wl,--no-undefined -Wl,--export-all-symbols -o .libs/gxinterface.exe common.o gxmodule.o gemod.o gxinterface.o main.o gxthread.o  -lgtkmm-4.0 -lgtk-4 -lpangowin32-1.0 -lcairo-gobject -lvulkan-1.dll -lgraphene-1.0 -lgdk_pixbuf-2.0 -lgthread-2.0 -lpangomm-2.48 -lgiomm-2.68 -lgio-2.0 -lglibmm-2.68 -lcairomm-1.16 -lsigc-3.0 -lpangocairo-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lharfbuzz -lcairo /ucrt64/lib/libintl.dll.a -L/ucrt64/lib -lintl -lpthread
+		D:/crosscompile/msys2/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/14.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe:
+		cannot find -lgtk-4: No such file or directory
+		D:/crosscompile/msys2/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/14.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe:
+		have you installed the static version of the gtk-4 library ?
+		D:/crosscompile/msys2/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/14.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe:
+		cannot find -lgraphene-1.0: No such file or directory
+		D:/crosscompile/msys2/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/14.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe:
+		have you installed the static version of the graphene-1.0 library ?
+		collect2.exe: error: ld returned 1 exit status
+
+	-static ( -static -no-undefined -Wl,--no-undefined,--export-all-symbols )
+		-> WORKING : link to install 
+			LINK to /d/gxinterface/package/ucrt64/bin/libdeflate.dll + DDL ?
+			PROG PATH : D:/crosscompile/msys2/ucrt64/share/gxinterface/1.0.0/ui/interface.ui
+		libtool: warning: Trying to link with static lib archive /ucrt64/lib/libintl.dll.a.
+		libtool: warning: I have the capability to make that library automatically link in when
+		libtool: warning: you link to this library.  But I can only do this if you have a
+		libtool: warning: shared version of the library, which you do not appear to have
+		libtool: warning: because the file extensions .a of this argument makes me believe
+		libtool: warning: that it is just a static archive that I should not use here.
+		
+	no -no-undefined (-static -Wl,--no-undefined,--export-all-symbols) 
+		-> WORKING : 
+			LINK to /ucrt64/bin/libfontconfig-1.dll + DLL
+			PROG PATH : D:/crosscompile/msys2/ucrt64/share/gxinterface/1.0.0/ui/interface.ui
+		libtool: warning: Trying to link with static lib archive /ucrt64/lib/libintl.dll.a.
+		libtool: warning: I have the capability to make that library automatically link in when
+		libtool: warning: you link to this library.  But I can only do this if you have a
+		libtool: warning: shared version of the library, which you do not appear to have
+		libtool: warning: because the file extensions .a of this argument makes me believe
+		libtool: warning: that it is just a static archive that I should not use here.
+
+	no --no-undefined ( -static -no-undefined -Wl,--export-all-symbols )
+		-> WORKING :
+			LINK to /ucrt64/bin/libgiomm-2.68-1.dll + DLL
+			PROG PATH : D:/crosscompile/msys2/ucrt64/share/gxinterface/1.0.0/ui/interface.ui
+		libtool: warning: Trying to link with static lib archive /ucrt64/lib/libintl.dll.a.
+		libtool: warning: I have the capability to make that library automatically link in when
+		libtool: warning: you link to this library.  But I can only do this if you have a
+		libtool: warning: shared version of the library, which you do not appear to have
+		libtool: warning: because the file extensions .a of this argument makes me believe
+		libtool: warning: that it is just a static archive that I should not use here.

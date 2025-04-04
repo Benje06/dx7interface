@@ -53,11 +53,22 @@
     #include <filesystem>
     #include <regex>
 
-    #ifdef G_OS_WIN32
+    #if defined(__WIN32) || defined(__MINGW32__)
+        #define WIN32_LEAN_AND_MEAN
         #include <windows.h>
-        #define DS ('\\')
+        #undef ERROR
+        #undef IN
+        #undef OUT
+        #undef WINDING
+        #undef IGNORE
+        #undef near
+        #define DS "\\"
         /* CR+LF */
-        #define EOL ('\r\n')
+        #undef EOL
+        #define EOL "\r\n"
+        /*typedef unsigned int uint;
+        typedef unsigned char u_char;
+        typedef unsigned long ulong;*/
     #endif
     #ifdef __linux__
         /* LF */

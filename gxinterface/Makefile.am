@@ -1,5 +1,3 @@
-## Process this file with automake to produce Makefile.in
-
 ## TODO: 
 SUBDIRS = \
 	po\
@@ -110,7 +108,7 @@ EXTRA_DIST = \
 ##desktopdir = $(datadir)/applications
 ##desktop_in_files = gxinterface.desktop.in
 ##desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-## @INTLTOOL_DESKTOP_RULE@
+##@INTLTOOL_DESKTOP_RULE@
 if DEV
 copy-gmo-for-dev:
 	@for file in po/*.gmo; do \

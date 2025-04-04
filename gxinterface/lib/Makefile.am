@@ -11,23 +11,28 @@ lib_LTLIBRARIES = \
     libgxinterface-0.0.1.la
 
 libgxinterface_0_0_1_la_SOURCES = \
-	../src/common.h ../src/common.cc\
+	../src/lang.h\
 	../src/debug.h\
+	../src/common.h ../src/common.cc\
+	../src/gxthread.h ../src/gxthread.cc\
 	../src/gxmodule.h ../src/gxmodule.cc\
 	../src/gemod.h ../src/gemod.cc\
-	../src/gxinterface.cc ./src/gxinterface.h\
-	../src/gxthread.h ../src/gxthread.cc\
-	../src/lang.h
+	../src/gxinterface.cc ./src/gxinterface.h
 	
 libgxinterface_0_0_1_la_LDFLAGS = \
-        -version-info $(SO_VERSION) \
-	-Wl,--export-dynamic -rdynamics --no-undefined
+	-version-info $(SO_VERSION) \
+	-rdynamic -no-undefined -Wl,--no-undefined,--export-all-symbols
+	
+##  -rdynamics -no-undefined -Wl,--export-dynamic 
 
+libgxinterface_la_CXXFLAGS = $(AM_CXXFLAGS)
 libgxinterface_0_0_1_la_CPPFLAGS = \
-	$(DEPS_CFLAGS) \
+	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) \
 	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
 	-DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"  \
 	-DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"
+
+## libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) /ucrt64/bin/libintl-8.dll $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
 libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS)
 
@@ -46,29 +51,6 @@ library_include_HEADERS = \
 	../src/lang.h
 
 libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
-
-
-## #### LIB Synth ####
-## libsynth_0_0_1_la_SOURCES = \
-##         synth.h synth.cc
-##
-## libsynth_0_0_1_la_LDFLAGS = \
-##         -version-info $(SO_VERSION) \
-##         -module -Wl,--export-dynamic -rdynamics
-##
-## libsynth_0_0_1_la_CPPFLAGS = \
-##         $(DEPS_CFLAGS) $(GTKMM_CFLAGS) \
-##         -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
-##         -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"  \
-##         -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\" \
-##         -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"
-##
-## libsynth_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
-##
-## libsynth_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
-## library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
-## library_include_HEADERS = \
-##         synth.h
 
 pkgconfigdir = $(datadir)/pkgconfig
 pkgconfig_DATA = ${PACKAGE_NAME}.pc

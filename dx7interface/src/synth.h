@@ -73,16 +73,30 @@
 #pragma once
 /* sys */
 /* app */
-//#include <uchar.h>
 #include <gxinterface/0.0.1/common.h>
 #include <gxinterface/0.0.1/debug.h>
 #include <gxinterface/0.0.1/lang.h>
-/**/
 #include <gxinterface/0.0.1/gxthread.h>
-/*	Alsa */
-#include <alsa/asoundlib.h>
-/** CONSTANTS **/
-#include "event_macro_helpers.h"
+
+#if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+        #include <RtMidi.h>
+        #define SND_SEQ_EVENT_NOTEON 0x80
+        #define SND_SEQ_EVENT_NOTEOFF 0x90
+        #define SND_SEQ_EVENT_KEYPRESS 0xA0
+        #define SND_SEQ_EVENT_CONTROLLER 0xB0
+        #define SND_SEQ_EVENT_PGMCHANGE 0xC0
+        #define SND_SEQ_EVENT_CHANPRESS 0xD0
+        #define SND_SEQ_EVENT_PITCHBEND 0xE0
+        #define SND_SEQ_EVENT_SYSEX 0xF0
+        #define SND_SEQ_EVENT_SENSING 0xFE
+#endif
+#ifdef __linux__ 
+        /*	Alsa */
+        #include <alsa/asoundlib.h>
+        /* Helpers */
+        #include "event_macro_helpers.h"
+#endif
+/* CONSTANTS */
 
 class Synth : public Thread {
     public:
@@ -91,17 +105,25 @@ class Synth : public Thread {
     private:
         bool block_midi_msg;
         Glib::ustring caller="None";
-        /*** ALSA MIDI ***/
-        snd_seq_t* seq_handle;                 /* handler */
-        snd_seq_system_info_t* seq_info;       /* info */
-        snd_seq_event_t* ev;                   /* evenement */
-        size_t in_buff_size, out_buff_size;      /* buffers d'entrée et de sortie */
-        int client_id=0;
-        int port_in=0, port_out=0;             /* ports d'entréee et de sortie */
-        /* seq queue */
-        int spfd;                              /* taille de la file de queue */
-        struct pollfd *pfd;                    /* array de file de queue du sequenceur */
-
+        #ifdef __linux__
+                /*** ALSA MIDI ***/
+                snd_seq_t* seq_handle;                 /* handler */
+                snd_seq_system_info_t* seq_info;       /* info */
+                snd_seq_event_t* ev;                   /* evenement */
+                size_t in_buff_size, out_buff_size;      /* buffers d'entrée et de sortie */
+                int client_id=0;
+                int port_in=0, port_out=0;             /* ports d'entréee et de sortie */
+                /* seq queue */
+                int spfd;                              /* taille de la file de queue */
+                struct pollfd *pfd;                    /* array de file de queue du sequenceur */
+        #endif
+        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+                std::string port_in_name;
+                std::string port_out_name;
+                RtMidiIn* port_in;
+                RtMidiOut* port_out;
+                static void midiInCallback(double timestamp, std::vector<unsigned char>* message, void* userData);
+        #endif
     protected:
         uint8_t id_fabricant = 0x00;              /* selected fabricant */
         uint8_t channel_send = 0x00;              /* selected channel */
@@ -116,20 +138,34 @@ class Synth : public Thread {
         /*** MIDI ***/
         void block_midi();
         void unblock_midi();
-        void print_event_info(snd_seq_event_t*);
-        int get_port_out_number();
-        int get_port_in_number();
-        int get_client_id();
-        std::string get_event_name(int);
-        snd_seq_event_t* get_seq_event_handler();
-        snd_seq_t* get_seq_handler();
-        snd_seq_system_info_t* get_seq_info();
+        #ifdef __linux__
+                /* ALSA */
+                void print_event_info(snd_seq_event_t*);
+                snd_seq_event_t* get_seq_event_handler();
+                snd_seq_t* get_seq_handler();
+                snd_seq_system_info_t* get_seq_info();
+                std::string get_event_name(int);
+                int get_port_out_number();
+                int get_port_in_number();
+                int get_client_id();
+        #endif
+        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+                std::vector<unsigned char> message;
+                void print_event_info();
+                std::string get_event_name(unsigned char);
+                struct timespec ts = {0, 1000000L};
+        #endif       
         size_t* get_seq_buffer_size();
         void connect_midi(Glib::ustring);
         void deconnect_midi();
-        void send_midi(char, uint, u_char*);
+        void send_midi(char, unsigned int, unsigned char*);
         /* could be overrride in the synthé module itself*/
-        virtual void listen_midi();             /* function that handle midi events */
+        #ifdef __linux__
+                virtual void listen_midi();             /* function that handle midi events */
+        #endif
+        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+                virtual void listen_midi(double, std::vector<unsigned char>*, void*) = 0;
+        #endif
         /*** THREAD ***/
         virtual bool Run();
 };

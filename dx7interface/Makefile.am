@@ -29,21 +29,21 @@ CLEANFILES = \
 
 ## If configure built it, then distclean should delete it.
 DISTCLEANFILES = \
-        Makefile\
-        Makefile.in\
-        src/Makefile\
-        src/Makefile.in\
-        data/Makefile\
-        data/Makefile.in\
-        data/images/Makefile\
-        data/images/Makefile.in\
-        data/launcher/Makefile\
-        data/launcher/Makefile.in\
-        data/launcher/dx7interface.desktop.in.h\
-        data/ui/Makefile\
-        data/ui/Makefile.in\
-        data/ui/libdx7interface-0.0.1.ui.h\
-        po/dx7interface.pot\
+	Makefile\
+	Makefile.in\
+	src/Makefile\
+	src/Makefile.in\
+	data/Makefile\
+	data/Makefile.in\
+	data/images/Makefile\
+	data/images/Makefile.in\
+	data/launcher/Makefile\
+	data/launcher/Makefile.in\
+	data/launcher/dx7interface.desktop.in.h\
+	data/ui/Makefile\
+	data/ui/Makefile.in\
+	data/ui/libdx7interface-0.0.1.ui.h\
+	po/dx7interface.pot\
 	aclocal.m4\
 	autoscan.log\
 	config.h\
@@ -70,9 +70,9 @@ DISTCLEANFILES = \
 	po/.intltool-merge-cache\
 	ABOUT-NLS\
 	po/*.gmo\
-        po/languagecode.po\
-        po/Makefile\
-        po/Makefile.in\
+	po/languagecode.po\
+	po/Makefile\
+	po/Makefile.in\
 	po/Makefile.in.in*\
 	po/notexist\
 	po/missing\

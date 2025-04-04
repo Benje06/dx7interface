@@ -157,10 +157,10 @@ bool Gemod::add_module(Glib::ustring module_name){
 				uint8_t nb_mod_ident = get_module_count(module_name);
 				std::cout << "Module: " << modules[nb_mod].get_name() << std::endl;
 				if  ( nb_mod_ident != 0 ){
-					modules[nb_mod].set_app_name( modules[nb_mod].get_app_name() + " (" + tostr<uint>(nb_mod_ident) +")" );
+					modules[nb_mod].set_app_name( modules[nb_mod].get_app_name() + " (" + tostr<unsigned int>(nb_mod_ident) +")" );
 				};
-				std::cout << "\tNombre de module avec ce nom(nb_mod_ident) : " << tostr<uint>(nb_mod_ident) << std::endl;
-				std::cout << "\tIndex module(nb_mod): " << tostr<uint>(nb_mod)  << std::endl;
+				std::cout << "\tNombre de module avec ce nom(nb_mod_ident) : " << tostr<unsigned int>(nb_mod_ident) << std::endl;
+				std::cout << "\tIndex module(nb_mod): " << tostr<unsigned int>(nb_mod)  << std::endl;
 				std::cout << "\tApp name(mod.name): " << modules[nb_mod].get_app_name() << std::endl;
 				std::cout << "\tModule name(extpath.name): " << modules[nb_mod].get_name() << std::endl;
 				std::cout << "\tModule ext(extpath.ext): " << modules[nb_mod].get_ext() << std::endl;

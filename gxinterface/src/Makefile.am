@@ -20,8 +20,8 @@ gxinterface_SOURCES = \
 	gxthread.h gxthread.cc\
 	lang.h
 
-# DEBUG FLAG -g
-# CFLAG = -g $(CFLAGS)
+## DEBUG FLAG -g
+## CFLAG = -g $(CFLAGS)
 
 AM_CPPFLAGS = \
 	$(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)\
@@ -31,5 +31,13 @@ AM_CPPFLAGS = \
 	-DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
 	-DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 
+## gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+## OK gxinterface_LDADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS) $(LIBS) -lpthread -lintl
+## OK gxinterface_LDADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS) $(LIBS)
+
 gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+
+gxinterface_LDFLAGS = -static -no-undefined -Wl,--no-undefined,--export-all-symbols
+
+
 

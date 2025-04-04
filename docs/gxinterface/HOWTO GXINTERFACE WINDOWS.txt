@@ -1,0 +1,28 @@
+## GxInterface
+
+export MSYS2_ARG_CONV_EXCL='--prefix;--datarootdir'
+./autogen.sh --target=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig --build=$(./config/config.guess) --prefix=/ucrt64
+
+make -j3
+make install
+make DESTDIR=/d/gxinterface/package install
+
+ldd /d/gxinterface/package/ucrt64/bin/gxinterface.exe | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/ucrt64/bin/
+
+## DX7interface
+
+./autogen.sh --target=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig --build=$(./config/config.guess) --enable-rtmidi
+
+make -j3
+make DESTDIR=/d/gxinterface/package install
+
+set PATH=d:\gxinterface\package\ucrt64\share\dx7interface\1.0.0;%PATH
+
+ldd /d/gxinterface/package/ucrt64/share/dx7interface/1.0.0/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/ucrt64/share/dx7interface/1.0.0/
+
+.la -> libdir='ucrt64\share\dx7interface\1.0.0'
+
+D:\gxinterface\package>ucrt64\bin\gxinterface.exe -m ucrt64\share\dx7interface\1.0.0\dx7interface-0.0.1.la
+
+
+
