@@ -21,7 +21,8 @@ libgxinterface_0_0_1_la_SOURCES = \
 	
 libgxinterface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
-	-rdynamic -no-undefined -Wl,--no-undefined,--export-all-symbols
+	-rdynamic -no-undefined -Wl,--no-undefined
+## win32 ,--export-all-symbols
 	
 ##  -rdynamics -no-undefined -Wl,--export-dynamic 
 

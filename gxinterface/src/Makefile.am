@@ -37,7 +37,8 @@ AM_CPPFLAGS = \
 
 gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
-gxinterface_LDFLAGS = -static -no-undefined -Wl,--no-undefined,--export-all-symbols
+gxinterface_LDFLAGS = -static -no-undefined -Wl,--no-undefined
+## ,--export-all-symbols
 
 
 

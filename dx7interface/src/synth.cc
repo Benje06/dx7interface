@@ -6,8 +6,10 @@ Synth::Synth(Glib::ustring name){
     std::cerr << caller;
     LOG_IN();
     init_nls();
-    port_in = new RtMidiIn();
-    port_out = new RtMidiOut();
+    #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+        port_in = new RtMidiIn();
+        port_out = new RtMidiOut();
+    #endif
     connect_midi(name);
     std::cerr << caller;
     LOG_OUT();
@@ -199,7 +201,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
     };
     int Synth::get_port_out_number(){
         return port_out;
-    };*/
+    };
 #endif
 #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
     /*std::pair<RtMidiIn*, RtMidiOut*> Synth::get_midi_io() {

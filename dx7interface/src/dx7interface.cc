@@ -113,7 +113,8 @@ void Dx7interface::create_bank_voices_list(){
         sigc::mem_fun(*this, &Dx7interface::on_bank_select));
     /* Sound Select */
 
-    //auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
+    //autoport_in = new RtMidiIn();
+    // factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
         sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_bind().connect(
@@ -268,7 +269,11 @@ void Dx7interface::save_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
     Glib::ustring midi_param_number;
     Glib::ustring first_line = "# Function, midi controller number";
     line = first_line;
-    line.append(tostr<const char>(*EOL));
+    #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+        line.append(tostr<const char>(*EOL));
+    #else
+        line.append(tostr<const char>(EOL));
+    #endif
     data_stream->put_string(line);
     for( int function_index = 0 ; function_index < max_param_nb; function_index++){
         midi_param_number = "";
@@ -279,7 +284,11 @@ void Dx7interface::save_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
             };
         };
         line = function + "," + midi_param_number;
-        line.append(tostr<const char>(*EOL));
+        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+            line.append(tostr<const char>(*EOL));
+        #else
+            line.append(tostr<const char>(EOL));
+        #endif
         data_stream->put_string(line);
     };
     data_stream->flush();
@@ -1997,10 +2006,10 @@ void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
 void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     /* set value in each widget from modif */
     /* general */
-    block_ui();
-    block_midi();
     //(get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
     (get_window())->add_tick_callback([this,sound] (const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+        block_ui();
+        block_midi();
         uint8_t j,k;
         /* ALGO */
         (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(sound->algo.algo.val+1);
@@ -2070,11 +2079,11 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
             }else{
                 (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<unsigned int>(j+1)))->set_value( val / 12 );
             };
+            set_voice_parameters(sound);
+            unblock_midi();
+            unblock_ui();
+            on_txt_freq_op_event();
         };
-        set_voice_parameters(sound);
-        unblock_midi();
-        unblock_ui();
-        on_txt_freq_op_event();
         return false; // Remove the tick callback after execution
     });
 
@@ -2296,9 +2305,9 @@ void Dx7interface::send_voice(st_dx7sysex_1* sound){
     msg[162]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 163, msg);
     /* extra parameters */
-    send_extra_parameters(sound);
+    //send_extra_parameters(sound);
     /* send mute for dx and hexter */
-    on_mute_op_event();
+    //on_mute_op_event();
     LOG_OUT();
 };
 void Dx7interface::send_extra_parameters(st_dx7sysex_1* sound){
