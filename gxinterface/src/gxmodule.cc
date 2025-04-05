@@ -373,7 +373,7 @@ bool Gx_module::load(Glib::ustring filename, uint8_t index){
 	extractPath(filename);
 	if ( (mod.extpath.ext == "ui") ||  (mod.extpath.ext == "xml") ){
 		return load_ui(filename,index);
-	}else if ( (mod.extpath.ext == "la") || (mod.extpath.ext == "so") || (mod.extpath.ext == "lo")) {
+	}else if ( (mod.extpath.ext == "la") || (mod.extpath.ext == "so") || (mod.extpath.ext == "lo") || (mod.extpath.ext == "dll") ) {
 		return load_so_la(filename,index);
 	}else{
 		std::cerr << "Error : Mauvaise extention de fichier." << std::endl;
