@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 0.95.0 -->
+<!-- Created with Cambalache 0.95.1 -->
 <interface domain="dx7interface">
   <!-- interface-name dx7interface-0.0.1-simplify.ui -->
   <requires lib="gio" version="2.44"/>
@@ -1338,7 +1338,7 @@
                                     <layout>
                                       <property name="column">0</property>
                                       <property name="column-span">2</property>
-                                      <property name="row">3</property>
+                                      <property name="row">4</property>
                                     </layout>
                                   </object>
                                 </child>
@@ -1349,7 +1349,7 @@
                                     <property name="receives-default">1</property>
                                     <layout>
                                       <property name="column">0</property>
-                                      <property name="row">1</property>
+                                      <property name="row">2</property>
                                     </layout>
                                   </object>
                                 </child>
@@ -1360,7 +1360,7 @@
                                     <property name="receives-default">1</property>
                                     <layout>
                                       <property name="column">0</property>
-                                      <property name="row">2</property>
+                                      <property name="row">1</property>
                                     </layout>
                                   </object>
                                 </child>
@@ -1370,7 +1370,7 @@
                                     <layout>
                                       <property name="column">0</property>
                                       <property name="column-span">2</property>
-                                      <property name="row">2</property>
+                                      <property name="row">3</property>
                                     </layout>
                                   </object>
                                 </child>
@@ -5465,60 +5465,26 @@
                         <property name="hexpand">1</property>
                         <property name="vexpand">1</property>
                         <child>
-                          <object class="GtkFrame" id="frame_fonction">
-                            <child>
-                              <object class="GtkBox" id="box_utils">
-                                <property name="halign">start</property>
-                                <property name="orientation">vertical</property>
-                                <property name="valign">start</property>
-                                <child>
-                                  <object class="GtkButton" id="btn_randomize">
-                                    <property name="focusable">1</property>
-                                    <property name="label" translatable="yes">randomize</property>
-                                    <property name="receives-default">1</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_panic">
-                                    <property name="focusable">1</property>
-                                    <property name="label" translatable="yes">panique</property>
-                                    <property name="receives-default">1</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="entry1">
-                                    <property name="focusable">1</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <layout>
-                              <property name="column">0</property>
-                              <property name="row">1</property>
-                            </layout>
-                          </object>
-                        </child>
-                        <child>
                           <object class="GtkFrame" id="frame_affect_param">
                             <child>
                               <object class="GtkBox" id="box_listen_affect_param">
                                 <property name="orientation">vertical</property>
                                 <child>
-                                    <object class="GtkBox" id="box_listen_affect_param_file">
-                                        <property name="orientation">horizontal</property>
-                                        <child>
-                                            <object class="GtkButton" id="btn_midi_learn_load">
-                                                <property name="halign">center</property>
-                                                <property name="label">Load</property>
-                                            </object>
-                                        </child>
-                                        <child>
-                                            <object class="GtkButton" id="btn_midi_learn_save">
-                                                <property name="halign">center</property>
-                                                <property name="label">Save</property>
-                                            </object>
-                                        </child>
-                                    </object>
+                                  <object class="GtkBox" id="box_listen_affect_param_file">
+                                    <property name="orientation">horizontal</property>
+                                    <child>
+                                      <object class="GtkButton" id="btn_midi_learn_load">
+                                        <property name="halign">center</property>
+                                        <property name="label">Load</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_midi_learn_save">
+                                        <property name="halign">center</property>
+                                        <property name="label">Save</property>
+                                      </object>
+                                    </child>
+                                  </object>
                                 </child>
                                 <child>
                                   <object class="GtkToggleButton" id="toggle_midi_learn">
@@ -5567,14 +5533,16 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="frame_midi_channel">
-                            <property name="label">Midi Channel</property>
+                          <object class="GtkFrame" id="frame_various_functions">
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
                             <child>
-                              <object class="GtkGrid" id="grid_midi_channel">
+                              <object class="GtkGrid" id="grid_various_functions">
+                                <property name="halign">start</property>
                                 <child>
                                   <object class="GtkLabel" id="label_midi_receive">
                                     <property name="justify">center</property>
-                                    <property name="label">Receive</property>
+                                    <property name="label">Midi Receive</property>
                                     <layout>
                                       <property name="column">0</property>
                                       <property name="row">0</property>
@@ -5584,7 +5552,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_midi_send">
                                     <property name="justify">center</property>
-                                    <property name="label">Send</property>
+                                    <property name="label">Midi Send</property>
                                     <layout>
                                       <property name="column">0</property>
                                       <property name="row">1</property>
@@ -5595,6 +5563,7 @@
                                   <object class="GtkSpinButton" id="midi_channel_send">
                                     <property name="adjustment">adj_midi_channel_send</property>
                                     <property name="focusable">1</property>
+                                    <property name="halign">start</property>
                                     <property name="numeric">1</property>
                                     <property name="text" translatable="yes">0</property>
                                     <property name="width-chars">2</property>
@@ -5609,6 +5578,7 @@
                                   <object class="GtkSpinButton" id="midi_channel_receive">
                                     <property name="adjustment">adj_midi_channel_receive</property>
                                     <property name="focusable">1</property>
+                                    <property name="halign">start</property>
                                     <property name="numeric">1</property>
                                     <property name="text" translatable="yes">0</property>
                                     <property name="width-chars">2</property>
@@ -5619,11 +5589,78 @@
                                     </layout>
                                   </object>
                                 </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_randomize">
+                                    <property name="focusable">1</property>
+                                    <property name="label" translatable="yes">randomize</property>
+                                    <property name="margin-bottom">5</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="receives-default">1</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="column-span">2</property>
+                                      <property name="row">4</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="entry1">
+                                    <property name="focusable">1</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="column-span">2</property>
+                                      <property name="row">6</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_panic">
+                                    <property name="focusable">1</property>
+                                    <property name="label" translatable="yes">panique</property>
+                                    <property name="margin-bottom">5</property>
+                                    <property name="margin-top">5</property>
+                                    <property name="receives-default">1</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="column-span">2</property>
+                                      <property name="row">3</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator" id="GtkSeparator_various_fonctions">
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="column-span">2</property>
+                                      <property name="row">2</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="label_send_message_sysex">
+                                    <property name="label">Send Message Sysex :</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="column-span">2</property>
+                                      <property name="row">5</property>
+                                    </layout>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">1</property>
+                              <property name="row">1</property>
+                              <property name="row-span">1</property>
                             </layout>
                           </object>
                         </child>
@@ -6413,13 +6450,13 @@
           </object>
         </child>
         <child>
-            <object class="GtkFrame">
-                <property name="child">
-                    <object class="GtkCheckButton" id="checkbutton_add_midi_learn_parameters">
-                        <property name="label" translatable="yes">Save midi learn configuration</property>
-                    </object>
-                </property>
-            </object>
+          <object class="GtkFrame">
+            <property name="child">
+              <object class="GtkCheckButton" id="checkbutton_add_midi_learn_parameters">
+                <property name="label" translatable="yes">Save midi learn configuration</property>
+              </object>
+            </property>
+          </object>
         </child>
         <child>
           <object class="GtkButton" id="btn_bank_save">
