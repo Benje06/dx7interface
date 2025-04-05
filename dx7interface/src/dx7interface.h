@@ -67,6 +67,7 @@ class Dx7interface : public Gx_module, public Synth {
     private:
         /**** Generic ****/
         bool error();
+        std::shared_ptr<int> pending_remove = std::make_shared<int>(0); // counter storing box remove pending task
         using FunctionPtr = void (Dx7interface::*)();  /* abstract for function as array */
         FunctionPtr mute_hexter_functions[6] = {
             &Dx7interface::on_mute_hexter_op1_event,

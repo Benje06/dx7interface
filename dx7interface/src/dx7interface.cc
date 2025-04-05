@@ -68,12 +68,11 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     create_save_dialog();
     // Create rigth click menu
     create_popover_menu();
-
-    set_default_values();
     // attach GUI signals
     attach_signals();
     /* */
     init_global_fonction_parameter();
+    set_default_values();
     // start thread
     S_Thread();
     unblock_midi();
@@ -111,14 +110,14 @@ void Dx7interface::create_bank_voices_list(){
         sigc::mem_fun(*this, &Dx7interface::on_bank_reveal));
     slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bank_select));
-    /* Sound Select */
 
-    //autoport_in = new RtMidiIn();
-    // factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
+    /* Sound Select */
+    // auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
         sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_bind().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bind_num));
+    // auto factory_name=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_name"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_setup().connect(
         sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_bind().connect(
@@ -132,7 +131,8 @@ void Dx7interface::create_param_list(){
     param_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_param"));
     param_selection_model->set_autoselect(false);
     param_selection_model->set_model(param_data_model);
-    //auto factory_name=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_name"));
+
+    // auto factory_param=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_param"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_param"))->signal_setup().connect(
         sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_param_label), Gtk::Align::START));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_param"))->signal_bind().connect(
@@ -162,67 +162,135 @@ bool Dx7interface::Run(){
 };
 
 void Dx7interface::add_midi_learned(int param_number, int function_index){
-        LOG_IN();
+        //LOG_IN();
         if( param_number >= static_cast<int>(midi_learned.size()) ){
             midi_learned.resize(param_number + 1);
         };
         midi_learned[param_number].push_back(function_index);
-        LOG_OUT();
+        //LOG_OUT();
 };
 
 void Dx7interface::rem_midi_learned(int param_number, int function_index){
-    LOG_IN();
+    //LOG_IN();
     if( param_number < static_cast<int>(midi_learned.size()) ){
         auto& vec = midi_learned[param_number];
         vec.erase(std::remove(vec.begin(), vec.end(), function_index), vec.end());
     };
-    LOG_OUT();
+    //LOG_OUT();
+};
+
+void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib::ustring param_number, int selected_item){
+    //LOG_IN();
+    // TODO: check param_number is a numeric
+    auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+    int midi_param_value = std::stoi(param_number.raw());
+    /* affected param name widget */
+    auto text_fct = Gtk::make_managed<Gtk::Text>();
+    text_fct->set_name(function_name);
+    text_fct->set_text(function_name);
+    text_fct->set_editable(false);
+    /* midi param number widget */
+    auto text_param = Gtk::make_managed<Gtk::Text>();
+    text_param->set_name(param_number);
+    text_param->set_text(param_number);
+    text_param->set_editable(false);
+    /* delete button for the entry */
+    auto btn_delete = Gtk::make_managed<Gtk::Button>("delete" +param_number);
+    btn_delete->set_name("delete_" + param_number);
+    /* box to group created widget */
+    auto box_funct = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL);
+    box_funct->set_name("box_midi_param"+param_number);
+    box_funct->append(*text_fct);
+    box_funct->append(*text_param);
+    box_funct->append(*btn_delete);
+    /* ui box to attach result */
+    box->add_tick_callback([this, box, box_funct,midi_param_value,selected_item](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+        //LOG_IN();
+        if(*pending_remove == 0){
+            //std::cout << " ADD box triggered" << std::endl;
+            add_midi_learned(midi_param_value, selected_item);
+            box->append(*box_funct);
+            //LOG_OUT();
+            return false; // Remove the tick callback after execution
+        }else{
+            return true;
+        }
+    });
+    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+        /* scoped slot to be autoremove */
+        auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
+        *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
+            //LOG_IN();
+            //std::cout << " REM box triggered" << std::endl;
+            if(*pending_remove > 0){
+                (*pending_remove)--;
+            };
+            int p_number = std::stoi(param_number.raw());
+            rem_midi_learned(p_number, selected_item);
+            auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+            box_funct->remove(*text_param);
+            box_funct->remove(*text_fct);
+            box_funct->remove(*btn_delete);
+            box->remove(*box_funct);
+            //LOG_OUT();
+        });
+    #else
+        auto slot_btn_delete_params = std::make_shared<sigc::connection>();
+        *slot_btn_delete_params = btn_delete->signal_clicked().connect(
+            [this, box_funct, text_fct, text_param, btn_delete, selected_item, param_number, slot_btn_delete_params]() {
+                //LOG_IN();
+                //std::cout << "REM box triggered" << std::endl;
+                if(*pending_remove > 0){
+                    (*pending_remove)--;
+                };
+                int p_number = std::stoi(param_number.raw());
+                rem_midi_learned(p_number, selected_item);
+                auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
+                box_funct->remove(*text_param);
+                box_funct->remove(*text_fct);
+                box_funct->remove(*btn_delete);
+                box->remove(*box_funct);
+                if (slot_btn_delete_params->connected()) {
+                    slot_btn_delete_params->disconnect();
+                }
+                //LOG_OUT();
+            }
+        );
+    #endif
+    //box->queue_draw();
+    //LOG_OUT();
 };
 
 void Dx7interface::clean_midi_learn(){
-    LOG_IN();
+    //LOG_IN();
     try{
         Gtk::Box* parent = get_gwidget<Gtk::Box>("box_listen_affect_param");
         Gtk::Widget* child = parent->get_first_child();
-        int p_number, selected_item;
-        Glib::RefPtr<Glib::Regex> regex_box= Glib::Regex::create("^box_midi_param.*");
-        Glib::RefPtr<Glib::Regex> regex_param = Glib::Regex::create("^\\d+$");
-        Glib::RefPtr<Glib::Regex> regex_function = Glib::Regex::create("^delete.*");
-        Glib::ustring name;
-        while (child){
-            Gtk::Widget* subchild = child->get_first_child();
-            if(regex_box->match(child->get_name())){
-                while (subchild){
-                    name = subchild->get_name();
-                    if(regex_param->match(name)){
-                        p_number = std::stoi(name);
-                    }else if(! regex_function->match(name)){
-                        for( int function_index = 0 ; function_index < max_param_nb; function_index++){
-                            if( function_list[function_index] == name ){
-                                selected_item = function_index;
-                                break;
-                            };
+        if(child){
+            Glib::RefPtr<Glib::Regex> regex_box= Glib::Regex::create("^box_midi_param.*");
+            Glib::RefPtr<Glib::Regex> regex_function = Glib::Regex::create("^delete.*");
+            while (child){
+                if( regex_box->match(child->get_name()) ){ // si match box_midi_param
+                    //std::cout << "child name: " << child->get_name() << std::endl;
+                    Gtk::Widget* subchild = child->get_first_child();
+                    while (subchild){
+                        //std::cout << "sub child name: " << subchild->get_name() << std::endl;
+                        if( regex_function->match(subchild->get_name()) ){
+                            //std::cout << "sub child MATCH" << subchild->get_name() << std::endl;
+                            (*pending_remove)++;
+                            subchild->add_tick_callback([this, parent, child, subchild](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
+                                //LOG_IN();
+                                //std::cout << "SUBCHILD activate triggered" << std::endl;
+                                subchild->activate();
+                                //subchild->queue_draw();
+                                //LOG_OUT();
+                                return false;
+                            });
+                            break;
                         };
+                        subchild = subchild->get_next_sibling();
                     };
-                    subchild->add_tick_callback([this, subchild, p_number, selected_item](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
-                        LOG_IN();
-                        subchild->unparent(); // Remove the widget from its parent
-                        this->rem_midi_learned(p_number, selected_item); // Perform cleanup
-                        LOG_OUT();
-                        return false; // Remove the tick callback after execution
-                    });
-                    subchild->queue_draw(); // Request a redraw
-                    subchild = subchild->get_next_sibling();
                 };
-                child->add_tick_callback([parent, child](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
-                    LOG_IN();
-                    parent->remove(*child); // Remove the child from its parent
-                    LOG_OUT();
-                    return false; // Remove the tick callback after execution
-                });
-                child->queue_draw(); // Request a redraw
-                child = child->get_next_sibling();
-            }else{
                 child = child->get_next_sibling();
             };
         };
@@ -231,27 +299,25 @@ void Dx7interface::clean_midi_learn(){
         " Reason: " + ex.what();
         std::cerr << err_msg << std::endl;
     };
-    LOG_OUT();
+    //LOG_OUT();
 };
 void Dx7interface::read_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
     LOG_IN();
     clean_midi_learn();
     data_stream = Gio::DataInputStream::create(param_file->read());
     std::string line;
-    Glib::ustring function;
-    Glib::ustring midi_param_number;
+    Glib::ustring function_name;
+    Glib::ustring param_number;
     data_stream->read_line(line);
     while(data_stream->read_line(line)){
-        function = line.substr(0,line.find_last_of(","));
-        midi_param_number = line.substr(line.find_last_of(",")+1,line.length());
+        function_name = line.substr(0,line.find_last_of(","));
+        param_number = line.substr(line.find_last_of(",")+1,line.length());
         std::regex pattern("[^0-9]+");
-        midi_param_number = std::regex_replace(midi_param_number.c_str(), pattern, "");
-        if( midi_param_number != "" ){
-            for( int function_index = 0 ; function_index < max_param_nb; function_index++){
-                if( function_list[function_index] == function ){
-                    int midi_param_value = std::stoi(midi_param_number.raw());
-                    add_midi_learned(midi_param_value, function_index);
-                    add_midi_learn_param_widget(function, midi_param_number, function_index);
+        param_number = std::regex_replace(param_number.c_str(), pattern, "");
+        if( param_number != "" ){
+            for( int selected_item = 0 ; selected_item < max_param_nb; selected_item++){
+                if( function_list[selected_item] == function_name ){
+                    add_midi_learn_param_widget(function_name, param_number, selected_item);
                     break;
                 };
             };
@@ -777,7 +843,7 @@ void Dx7interface::on_midi_learn_param_save(){
 };
 
 void Dx7interface::on_midi_learn_param_select(){
-    LOG_IN();
+    //LOG_IN();
     try{
         file_dialog_param_select->set_title("Select config");
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
@@ -794,8 +860,7 @@ void Dx7interface::on_midi_learn_param_select(){
                     + "Reason: " + ex.what();
                     std::cerr << err_msg << std::endl;
                 };
-            }
-            ); /* end dialog open function */
+            }); /* end dialog open function */
         #else
             file_dialog_param_select->set_transient_for(*(get_window()));
             file_dialog_param_select->signal_response().connect([this](int response) {
@@ -819,9 +884,10 @@ void Dx7interface::on_midi_learn_param_select(){
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
         //throw std::runtime_error(err_msg);
     };
-    LOG_OUT();
+    //LOG_OUT();
 };
 
 /*** BANK ***/
@@ -868,6 +934,7 @@ void Dx7interface::on_bank_select(){
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
         //throw std::runtime_error(err_msg);
     };
     LOG_OUT();
@@ -2399,86 +2466,8 @@ void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
     };
 };
 
-void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib::ustring param_number, int selected_item){
-    LOG_IN();
-    // TODO: check param_number is a numeric
-    /* affected param name widget */
-    auto text_fct = Gtk::make_managed<Gtk::Text>();
-    text_fct->set_name(function_name);
-    text_fct->set_text(function_name);
-    text_fct->set_editable(false);
-    /* midi param number widget */
-    auto text_param = Gtk::make_managed<Gtk::Text>();
-    text_param->set_name(param_number);
-    text_param->set_text(param_number);
-    text_param->set_editable(false);
-    /* delete button for the entry */
-    auto btn_delete = Gtk::make_managed<Gtk::Button>("delete" +param_number);
-    btn_delete->set_name("delete_" + param_number);
-    /* box to group created widget */
-    auto box_funct = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL);
-    box_funct->set_name("box_midi_param"+param_number);
-    box_funct->append(*text_fct);
-    box_funct->append(*text_param);
-    box_funct->append(*btn_delete);
-    /* ui box to attach result */
-    auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
-    box->add_tick_callback([box, box_funct](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
-        LOG_IN();
-        box->append(*box_funct);
-        LOG_OUT();
-        return false; // Remove the tick callback after execution
-    });
-    box->queue_draw();
-    /* scoped slot to be autoremove */
-    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-        auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
-        *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
-            LOG_IN();
-            int p_number = std::stoi(param_number.raw());
-            rem_midi_learned(p_number, selected_item);
-            auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
-            box_funct->add_tick_callback([box_funct,text_param,text_fct,btn_delete](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
-                LOG_IN();
-                box_funct->remove(*text_param);
-                box_funct->remove(*text_fct);
-                box_funct->remove(*btn_delete);
-                LOG_OUT();
-                return false; // Remove the tick callback after execution
-            });
-            box_funct->queue_draw();
-            box->add_tick_callback([box, box_funct](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
-                LOG_IN();
-                box->remove(*box_funct);
-                LOG_OUT();
-                return false; // Remove the tick callback after execution
-            });
-            box->queue_draw();
-            LOG_OUT();
-        });
-    #else
-        auto slot_btn_delete_params = std::make_shared<sigc::connection>();
-        *slot_btn_delete_params = btn_delete->signal_clicked().connect(
-            [this, box_funct, text_fct, text_param, btn_delete, selected_item, param_number, slot_btn_delete_params]() {
-                LOG_IN();
-                int p_number = std::stoi(param_number.raw());
-                rem_midi_learned(p_number, selected_item);
-                auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
-                box_funct->remove(*text_param);
-                box_funct->remove(*text_fct);
-                box_funct->remove(*btn_delete);
-                box->remove(*box_funct);
-                if (slot_btn_delete_params->connected()) {
-                    slot_btn_delete_params->disconnect();
-                }
-                LOG_OUT();
-            }
-        );
-    #endif
-    LOG_OUT();
-};
-
 void Dx7interface::on_add_midi_learn_event(){
+    LOG_IN();
     auto selected_item = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected_item(); // return selected item
     auto selected_function = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected(); // return index of selected item
     if (selected_item) {
@@ -2490,6 +2479,7 @@ void Dx7interface::on_add_midi_learn_event(){
             add_midi_learn_param_widget(function_name, st_midi_param_number, selected_function);
         };
     };
+    LOG_OUT();
 };
 
 /* Init all Gesture controller */
