@@ -28,7 +28,9 @@
 }
 .frameloadbank columnview header label{
 }
-
+.bank_select{
+    font-weight: bold;
+}
 /*** Button reveal bank ***/
 .btn_reveal {
     margin:0 2px;
@@ -38,6 +40,7 @@
 }
 
 button{
+    /*font-weight: bold;*/
     margin:0 0;
     padding:0 0;
 }
