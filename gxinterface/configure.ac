@@ -27,7 +27,8 @@ AS_CASE([$host_os],
         AC_MSG_ERROR([Unsupported operating system: $host_os])
     ]
 )
-
+AM_CONDITIONAL([PLATFORM_WINDOWS], [test "$platform_win32" = "yes"])
+AM_CONDITIONAL([PLATFORM_LINUX], [test "$platform_win32" = "no"])
 dnl ================================================================
 dnl checks for programs
 dnl ================================================================
@@ -47,7 +48,6 @@ ifdef('lt_option',
     [LT_INIT([lt_option])],
     [LT_INIT])
 
-
 AC_LANG([C++])
 
 AC_PROG_CC
@@ -66,7 +66,7 @@ AC_SUBST(CXXFLAGS)
 dnl ================================================================
 dnl Check for libraries
 dnl ================================================================
-dnl AC_SEARCH_LIBS([strerror],[cposix])
+AC_SEARCH_LIBS([strerror],[cposix])
 dnl AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([POSIX threads library not found])])
 dnl AC_CHECK_LIB([intl], [libintl_fprintf], [], [AC_MSG_ERROR([GNU gettext library not found])])
 dnl PTHREAD_LIBS="-lpthread"
@@ -104,7 +104,6 @@ AC_LANG_COMPILER_REQUIRE
 dnl ================================================================
 dnl checks for library functions
 dnl ================================================================
-
 AC_FUNC_ALLOCA
 AC_FUNC_ERROR_AT_LINE
 
@@ -112,6 +111,7 @@ PKG_CHECK_MODULES([DEPS], [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_CPPFLAGS)
 AC_SUBST(DEPS_LIBS)
+
 dnl ================================================================
 dnl checks for system services
 dnl ================================================================

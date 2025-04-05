@@ -20,10 +20,6 @@ dx7interface_0_0_1_la_SOURCES = \
         GtkClass.h GtkClass.cc\
         dx7sysex.h dx7interface.h dx7interface.cc
 
-dx7interface_0_0_1_la_LDFLAGS = \
-        -version-info $(SO_VERSION) \
-        -module -rdynamics -no-undefined -Wl,--no-undefined,--export-dynamic 
-
 dx7interface_0_0_1_la_CPPFLAGS = \
         $(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) \
         -DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"\
@@ -35,46 +31,24 @@ dx7interface_0_0_1_la_CPPFLAGS = \
 
 dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
 
+dx7interface_0_0_1_la_LDFLAGS = \
+        -version-info $(SO_VERSION) \
+        -module -no-undefined -Wl,--no-undefined,--gc-sections
+
+# Platform-specific additions
+if PLATFORM_WINDOWS
+  # Windows/MinGW: PE-specific flags ; ,-rpath,ucrt64\lib
+  dx7interface_0_0_1_la_LDFLAGS += -Wl,--export-all-symbols
+else
+  # Linux/ELF: Equivalent symbol visibility control
+  dx7interface_0_0_1_la_LDFLAGS += -rdynamic  # Expands to -Wl,--export-dynamic
+endif
+
 ## dx7interface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 ## library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
 ## library_include_HEADERS = \
 ##        dx7interface.h  \
 ##        dx7sysex.h
-
-## LIB tx81z ####
-## tx81zinterface_0_0_1_la_SOURCES = \
-##        tx81z.h tx81z.cc\
-##        synth.h synth.cc\
-##  GtkClass.h GtkClass.cc\
-##        tx81zsysex.h
-
-## Lib DX7 interface for sysex editing as module
-##  tx81zinterface_0_0_1_la_LDFLAGS = \
-##        -version-info $(SO_VERSION) \
-##       -module -Wl,--export-dynamic -rdynamics -no-undefined
-## tx81zinterface_0_0_1_la_CPPFLAGS =\
-##        $(DEPS_CFLAGS) $(GTKMM_CFLAGS)\
-##        -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
-##        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
-##        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-##        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
-##        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
-## tx81zinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
-## tx81zinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
-## library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
-## library_include_HEADERS = \
-##        tx81z.h\
-##        tx81zsysex.h
-## Install the generated pkg-config file (.pc) into the expected location for
-## architecture-dependent package configuration information.  Occasionally,
-## pkg-config files are also used for architecture-independent data packages,
-## in which case the correct install location would be $(datadir)/pkgconfig.
-## pkgconfigdir = $(datadir)/pkgconfig
-## pkgconfig_DATA = ${PACKAGE_NAME}.pc
-## Install the generated pkg-config file (.pc) into the expected location for
-## architecture-dependent package configuration information.  Occasionally,
-## pkg-config files are also used for architecture-independent data packages,
-## in which case the correct install location would be $(datadir)/pkgconfig.
 
 pkgconfigdir = $(datadir)/pkgconfig
 pkgconfig_DATA = ${PACKAGE_NAME}.pc

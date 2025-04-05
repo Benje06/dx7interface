@@ -1,13 +1,20 @@
 ## GxInterface
 
-export MSYS2_ARG_CONV_EXCL='--prefix;--datarootdir'
-./autogen.sh --target=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig --build=$(./config/config.guess) --prefix=/ucrt64
+# export MSYS2_ARG_CONV_EXCL='--prefix;--datarootdir'  # --pkgdatadir
+# export MSYS2_ARG_CONV_EXCL='--prefix;--datarootdir;--datadir'
+# export MSYS2_ARG_CONV_EXCL="-DPROGRAMNAME_LOCALEDIR=;-DPROGRAMNAME_UI_DIR=;-DPROGRAMNAME_MOD_DIR=;-DPROGRAMNAME_IMG_DIR=;-DPROGRAMNAME_DATA_DIR=;/ucrt64;--prefix;--datarootdir;--datadir;--pkgdatadir"
+
+# --prefix=/ucrt64 --datarootdir=/ucrt64/share --datadir=/ucrt64/share
+./autogen.sh --target=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig --build=$(./config/config.guess) 
 
 make -j3
 make install
 make DESTDIR=/d/gxinterface/package install
 
-ldd /d/gxinterface/package/ucrt64/bin/gxinterface.exe | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/ucrt64/bin/
+ldd /d/gxinterface/package/ucrt64/bin/gxinterface.exe | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/ucrt64/lib/
+
+set PATH=D:\gxinterface\package\ucrt64\lib;%PATH%
+
 
 ## DX7interface
 
@@ -16,13 +23,14 @@ ldd /d/gxinterface/package/ucrt64/bin/gxinterface.exe | grep /ucrt64 | awk '{pri
 make -j3
 make DESTDIR=/d/gxinterface/package install
 
-set PATH=d:\gxinterface\package\ucrt64\share\dx7interface\1.0.0;%PATH
+set PATH=d:\gxinterface\package\gxinterface\share\dx7interface\1.0.0;%PATH
 
-ldd /d/gxinterface/package/ucrt64/share/dx7interface/1.0.0/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/ucrt64/share/dx7interface/1.0.0/
+ldd src/.libs/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/ucrt64/share/dx7interface/1.0.0/
 
 .la -> libdir='ucrt64\share\dx7interface\1.0.0'
 
-D:\gxinterface\package>ucrt64\bin\gxinterface.exe -m ucrt64\share\dx7interface\1.0.0\dx7interface-0.0.1.la
+set PATH=D:\gxinterface\package\gxinterface\share\dx7interface\1.0.0;%PATH%
 
+D:\gxinterface\package>bin\gxinterface.exe -m share\dx7interface\1.0.0\dx7interface-0.0.1.la
 
 

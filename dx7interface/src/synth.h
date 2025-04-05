@@ -21,7 +21,7 @@
  * 0x7F	127	Real time*
  * Fabricant ID
  * 0x01	1	Sequential Circuits
- * 0x02	2	Big B*riar
+ * 0x02	2	Big Briar
  * 0x03	3	Octave / Plateau
  * 0x04	4	Moog
  * 0x05	5	Passport Designs
@@ -60,6 +60,21 @@
  * 0x43	67	Yamaha
  * 0x44	68	Casio
  * 0x45	69	Akai
+ * 0x46 070 Kamiya Studio
+ * 0x47 071 Akai
+ * 0x48 072 Victor
+ * 0x4B 075 Fujitsu
+ * 0x4C 076 Sony
+ * 0x4E 078 Teac
+ * 0x50 080 Matsushita
+ * 0x51 081 Fostex
+ * 0x52 082 Zoom
+  *0x54 084 Matsushita
+ * 0x55 085 Suzuki
+ * 0x56 086 Fuji Sound
+ * 0x57 087 Acoustic Technical Laboratory
+ * 0x7E 126 Universal Non Realtime Message (UNRT)
+ * 0x7F 127 Universal Realtime Message (URT)
  */
 /*TODO :
  *timer

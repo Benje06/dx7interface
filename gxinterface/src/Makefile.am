@@ -13,11 +13,11 @@ bin_PROGRAMS = \
 gxinterface_SOURCES = \
 	debug.h\
 	common.h common.cc\
+	gxthread.h gxthread.cc\
 	gxmodule.h gxmodule.cc\
 	gemod.h gemod.cc\
 	gxinterface.h gxinterface.cc\
 	main.h main.cc\
-	gxthread.h gxthread.cc\
 	lang.h
 
 ## DEBUG FLAG -g
@@ -37,8 +37,17 @@ AM_CPPFLAGS = \
 
 gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
-gxinterface_LDFLAGS = -static -no-undefined -Wl,--no-undefined
-## ,--export-all-symbols
+gxinterface_LDFLAGS = -static -no-undefined -Wl,--no-undefined,--gc-sections
+
+# Platform-specific additions
+if PLATFORM_WINDOWS
+  # Windows/MinGW: PE-specific flags ; ,-rpath,ucrt64\lib
+  gxinterface_LDFLAGS += -Wl,--export-all-symbols
+else
+  # Linux/ELF: Equivalent symbol visibility control
+  gxinterface_LDFLAGS += -rdynamic  # Expands to -Wl,--export-dynamic
+endif
+
 
 
 

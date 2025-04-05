@@ -61,8 +61,8 @@ AS_CASE([$host_os],
         AC_MSG_ERROR([Unsupported operating system: $host_os])
     ]
 )
-
-
+AM_CONDITIONAL([PLATFORM_WINDOWS], [test "$platform_win32" = "yes"])
+AM_CONDITIONAL([PLATFORM_LINUX], [test "$platform_win32" = "no"])
 dnl ================================================================
 dnl checks for programs
 dnl ================================================================
