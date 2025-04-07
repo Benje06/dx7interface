@@ -68,7 +68,12 @@ class Dx7interface : public Gx_module, public Synth {
         /**** Generic ****/
         bool error();
         std::shared_ptr<int> pending_remove = std::make_shared<int>(0); // counter storing box remove pending task
-        using FunctionPtr = void (Dx7interface::*)();  /* abstract for function as array */
+
+        using FunctionPtr = void (Dx7interface::*)();                             /* abstract for function without parameters */
+        using FunctionPtrInt = void (Dx7interface::*)(int);                       /* abstract for function with int parameter */
+        using FunctionPtrFile = void (Dx7interface::*)(Glib::RefPtr<Gio::File>);  /* abstract for function with file parameter */
+        using FunctionPtr3str = void (Dx7interface::*)(Glib::ustring,Glib::ustring,unsigned int);  /* abstract for function with 3 glib::ustring parameters */
+
         FunctionPtr mute_hexter_functions[6] = {
             &Dx7interface::on_mute_hexter_op1_event,
             &Dx7interface::on_mute_hexter_op2_event,
@@ -328,8 +333,7 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
 
-        using FunctionIntPtr = void (Dx7interface::*)(int);  /* abstract for function as array */
-        FunctionIntPtr list_ui_parameters_functions[max_param_nb] = {
+        FunctionPtrInt list_ui_parameters_functions[max_param_nb] = {
             &Dx7interface::set_aftrtch_assgn_event,
             &Dx7interface::set_aftrtch_rng_event,
             &Dx7interface::set_algo_event,
@@ -541,19 +545,20 @@ class Dx7interface : public Gx_module, public Synth {
         void set_default_values();
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void set_bank(Glib::RefPtr<Gio::File>);
-        void load_bank(Glib::RefPtr<Gio::File>);
+        void set_bank_sounds(Glib::ustring, Glib::ustring, unsigned int);
+        void load_file(Glib::RefPtr<Gio::File>,FunctionPtr3str);
         void receive_bank(std::vector<uint8_t>);
         void receive_voice(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
         void receive_voice_by_byte(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
         void receive_paramters(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);
         /* restore */
+        void restore_origin();
         void on_restore_bank();
-        void restore_origin_bank();
         void on_restore_sound();
-        void restore_origin_sound();
         /* repalce/delete */
-        void on_insert_after();
-        void on_replace_sound();
+        void on_insert_at();
+        void replace_sound(Glib::ustring, Glib::ustring, unsigned int);
+        void on_replace_sound(Glib::RefPtr<Gio::File> file);
         void on_delete_sound();
         /* save/write */
         void write_file(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
@@ -673,7 +678,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_columnview_right_click;
         void on_selected_sound_change(unsigned int,unsigned int);
         sigc::connection slot_selected_sound_change;
-        void on_bank_select();
+        void on_file_select(FunctionPtrFile);
         sigc::connection slot_bank_select;
         /* populate columnview */
         void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);

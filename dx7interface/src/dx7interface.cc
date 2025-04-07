@@ -109,7 +109,10 @@ void Dx7interface::create_bank_voices_list(){
     slot_bank_reveal = (get_gwidget<Gtk::Button>("btn_toolbar_reveal_bank"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bank_reveal));
     slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_bank_select));
+        sigc::bind(
+        sigc::mem_fun(*this, &Dx7interface::on_file_select),
+        &Dx7interface::set_bank )
+    );
 
     /* Sound Select */
     // auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
@@ -211,7 +214,7 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
             add_midi_learned(midi_param_value, selected_item);
             box->append(*box_funct);
             //LOG_OUT();
-            return false; // Remove the tick callback after execution
+            return false; // false: Remove the tick callback after execution
         }else{
             return true;
         }
@@ -461,7 +464,13 @@ void Dx7interface::save_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
                         sysex_buffer.insert(sysex_buffer.end(), byte_ptr, byte_ptr + ev->data.ext.len);
                         if (!sysex_buffer.empty() && sysex_buffer.back() == 0xF7) {
                             uncomplete = false;
-                            receive_bank(sysex_buffer);
+                            if(sysex_buffer.size() > 163){
+                                receive_bank(sysex_buffer);
+                            }else if(sysex_buffer.size() == 163){
+                                //receive_sound(sysex_buffer);
+                            }else{
+                                //receive sysex message
+                            };
                             sysex_buffer.clear();
                         };
                     };
@@ -601,7 +610,7 @@ void Dx7interface::create_popover_menu(){
     menu->append("_Save bank", "menu.save_bank");
     menu->append("_Restore sound", "menu.restore_sound");
     menu->append("_Restore bank", "menu.restore_bank");
-    menu->append("_Insert_After", "menu.insert_after");
+    menu->append("_Insert At", "menu.insert_at");
     menu->append("_Replace", "menu.replace_sound");
     menu->append("_Delete", "menu.delete_sound");
 
@@ -661,82 +670,55 @@ void Dx7interface::create_save_dialog() {
 };
 
 void Dx7interface::OpenFileSaveDialog(){
-    file_dialog_bank_save->set_title(dialog_bank_save->get_title());
-    Glib::ustring filename;
-    unsigned int index = 0;
-    bool as_raw = get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active();
-    bool is_32 = get_gwidget<Gtk::CheckButton>("checkbutton_32")->get_active();
-    bool is_128 = get_gwidget<Gtk::CheckButton>("checkbutton_128")->get_active();
-    write_extra_params = get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active();
-    if(save_type == SOUND){
-        export_config = DX7_1;
-        filename = bank_1_modif.sound->name;
-    }else if(save_type == BANK){
-        filename = bank_1_modif.name;
-        if(is_32){
-            export_config = DX7_32;
-            index = get_gwidget<Gtk::SpinButton>("spinbutton_save_start")->get_value();
-        }else if(is_128){
-            export_config = DX7_128;
+    if(bank_nb_sound != 0){
+        // GENERIC ??
+        file_dialog_bank_save->set_title(dialog_bank_save->get_title());
+        Glib::ustring filename;
+        unsigned int index = 0;
+        bool is_32 = false;
+        bool is_128 = false;
+        bool as_raw = get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active();
+        if(bank_nb_sound > 32){
+            is_32 = get_gwidget<Gtk::CheckButton>("checkbutton_32")->get_active();
+            is_128 = get_gwidget<Gtk::CheckButton>("checkbutton_128")->get_active();
         }else{
+            is_32=true;
+        };
+        write_extra_params = get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active();
+        if(save_type == SOUND){
             export_config = DX7_1;
+            filename = bank_1_modif.sound->name;
+        }else if(save_type == BANK){
+            filename = bank_1_modif.name;
+            if(is_32){
+                export_config = DX7_32;
+                index = get_gwidget<Gtk::SpinButton>("spinbutton_save_start")->get_value();
+            }else if(is_128){
+                export_config = DX7_128;
+            }else{
+                export_config = DX7_1;
+            };
         };
-    };
-    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-        if(as_raw){
-            file_dialog_bank_save->set_initial_name(filename+".dx7");
-            export_config = DX7_RAW;
-        }else{
-            file_dialog_bank_save->set_initial_name(filename+".syx");
-        };
-        std::cout << "base filename: " << filename << std::endl;
-        std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
-        if(initial_folder_save==nullptr){
-            initial_folder_save=initial_folder_open;
-        }
-        file_dialog_bank_save->set_initial_folder(initial_folder_save);
-        file_dialog_bank_save->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
-            try {
-                Glib::RefPtr<Gio::File> file = file_dialog_bank_save->save_finish(result);
-                if (file) {
-                    std::cout << "writing file: " << file->get_path() << std::endl;
-                    initial_folder_save = Gio::File::create_for_path(file->get_parent()->get_path());
-                    //Glib::shell_quote(filename+".dx7");
-                    if(save_type == SOUND){
-                        if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
-                            write_voice_as_raw(file);
-                        }else{
-                            write_voice_as_sysex(file);
-                        };
-                    }else if(save_type == BANK){
-                        write_bank(file,index);
-                    };
-                };
-            } catch (const std::exception & ex) {
-                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
-                " Reason: " + ex.what();
-                std::cerr << err_msg << std::endl;
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            if(as_raw){
+                file_dialog_bank_save->set_initial_name(filename+".dx7");
+                export_config = DX7_RAW;
+            }else{
+                file_dialog_bank_save->set_initial_name(filename+".syx");
+            };
+            std::cout << "base filename: " << filename << std::endl;
+            std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
+            if(initial_folder_save==nullptr){
+                initial_folder_save=initial_folder_open;
             }
-        });
-    #else
-        file_dialog_bank_save->set_transient_for(*(get_window()));
-        if(as_raw){
-            file_dialog_bank_save->set_current_name(filename+".dx7");
-            export_config = DX7_RAW;
-        }else{
-            file_dialog_bank_save->set_current_name(filename+".syx");
-        };
-        std::cout << "base filename: " << filename << std::endl;
-        std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
-        if(initial_folder_save==nullptr){
-            initial_folder_save=initial_folder_open;
-        }
-        file_dialog_bank_save->set_current_folder(initial_folder_save);
-        file_dialog_bank_save->signal_response().connect([this,index](int response) {
-            try {
-                if (response == Gtk::ResponseType::ACCEPT) {
-                    auto file = file_dialog_bank_save->get_file();
+            file_dialog_bank_save->set_initial_folder(initial_folder_save);
+            file_dialog_bank_save->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
+                try {
+                    Glib::RefPtr<Gio::File> file = file_dialog_bank_save->save_finish(result);
                     if (file) {
+                        std::cout << "writing file: " << file->get_path() << std::endl;
+                        initial_folder_save = Gio::File::create_for_path(file->get_parent()->get_path());
+                        //Glib::shell_quote(filename+".dx7");
                         if(save_type == SOUND){
                             if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
                                 write_voice_as_raw(file);
@@ -747,42 +729,80 @@ void Dx7interface::OpenFileSaveDialog(){
                             write_bank(file,index);
                         };
                     };
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+                    " Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
                 }
-                file_dialog_bank_save->hide();
-            } catch (const std::exception & ex) {
-                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                + "Reason: " + ex.what();
-                std::cerr << err_msg << std::endl;
+            });
+        #else
+            file_dialog_bank_save->set_transient_for(*(get_window()));
+            if(as_raw){
+                file_dialog_bank_save->set_current_name(filename+".dx7");
+                export_config = DX7_RAW;
+            }else{
+                file_dialog_bank_save->set_current_name(filename+".syx");
             };
-        });
-        file_dialog_bank_save->show();
-    #endif
+            std::cout << "base filename: " << filename << std::endl;
+            std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
+            if(initial_folder_save==nullptr){
+                initial_folder_save=initial_folder_open;
+            }
+            file_dialog_bank_save->set_current_folder(initial_folder_save);
+            file_dialog_bank_save->signal_response().connect([this,index](int response) {
+                try {
+                    if (response == Gtk::ResponseType::ACCEPT) {
+                        auto file = file_dialog_bank_save->get_file();
+                        if (file) {
+                            if(save_type == SOUND){
+                                if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
+                                    write_voice_as_raw(file);
+                                }else{
+                                    write_voice_as_sysex(file);
+                                };
+                            }else if(save_type == BANK){
+                                write_bank(file,index);
+                            };
+                        };
+                    }
+                    file_dialog_bank_save->hide();
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                    + "Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
+                };
+            });
+            file_dialog_bank_save->show();
+        #endif
+    };
 };
 
 void Dx7interface::OpenFileSelectDialog(Glib::ustring title,Glib::ustring filename){
+    // GENERIC ??
     try{
-        dialog_bank_save->set_transient_for(*(get_window()));
-        dialog_bank_save->set_title(title);
-        Glib::ustring save_label=title+": "+filename;
-        get_gwidget<Gtk::Label>("label_save_name")->set_label(save_label);
-        auto spinbutton_save_start = get_gwidget<Gtk::SpinButton>("spinbutton_save_start");
-        /* set the upper limit to bank_nb_sound less 32 */
-        double lower, upper;
-        spinbutton_save_start->get_range(lower, upper);
-        spinbutton_save_start->set_range(lower, (bank_nb_sound-32));
+            dialog_bank_save->set_transient_for(*(get_window()));
+            dialog_bank_save->set_title(title);
+            Glib::ustring save_label=title+": "+filename;
+            get_gwidget<Gtk::Label>("label_save_name")->set_label(save_label);
+            auto spinbutton_save_start = get_gwidget<Gtk::SpinButton>("spinbutton_save_start");
+            /* set the upper limit to bank_nb_sound less 32 */
+            double lower, upper;
+            spinbutton_save_start->get_range(lower, upper);
+            spinbutton_save_start->set_range(lower, (bank_nb_sound-32));
 
-        /* set visible for bank save */
-        if(save_type == BANK && bank_nb_sound > 32){
-            get_gwidget<Gtk::Box>("box_save_bank")->set_visible(true);
-            get_gwidget<Gtk::Label>("label_bulk")->set_visible(true);
-        }else{
-            get_gwidget<Gtk::Box>("box_save_bank")->set_visible(false);
-            get_gwidget<Gtk::Label>("label_bulk")->set_visible(false);
-        };
-        dialog_bank_save->present();
+            /* set visible for bank save */
+            if(save_type == BANK && bank_nb_sound > 32){
+                get_gwidget<Gtk::Box>("box_save_bank")->set_visible(true);
+                get_gwidget<Gtk::Label>("label_bulk")->set_visible(true);
+            }else{
+                get_gwidget<Gtk::Box>("box_save_bank")->set_visible(false);
+                get_gwidget<Gtk::Label>("label_bulk")->set_visible(false);
+            };
+            dialog_bank_save->present();
     }catch (const std::exception & ex) {
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Reason: " + ex.what();
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
         //throw std::runtime_error(err_msg);
     };
 };
@@ -891,17 +911,18 @@ void Dx7interface::on_midi_learn_param_select(){
 };
 
 /*** BANK ***/
-void Dx7interface::on_bank_select(){
+void Dx7interface::on_file_select(FunctionPtrFile funct){
+    // GENERIC MOOVE TO SYNTH
     LOG_IN();
     try{
         file_dialog_bank_select->set_title("Select bank");
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
             file_dialog_bank_select->set_initial_folder(initial_folder_open);
-            file_dialog_bank_select->open( *(get_window()), [this](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+            file_dialog_bank_select->open( *(get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
                 try {
                     Glib::RefPtr<Gio::File> bank_file = file_dialog_bank_select->open_finish(result);
                     if (bank_file) {
-                        set_bank(bank_file);
+                        (this->*funct)(bank_file);
                         initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());
                     };
                 } catch (const std::exception & ex) {
@@ -909,16 +930,15 @@ void Dx7interface::on_bank_select(){
                     + "Reason: " + ex.what();
                     std::cerr << err_msg << std::endl;
                 };
-            }
-            ); /* end dialog open function */
+            }); /* end dialog open function */
         #else
             file_dialog_bank_select->set_transient_for(*(get_window()));
-            file_dialog_bank_select->signal_response().connect([this](int response) {
+            file_dialog_bank_select->signal_response().connect([this,funct](int response) {
                 try {
                     if (response == Gtk::ResponseType::ACCEPT) {
                         auto bank_file = file_dialog_bank_select->get_file();
                         if (bank_file) {
-                            set_bank(bank_file);
+                            (this->*funct)(bank_file);
                             initial_folder_open= Gio::File::create_for_path(bank_file->get_path());;
                         };
                     };
@@ -966,90 +986,94 @@ void Dx7interface::clean_bank(){
     };
     LOG_OUT();
 };
+void Dx7interface::set_bank_sounds(Glib::ustring file_name,Glib::ustring file_base,unsigned int file_size){
+    uint8_t i;
+    switch ( file_size ){
+        case 128: /* one voice */
+            bank_nb_sound = 1;
+            i = 0;
+            seek_voice(i, &bank_1_origin.sound[i]);
+            seek_parameters(file_base, &bank_1_origin.sound[i]);
+            bank_1_origin.name = file_name;
+            break;
+        case 155: /* one voice Dx7 bulk 1 */
+            bank_nb_sound = 1;
+            i = 0;
+            seek_voice_by_byte(i, &bank_1_origin.sound[i]);
+            seek_parameters(file_base, &bank_1_origin.sound[i]);
+            bank_1_origin.name = file_name;
+            break;
+        case 4096: /* 32 voices Dx7 bulk 32 */
+            bank_nb_sound = 32;
+            for( i = 0; i < 32; i++ ){
+                seek_voice(i,&bank_32_origin.sound[i]);
+                seek_parameters(file_base, &bank_32_origin.sound[i]);
+            };
+            bank_32_origin.name = file_name;
+            break;
+        case 16384: /* 128 voices */
+            bank_nb_sound = 128;
+            for( i = 0; i < 128; i++ ){
+                seek_voice(i, &bank_128_origin.sound[i]);
+                seek_parameters(file_base, &bank_128_origin.sound[i]);
+            };
+            bank_128_origin.name = file_name;
+            break;
+    };
+    save_type=BANK;
+    restore_origin();
+}
+
 void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
+    LOG_IN();
     old_snum=0;
+    block_ui();
+    block_midi();
     clean_bank();
-    load_bank(bank_file);
-    bank_selection_model->set_selected(0);
-    redraw_all_curve();
+    load_file(bank_file,&Dx7interface::set_bank_sounds); //copy file content in _modif et _origin
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)old_snum,nullptr,Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });
     Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
     Glib::ustring name = filename.substr(0,filename.find_last_of("."));
     get_gwidget<Gtk::Button>("bank_select")->set_label(name);
+    LOG_OUT();
 };
-void Dx7interface::load_bank(Glib::RefPtr<Gio::File> bank_file){
+
+void Dx7interface::load_file(Glib::RefPtr<Gio::File> file, FunctionPtr3str funct){
+    // GENERIC moove to synth
     LOG_IN();
-    /* open file */
     try {
-        uint8_t i;
-        data_stream = Gio::DataInputStream::create(bank_file->read());
-        unsigned int file_size = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
-        Glib::ustring filename = bank_file->get_path();
-        Glib::ustring bank_file_base = filename.substr(0,filename.find_last_of("."));
-        Glib::ustring bank_name = bank_file_base.substr( bank_file_base.find_last_of("/")+1, bank_file_base.length() );
-        std::cout << "Bank name: " << bank_name << std::endl;
+        unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
+        Glib::ustring filename = file->get_path();
+        Glib::ustring file_base = filename.substr(0,filename.find_last_of("."));
+        Glib::ustring file_name = file_base.substr( file_base.find_last_of("/")+1, file_base.length() );
+        std::cout << "Bank name: " << file_name << std::endl;
+
+        data_stream = Gio::DataInputStream::create(file->read());
         unsigned char data = data_stream->read_byte();
         if (data == 0xF0 ){
-            for ( i=0; i < 5; i++){
+            for (uint8_t i=0; i < 5; i++){
                 data_stream->read_byte();
             };
             file_size -= 8;
         }else{
             data_stream->close();
-            data_stream = Gio::DataInputStream::create(bank_file->read());
-            file_size = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
+            data_stream = Gio::DataInputStream::create(file->read());
+            file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
         };
-        if( std::filesystem::exists( (bank_file_base+"_fct.syx").c_str() ) ){
-            Glib::RefPtr<Gio::File> file=Gio::File::create_for_path( (bank_file_base+"_fct.syx").c_str() );
-            data_stream_param = Gio::DataInputStream::create(file->read());
+        if( std::filesystem::exists( (file_base+"_fct.syx").c_str() ) ){
+            Glib::RefPtr<Gio::File> file_fct=Gio::File::create_for_path( (file_base+"_fct.syx").c_str() );
+            data_stream_param = Gio::DataInputStream::create(file_fct->read());
         }
-        switch ( file_size ){
-            case 128: /* one voice */
-                i = 0;
-                seek_voice(i, &bank_1_origin.sound[i]);
-                seek_parameters(bank_file_base, &bank_1_origin.sound[i]);
-                bank_1_origin.name = bank_name;
-                bank_1_modif=bank_1_origin;
-                bank_nb_sound = 1;
-                break;
-            case 155: /* one voice Dx7 bulk 1 */
-                i = 0;
-                seek_voice_by_byte(i, &bank_1_origin.sound[i]);
-                seek_parameters(bank_file_base, &bank_1_origin.sound[i]);
-                bank_1_origin.name = bank_name;
-                bank_1_modif=bank_1_origin;
-                bank_nb_sound = 1;
-                break;
-            case 4096: /* 32 voices Dx7 bulk 32 */
-                for( i = 0; i < 32; i++ ){
-                    seek_voice(i,&bank_32_origin.sound[i]);
-                    seek_parameters(bank_file_base, &bank_32_origin.sound[i]);
-                };
-                bank_32_origin.name = bank_name;
-                bank_32_modif=bank_32_origin;
-                bank_1_origin.sound[0]=bank_32_origin.sound[0];
-                bank_1_origin.name = bank_name;
-                bank_1_modif=bank_1_origin;
-                bank_nb_sound = 32;
-                break;
-            case 16384: /* 128 voices */
-                for( i = 0; i < 128; i++ ){
-                    seek_voice(i, &bank_128_origin.sound[i]);
-                    seek_parameters(bank_file_base, &bank_128_origin.sound[i]);
-                };
-                bank_128_origin.name = bank_name;
-                bank_128_modif=bank_128_origin;
-                bank_1_origin.sound[0]=bank_128_origin.sound[0];
-                bank_1_origin.name = bank_name;
-                bank_1_modif=bank_1_origin;
-                bank_nb_sound = 128;
-                break;
-        };
+        (this->*funct)(file_name,file_base,file_size);
         data_stream->close();
         if(!isStreamClosed(data_stream_param)){
             data_stream_param->close();
         };
     }catch(const std::exception& ex){
-        Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
+        Glib::ustring filename = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Cannot load: " + filename + "\n"
         + "Reason: " + ex.what();
@@ -1101,70 +1125,115 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
             bank_nb_sound = 32;
             break;
     }
-    bank_selection_model->set_selected(0);
-    redraw_all_curve();
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)old_snum,nullptr,Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });
     Glib::ustring name = "Received";
     get_gwidget<Gtk::Button>("bank_select")->set_label(name);
 };
-
 /* restore */
+void Dx7interface::restore_origin(){
+    LOG_IN();
+    block_ui();
+    block_midi();
+    switch ( bank_nb_sound ){
+        case 32:
+            if(save_type == BANK){
+                std::cout << "Restore bank: " << bank_32_origin.name << " from origin bank." << std::endl;
+                bank_32_modif = bank_32_origin;
+            }else{
+                std::cout << "Restore sound: " << bank_32_origin.sound[old_snum].name << " from origin bank." << std::endl;
+                bank_32_modif.sound[old_snum] = bank_32_origin.sound[old_snum];
+            }
+            bank_1_origin.sound[0] = bank_32_origin.sound[old_snum];
+            break;
+        case 128:
+            if(save_type == BANK){
+                std::cout << "Restore bank: " << bank_128_origin.name << " from origin bank." << std::endl;
+                bank_128_modif = bank_128_origin;
+            }else{
+                std::cout << "Restore sound: " << bank_128_origin.sound[old_snum].name << " from origin bank." << std::endl;
+                bank_128_modif.sound[old_snum] = bank_128_origin.sound[old_snum];
+            }
+            bank_1_origin.sound[0] = bank_128_origin.sound[old_snum];
+            break;
+    };
+    bank_1_modif.sound[0] = bank_1_origin.sound[0];
+    LOG_OUT();
+};
 void Dx7interface::on_restore_bank(){
     LOG_IN();
-    restore_origin_bank();
+    save_type = BANK;
+    restore_origin();
     set_voice(&bank_1_modif.sound[0]);
-    redraw_all_curve();
     LOG_OUT();
 };
-void Dx7interface::restore_origin_bank(){
-    switch ( bank_nb_sound ){
-        case 1:
-            std::cout << "Restore bank: " << bank_1_modif.name << " from origin bank." << std::endl;
-            bank_1_modif = bank_1_origin;
-            break;
-        case 32:
-            std::cout << "Restore bank: " << bank_32_modif.name << " from origin bank." << std::endl;
-            bank_32_modif = bank_32_origin;
-            bank_1_origin.sound[0] = bank_32_origin.sound[old_snum];
-            break;
-        case 128:
-            std::cout << "Restore bank: " << bank_128_modif.name << " from origin bank." << std::endl;
-            bank_128_modif = bank_128_origin;
-            bank_1_origin.sound[0] = bank_128_origin.sound[old_snum];
-            break;
-    };
-    bank_1_modif = bank_1_origin;
-};
+
 void Dx7interface::on_restore_sound(){
     LOG_IN();
-    // TODO: get index pointed by cursor
-    restore_origin_sound();
+    save_type = SOUND;
+    restore_origin();
     set_voice(&bank_1_modif.sound[0]);
-    redraw_all_curve();
     LOG_OUT();
 };
 
-void Dx7interface::restore_origin_sound(){
-    // set bank_X_origin.sound[snum] in bank_X_modif.sound[snum] and use it
-    std::cout << "Restore voice: " << bank_1_modif.sound->name << " from origin bank." << std::endl;
-
+void Dx7interface::on_replace_sound(Glib::RefPtr<Gio::File> file){
+    load_file(file,&Dx7interface::replace_sound);
+}
+void Dx7interface::replace_sound(Glib::ustring file_name, Glib::ustring file_base, unsigned int file_size){
+    LOG_IN();
+    block_ui();
+    block_midi();
+    bank_data_model->remove(old_snum);
+    std::cout << "bank nb sound: " << (int)bank_nb_sound << std:: endl;
+    std::cout << "old_snum: " << (int)old_snum << std:: endl;
     switch ( bank_nb_sound ){
+        case 1:
+            std::cout << "Replace sound 1: " << bank_1_modif.sound->name;
+            seek_voice(0, &bank_1_origin.sound[0]);
+            seek_parameters(file_base, &bank_1_origin.sound[0]);
+            std::cout << " With: " << bank_1_origin.sound->name << std::endl;
+            break;
         case 32:
-            bank_32_modif.sound[old_snum] = bank_32_origin.sound[old_snum];
-            bank_1_origin.sound[0] = bank_32_origin.sound[old_snum];
+            std::cout << "Replace sound 32: " << bank_32_modif.sound->name;
+            seek_voice(old_snum, &bank_32_origin.sound[old_snum]);
+            seek_parameters(file_base, &bank_32_origin.sound[old_snum]);;
+            std::cout << " With: " << bank_32_origin.sound->name << std::endl;
             break;
         case 128:
-            bank_128_modif.sound[old_snum] = bank_128_origin.sound[old_snum];
-            bank_1_origin.sound[0] = bank_128_origin.sound[old_snum];
+            std::cout << "Replace sound 128: " << bank_128_modif.sound->name;
+            seek_voice(old_snum, &bank_128_origin.sound[old_snum]);
+            seek_parameters(file_base, &bank_128_origin.sound[old_snum]);
+            std::cout << " With: " << bank_128_origin.sound->name << std::endl;
             break;
     };
-    bank_1_modif = bank_1_origin;
+    save_type=SOUND;
+    restore_origin();
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)old_snum,nullptr,Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });
+
+    LOG_OUT();
 };
+
+
 /* insert/replace/delete */
-void Dx7interface::on_insert_after(){
-};
-void Dx7interface::on_replace_sound(){
+void Dx7interface::on_insert_at(){
+    /* Open dialog insert at position
+     *  insert at position ? spinbutton
+     * modes :
+     *  default push other sound to next position
+     *  si taille banque = 32 et position 32 => concatene -> banque 128 sons ( 32 + x sons + x init sounds)
+     *  si taille banque = 1 => concatene -> banque 32/128 sons ( 1 + x sons + x init )
+     *  si taille banque 128 => insert at and push out others
+     */
+    LOG_IN();
+    LOG_OUT();
 };
 void Dx7interface::on_delete_sound(){
+
 };
 /*** save/write ***/
 void Dx7interface::write_file(Glib::RefPtr<Gio::File> file, unsigned char* msg, unsigned int msg_size){
@@ -1186,8 +1255,9 @@ void Dx7interface::on_save_bank(){
         save_modif_sound();
         OpenFileSelectDialog(title, bank_1_modif.name);
     }catch (const std::exception & ex) {
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Reason: " + ex.what();
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
         //throw std::runtime_error(err_msg);
     };
     LOG_OUT();
@@ -1283,7 +1353,10 @@ void Dx7interface::write_bank_as_sysex(Glib::RefPtr<Gio::File> file,unsigned int
         msg[l]=0xF7;
         write_file(file,msg,msg_size);
     } catch (const std::exception& ex) {
-        std::cerr << "Error writing to file: " << ex.what() << std::endl;
+        std::cerr << "Error writing to file: " << std::endl;
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
     }
     /*std::cout << "varaiable l: " << (int)l << std::endl ;
     for (unsigned int i = 0 ; i < size ; i++){
@@ -1344,7 +1417,10 @@ void Dx7interface::write_bank_as_raw(Glib::RefPtr<Gio::File> file, unsigned int 
             write_file(file_extra,msg_extra,msg_extra_size);
         };
     } catch (const std::exception& ex) {
-        std::cerr << "Error writing to file: " << ex.what() << std::endl;
+        std::cerr << "Error writing to file: " << std::endl;
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
     }
     /*for (unsigned int i = 0 ; i < size ; i++){
         std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)(msg[i] & 0xFF)<< " " ;
@@ -1440,69 +1516,75 @@ void Dx7interface::write_voice_bulk1(unsigned int* l, unsigned char* msg, St_dx7
     };
 };
 void Dx7interface::write_voice_bulk32(unsigned int* l, unsigned char* msg, St_dx7sysex_1* sound, uint8_t* voice_checksum){
-    /* TODO : check original sound format and other kind */
-    unsigned int j, k;
-    /* operator j */
-    for ( j = 6; j-- != 0 ; ){
-        /* OP[J] EG RATE[k] */
-        for ( k = 0; k < 4 ; k++ ){
-            msg[(*l)++]=sound->op[j].eg_rt[k].val & 0x7F;
+    try {
+        /* TODO : check original sound format and other kind */
+        unsigned int j, k;
+        /* operator j */
+        for ( j = 6; j-- != 0 ; ){
+            /* OP[J] EG RATE[k] */
+            for ( k = 0; k < 4 ; k++ ){
+                msg[(*l)++]=sound->op[j].eg_rt[k].val & 0x7F;
+                *voice_checksum -= msg[(*l)-1];
+            };
+            /* OP[J] EG LVL[k] */
+            for ( k = 0; k < 4 ; k++  ){
+                msg[(*l)++]=sound->op[j].eg_lvl[k].val & 0x7F;
+                *voice_checksum -= msg[(*l)-1];
+            };
+            msg[(*l)++] = sound->op[j].kls.brk_pt.val & 0x7F;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = sound->op[j].kls.lft_dpth.val & 0x7F;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = sound->op[j].kls.rght_dpth.val & 0x7F;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = ( (sound->op[j].kls.rght_curve.val << 2) + (sound->op[j].kls.lft_curve.val & 0x03) ) & 0x0F ;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = ( (sound->op[j].dtun.val << 3) + (sound->op[j].krs.val & 0x07) ) & 0x7F;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = ( (sound->op[j].kvs.val << 2) + (sound->op[j].ams.val & 0x03) ) & 0x1F;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = sound->op[j].lvl.val & 0x7F;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = ( ( sound->op[j].freq_coarse.val << 1) + (sound->op[j].freq_mode.val & 0x01)  ) & 0x3F;
+            *voice_checksum -= msg[(*l)-1];
+            msg[(*l)++] = sound->op[j].freq_fine.val & 0x7F;
             *voice_checksum -= msg[(*l)-1];
         };
-        /* OP[J] EG LVL[k] */
-        for ( k = 0; k < 4 ; k++  ){
-            msg[(*l)++]=sound->op[j].eg_lvl[k].val & 0x7F;
+        for(j=0 ; j < 4; j++ ){
+            msg[(*l)++] = sound->pitch.eg_rt[j].val & 0x7F;
             *voice_checksum -= msg[(*l)-1];
         };
-        msg[(*l)++] = sound->op[j].kls.brk_pt.val & 0x7F;
+        for(j=0 ; j < 4; j++ ){
+            msg[(*l)++] = sound->pitch.eg_lvl[j].val & 0x7F;
+            *voice_checksum -= msg[(*l)-1];
+        };
+        msg[(*l)++] = sound->algo.algo.val & 0x1F;
         *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = sound->op[j].kls.lft_dpth.val & 0x7F;
+        msg[(*l)++] = ( (sound->algo.oks.val << 3) + (sound->algo.feedback.val & 0x07) ) & 0x0F;
         *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = sound->op[j].kls.rght_dpth.val & 0x7F;
-        *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = ( (sound->op[j].kls.rght_curve.val << 2) + (sound->op[j].kls.lft_curve.val & 0x03) ) & 0x0F ;
-        *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = ( (sound->op[j].dtun.val << 3) + (sound->op[j].krs.val & 0x07) ) & 0x7F;
-        *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = ( (sound->op[j].kvs.val << 2) + (sound->op[j].ams.val & 0x03) ) & 0x1F;
-        *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = sound->op[j].lvl.val & 0x7F;
-        *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = ( ( sound->op[j].freq_coarse.val << 1) + (sound->op[j].freq_mode.val & 0x01)  ) & 0x3F;
-        *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = sound->op[j].freq_fine.val & 0x7F;
-        *voice_checksum -= msg[(*l)-1];
-    };
-    for(j=0 ; j < 4; j++ ){
-        msg[(*l)++] = sound->pitch.eg_rt[j].val & 0x7F;
-        *voice_checksum -= msg[(*l)-1];
-    };
-    for(j=0 ; j < 4; j++ ){
-        msg[(*l)++] = sound->pitch.eg_lvl[j].val & 0x7F;
-        *voice_checksum -= msg[(*l)-1];
-    };
-    msg[(*l)++] = sound->algo.algo.val & 0x1F;
-    *voice_checksum -= msg[(*l)-1];
-    msg[(*l)++] = ( (sound->algo.oks.val << 3) + (sound->algo.feedback.val & 0x07) ) & 0x0F;
-    *voice_checksum -= msg[(*l)-1];
 
-    msg[(*l)++] = sound->lfo.speed.val & 0x7F;
-    *voice_checksum -= msg[(*l)-1];
-    msg[(*l)++] = sound->lfo.delay.val & 0x7F;
-    *voice_checksum -= msg[(*l)-1];
-    msg[(*l)++] = sound->lfo.pmd.val & 0x7F;
-    *voice_checksum -= msg[(*l)-1];
-    msg[(*l)++] = sound->lfo.amd.val & 0x7F;
-    *voice_checksum -= msg[(*l)-1];
-    msg[(*l)++] = ( ( sound->lfo.pms.val << 4) + ( (sound->lfo.wave.val & 0x07) <<1 ) + (sound->lfo.sync.val & 0x01) ) & 0x7F;
-    *voice_checksum -= msg[(*l)-1];
-    msg[(*l)++] = sound->algo.transpose.val & 0x7F;
-    *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->lfo.speed.val & 0x7F;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->lfo.delay.val & 0x7F;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->lfo.pmd.val & 0x7F;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->lfo.amd.val & 0x7F;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = ( ( sound->lfo.pms.val << 4) + ( (sound->lfo.wave.val & 0x07) <<1 ) + (sound->lfo.sync.val & 0x01) ) & 0x7F;
+        *voice_checksum -= msg[(*l)-1];
+        msg[(*l)++] = sound->algo.transpose.val & 0x7F;
+        *voice_checksum -= msg[(*l)-1];
 
-    for (uint8_t carac = 0 ; carac <= 9 ; carac++ ){
-        msg[(*l)++] = sound->name.data()[carac];
-    };
-    *voice_checksum -= msg[(*l)-1];
+        for (uint8_t carac = 0 ; carac <= 9 ; carac++ ){
+            msg[(*l)++] = sound->name.data()[carac];
+        };
+        *voice_checksum -= msg[(*l)-1];
+    }catch (const std::exception& ex) {
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
+    }
 };
 void Dx7interface::write_voice_as_sysex(Glib::RefPtr<Gio::File> file){
     try {
@@ -1521,7 +1603,10 @@ void Dx7interface::write_voice_as_sysex(Glib::RefPtr<Gio::File> file){
         msg[162]=0xF7;
         write_file(file,msg,msg_size);
     } catch (const std::exception& ex) {
-        std::cerr << "Error writing to file: " << ex.what() << std::endl;
+        std::cerr << "Error writing to file: " << std::endl;
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
     }
 };
 void Dx7interface::write_voice_as_raw(Glib::RefPtr<Gio::File> file){
@@ -1533,7 +1618,10 @@ void Dx7interface::write_voice_as_raw(Glib::RefPtr<Gio::File> file){
         write_voice_bulk1(&l, msg, &bank_1_modif.sound[0], &voice_checksum );
         write_file(file,msg,msg_size);
     } catch (const std::exception& ex) {
-        std::cerr << "Error writing to file: " << ex.what() << std::endl;
+        std::cerr << "Error writing to file: " << std::endl;
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
     }
 };
 
@@ -1575,7 +1663,10 @@ void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,unsigned ch
                 msg[(*index)++]=0xF7;
             };
         } catch (const std::exception& ex) {
-            std::cerr << "Error writing to file: " << ex.what() << std::endl;
+            std::cerr << "Error writing to file: " << std::endl;
+            std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+            " Reason: " + ex.what();
+            std::cerr << err_msg << std::endl;
         };
     };
     LOG_OUT();
@@ -1602,8 +1693,10 @@ void Dx7interface::on_save_sound(){
         save_type = SOUND;
         OpenFileSelectDialog(title, bank_1_modif.sound->name);
     }catch (const std::exception & ex) {
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Reason: " + ex.what();
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
+
         //throw std::runtime_error(err_msg);
     };
     LOG_OUT();
@@ -1662,6 +1755,8 @@ void Dx7interface::write_voices_as_n_sysex(St_dx7sysex_1* sound){
 /** Save current sound on bank_X_modif and load set_selected sound from bank_X_modif**/
 void Dx7interface::on_selected_sound_change(unsigned int num, unsigned int nb_elmnt){
     LOG_IN();
+    block_ui();
+    block_midi();
     auto snum = bank_selection_model->get_selected();
     switch ( bank_nb_sound ){
         case 32:
@@ -1678,8 +1773,6 @@ void Dx7interface::on_selected_sound_change(unsigned int num, unsigned int nb_el
     old_snum = snum;
     (get_gwidget<Gtk::ToggleButton>("btn_compare"))->set_active(false);
     set_voice(&bank_1_modif.sound[0]);
-    send_voice(&bank_1_modif.sound[0]);
-    redraw_all_curve();
     LOG_OUT();
 };
 
@@ -1751,7 +1844,7 @@ void Dx7interface::seek_voice(uint8_t i, St_dx7sysex_1* sound){ /* BULK 32 */
     sound->name=strm.str();
     sound->extra.mute.val=0x7F;
     /* add voice name to liststore */
-    bank_data_model->append(SoundBankItem::create(i,sound->name));
+    bank_data_model->insert(i,SoundBankItem::create(i,sound->name));
     //LOG_OUT();
 };
 
@@ -1806,14 +1899,15 @@ void Dx7interface::seek_voice_by_byte(uint8_t i, St_dx7sysex_1* sound){ /* BULK 
     sound->name=strm.str();
     sound->extra.mute.val=0x7F;
     /* add voice name to liststore */
-    bank_data_model->append(SoundBankItem::create(i,sound->name));
+    bank_data_model->insert(i,SoundBankItem::create(i,sound->name));
     //LOG_OUT();
 };
 void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* sound){
     if( isStreamClosed(data_stream_param) && std::filesystem::exists( (bank_file_base + sound->name.c_str() + "_fct.syx").c_str() ) ){
-        Glib::RefPtr<Gio::File> file=Gio::File::create_for_path( (bank_file_base + sound->name.c_str() + "_fct.syx").c_str() );
-        std::cout << "For voice: " << sound->name.c_str() << "\tParameter Function read from file: " << file->get_path() << std::endl;
-        data_stream_param = Gio::DataInputStream::create(file->read());
+        // case fct for one sound
+        Glib::RefPtr<Gio::File> file_fct=Gio::File::create_for_path( (bank_file_base + sound->name.c_str() + "_fct.syx").c_str() );
+        std::cout << "For voice: " << sound->name.c_str() << "\tParameter Function read from file: " << file_fct->get_path() << std::endl;
+        data_stream_param = Gio::DataInputStream::create(file_fct->read());
         seek_voice_parameters(sound);
         data_stream_param->close();
     }else{
@@ -1821,7 +1915,8 @@ void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* 
     };
 };
 
-void Dx7interface::receive_voice(uint8_t sound_index, St_dx7sysex_1* sound, std::vector<uint8_t> data){ /* BULK 32 */
+void Dx7interface::receive_voice(uint8_t sound_index, St_dx7sysex_1* sound, std::vector<uint8_t> data){
+    /* BULK 32 */
     //LOG_IN();
         int i;
         i=6 + (128 * sound_index);
@@ -1983,6 +2078,7 @@ void Dx7interface::receive_paramters(uint8_t sound_index, St_dx7sysex_1* sound, 
 };
 
 bool Dx7interface::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& stream) {
+    // GENERIC
     try {
         if(stream){
             return false;
@@ -2073,10 +2169,7 @@ void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
 void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
     /* set value in each widget from modif */
     /* general */
-    //(get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
     (get_window())->add_tick_callback([this,sound] (const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
-        block_ui();
-        block_midi();
         uint8_t j,k;
         /* ALGO */
         (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(sound->algo.algo.val+1);
@@ -2147,11 +2240,14 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
                 (get_gwidget<Gtk::SpinButton>("octv_brk_pt_op"+tostr<unsigned int>(j+1)))->set_value( val / 12 );
             };
             set_voice_parameters(sound);
-            unblock_midi();
-            unblock_ui();
-            on_txt_freq_op_event();
         };
-        return false; // Remove the tick callback after execution
+        redraw_all_curve();
+        on_txt_freq_op_event();
+        unblock_midi();
+        unblock_ui();
+        send_voice(&bank_1_modif.sound[0]);
+        (get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
+        return false; // false: Remove the tick callback after execution
     });
 
     LOG_OUT();
@@ -2518,6 +2614,7 @@ void Dx7interface::init_global_fonction_parameter(){
     LOG_IN();
     on_mono_poly_event();
     on_portamento_md_event();
+    on_txt_freq_op_event();
     LOG_OUT();
 };
 
@@ -2527,8 +2624,11 @@ void Dx7interface::attach_action_group_signals(){
     action_group->add_action("save_bank", sigc::mem_fun(*this, &Dx7interface::on_save_bank));
     action_group->add_action("restore_sound", sigc::mem_fun(*this, &Dx7interface::on_restore_sound));
     action_group->add_action("restore_bank", sigc::mem_fun(*this, &Dx7interface::on_restore_bank));
-    action_group->add_action("insert_after", sigc::mem_fun(*this, &Dx7interface::on_insert_after));
-    action_group->add_action("replace_sound", sigc::mem_fun(*this, &Dx7interface::on_replace_sound));
+    action_group->add_action("insert_at", sigc::mem_fun(*this, &Dx7interface::on_insert_at));
+    action_group->add_action("replace_sound", sigc::bind(
+        sigc::mem_fun(*this, &Dx7interface::on_file_select),
+        &Dx7interface::on_replace_sound )
+    );
     action_group->add_action("delete_sound", sigc::mem_fun(*this, &Dx7interface::on_delete_sound));
 };
 void Dx7interface::on_as_raw_event(){
@@ -2756,13 +2856,18 @@ void Dx7interface::attach_signals(){
 
 
     (get_gwidget<Gtk::SpinButton>("algo_number"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value;
+        unsigned int ui_val = ((get_gwidget<Gtk::SpinButton>("algo_number"))->get_value() - 1);
         if (compare) {
-            value = bank_1_origin.sound->algo.algo.val;
+            if( ui_val != bank_1_origin.sound->algo.algo.val ){
+                int value = bank_1_origin.sound->algo.algo.val;
+                (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(value + 1);
+            };
         }else{
-            value = bank_1_modif.sound->algo.algo.val;
+            if( ui_val != bank_1_modif.sound->algo.algo.val ){
+                int value = bank_1_modif.sound->algo.algo.val;
+                (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(value + 1);
+            };
         };
-        (get_gwidget<Gtk::SpinButton>("algo_number"))->set_value(value + 1);
         return true; // Return false to remove the callback after one executio
     });
 
@@ -3072,13 +3177,18 @@ void Dx7interface::attach_signals(){
     slot_dtun_op1 = (get_gwidget<Gtk::Scale>("dtun_op1"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_dtun_op1_event));
     (get_gwidget<Gtk::Scale>("dtun_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        int value;
+        unsigned int ui_val = ((get_gwidget<Gtk::Scale>("dtun_op1"))->get_value() - 7);
         if (compare) {
-            value = bank_1_origin.sound->op[0].dtun.val-7;
+            if( ui_val != bank_1_origin.sound->algo.algo.val ){
+                int value = bank_1_origin.sound->op[0].dtun.val-7;
+                (get_gwidget<Gtk::Scale>("dtun_op1"))->set_value(value);
+            };
         }else{
-            value = bank_1_modif.sound->op[0].dtun.val-7;
+            if( ui_val != bank_1_modif.sound->algo.algo.val ){
+                int value = bank_1_modif.sound->op[0].dtun.val-7;
+                (get_gwidget<Gtk::Scale>("dtun_op1"))->set_value(value);
+            };
         };
-        (get_gwidget<Gtk::Scale>("dtun_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
     /* OP1 EG */
@@ -4783,7 +4893,6 @@ void Dx7interface::mouse_mooves(double x, double y, Glib::ustring name){
         (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<int>(p_drag)+"_"+name))->set_value(val_y);
     };
 };
-
 void Dx7interface::mouse_click(int n_press, double x, double y, Glib::ustring name){
     //double width = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_width();
     double height = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_height();
@@ -5289,8 +5398,8 @@ void Dx7interface::redraw_all_curve(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
 };
 
-/* Extra Functions */
 
+/* MIDI Functions */
 void Dx7interface::on_midi_channel_send_event(){
     LOG_IN();
     channel_send = (get_gwidget<Gtk::SpinButton>("midi_channel_send"))->get_value()-1;
@@ -5302,6 +5411,8 @@ void Dx7interface::on_midi_channel_receive_event(){
     LOG_OUT();
 };
 
+
+/* Extra Functions */
 void Dx7interface::on_mono_poly_event(){
 	LOG_IN();
     unsigned char msg[7];                      // paremter change
@@ -5613,7 +5724,8 @@ void Dx7interface::on_panic_event(){
 };
 
 /* ALGO */
-void Dx7interface::on_algo_event() {	LOG_IN();
+void Dx7interface::on_algo_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5631,6 +5743,7 @@ void Dx7interface::on_algo_event() {	LOG_IN();
 };
 
 void Dx7interface::on_feedback_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5643,9 +5756,11 @@ void Dx7interface::on_feedback_event() {
     if (!compare){
         bank_1_modif.sound->algo.feedback.val = msg[5];
     };
+    LOG_OUT();
 };
 
 void Dx7interface::on_transpose_event() {
+    LOG_IN();
     char val =  (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected()
              +( ((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()-1)*12 );
     if( val >= 0 && val <= 48){
@@ -5662,9 +5777,11 @@ void Dx7interface::on_transpose_event() {
             bank_1_modif.sound->algo.transpose.val = msg[5];
         };
     };
+    LOG_OUT();
 };
 
 void Dx7interface::on_oks_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5681,6 +5798,7 @@ void Dx7interface::on_oks_event() {
     if (!compare){
         bank_1_modif.sound->algo.oks.val = msg[5];
     };
+    LOG_OUT();
 };
 
 /* LFO */
@@ -5703,6 +5821,7 @@ void Dx7interface::on_lfo_wav_event() {
 };
 
 void Dx7interface::on_lfo_sync_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5719,9 +5838,11 @@ void Dx7interface::on_lfo_sync_event() {
     if (!compare){
         bank_1_modif.sound->lfo.sync.val=msg[5];
     };
+    LOG_OUT();
 };
 
 void Dx7interface::on_lfo_speed_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5734,9 +5855,11 @@ void Dx7interface::on_lfo_speed_event() {
     if (!compare){
         bank_1_modif.sound->lfo.speed.val = msg[5];
     };
+    LOG_OUT();
 };
 
 void Dx7interface::on_lfo_delay_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5749,9 +5872,11 @@ void Dx7interface::on_lfo_delay_event() {
     if (!compare){
         bank_1_modif.sound->lfo.delay.val = msg[5];
     };
+    LOG_OUT();
 };
 
-void Dx7interface::on_lfo_pmd_event() {	LOG_IN();
+void Dx7interface::on_lfo_pmd_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5767,7 +5892,8 @@ void Dx7interface::on_lfo_pmd_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_lfo_amd_event() {	LOG_IN();
+void Dx7interface::on_lfo_amd_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5784,7 +5910,8 @@ void Dx7interface::on_lfo_amd_event() {	LOG_IN();
 };
 
 /*LFO MODULATION */
-void Dx7interface::on_pms_event() {	LOG_IN();
+void Dx7interface::on_pms_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5801,7 +5928,8 @@ void Dx7interface::on_pms_event() {	LOG_IN();
 };
 
 /* PITCH EG */
-void Dx7interface::on_pitch_rt1_event() {	LOG_IN();
+void Dx7interface::on_pitch_rt1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5818,7 +5946,8 @@ void Dx7interface::on_pitch_rt1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_pitch_rt2_event() {	LOG_IN();
+void Dx7interface::on_pitch_rt2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5835,7 +5964,8 @@ void Dx7interface::on_pitch_rt2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_pitch_rt3_event() {	LOG_IN();
+void Dx7interface::on_pitch_rt3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5852,7 +5982,8 @@ void Dx7interface::on_pitch_rt3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_pitch_rt4_event() {	LOG_IN();
+void Dx7interface::on_pitch_rt4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5869,7 +6000,8 @@ void Dx7interface::on_pitch_rt4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_pitch_lvl1_event() {	LOG_IN();
+void Dx7interface::on_pitch_lvl1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5886,7 +6018,8 @@ void Dx7interface::on_pitch_lvl1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_pitch_lvl2_event() {	LOG_IN();
+void Dx7interface::on_pitch_lvl2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5903,7 +6036,8 @@ void Dx7interface::on_pitch_lvl2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_pitch_lvl3_event() {	LOG_IN();
+void Dx7interface::on_pitch_lvl3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -5920,7 +6054,8 @@ void Dx7interface::on_pitch_lvl3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_pitch_lvl4_event() {	LOG_IN();
+void Dx7interface::on_pitch_lvl4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6002,7 +6137,8 @@ void Dx7interface::on_txt_freq_op_event()   {
 };
 
 /* OP1 */
-void Dx7interface::on_ams_op1_event() {	LOG_IN();
+void Dx7interface::on_ams_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6019,7 +6155,8 @@ void Dx7interface::on_ams_op1_event() {	LOG_IN();
 };
 
 /* OP1 FREQ */
-void Dx7interface::on_freq_mode_op1_event() {	LOG_IN();
+void Dx7interface::on_freq_mode_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6036,7 +6173,8 @@ void Dx7interface::on_freq_mode_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_coarse_op1_event() {	LOG_IN();
+void Dx7interface::on_freq_coarse_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6053,7 +6191,8 @@ void Dx7interface::on_freq_coarse_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_fine_op1_event() {	LOG_IN();
+void Dx7interface::on_freq_fine_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6070,7 +6209,8 @@ void Dx7interface::on_freq_fine_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_dtun_op1_event() {	LOG_IN();
+void Dx7interface::on_dtun_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6087,7 +6227,8 @@ void Dx7interface::on_dtun_op1_event() {	LOG_IN();
 };
 
 /* OP1 EG */
-void Dx7interface::on_eg_rt1_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_rt1_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6104,7 +6245,8 @@ void Dx7interface::on_eg_rt1_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt2_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_rt2_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6121,7 +6263,8 @@ void Dx7interface::on_eg_rt2_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt3_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_rt3_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6138,7 +6281,8 @@ void Dx7interface::on_eg_rt3_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt4_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_rt4_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6155,7 +6299,8 @@ void Dx7interface::on_eg_rt4_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl1_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl1_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6172,7 +6317,8 @@ void Dx7interface::on_eg_lvl1_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl2_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl2_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6189,7 +6335,8 @@ void Dx7interface::on_eg_lvl2_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl3_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl3_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6206,7 +6353,8 @@ void Dx7interface::on_eg_lvl3_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl4_op1_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl4_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6224,7 +6372,8 @@ void Dx7interface::on_eg_lvl4_op1_event() {	LOG_IN();
 };
 
 /* OP1 FRAME VOLUME */
-void Dx7interface::on_krs_op1_event() {	LOG_IN();
+void Dx7interface::on_krs_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6240,7 +6389,8 @@ void Dx7interface::on_krs_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kvs_op1_event() {	LOG_IN();
+void Dx7interface::on_kvs_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6256,7 +6406,8 @@ void Dx7interface::on_kvs_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_lvl_op1_event() {	LOG_IN();
+void Dx7interface::on_lvl_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6306,7 +6457,8 @@ void Dx7interface::on_mute_hexter_op1_event(){
 };
 
 /* OP1 KLS */
-void Dx7interface::on_kls_lft_curve_op1_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_curve_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6323,7 +6475,8 @@ void Dx7interface::on_kls_lft_curve_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_curve_op1_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_curve_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6340,7 +6493,8 @@ void Dx7interface::on_kls_rght_curve_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_lft_dpth_op1_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_dpth_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6357,7 +6511,8 @@ void Dx7interface::on_kls_lft_dpth_op1_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_dpth_op1_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_dpth_op1_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6375,6 +6530,7 @@ void Dx7interface::on_kls_rght_dpth_op1_event() {	LOG_IN();
 };
 
 void Dx7interface::on_kls_brk_pt_op1_event() {
+    LOG_IN();
     char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->get_selected();
     char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->get_value();
     if(val_note < 3){
@@ -6396,10 +6552,12 @@ void Dx7interface::on_kls_brk_pt_op1_event() {
         };
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
     };
+    LOG_OUT();
 };
 
 /* OP2 */
-void Dx7interface::on_ams_op2_event() {	LOG_IN();
+void Dx7interface::on_ams_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6416,7 +6574,8 @@ void Dx7interface::on_ams_op2_event() {	LOG_IN();
 };
 
 /* OP2 FREQ */
-void Dx7interface::on_freq_mode_op2_event() {	LOG_IN();
+void Dx7interface::on_freq_mode_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6433,7 +6592,8 @@ void Dx7interface::on_freq_mode_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_coarse_op2_event() {	LOG_IN();
+void Dx7interface::on_freq_coarse_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6450,7 +6610,8 @@ void Dx7interface::on_freq_coarse_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_fine_op2_event() {	LOG_IN();
+void Dx7interface::on_freq_fine_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6467,7 +6628,8 @@ void Dx7interface::on_freq_fine_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_dtun_op2_event() {	LOG_IN();
+void Dx7interface::on_dtun_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6484,7 +6646,8 @@ void Dx7interface::on_dtun_op2_event() {	LOG_IN();
 };
 
 /* OP2 EG */
-void Dx7interface::on_eg_rt1_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_rt1_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6501,7 +6664,8 @@ void Dx7interface::on_eg_rt1_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt2_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_rt2_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6518,7 +6682,8 @@ void Dx7interface::on_eg_rt2_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt3_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_rt3_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6535,7 +6700,8 @@ void Dx7interface::on_eg_rt3_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt4_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_rt4_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6552,7 +6718,8 @@ void Dx7interface::on_eg_rt4_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl1_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl1_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6569,7 +6736,8 @@ void Dx7interface::on_eg_lvl1_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl2_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl2_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6586,7 +6754,8 @@ void Dx7interface::on_eg_lvl2_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl3_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl3_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6603,7 +6772,8 @@ void Dx7interface::on_eg_lvl3_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl4_op2_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl4_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6621,7 +6791,8 @@ void Dx7interface::on_eg_lvl4_op2_event() {	LOG_IN();
 };
 
 /* OP2 FRAME VOLUME */
-void Dx7interface::on_krs_op2_event() {	LOG_IN();
+void Dx7interface::on_krs_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6637,7 +6808,8 @@ void Dx7interface::on_krs_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kvs_op2_event() {	LOG_IN();
+void Dx7interface::on_kvs_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6653,7 +6825,8 @@ void Dx7interface::on_kvs_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_lvl_op2_event() {	LOG_IN();
+void Dx7interface::on_lvl_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6702,7 +6875,8 @@ void Dx7interface::on_mute_hexter_op2_event() {
 };
 
 /* OP2 KLS */
-void Dx7interface::on_kls_lft_curve_op2_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_curve_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6719,7 +6893,8 @@ void Dx7interface::on_kls_lft_curve_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_curve_op2_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_curve_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6736,7 +6911,8 @@ void Dx7interface::on_kls_rght_curve_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_lft_dpth_op2_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_dpth_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6753,7 +6929,8 @@ void Dx7interface::on_kls_lft_dpth_op2_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_dpth_op2_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_dpth_op2_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6796,7 +6973,8 @@ void Dx7interface::on_kls_brk_pt_op2_event() {
 
 
 /* OP3 */
-void Dx7interface::on_ams_op3_event() {	LOG_IN();
+void Dx7interface::on_ams_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6813,7 +6991,8 @@ void Dx7interface::on_ams_op3_event() {	LOG_IN();
 };
 
 /* OP3 FREQ */
-void Dx7interface::on_freq_mode_op3_event() {	LOG_IN();
+void Dx7interface::on_freq_mode_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6830,7 +7009,8 @@ void Dx7interface::on_freq_mode_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_coarse_op3_event() {	LOG_IN();
+void Dx7interface::on_freq_coarse_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6847,7 +7027,8 @@ void Dx7interface::on_freq_coarse_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_fine_op3_event() {	LOG_IN();
+void Dx7interface::on_freq_fine_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6864,7 +7045,8 @@ void Dx7interface::on_freq_fine_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_dtun_op3_event() {	LOG_IN();
+void Dx7interface::on_dtun_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6881,7 +7063,8 @@ void Dx7interface::on_dtun_op3_event() {	LOG_IN();
 };
 
 /* OP3 EG */
-void Dx7interface::on_eg_rt1_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_rt1_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6898,7 +7081,8 @@ void Dx7interface::on_eg_rt1_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt2_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_rt2_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6915,7 +7099,8 @@ void Dx7interface::on_eg_rt2_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt3_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_rt3_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6932,7 +7117,8 @@ void Dx7interface::on_eg_rt3_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt4_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_rt4_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6949,7 +7135,8 @@ void Dx7interface::on_eg_rt4_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl1_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl1_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6966,7 +7153,8 @@ void Dx7interface::on_eg_lvl1_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl2_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl2_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -6983,7 +7171,8 @@ void Dx7interface::on_eg_lvl2_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl3_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl3_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7000,7 +7189,8 @@ void Dx7interface::on_eg_lvl3_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl4_op3_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl4_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7018,7 +7208,8 @@ void Dx7interface::on_eg_lvl4_op3_event() {	LOG_IN();
 };
 
 /* OP3 FRAME VOLUME */
-void Dx7interface::on_krs_op3_event() {	LOG_IN();
+void Dx7interface::on_krs_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7034,7 +7225,8 @@ void Dx7interface::on_krs_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kvs_op3_event() {	LOG_IN();
+void Dx7interface::on_kvs_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7050,7 +7242,8 @@ void Dx7interface::on_kvs_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_lvl_op3_event() {	LOG_IN();
+void Dx7interface::on_lvl_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7098,7 +7291,8 @@ void Dx7interface::on_mute_hexter_op3_event() {
 };
 
 /* OP3 KLS */
-void Dx7interface::on_kls_lft_curve_op3_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_curve_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7115,7 +7309,8 @@ void Dx7interface::on_kls_lft_curve_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_curve_op3_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_curve_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7132,7 +7327,8 @@ void Dx7interface::on_kls_rght_curve_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_lft_dpth_op3_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_dpth_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7149,7 +7345,8 @@ void Dx7interface::on_kls_lft_dpth_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_dpth_op3_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_dpth_op3_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7166,7 +7363,8 @@ void Dx7interface::on_kls_rght_dpth_op3_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_brk_pt_op3_event() {	LOG_IN();
+void Dx7interface::on_kls_brk_pt_op3_event() {
+    LOG_IN();
     char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->get_selected();
     char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->get_value();
     if(val_note < 3){
@@ -7192,7 +7390,8 @@ void Dx7interface::on_kls_brk_pt_op3_event() {	LOG_IN();
 
 
 /* OP4 */
-void Dx7interface::on_ams_op4_event() {	LOG_IN();
+void Dx7interface::on_ams_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7209,7 +7408,8 @@ void Dx7interface::on_ams_op4_event() {	LOG_IN();
 };
 
 /* OP4 FREQ*/
-void Dx7interface::on_freq_mode_op4_event() {	LOG_IN();
+void Dx7interface::on_freq_mode_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7226,7 +7426,8 @@ void Dx7interface::on_freq_mode_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_coarse_op4_event() {	LOG_IN();
+void Dx7interface::on_freq_coarse_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7243,7 +7444,8 @@ void Dx7interface::on_freq_coarse_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_fine_op4_event() {	LOG_IN();
+void Dx7interface::on_freq_fine_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7260,7 +7462,8 @@ void Dx7interface::on_freq_fine_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_dtun_op4_event() {	LOG_IN();
+void Dx7interface::on_dtun_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7277,7 +7480,8 @@ void Dx7interface::on_dtun_op4_event() {	LOG_IN();
 };
 
 /* OP4 EG*/
-void Dx7interface::on_eg_rt1_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_rt1_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7294,7 +7498,8 @@ void Dx7interface::on_eg_rt1_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt2_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_rt2_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7311,7 +7516,8 @@ void Dx7interface::on_eg_rt2_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt3_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_rt3_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7328,7 +7534,8 @@ void Dx7interface::on_eg_rt3_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt4_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_rt4_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7345,7 +7552,8 @@ void Dx7interface::on_eg_rt4_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl1_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl1_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7362,7 +7570,8 @@ void Dx7interface::on_eg_lvl1_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl2_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl2_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7379,7 +7588,8 @@ void Dx7interface::on_eg_lvl2_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl3_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl3_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7396,7 +7606,8 @@ void Dx7interface::on_eg_lvl3_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl4_op4_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl4_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7415,7 +7626,8 @@ void Dx7interface::on_eg_lvl4_op4_event() {	LOG_IN();
 
 
 /* OP4 FRAME VOLUME */
-void Dx7interface::on_krs_op4_event() {	LOG_IN();
+void Dx7interface::on_krs_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7431,7 +7643,8 @@ void Dx7interface::on_krs_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kvs_op4_event() {	LOG_IN();
+void Dx7interface::on_kvs_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7447,7 +7660,8 @@ void Dx7interface::on_kvs_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_lvl_op4_event() {	LOG_IN();
+void Dx7interface::on_lvl_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7495,7 +7709,8 @@ void Dx7interface::on_mute_hexter_op4_event() {
 };
 
 /* OP4 KLS*/
-void Dx7interface::on_kls_lft_curve_op4_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_curve_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7512,7 +7727,8 @@ void Dx7interface::on_kls_lft_curve_op4_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_curve_op4_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_curve_op4_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7586,7 +7802,8 @@ void Dx7interface::on_kls_brk_pt_op4_event(){
 };
 
 /* OP5 */
-void Dx7interface::on_ams_op5_event() {	LOG_IN();
+void Dx7interface::on_ams_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7603,7 +7820,8 @@ void Dx7interface::on_ams_op5_event() {	LOG_IN();
 };
 
 /* OP5 FREQ */
-void Dx7interface::on_freq_mode_op5_event() {	LOG_IN();
+void Dx7interface::on_freq_mode_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7620,7 +7838,8 @@ void Dx7interface::on_freq_mode_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_coarse_op5_event() {	LOG_IN();
+void Dx7interface::on_freq_coarse_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7637,7 +7856,8 @@ void Dx7interface::on_freq_coarse_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_fine_op5_event() {	LOG_IN();
+void Dx7interface::on_freq_fine_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7654,7 +7874,8 @@ void Dx7interface::on_freq_fine_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_dtun_op5_event() {	LOG_IN();
+void Dx7interface::on_dtun_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7671,7 +7892,8 @@ void Dx7interface::on_dtun_op5_event() {	LOG_IN();
 };
 
 /* OP5 EG */
-void Dx7interface::on_eg_rt1_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_rt1_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7688,7 +7910,8 @@ void Dx7interface::on_eg_rt1_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt2_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_rt2_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7705,7 +7928,8 @@ void Dx7interface::on_eg_rt2_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt3_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_rt3_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7722,7 +7946,8 @@ void Dx7interface::on_eg_rt3_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt4_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_rt4_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7739,7 +7964,8 @@ void Dx7interface::on_eg_rt4_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl1_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl1_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7756,7 +7982,8 @@ void Dx7interface::on_eg_lvl1_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl2_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl2_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7773,7 +8000,8 @@ void Dx7interface::on_eg_lvl2_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl3_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl3_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7790,7 +8018,8 @@ void Dx7interface::on_eg_lvl3_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl4_op5_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl4_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7808,7 +8037,8 @@ void Dx7interface::on_eg_lvl4_op5_event() {	LOG_IN();
 };
 
 /* OP5 FRAME VOLUME */
-void Dx7interface::on_krs_op5_event() {	LOG_IN();
+void Dx7interface::on_krs_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7824,7 +8054,8 @@ void Dx7interface::on_krs_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kvs_op5_event() {	LOG_IN();
+void Dx7interface::on_kvs_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7840,7 +8071,8 @@ void Dx7interface::on_kvs_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_lvl_op5_event() {	LOG_IN();
+void Dx7interface::on_lvl_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7889,7 +8121,8 @@ void Dx7interface::on_mute_hexter_op5_event() {
 };
 
 /* OP5 KLS */
-void Dx7interface::on_kls_lft_curve_op5_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_curve_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7906,7 +8139,8 @@ void Dx7interface::on_kls_lft_curve_op5_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_curve_op5_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_curve_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7924,6 +8158,7 @@ void Dx7interface::on_kls_rght_curve_op5_event() {	LOG_IN();
 };
 
 void Dx7interface::on_kls_lft_dpth_op5_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7937,9 +8172,11 @@ void Dx7interface::on_kls_lft_dpth_op5_event() {
         bank_1_modif.sound->op[4].kls.lft_dpth.val=msg[5];
     };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    LOG_OUT();
 };
 
 void Dx7interface::on_kls_rght_dpth_op5_event(){
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7953,9 +8190,11 @@ void Dx7interface::on_kls_rght_dpth_op5_event(){
         bank_1_modif.sound->op[4].kls.rght_dpth.val=msg[5];
     };
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    LOG_OUT();
 };
 
 void Dx7interface::on_kls_brk_pt_op5_event() {
+    LOG_IN();
     char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->get_selected();
     char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->get_value();
     if(val_note < 3){
@@ -7977,10 +8216,12 @@ void Dx7interface::on_kls_brk_pt_op5_event() {
         };
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
     };
+    LOG_OUT();
 };
 
 /* OP6 */
-void Dx7interface::on_ams_op6_event() {	LOG_IN();
+void Dx7interface::on_ams_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -7997,7 +8238,8 @@ void Dx7interface::on_ams_op6_event() {	LOG_IN();
 };
 
 /* OP6 FREQ */
-void Dx7interface::on_freq_mode_op6_event() {	LOG_IN();
+void Dx7interface::on_freq_mode_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8014,7 +8256,8 @@ void Dx7interface::on_freq_mode_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_coarse_op6_event() {	LOG_IN();
+void Dx7interface::on_freq_coarse_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8031,7 +8274,8 @@ void Dx7interface::on_freq_coarse_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_freq_fine_op6_event() {	LOG_IN();
+void Dx7interface::on_freq_fine_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8048,7 +8292,8 @@ void Dx7interface::on_freq_fine_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_dtun_op6_event() {	LOG_IN();
+void Dx7interface::on_dtun_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8065,7 +8310,8 @@ void Dx7interface::on_dtun_op6_event() {	LOG_IN();
 };
 
 /* OP6 EG */
-void Dx7interface::on_eg_rt1_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_rt1_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8082,7 +8328,8 @@ void Dx7interface::on_eg_rt1_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt2_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_rt2_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8099,7 +8346,8 @@ void Dx7interface::on_eg_rt2_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt3_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_rt3_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8116,7 +8364,8 @@ void Dx7interface::on_eg_rt3_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_rt4_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_rt4_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8133,7 +8382,8 @@ void Dx7interface::on_eg_rt4_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl1_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl1_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8150,7 +8400,8 @@ void Dx7interface::on_eg_lvl1_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl2_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl2_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8167,7 +8418,8 @@ void Dx7interface::on_eg_lvl2_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl3_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl3_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8184,7 +8436,8 @@ void Dx7interface::on_eg_lvl3_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_eg_lvl4_op6_event() {	LOG_IN();
+void Dx7interface::on_eg_lvl4_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8202,7 +8455,8 @@ void Dx7interface::on_eg_lvl4_op6_event() {	LOG_IN();
 };
 
 /* OP6 FRAME VOLUME */
-void Dx7interface::on_krs_op6_event() {	LOG_IN();
+void Dx7interface::on_krs_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8218,7 +8472,8 @@ void Dx7interface::on_krs_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kvs_op6_event() {	LOG_IN();
+void Dx7interface::on_kvs_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8234,7 +8489,8 @@ void Dx7interface::on_kvs_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_lvl_op6_event() {	LOG_IN();
+void Dx7interface::on_lvl_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8282,7 +8538,8 @@ void Dx7interface::on_mute_hexter_op6_event() {
 };
 
 /* OP6 KLS */
-void Dx7interface::on_kls_lft_curve_op6_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_curve_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8299,7 +8556,8 @@ void Dx7interface::on_kls_lft_curve_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_curve_op6_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_curve_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8316,7 +8574,8 @@ void Dx7interface::on_kls_rght_curve_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_lft_dpth_op6_event() {	LOG_IN();
+void Dx7interface::on_kls_lft_dpth_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
@@ -8333,7 +8592,8 @@ void Dx7interface::on_kls_lft_dpth_op6_event() {	LOG_IN();
     LOG_OUT();
 };
 
-void Dx7interface::on_kls_rght_dpth_op6_event() {	LOG_IN();
+void Dx7interface::on_kls_rght_dpth_op6_event() {
+    LOG_IN();
     unsigned char msg[7];
     msg[0]=0xF0;
     msg[1]=id_fabricant;
