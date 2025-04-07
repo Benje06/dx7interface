@@ -14,12 +14,12 @@ AC_CONFIG_AUX_DIR([config])
 AC_CANONICAL_HOST
 AS_CASE([$host_os],
     [linux*], [
-        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48"
+        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
         AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
         platform_win32=no
     ],
     [mingw*|windows*|pw32*|cygwin*], [
-        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48"
+        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
         AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
         platform_win32=yes
     ],
@@ -108,6 +108,7 @@ AC_FUNC_ALLOCA
 AC_FUNC_ERROR_AT_LINE
 
 PKG_CHECK_MODULES([DEPS], [$pkg_modules])
+dnl redondant ??? AC_SUBST ??
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_CPPFLAGS)
 AC_SUBST(DEPS_LIBS)
@@ -204,12 +205,18 @@ Configuration:
   Source code location:	 ${srcdir}
   Compiler:		 C : ${CC},		C++ : ${CXX}
   GNOME UI Widgets:		 ${have_gnome}
-  CFLAGS:  ${CFLAGS}
+
   CPPFLAGS: ${CPPFLAGS}
+  CFLAGS:  ${CFLAGS}
   CXXFLAGS: ${CXXFLAGS}
-  DEPS_LIBS: ${DEPS_LIBS}
+
+  DEPS_CPPFLAGS: ${DEPS_CPPFLAGS}
+  DEPS_CFLAGS: ${DEPS_CFLAGS}
+  DEPS_CXXFLAGS: ${DEPS_CXXFLAGS}
+
   LDFLAGS: ${LDFLAGS}
-  
+  DEPS_LIBS: ${DEPS_LIBS}
+
   GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}
     
   PROGRAMNAME_LOCALEDIR: ${PROGRAMNAME_LOCALEDIR}

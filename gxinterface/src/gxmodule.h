@@ -25,6 +25,7 @@
 	/* app */
 	#include "common.h"
 	#include <glibmm/module.h>
+	#include <fontconfig/fontconfig.h>
 /*
  ***** Gx_Module *****
 */
@@ -107,6 +108,7 @@ class Gx_module {
 		};
 		Glib::RefPtr<Glib::Object> get_gobject(Glib::ustring object_name);
 		Gtk::Window* get_window();
+        void load_custom_font(const std::string&);
 	public:
 		/** send root widget of module **/
 		Gtk::Box* get_boxmain();     // return box from refxml get_module

@@ -203,7 +203,26 @@ void Gx_module::apply_style_to(widgetType* widget){*/
 /*void Gx_module::clear_style_for_screen(Glib::RefPtr<Gtk::StyleProvider> css_provider){
 
 };*/
+void Gx_module::load_custom_font(const std::string& font_path) {
+    // Initialize Fontconfig
+    FcConfig* config = FcInitLoadConfigAndFonts();
+    if (!config) {
+        std::cerr << "Failed to initialize Fontconfig." << std::endl;
+        return;
+    }
 
+    // Add the custom font file to Fontconfig
+    if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(font_path.c_str()))) {
+        std::cerr << "Failed to add custom font: " << font_path << std::endl;
+        FcConfigDestroy(config);
+        return;
+    }
+
+    // Set the custom configuration as current
+    FcConfigSetCurrent(config);
+
+    std::cout << "Custom font added successfully: " << font_path << std::endl;
+}
 /*** apply style to all the application(screen) ***/
 void Gx_module::apply_style_to_screen(){
     LOG_IN();
