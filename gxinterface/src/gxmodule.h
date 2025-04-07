@@ -31,14 +31,14 @@
 */
 class Gx_module {
 	private:
-		struct St_extPath{             /* Provided file informations */
+		typedef struct St_extPath{             /* Provided file informations */
 			Glib::ustring ext;
 			Glib::ustring name;
 			Glib::ustring filename;
 			Glib::ustring path;
 			Glib::ustring file;
 		} ;
-		struct St_mod {                 /* Module informations */
+		typedef struct St_mod {                 /* Module informations */
 			struct St_extPath extpath;
 			Glib::ustring name;
 			Glib::ustring type;
@@ -49,7 +49,7 @@ class Gx_module {
             std::string custom_font = "";  /* custom font */
 			uint8_t index;
 		} mod;
-        struct St_mod_options {                 /* Module options */
+        typedef struct St_mod_options {                 /* Module options */
             Glib::ustring name;
             Glib::ustring color="";
             Glib::ustring cssfile;								/* CSS file */
