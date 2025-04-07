@@ -31,28 +31,36 @@
 */
 class Gx_module {
 	private:
-		struct st_extPath{             /* Provided file informations */
+		struct St_extPath{             /* Provided file informations */
 			Glib::ustring ext;
 			Glib::ustring name;
 			Glib::ustring filename;
 			Glib::ustring path;
 			Glib::ustring file;
 		} ;
-		struct st_mod {                 /* Module informations */
-			struct st_extPath extpath;
+		struct St_mod {                 /* Module informations */
+			struct St_extPath extpath;
 			Glib::ustring name;
 			Glib::ustring type;
 			Glib::ustring cat;
 			Glib::ustring desc;
-            Glib::ustring color="";
+            Glib::ustring color = "";
+            Glib::ustring cssfile = "";								/* CSS file */
+            std::string custom_font = "";  /* custom font */
 			uint8_t index;
 		} mod;
+        struct St_mod_options {                 /* Module options */
+            Glib::ustring name;
+            Glib::ustring color="";
+            Glib::ustring cssfile;								/* CSS file */
+            const std::string custom_font;  /* custom font */
+        } module_options;
 
 		Glib::Module *gmodule = nullptr;					/* the module (.la .so ...) itself */
 		std::shared_ptr<void> module_pointer;				/* returned from module function use to call the destructor of module */
 		/* UI */
 		Glib::RefPtr<Gtk::Builder> refXml;					/* refxml to store ui file */
-		Glib::ustring cssfile;								/* CSS file */
+
 		Gtk::Box* rootbox = nullptr;									/* Root Widget from the refxml box_main or window_main */
 		Gtk::Window* main_window = nullptr;					// needed for standalone
 		Gtk::ScrolledWindow* main_scrolledwindow = nullptr;	// needed for standalone
@@ -86,7 +94,7 @@ class Gx_module {
 		*  using Loadplugfunc = std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring>(*)(uint8_t);
 		* loadplugfunc module_func;
 		*/
-		std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring> (*module_func) (uint8_t);
+		std::tuple<std::shared_ptr<void>, St_mod_options> (*module_func) (uint8_t);
 
 		/* get a widget inside the refxml should be in the headers to be use as an external C*/
 		template <class widgetType>

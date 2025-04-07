@@ -124,10 +124,10 @@ Glib::RefPtr<Glib::Object> Gx_module::get_gobject(Glib::ustring object_name) {
 void Gx_module::set_style_file(Glib::ustring file_css){
     LOG_IN();
     if( std::filesystem::exists(file_css.c_str()) ){
-        cssfile=file_css;
+        mod.cssfile=file_css;
     }else{
         std::cerr<< _("Warning the css style file ")<< file_css << _(" doesn't exist or is not readable")<< std::endl;
-        cssfile="";
+        mod.cssfile="";
     };
     LOG_OUT();
 };
@@ -227,11 +227,12 @@ void Gx_module::load_custom_font(const std::string& font_path) {
 void Gx_module::apply_style_to_screen(){
     LOG_IN();
     try{
-        if(cssfile != ""){
+        if(mod.cssfile != ""){
+            load_custom_font(mod.custom_font);
             auto settings = Gtk::Settings::get_default();
             auto css = Gtk::CssProvider::create();
             auto custom_provider = Gtk::CssProvider::create();
-            css->load_from_path(cssfile);
+            css->load_from_path(mod.cssfile);
 
             #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
                 if(mod.color != ""){
@@ -254,7 +255,7 @@ void Gx_module::apply_style_to_screen(){
             #endif
         };
     } catch (const std::exception& ex) {
-        std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to load style: !!!\n") + cssfile + "\n" + _("Reason => ") + ex.what();
+        std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to load style: !!!\n") + mod.cssfile + "\n" + _("Reason => ") + ex.what();
         LOG_OUT();
         throw std::runtime_error(err_msg);
     };
@@ -273,12 +274,13 @@ bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
 	            gmodule->get_symbol( "LoadPlug", (void*&) module_func ) ){
 	            std::cout << "Name of the GLIB::Module: "<< std::endl;
                 std::cout << "\t" << gmodule->get_name() << std::endl;
-		        auto [mod_pointer, rootbox_ptr, cssfile_String] = module_func(index);
-                cssfile=cssfile_String;
+		        auto [mod_pointer, mod_options] = module_func(index);
+                mod.cssfile=mod_options.cssfile;
+                mod.custom_font=mod_options.custom_font;
                 module_pointer = mod_pointer;
-                rootbox = rootbox_ptr;
-                std::cout << cssfile << std::endl;
-                set_style_file(cssfile);
+                rootbox = std::static_pointer_cast<Gx_module>(module_pointer)->get_rootbox();
+                std::cout << mod.cssfile << std::endl;
+                set_style_file(mod.cssfile);
                 set_app_name( (rootbox)->get_name() );
                 std::cout << "Name of app: " << get_app_name() << std::endl;
                 mod.index=index;
