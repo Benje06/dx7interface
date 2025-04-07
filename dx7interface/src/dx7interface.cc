@@ -23,10 +23,9 @@
         #include "dx7interface.h"
 
 extern "C" {
-    std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring> LoadPlug(uint8_t index){
-        auto editor = std::make_shared<Dx7interface>(UI,index);
-        Gtk::Box* mbox =  editor->get_rootbox();
-        return std::make_tuple(editor, mbox, CSSFILE); //CSSFILE
+    std::tuple<std::shared_ptr<void>, St_mod_options> LoadPlug(uint8_t index){
+        auto dx7interface = std::make_shared<Dx7interface>(UI,index);
+        return std::make_tuple(dx7interface, dx7interface->get_module_options());
     };
 }
 
@@ -42,7 +41,8 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     }else{
         set_app_name(MODULE_NAME+index);
     };
-
+    module_options.cssfile = CSSFILE;
+    module_options.custom_font = "/home/jerome/Téléchargements/raster-fonts-6x8/raster-fonts-6x8.ttf";
     /* MIDI */
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
@@ -1167,6 +1167,10 @@ void Dx7interface::on_restore_bank(){
     save_type = BANK;
     restore_origin();
     set_voice(&bank_1_modif.sound[0]);
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)old_snum,nullptr,Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });
     LOG_OUT();
 };
 
@@ -1175,6 +1179,10 @@ void Dx7interface::on_restore_sound(){
     save_type = SOUND;
     restore_origin();
     set_voice(&bank_1_modif.sound[0]);
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)old_snum,nullptr,Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });
     LOG_OUT();
 };
 

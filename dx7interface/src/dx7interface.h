@@ -37,6 +37,7 @@
 /*** APP ***/
 #include <gxinterface/0.0.1/common.h>
 #include <gxinterface/0.0.1/gxmodule.h>
+//#include "../gxinterface/src/gxmodule.h"
 #include <filesystem>
 #include "GtkClass.h"
 /* Synth */
@@ -55,7 +56,7 @@
 #define CSSFILE MOD_UI_DIRECTORY"theme.css"
 
 extern "C" {
-    std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring> LoadPlug(uint8_t);
+    std::tuple<std::shared_ptr<void>, St_mod_options> LoadPlug(uint8_t);
 };
 
 class Dx7interface : public Gx_module, public Synth {
