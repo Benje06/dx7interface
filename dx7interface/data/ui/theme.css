@@ -106,9 +106,9 @@ entry {
     min-width: 0;
     padding: 0 0;
 }
-.sound_name{
+.sound_name > *{
     font-family: "Raster Fonts 6x8";
-    font-size:80px;
+    /*font-size:30px;*/
 }
 /*
 scale[.fine-tune][.marks-before][.marks-after]
