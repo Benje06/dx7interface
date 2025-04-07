@@ -203,7 +203,7 @@ void Gx_module::apply_style_to(widgetType* widget){*/
 /*void Gx_module::clear_style_for_screen(Glib::RefPtr<Gtk::StyleProvider> css_provider){
 
 };*/
-St_mod_options get_module_options(){
+Gx_module::St_mod_options Gx_module::get_module_options(){
     return module_options;
 };
 void Gx_module::load_custom_font(const std::string& font_path) {

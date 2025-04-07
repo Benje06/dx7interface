@@ -29,17 +29,19 @@
 /*
  ***** Gx_Module *****
 */
+
 class Gx_module {
 	private:
-		typedef struct St_extPath{             /* Provided file informations */
+		typedef struct st_extPath{             /* Provided file informations */
 			Glib::ustring ext;
 			Glib::ustring name;
 			Glib::ustring filename;
 			Glib::ustring path;
 			Glib::ustring file;
-		} ;
-		typedef struct St_mod {                 /* Module informations */
-			struct St_extPath extpath;
+		} St_extPath;
+        St_extPath extpath;
+		typedef struct st_mod {                 /* Module informations */
+			St_extPath extpath;
 			Glib::ustring name;
 			Glib::ustring type;
 			Glib::ustring cat;
@@ -48,13 +50,15 @@ class Gx_module {
             Glib::ustring cssfile = "";								/* CSS file */
             std::string custom_font = "";  /* custom font */
 			uint8_t index;
-		} mod;
-        typedef struct St_mod_options {                 /* Module options */
+		} St_mod;
+        St_mod mod;
+        typedef struct st_mod_options {                 /* Module options */
             Glib::ustring name;
             Glib::ustring color="";
             Glib::ustring cssfile;								/* CSS file */
             const std::string custom_font;  /* custom font */
-        } module_options;
+        } St_mod_options;
+        St_mod_options module_options;
 
 		Glib::Module *gmodule = nullptr;					/* the module (.la .so ...) itself */
 		std::shared_ptr<void> module_pointer;				/* returned from module function use to call the destructor of module */
@@ -88,7 +92,7 @@ class Gx_module {
 		void clear_style_of(widgetType*);
         void analyse_param(char**, int);
 
-	protected: 
+	protected:
 		/* prototype fonction of module call */
 		/*
 		*  using Loadplugfunc = std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring>(*)(uint8_t);
