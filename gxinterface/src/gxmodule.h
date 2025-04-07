@@ -29,6 +29,12 @@
 /*
  ***** Gx_Module *****
 */
+typedef struct st_mod_options {                 /* Module options */
+    Glib::ustring name="";
+    Glib::ustring color="";
+    Glib::ustring cssfile="";								/* CSS file */
+    std::string custom_font="";  /* custom font */
+} St_mod_options;
 
 class Gx_module {
 	private:
@@ -52,15 +58,8 @@ class Gx_module {
 			uint8_t index;
 		} St_mod;
         St_mod mod;
-        typedef struct st_mod_options {                 /* Module options */
-            Glib::ustring name;
-            Glib::ustring color="";
-            Glib::ustring cssfile;								/* CSS file */
-            const std::string custom_font;  /* custom font */
-        } St_mod_options;
-        St_mod_options module_options;
 
-		Glib::Module *gmodule = nullptr;					/* the module (.la .so ...) itself */
+        Glib::Module *gmodule = nullptr;					/* the module (.la .so ...) itself */
 		std::shared_ptr<void> module_pointer;				/* returned from module function use to call the destructor of module */
 		/* UI */
 		Glib::RefPtr<Gtk::Builder> refXml;					/* refxml to store ui file */
@@ -93,6 +92,7 @@ class Gx_module {
         void analyse_param(char**, int);
 
 	protected:
+        St_mod_options module_options;
 		/* prototype fonction of module call */
 		/*
 		*  using Loadplugfunc = std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring>(*)(uint8_t);
@@ -121,8 +121,8 @@ class Gx_module {
 		Glib::RefPtr<Glib::Object> get_gobject(Glib::ustring object_name);
 		Gtk::Window* get_window();
         void load_custom_font(const std::string&);
-        St_mod_options get_module_options();
 	public:
+        St_mod_options get_module_options();
 		/** send root widget of module **/
 		Gtk::Box* get_boxmain();     // return box from refxml get_module
 		Gtk::Box* get_rootbox();    // return box from rootbox
