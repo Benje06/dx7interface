@@ -97,14 +97,26 @@
         #include <glibmm/i18n.h>
     #endif
     #include <gtkmm-4.0/gtkmm.h>
-    /** convert to string any type of number **/
+    /*** String Convert ***/
+    /* convert to string any type of number */
     template <class paramType>
     Glib::ustring tostr(paramType val) {
         std::ostringstream strm;
         strm << val;
         return strm.str();
     };
-
+    /* convert glib::ustring to ascii-7bit */
+    std::string convert_to_ascii(const Glib::ustring& input) {
+        std::string result;
+        for( auto ch : input ){
+            if( ch < 128 ){ / Keep ASCII characters
+                result += ch; /
+            } else { // Replace non-ASCII characters with '?'
+                result += '?';
+            };
+        };
+        return result;
+    }
     // used to hash MACRO value to array (ex: use to convert MACRO int type of snd_seq_event_type to text message with the name of the macro)
     constexpr std::size_t str_const_hash(const char* str) {
         // Implement a simple compile-time hash function
