@@ -25,7 +25,11 @@
 	/* app */
 	#include "common.h"
 	#include <glibmm/module.h>
-	#include <fontconfig/fontconfig.h>
+	/* to support ffont inclusion at load (not working)
+     * #include <pangomm.h>
+     * #include <pangomm/cairofontmap.h>
+     * #include <fontconfig/fontconfig.h>
+     */
 /*
  ***** Gx_Module *****
 */
@@ -79,6 +83,7 @@ class Gx_module {
 		bool load_so_la(Glib::ustring,uint8_t);
 		/*** CSS ***/
 		void set_style_file(Glib::ustring); // CSS to be call by the module
+        void set_custom_font_file(Glib::ustring);
         /* all the app */
 		void apply_style_to_screen(); // apply_style to the window
 		void clear_style_for_screen(Glib::RefPtr<Gtk::StyleProvider>);
@@ -91,6 +96,8 @@ class Gx_module {
 		void clear_style_of(widgetType*);
         void analyse_param(char**, int);
 
+        FcConfig* load_font_into_fontconfig(const std::string&);
+        void load_font_into_pango(FcConfig*, const std::string&);
 	protected:
         St_mod_options module_options;
 		/* prototype fonction of module call */

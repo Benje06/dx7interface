@@ -30,9 +30,9 @@
     /* app */
     #include "gxmodule.h"
 
-/*
- **** Gx_module ****
- */
+    /*
+    **** Gx_module ****
+    */
  
 /* gx as ui or la, 
  * as ui for Gemod as a Gx module manager in gxinterface
@@ -60,7 +60,7 @@ void Gx_module::analyse_param(char** argv, int argc){
     for ( int i = 1; i <= argc; i++) {
         if ( (argv[i] != NULL) && ( Glib::ustring(argv[i]) == "-c" || (Glib::ustring(argv[i]) == "-c") )
             && (argv[i+1] != NULL) && ( Glib::ustring(argv[i+1]) != "" )
-        ){  // -i and interface filename as argument
+        ){  // -c and html color code as argument
             mod.color = Glib::ustring(argv[i+1]);
         };
     };
@@ -125,9 +125,21 @@ void Gx_module::set_style_file(Glib::ustring file_css){
     LOG_IN();
     if( std::filesystem::exists(file_css.c_str()) ){
         mod.cssfile=file_css;
+        std::cout << _("Css style file: ")<< mod.cssfile << std::endl;
     }else{
-        std::cerr<< _("Warning the css style file ")<< file_css << _(" doesn't exist or is not readable")<< std::endl;
+        std::cerr<< _("Warning: the css style file ")<< file_css << _(" doesn't exist or is not readable")<< std::endl;
         mod.cssfile="";
+    };
+    LOG_OUT();
+};
+void Gx_module::set_custom_font_file(Glib::ustring custom_font_file){
+    LOG_IN();
+    if( std::filesystem::exists(custom_font_file.c_str()) ){
+        mod.custom_font=custom_font_file;
+        std::cout << _("Custom font file: ")<< mod.custom_font << std::endl;
+    }else{
+        std::cerr<< _("Warning: the custom font file ")<< custom_font_file << _(" doesn't exist or is not readable")<< std::endl;
+        mod.custom_font="";
     };
     LOG_OUT();
 };
@@ -206,32 +218,147 @@ void Gx_module::apply_style_to(widgetType* widget){*/
 St_mod_options Gx_module::get_module_options(){
     return module_options;
 };
-void Gx_module::load_custom_font(const std::string& font_path) {
-    // Initialize Fontconfig
-    FcConfig* config = FcInitLoadConfigAndFonts();
-    if (!config) {
-        std::cerr << "Failed to initialize Fontconfig." << std::endl;
-        return;
-    }
+
+/* Font configuration */
+FcConfig* Gx_module::load_font_into_fontconfig(const std::string& font_path) {
+    // Check if the font file exists
+    if( !std::filesystem::exists(font_path) ){
+        std::cerr << "Font file does not exist: " << font_path << std::endl;
+        return nullptr;
+    };
+
+    // Create a custom Fontconfig configuration
+    FcConfig* config = FcConfigCreate();
+    if( !config ){
+        std::cerr << "Failed to create Fontconfig configuration." << std::endl;
+        return nullptr;
+    };
 
     // Add the custom font file to Fontconfig
-    if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(font_path.c_str()))) {
+    if( !FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(font_path.c_str())) ){
         std::cerr << "Failed to add custom font: " << font_path << std::endl;
+        FcConfigDestroy(config);
+        return nullptr;
+    }else{
+        std::cout << "Successfully added custom font: " << font_path << std::endl;
+    };
+
+    // Verify that the custom font is registered in Fontconfig
+    FcPattern* pattern = FcPatternCreate();
+    FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>("Raster Fonts 6x8"));  // Replace with your font family name
+    FcObjectSet* objectSet = FcObjectSetBuild(FC_FAMILY, FC_STYLE, FC_FILE, nullptr);
+
+    FcFontSet* matched_fonts = FcFontList(config, pattern, objectSet);
+    if( matched_fonts ){
+        std::cout << "Matched Fonts:" << std::endl;
+        for( int i = 0; i < matched_fonts->nfont; ++i ){
+            FcPattern* font = matched_fonts->fonts[i];
+            char* family = nullptr;
+            char* style = nullptr;
+            char* file = nullptr;
+            if( FcPatternGetString(font, FC_FAMILY, 0, reinterpret_cast<FcChar8**>(&family)) == FcResultMatch &&
+                FcPatternGetString(font, FC_STYLE, 0, reinterpret_cast<FcChar8**>(&style)) == FcResultMatch &&
+                FcPatternGetString(font, FC_FILE, 0, reinterpret_cast<FcChar8**>(&file)) == FcResultMatch ){
+                    std::cout << "Family: " << family << ", Style: " << style << ", File: " << file << std::endl;
+            }else{
+                    std::cerr << "Failed to retrieve properties for a matched font." << std::endl;
+            };
+        };
+        FcFontSetDestroy(matched_fonts);
+    };
+    return config;  // Return the custom configuration for use in Pango
+};
+// Function to make the custom font available in Pango
+void Gx_module::load_font_into_pango(FcConfig* config, const std::string& font_name) {
+    /*
+    setenv("FONTCONFIG_CACHE", "/home/...", 1);
+    setenv("FONTCONFIG_FILE", "/home/.../custom_font_config.conf", 1);
+    // Load the custom configuration file
+    std::string config_file = "/home/.../custom_font_config.conf";
+    if (!FcConfigParseAndLoad(config, (FcChar8*)config_file.c_str(), FcTrue)) {
+        std::cerr << "Failed to load custom Fontconfig file: " << config_file << std::endl;
+        FcConfigDestroy(config);
+        return;
+    }else{
+         std::cerr << "Loaded custom Fontconfig file: " << config_file << std::endl;
+    }
+
+    // Set this configuration as the current one
+    if (!FcConfigSetCurrent(config)) {
+        std::cerr << "Failed to set the current Fontconfig configuration." << std::endl;
+        FcConfigDestroy(config);
+        return;
+    }else{
+        std::cerr << "Current Fontconfig configuration set." << std::endl;
+    }
+
+    // Build fonts in the new configuration
+    if (!FcConfigBuildFonts(config)) {
+        std::cerr << "Failed to build fonts in Fontconfig." << std::endl;
         FcConfigDestroy(config);
         return;
     }
 
-    // Set the custom configuration as current
-    FcConfigSetCurrent(config);
+    // Get the default Pango Cairo FontMap
+    auto font_map = Pango::CairoFontMap::get_default();
+    if (!font_map) {
+        std::cerr << "Failed to get default Pango Cairo FontMap." << std::endl;
+        FcConfigDestroy(config);
+        return;
+    }
 
-    std::cout << "Custom font added successfully: " << font_path << std::endl;
-}
+    // Create a Pango context using the updated font map
+    auto context = font_map->create_context();
+    if (!context) {
+        std::cerr << "Failed to create Pango context." << std::endl;
+        FcConfigDestroy(config);
+        return;
+    }
+
+    // List all available font families
+    auto families = context->list_families();
+    bool found = false;
+
+    for (const auto& family : families) {
+        if (family->get_name() == font_name) {
+            found = true;
+            break;
+        };
+    };
+
+    if (found)
+        std::cout << "Font '" << font_name << "' is available in Pango." << std::endl;
+    else {
+        std::cerr << "Font '" << font_name << "' is not available in Pango." << std::endl;
+        std::cerr << "Available fonts:" << std::endl;
+        for (const auto& family : families) {
+            std::cerr << "  - " << family->get_name() << std::endl;
+        };
+    };
+    FcConfigDestroy(config);
+    */
+};
+void Gx_module::load_custom_font(const std::string& font_path) {
+    /*
+     * Function to load a custom font into Fontconfig
+     * load_font_into_fontconfig: add font to fontconfig (working)
+     * load_font_into_pango: add font to pango (not working)
+     */
+    //FcConfig* config = load_font_into_fontconfig(font_path);
+    //load_font_into_pango(config, "Raster Fonts 6x8");
+    //if(config){
+    //    FcConfigDestroy(config);
+    //};
+};
+
 /*** apply style to all the application(screen) ***/
 void Gx_module::apply_style_to_screen(){
     LOG_IN();
     try{
         if(mod.cssfile != ""){
-            load_custom_font(mod.custom_font);
+            if(mod.custom_font != ""){
+                load_custom_font(mod.custom_font);
+            };
             auto settings = Gtk::Settings::get_default();
             auto css = Gtk::CssProvider::create();
             auto custom_provider = Gtk::CssProvider::create();
@@ -255,6 +382,9 @@ void Gx_module::apply_style_to_screen(){
                 };
                 auto display = Gdk::Display::get_default();
                 Gtk::StyleContext::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                if(mod.color != ""){
+                    Gtk::StyleContext::add_provider_for_display(display, custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                };
             #endif
         };
     } catch (const std::exception& ex) {
@@ -278,12 +408,10 @@ bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
 	            std::cout << "Name of the GLIB::Module: "<< std::endl;
                 std::cout << "\t" << gmodule->get_name() << std::endl;
 		        auto [mod_pointer, mod_options] = module_func(index);
-                mod.cssfile=mod_options.cssfile;
-                mod.custom_font=mod_options.custom_font;
+                set_style_file(mod_options.cssfile);
+                set_custom_font_file(mod_options.custom_font);
                 module_pointer = mod_pointer;
                 rootbox = std::static_pointer_cast<Gx_module>(module_pointer)->get_rootbox();
-                std::cout << mod.cssfile << std::endl;
-                set_style_file(mod.cssfile);
                 set_app_name( (rootbox)->get_name() );
                 std::cout << "Name of app: " << get_app_name() << std::endl;
                 mod.index=index;
@@ -325,6 +453,7 @@ bool Gx_module::set_refxml(Glib::ustring filename)	{
 	}catch (const std::exception& ex){
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "\nSet refXml failed with error : " + ex.what();
+        LOG_OUT();
         throw std::runtime_error(err_msg);
 		return false;
 	};
@@ -334,7 +463,7 @@ bool Gx_module::set_refxml(Glib::ustring filename)	{
 bool Gx_module::load_ui(Glib::ustring filename, uint8_t index){
     LOG_IN();
     try{
-        /* TODO: maybe try catch and throw lower part */
+        /* TODO: maybe throw lower part */
         if(set_refxml(filename)){
             rootbox=refXml->get_widget<Gtk::Box>("box_main");
             if(rootbox){
