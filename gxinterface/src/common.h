@@ -106,11 +106,11 @@
         return strm.str();
     };
     /* convert glib::ustring to ascii-7bit */
-    std::string convert_to_ascii(const Glib::ustring& input) {
+    std::string strtoascii(const Glib::ustring& input) {
         std::string result;
         for( auto ch : input ){
-            if( ch < 128 ){ / Keep ASCII characters
-                result += ch; /
+            if( ch < 128 ){ // Keep ASCII characters
+                result += ch;
             } else { // Replace non-ASCII characters with '?'
                 result += '?';
             };
