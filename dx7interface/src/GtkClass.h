@@ -15,6 +15,8 @@ class SoundBankItem : public Glib::Object {
         static Glib::RefPtr<SoundBankItem> create(unsigned int number, const Glib::ustring& name){
             return Glib::make_refptr_for_instance<SoundBankItem>(new SoundBankItem(number, name));
         };
+        void set_number(unsigned int num) { i_number = num; };
+        void set_name(Glib::ustring name) { i_name = name; };
         unsigned int get_number() { return i_number; };
         Glib::ustring get_name() { return i_name; };
 };

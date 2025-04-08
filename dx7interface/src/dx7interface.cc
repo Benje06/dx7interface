@@ -41,8 +41,8 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     }else{
         set_app_name(MODULE_NAME+index);
     };
-    module_options.cssfile = CSSFILE;
-    module_options.custom_font = "";
+    mod_options.cssfile = CSSFILE;
+    mod_options.custom_font = "";
     /* MIDI */
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
@@ -2645,23 +2645,6 @@ void Dx7interface::attach_action_group_signals(){
     );
     action_group->add_action("delete_sound", sigc::mem_fun(*this, &Dx7interface::on_delete_sound));
 };
-void Dx7interface::on_as_raw_event(){
-    if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
-        get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_sensitive(true);
-    }else{
-        get_gwidget<Gtk::CheckButton>("checkbutton_32")->set_active(true);
-        get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_sensitive(false);
-    };
-};
-void Dx7interface::on_extra_param_event(){
-    if(get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active()){
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(true);
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(true);
-    }else{
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(false);
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(false);
-    };
-};
 
 void Dx7interface::attach_drawarea_signals(){
 
@@ -2781,16 +2764,20 @@ void Dx7interface::attach_signals(){
         dialog_save->close();
     });
 
+    /* Sound Name modification */
+    slot_sound_name_activate =(get_gwidget<Gtk::Entry>("entry_sound_name"))->signal_activate().connect( sigc::mem_fun(*this, &Dx7interface::on_sound_name_event));
+    slot_sound_name_change =(get_gwidget<Gtk::Entry>("entry_sound_name"))->signal_changed().connect( sigc::mem_fun(*this, &Dx7interface::on_sound_name_event));
+
+    (get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_extra_param_event));
+
+    /* Midi learn */
     slot_midi_learn_load = (get_gwidget<Gtk::Button>("btn_midi_learn_load"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_midi_learn_param_select));
 
     slot_midi_learn_save = (get_gwidget<Gtk::Button>("btn_midi_learn_save"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_midi_learn_param_save));
 
-    (get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_extra_param_event));
-
-    /* Midi learn */
     (get_gwidget<Gtk::ToggleButton>("toggle_midi_learn"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_midi_learn_event));
     (get_gwidget<Gtk::Button>("button_add_param"))->signal_clicked().connect(
@@ -2814,6 +2801,7 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_ptch_bnd_rng_event));
     slot_ptch_bnd_stp = (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_ptch_bnd_stp_event));
+
     /* tableau des controleurs */
     slot_md_whl_rng = (get_gwidget<Gtk::SpinButton>("md_whl_rng"))->signal_value_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_md_whl_rng_event));
@@ -5412,6 +5400,40 @@ void Dx7interface::redraw_all_curve(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
 };
 
+/* Edit sound name */
+
+/* Sound Name modification */
+Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
+    LOG_IN();
+    sound_name = sound_name.substr(0, 10);
+    unsigned int missing_char = 10 - sound_name.length();
+    for( int i=0; i < missing_char ;i++){
+        sound_name += ' ';
+    }
+    sound_name = str_to_ascii(sound_name);
+    LOG_OUT();
+    return sound_name;
+};
+void Dx7interface::set_sound_name(Glib::ustring sound_name){
+    LOG_IN();
+    bank_1_modif.sound->name = sound_name;
+    bank_data_model->remove(old_snum);
+    bank_data_model->insert(old_snum,SoundBankItem::create(old_snum,sound_name));
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)old_snum,nullptr,Gtk::ListScrollFlags::SELECT);
+        (get_gwidget<Gtk::Entry>("entry_sound_name"))->grab_focus();
+        return false; // Return false to remove the callback after one executio
+    });
+    LOG_OUT();
+};
+void Dx7interface::on_sound_name_event(){
+    LOG_IN();
+    std::string sound_name = (get_gwidget<Gtk::Entry>("entry_sound_name"))->get_text();
+    if( sound_name != (bank_1_modif.sound->name).c_str() ){
+        set_sound_name(check_sound_name(sound_name));
+    };
+    LOG_OUT();
+};
 
 /* MIDI Functions */
 void Dx7interface::on_midi_channel_send_event(){
@@ -5735,6 +5757,24 @@ void Dx7interface::on_panic_event(){
     msg[1]=0x7B;
     msg[2]=0x00;
     send_midi(SND_SEQ_EVENT_CONTROLLER, 3, msg);
+};
+/* Save box */
+void Dx7interface::on_as_raw_event(){
+    if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
+        get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_sensitive(true);
+    }else{
+        get_gwidget<Gtk::CheckButton>("checkbutton_32")->set_active(true);
+        get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_sensitive(false);
+    };
+};
+void Dx7interface::on_extra_param_event(){
+    if(get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active()){
+        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(true);
+        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(true);
+    }else{
+        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(false);
+        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(false);
+    };
 };
 
 /* ALGO */
@@ -8648,6 +8688,7 @@ void Dx7interface::on_kls_brk_pt_op6_event() {
     };
 };
 
+/** UI EVENTs **/
 void Dx7interface::set_aftrtch_assgn_event(int value){
     value = value/(127/bank_1_modif.sound->extra.functions.aftrtch_assgn.max);
     if(value <0){
@@ -10225,9 +10266,10 @@ void Dx7interface::set_transpose_event(int value){
     bank_1_modif.sound->algo.transpose.val=(int)value;
 };
 
-
 void Dx7interface::block_ui(){
     /*** Block UI ***/
+    slot_sound_name_activate.block(true);
+    slot_sound_name_change.block(true);
     /* algo */
     slot_algo.block(true);
     slot_feedback.block(true);
@@ -10431,6 +10473,8 @@ void Dx7interface::block_ui(){
 
 void Dx7interface::unblock_ui(){
     /*** Unblock UI ***/
+    slot_sound_name_activate.unblock();
+    slot_sound_name_change.unblock();
     /* algo */
     slot_algo.unblock();
     slot_feedback.unblock();
@@ -10637,6 +10681,8 @@ void Dx7interface::dettach_signals(){
     slot_bank_select.disconnect();
     /* Sound Select */
     slot_selected_sound_change.disconnect();
+    slot_sound_name_activate.disconnect();
+    slot_sound_name_change.disconnect();
 
     /* Algo */
     slot_algo.disconnect();

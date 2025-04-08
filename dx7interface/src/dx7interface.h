@@ -37,6 +37,7 @@
 /*** APP ***/
 #include <gxinterface/0.0.1/common.h>
 #include <gxinterface/0.0.1/gxmodule.h>
+//#include "../gxinterface/src/common.h"
 //#include "../gxinterface/src/gxmodule.h"
 #include <filesystem>
 #include "GtkClass.h"
@@ -75,14 +76,6 @@ class Dx7interface : public Gx_module, public Synth {
         using FunctionPtrFile = void (Dx7interface::*)(Glib::RefPtr<Gio::File>);  /* abstract for function with file parameter */
         using FunctionPtr3str = void (Dx7interface::*)(Glib::ustring,Glib::ustring,unsigned int);  /* abstract for function with 3 glib::ustring parameters */
 
-        FunctionPtr mute_hexter_functions[6] = {
-            &Dx7interface::on_mute_hexter_op1_event,
-            &Dx7interface::on_mute_hexter_op2_event,
-            &Dx7interface::on_mute_hexter_op3_event,
-            &Dx7interface::on_mute_hexter_op4_event,
-            &Dx7interface::on_mute_hexter_op5_event,
-            &Dx7interface::on_mute_hexter_op6_event
-        };
         #ifdef __linux__ 
                 /*** ALSA MIDI ***/
                 snd_seq_t* seq_handle = nullptr;                /* handler */
@@ -656,6 +649,14 @@ class Dx7interface : public Gx_module, public Synth {
         void mouse_mooves(double, double, Glib::ustring);
 
         /*** UI ***/
+        FunctionPtr mute_hexter_functions[6] = {
+            &Dx7interface::on_mute_hexter_op1_event,
+            &Dx7interface::on_mute_hexter_op2_event,
+            &Dx7interface::on_mute_hexter_op3_event,
+            &Dx7interface::on_mute_hexter_op4_event,
+            &Dx7interface::on_mute_hexter_op5_event,
+            &Dx7interface::on_mute_hexter_op6_event
+        };
         /** EVENTS / SIGNAL **/
         void block_ui();                       /* block all interface events */
         void unblock_ui();                     /* ... */
@@ -685,7 +686,11 @@ class Dx7interface : public Gx_module, public Synth {
         void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
         void on_bind_name(const Glib::RefPtr<Gtk::ListItem>&);
         void on_setup_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
-
+        void on_sound_name_event();
+        Glib::ustring check_sound_name(Glib::ustring);
+        void set_sound_name(Glib::ustring);
+        sigc::connection slot_sound_name_activate;
+        sigc::connection slot_sound_name_change;
         /** Functions parameters **/
         void init_global_fonction_parameter();
 
