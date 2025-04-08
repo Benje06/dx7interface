@@ -48,7 +48,6 @@ ifdef('lt_option',
     [LT_INIT([lt_option])],
     [LT_INIT])
 
-AC_LANG([C++])
 AC_C_INLINE
 AC_PROG_CC
 AC_PROG_CXX
@@ -59,6 +58,8 @@ AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+AC_LANG([C++])
+AC_LANG_COMPILER([C++])
 
 dnl CXXFLAGS="$CXXFLAGS -fexceptions -std=c++17 -Wall -Wextra"
 AC_SUBST(CXXFLAGS)
