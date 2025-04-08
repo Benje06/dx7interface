@@ -106,7 +106,7 @@
         return strm.str();
     };
     /* convert glib::ustring to ascii-7bit */
-    constexpr std::string str_to_ascii(const Glib::ustring& input) {
+    inline std::string str_to_ascii(const Glib::ustring& input) {
         std::string result;
         for( auto ch : input ){
             if( ch < 128 ){ // Keep ASCII characters
