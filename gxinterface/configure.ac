@@ -49,7 +49,7 @@ ifdef('lt_option',
     [LT_INIT])
 
 AC_LANG([C++])
-
+AC_C_INLINE
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CXXCPP
