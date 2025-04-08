@@ -42,7 +42,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
         set_app_name(MODULE_NAME+index);
     };
     module_options.cssfile = CSSFILE;
-    module_options.custom_font = "/home/jerome/Téléchargements/raster-fonts-6x8/raster-fonts-6x8.ttf";
+    module_options.custom_font = "";
     /* MIDI */
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
