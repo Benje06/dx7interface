@@ -33,10 +33,11 @@
 /*
  ***** Gx_Module *****
 */
-typedef struct st_mod_options {                 /* Module options */
+typedef struct st_mod_options {  /* Module options */
     Glib::ustring name="";
     Glib::ustring color="";
-    Glib::ustring cssfile="";								/* CSS file */
+    Glib::ustring cssfile="";     /* CSS file */
+    Glib::ustring icon="";
     std::string custom_font="";  /* custom font */
 } St_mod_options;
 
@@ -85,6 +86,7 @@ class Gx_module {
 		void set_style_file(Glib::ustring); // CSS to be call by the module
         void set_custom_font_file(Glib::ustring);
         /* all the app */
+        void set_icon_file(Glib::ustring);
 		void apply_style_to_screen(); // apply_style to the window
 		void clear_style_for_screen(Glib::RefPtr<Gtk::StyleProvider>);
         /* window */
@@ -99,7 +101,7 @@ class Gx_module {
         FcConfig* load_font_into_fontconfig(const std::string&);
         void load_font_into_pango(FcConfig*, const std::string&);
 	protected:
-        St_mod_options module_options;
+        St_mod_options mod_options;
 		/* prototype fonction of module call */
 		/*
 		*  using Loadplugfunc = std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring>(*)(uint8_t);

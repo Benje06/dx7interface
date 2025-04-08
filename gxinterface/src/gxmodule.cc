@@ -143,7 +143,18 @@ void Gx_module::set_custom_font_file(Glib::ustring custom_font_file){
     };
     LOG_OUT();
 };
-
+/* Set app icon */
+void Gx_module::set_icon_file(Glib::ustring icon_file){
+    LOG_IN();
+    if( std::filesystem::exists(icon_file.c_str()) ){
+        mod_options.icon=icon_file;
+        std::cout << _("Icon file: ")<< mod_options.icon << std::endl;
+    }else{
+        std::cerr<< _("Warning: the icon file ")<< icon_file << _(" doesn't exist or is not readable")<< std::endl;
+        mod_options.icon="";
+    };
+    LOG_OUT();
+};
 /* WINDOW */
 void Gx_module::create_window(){
     LOG_IN();
@@ -159,6 +170,22 @@ void Gx_module::create_window(){
         main_window->set_default_size(1024, 768);
         //clear_style_of_window(main_window);
         //apply_style_to<Gtk::Window>(main_window);
+
+        /*
+         * application icon try
+        auto icon_theme = Gtk::IconTheme::get_for_display(Gdk::Display::get_default());
+        //icon_theme->add_search_path(mod.extpath.path + "../data/images/hicolor/apps/48x48" );
+        //icon_theme->add_search_path( mod.extpath.path + "../data/images/hicolor/apps/48x48" );
+        if (icon_theme->has_icon(get_app_name())) {
+            main_window->set_default_icon_name(get_app_name());
+            main_window->set_icon_name(get_app_name());
+            std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
+        }else{
+            std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
+            std::cout << "No Icon named "<< get_app_name() << std::endl;
+        }
+        */
+
         apply_style_to_screen();
         main_window->set_visible();
         std::static_pointer_cast<Gx_module>(module_pointer)->set_main_window(main_window);
@@ -216,7 +243,7 @@ void Gx_module::apply_style_to(widgetType* widget){*/
 
 };*/
 St_mod_options Gx_module::get_module_options(){
-    return module_options;
+    return mod_options;
 };
 
 /* Font configuration */
@@ -410,6 +437,7 @@ bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
 		        auto [mod_pointer, mod_options] = module_func(index);
                 set_style_file(mod_options.cssfile);
                 set_custom_font_file(mod_options.custom_font);
+                set_icon_file(mod_options.icon);
                 module_pointer = mod_pointer;
                 rootbox = std::static_pointer_cast<Gx_module>(module_pointer)->get_rootbox();
                 set_app_name( (rootbox)->get_name() );
