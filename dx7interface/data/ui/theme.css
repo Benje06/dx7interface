@@ -19,9 +19,50 @@
  * │      ╰── [rubberband]
  * ╰── [rubberband]
  */
+.sound_name{
+    font-size:0.90em;
+    font-family: "Raster Fonts 6x8";
+    color: #061820;
+    background-color:#738c75;
+    /*font-size:30px;*/
+}
+entry{
+    font-size:0.90em;
+    font-family: "Raster Fonts 6x8";
+    color: #061820;
+    background-color:#648180;
+}
+.sound_label {
+    font-size:0.90em;
+    font-family: "Raster Fonts 6x8";
+    color: #061820;
+    /*background-color:#243c41;*/
+}
+columnview row{
+    /* blue:
+     *      base:          #425654 or #3e5256 30lux
+     *      1st corrected: #435655 30lux
+     *      2nd corrected: #4d6564 35lux perfect
+     *      3nd corrected: #5c6d70 selected
+     *      40lux 12sat :#5a7271;
+     */
+    background-color:#648180;
+    border:1px solid black;
+}
+columnview row:selected{
+    /* yellow:
+     *      base:           #49554a
+     *      1st corrected:  #5a6d5b
+     *      2nd correct:    #738c75
+     *      border:         #8fa391
+     */
+    background-color:#738c75;
+    border:2px solid #738c75;
+}
 .frameloadbank columnview{
     min-width:160px;
 }
+
 .frameloadbank columnview listview{
     min-width:160px;
     color:white;
@@ -106,10 +147,7 @@ entry {
     min-width: 0;
     padding: 0 0;
 }
-.sound_name{
-    font-family: "Raster Fonts 6x8";
-    /*font-size:30px;*/
-}
+
 /*
 scale[.fine-tune][.marks-before][.marks-after]
 ├── [value][.top][.right][.bottom][.left]
