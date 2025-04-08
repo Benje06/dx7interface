@@ -26,7 +26,7 @@ Installer les outils de compilation ( build-essential )
     la librairie alsa (libasound2-dev)
     l'outils de build du paquets deb (checkinstall)
 "
-sudo apt-get install build-essential autoconf autogen automake autotools-dev libtool gettext libgtkmm-3.0-dev libasound2-dev checkinstall
+sudo apt-get install build-essential autoconf autogen automake autotools-dev libtool gettext libgtkmm-4.0-dev libasound2-dev checkinstall
 
 echo "Enlever l'ancien gxinterface
     nettoyer les repertoire des sources (make distclean ou make clean)
@@ -39,7 +39,7 @@ echo "Enlever l'ancien gxinterface
 "
 cd ../../gxinterface
 sudo apt remove -y gxinterface
-make distclean || make clean
+make clean && make distclean
 ./autogen.sh --prefix=/usr
 make
 sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y 
@@ -53,7 +53,7 @@ echo "Enlever l'ancien dx7interface
     ## make distclean || make clean && NOCONFIGURE=no  ./autogen.sh --prefix=/usr && sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y 
 "
 cd ../dx7interface
-make distclean || make clean
+make clean && make distclean
 ./autogen.sh --prefix=/usr
 sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y 
 

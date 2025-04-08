@@ -1,27 +1,37 @@
 ### DOC
-doc d'utilisation*
+doc d'utilisation* (DEBIAN)
 page html
 normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
 normalisation gx_module (fonction load,
 
+## Dossier DX7
+clean dossier ( sous repertoire: utilitaires(bouclemidi), instruments(.ins), banque de sons(.syx/.fct), controller(midilearn), ) 
+ajouter deepmind 12 param
+
 # LANG
 traductions
 
 # effectivité
-evenements MIDI (temporisation)
+evenements MIDI (temporisation, ?mode omni?)
 ecriture fichier des extra parameters( compatible tf1)
-* reception/envoi en midi (send bank(32), ?plusieurs sons?)
-multiplateforme (midi/interface) drumkit, Juce ???
+* reception/envoi en midi (send bank(32), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
+multiplateforme (midi/interface) libremidi (prefered but not compiled for ucrt64), rtmidi(win done with ucrt64)  ??? Juce (license prorietaire), drumkit (sequenceur midi)
+	Listen midi(windows)
+	Packeag (windows)
 
 # Interface
-* insert/replace/delete/(moove)
+Select midi device from interface
+rename midi learn function list
+* insert/delete/(moove)
 fenetre secondaires (option, module)
 refonte interface( size/expand des elements)
 * son par defaut (son init)
 boutons randomize
 
 ### CODE
+factorisation ( ?receive and load bank? )
+genericité / moove to other class (synth,...) ?midi learn,lecture/ecriture,compare?
 synth generique (voir avec marc)
 gestion d'exceptions
 filtre des variables utilisateurs ???
