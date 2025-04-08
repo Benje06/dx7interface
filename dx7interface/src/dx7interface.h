@@ -511,18 +511,18 @@ class Dx7interface : public Gx_module, public Synth {
         Gtk::PopoverMenu* m_popover_menu = nullptr;
         /* save dialog */
         void create_save_dialog();
-        Gtk::Window* dialog_bank_save = nullptr;
-        Gtk::Button* button_bank_save = nullptr;
+        Gtk::Window* dialog_save = nullptr;
+        Gtk::Button* button_save = nullptr;
 
         Gtk::CheckButton* checkbutton_bulk = nullptr;
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            Gtk::FileDialog* file_dialog_bank_select = nullptr;
-            Gtk::FileDialog* file_dialog_bank_save = nullptr;
+            Gtk::FileDialog* file_dialog_select = nullptr;
+            Gtk::FileDialog* file_dialog_save = nullptr;
             Gtk::FileDialog* file_dialog_param_select = nullptr;
             Gtk::FileDialog* file_dialog_param_save = nullptr;
         #else
-            Gtk::FileChooserDialog* file_dialog_bank_select = nullptr;
-            Gtk::FileChooserDialog* file_dialog_bank_save = nullptr;
+            Gtk::FileChooserDialog* file_dialog_select = nullptr;
+            Gtk::FileChooserDialog* file_dialog_save = nullptr;
             Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
             Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
             Gtk::Button* button_accept = nullptr;
