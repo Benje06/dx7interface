@@ -12,22 +12,28 @@ ajouter deepmind 12 param
 # LANG
 traductions
 
-# effectivité
+# Fonctionalitées
 evenements MIDI (temporisation, ?mode omni?)
 ecriture fichier des extra parameters( compatible tf1)
 * reception/envoi en midi (send bank(32), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
 multiplateforme (midi/interface) libremidi (prefered but not compiled for ucrt64), rtmidi(win done with ucrt64)  ??? Juce (license prorietaire), drumkit (sequenceur midi)
-	Listen midi(windows)
-	Packeag (windows)
+	Listen midi (windows)
+	Package (windows)
 
 # Interface
-Select midi device from interface
+? Select midi device from interface ?
 rename midi learn function list
 * insert/delete/(moove)
 fenetre secondaires (option, module)
 refonte interface( size/expand des elements)
 * son par defaut (son init)
-boutons randomize
+randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, en fonction dela frequence, ...) )
+	- que ce soit audible
+	- "musicale"
+	- 
+#Theme
+test css valeur pour themes clair/fonce.
+inclusion de font ( install, chargment dynamic) 
 
 ### CODE
 factorisation ( ?receive and load bank? )
