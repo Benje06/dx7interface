@@ -102,6 +102,21 @@ void Dx7interface::create_bank_voices_list(){
     bank_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_bank"));
     bank_selection_model->set_autoselect(false);
     bank_selection_model->set_model(bank_data_model);
+
+    /* Sound Select */
+    // auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
+        sigc::bind(
+            sigc::mem_fun(*this, &Dx7interface::on_setup_sound_number_label), Gtk::Align::CENTER));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_bind().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_bind_num));
+    // auto factory_name=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_name"));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_setup().connect(
+        sigc::bind(
+            sigc::mem_fun(*this, &Dx7interface::on_setup_sound_name_label), Gtk::Align::CENTER));
+    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_bind().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_bind_name));
+
     slot_selected_sound_change = bank_selection_model->signal_selection_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_selected_sound_change));
 
@@ -110,21 +125,8 @@ void Dx7interface::create_bank_voices_list(){
         sigc::mem_fun(*this, &Dx7interface::on_bank_reveal));
     slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
         sigc::bind(
-        sigc::mem_fun(*this, &Dx7interface::on_file_select),
-        &Dx7interface::set_bank )
+            sigc::mem_fun(*this, &Dx7interface::on_file_select), &Dx7interface::set_bank )
     );
-
-    /* Sound Select */
-    // auto factory_num=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_num"));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_setup().connect(
-        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_num"))->signal_bind().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_bind_num));
-    // auto factory_name=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_name"));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_setup().connect(
-        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_label), Gtk::Align::START));
-    (get_gwidget<Gtk::SignalListItemFactory>("factory_name"))->signal_bind().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_bind_name));
 };
 
 void Dx7interface::create_param_list(){
@@ -2534,31 +2536,40 @@ void Dx7interface::on_bank_reveal(){
 
 /* bank view / columnview population functions */
 void Dx7interface::on_bind_num(const Glib::RefPtr<Gtk::ListItem>& list_item){
-    auto col = std::dynamic_pointer_cast<SoundBankItem>(list_item->get_item());
-    if (!col){ return; };
     auto label = dynamic_cast<Gtk::Label*>(list_item->get_child());
-    if (!label){ return; };
-    label->set_text(Glib::ustring::format(col->get_number()));
+    if(label ){
+        auto item = std::dynamic_pointer_cast<SoundBankItem>(list_item->get_item());
+        if( item ){
+            label->set_text(Glib::ustring::format(item->get_number()));
+        };
+    };
 };
-void Dx7interface::on_bind_name(const Glib::RefPtr<Gtk::ListItem>& list_item){
-    auto col = std::dynamic_pointer_cast<SoundBankItem>(list_item->get_item());
-    if (!col){ return; };
+void Dx7interface::on_bind_name(const std::shared_ptr<Gtk::ListItem>& list_item){
+    LOG_IN();
     auto label = dynamic_cast<Gtk::Label*>(list_item->get_child());
-    if (!label){ return; };
-    label->set_text(col->get_name());
+    auto item =  std::dynamic_pointer_cast<SoundBankItem>(list_item->get_item());
+    if( label && item){
+            label->set_text(item->get_name());
+    };
+    LOG_OUT();
 };
-void Dx7interface::on_setup_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align halign){
+void Dx7interface::on_setup_sound_name_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align halign){
+    auto label = Gtk::make_managed<Gtk::Label>("", halign);
+    label->get_style_context()->add_class("sound_label");  // Add custom CSS class
+    list_item->set_child(*label);
+};
+void Dx7interface::on_setup_sound_number_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align halign){
     auto label = Gtk::make_managed<Gtk::Label>("", halign);
     label->get_style_context()->add_class("sound_label");  // Add custom CSS class
     list_item->set_child(*label);
 };
 
 void Dx7interface::on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>& list_item){
-    auto col = std::dynamic_pointer_cast<ParamItem>(list_item->get_item());
-    if (!col){ return; };
     auto label = dynamic_cast<Gtk::Label*>(list_item->get_child());
-    if (!label){ return; };
-    label->set_text(col->get_name());
+    auto item =  std::dynamic_pointer_cast<SoundBankItem>(list_item->get_item());
+    if( label && item){
+        label->set_text(item->get_name());
+    };
 };
 void Dx7interface::on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align halign){
     auto label = Gtk::make_managed<Gtk::Label>("", halign);
@@ -5404,47 +5415,46 @@ void Dx7interface::redraw_all_curve(){
 
 /* Sound Name modification */
 Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
-    LOG_IN();
+    // LOG_IN();
     sound_name = sound_name.substr(0, 10);
     unsigned int missing_char = 10 - sound_name.length();
     for( int i=0; i < missing_char ;i++){
         sound_name += ' ';
     }
     sound_name = str_to_ascii(sound_name);
-    LOG_OUT();
+    // LOG_OUT();
     return sound_name;
 };
 void Dx7interface::set_sound_name(Glib::ustring sound_name){
-    LOG_IN();
+    // LOG_IN();
     bank_1_modif.sound->name = sound_name;
-    bank_data_model->remove(old_snum);
-    bank_data_model->insert(old_snum,SoundBankItem::create(old_snum,sound_name));
-    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
-        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)old_snum,nullptr,Gtk::ListScrollFlags::SELECT);
-        (get_gwidget<Gtk::Entry>("entry_sound_name"))->grab_focus();
-        return false; // Return false to remove the callback after one executio
-    });
-    LOG_OUT();
+    auto new_sound = SoundBankItem::create(old_snum,sound_name);
+    if ( bank_data_model->get_n_items() == 0) {
+        bank_data_model->insert(0, new_sound);
+    }else{
+        bank_data_model->splice(old_snum, 1, {new_sound});  // Replace item at same position
+    };
+    // LOG_OUT();
 };
 void Dx7interface::on_sound_name_event(){
-    LOG_IN();
+    // LOG_IN();
     std::string sound_name = (get_gwidget<Gtk::Entry>("entry_sound_name"))->get_text();
     if( sound_name != (bank_1_modif.sound->name).c_str() ){
         set_sound_name(check_sound_name(sound_name));
     };
-    LOG_OUT();
+    // LOG_OUT();
 };
 
 /* MIDI Functions */
 void Dx7interface::on_midi_channel_send_event(){
-    LOG_IN();
+    // LOG_IN();
     channel_send = (get_gwidget<Gtk::SpinButton>("midi_channel_send"))->get_value()-1;
-    LOG_OUT();
+    // LOG_OUT();
 };
 void Dx7interface::on_midi_channel_receive_event(){
-    LOG_IN();
+    // LOG_IN();
     channel_receive = (get_gwidget<Gtk::SpinButton>("midi_channel_receive"))->get_value()-1;
-    LOG_OUT();
+    // LOG_OUT();
 };
 
 

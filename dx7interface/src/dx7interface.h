@@ -684,8 +684,9 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_bank_select;
         /* populate columnview */
         void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
-        void on_bind_name(const Glib::RefPtr<Gtk::ListItem>&);
-        void on_setup_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
+        void on_bind_name(const std::shared_ptr<Gtk::ListItem>&);
+        void on_setup_sound_number_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
+        void on_setup_sound_name_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
         void on_sound_name_event();
         Glib::ustring check_sound_name(Glib::ustring);
         void set_sound_name(Glib::ustring);

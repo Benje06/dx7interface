@@ -8,41 +8,47 @@
 /* Class to manager Items in ListStore Sound_bank*/
 class SoundBankItem : public Glib::Object {
     private:
-        unsigned int i_number;         /*internal number*/
-        Glib::ustring i_name;   /*internal name*/
-        SoundBankItem(unsigned int, const Glib::ustring&);
-    public:
-        static Glib::RefPtr<SoundBankItem> create(unsigned int number, const Glib::ustring& name){
-            return Glib::make_refptr_for_instance<SoundBankItem>(new SoundBankItem(number, name));
-        };
-        void set_number(unsigned int num) { i_number = num; };
-        void set_name(Glib::ustring name) { i_name = name; };
-        unsigned int get_number() { return i_number; };
-        Glib::ustring get_name() { return i_name; };
-};
+        // Protected constructor to enforce the use of the factory method
+        SoundBankItem(unsigned int number, const Glib::ustring& name)
+        : Glib::ObjectBase("SoundBankItem"),
+        i_number(*this, "number", number),  // Initialize properties
+        i_name(*this, "name", name) {}
+        // Properties
+        Glib::Property<unsigned int> i_number;  // Internal number property
+        Glib::Property<Glib::ustring> i_name;   // Internal name property
 
-/*class Factory {
     public:
-        void on_bind_num(void*, const Glib::RefPtr<Gtk::ListItem>&);
-        void on_bind_name(void*, const Glib::RefPtr<Gtk::ListItem>&);
-};*/
+        // Factory method for creating instances
+        static Glib::RefPtr<SoundBankItem> create(unsigned int number, const Glib::ustring& name) {
+            return Glib::make_refptr_for_instance<SoundBankItem>(new SoundBankItem(number, name));
+        }
+
+        // Setters
+        void set_number(unsigned int num) {
+            std::cout <<"SET NUMBER CALLED" << std::endl;
+            i_number.set_value(num);
+        }
+        void set_name(const Glib::ustring& name) {
+            std::cout <<"SET NAME CALLED" << std::endl;
+            i_name.set_value(name);
+        }
+
+        // Getters (marked as const)
+        unsigned int get_number() const { return i_number.get_value(); }
+        Glib::ustring get_name() const { return i_name.get_value(); }
+};
 
 /* Class to manager Items in ListStore Sound_bank*/
 class ParamItem : public Glib::Object {
-private:
-    Glib::ustring i_name;   /*internal name*/
-    ParamItem(const Glib::ustring&);
-public:
-    static Glib::RefPtr<ParamItem> create(const Glib::ustring& name){
-        return Glib::make_refptr_for_instance<ParamItem>(new ParamItem(name));
-    };
-    Glib::ustring get_name() { return i_name; };
+    private:
+        Glib::ustring i_name;   /*internal name*/
+        ParamItem(const Glib::ustring&);
+    public:
+        static Glib::RefPtr<ParamItem> create(const Glib::ustring& name){
+            return Glib::make_refptr_for_instance<ParamItem>(new ParamItem(name));
+        };
+        Glib::ustring get_name() { return i_name; };
 };
-
-/*class FactoryParam {
-public:
-    void on_bind_name(void*, const Glib::RefPtr<Gtk::ListItem>&);
-};*/
 
 class DropDownScrollController{
     private:
