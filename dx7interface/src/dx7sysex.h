@@ -165,14 +165,17 @@
 
     template <unsigned int i>
     struct St_dx7sysex{
+        // TODO: use vector
+        //std::vector<St_dx7sysex_1> sound;
         St_dx7sysex_1 sound[i];
         Glib::ustring name;
 
     };
     typedef struct {
+        //std::vector<St_dx7sysex_1> sound;
         St_dx7sysex_1 sound[1]; // Flexible array member
         //Glib::ustring name;
-        std::string name;
+        Glib::ustring name;
     }*Bank_ptr;
 
 #endif /* dx7sysex_H */

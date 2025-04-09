@@ -77,21 +77,21 @@ class Dx7interface : public Gx_module, public Synth {
         using FunctionPtr3str = void (Dx7interface::*)(Glib::ustring,Glib::ustring,unsigned int);  /* abstract for function with 3 glib::ustring parameters */
 
         #ifdef __linux__ 
-                /*** ALSA MIDI ***/
-                snd_seq_t* seq_handle = nullptr;                /* handler */
-                snd_seq_system_info_t* info = nullptr;          /* info */
-                snd_seq_event_t* ev = nullptr;                  /* evenement */
-                size_t in_buff_size, out_buff_size;             /* buffer d'entré et de sortie */
-                std::vector<uint8_t> sysex_buffer;              // Buffer to store SysEx fragments
+            /*** ALSA MIDI ***/
+            snd_seq_t* seq_handle = nullptr;                /* handler */
+            snd_seq_system_info_t* info = nullptr;          /* info */
+            snd_seq_event_t* ev = nullptr;                  /* evenement */
+            size_t in_buff_size, out_buff_size;             /* buffer d'entré et de sortie */
+            std::vector<uint8_t> sysex_buffer;              // Buffer to store SysEx fragments
         #endif
         /* Boolean */
         bool lock = false;
-        bool compare = false;                   /* set if compare button is activate */
-        bool send_extra_params = false;         /* set if send_extra paraameter is activate */
-        bool write_extra_params = false;         /* set if send_extra paraameter is activate */
-        bool mode_tf1 = false;                   /* mode tf1 = fonction parameter by sound */
-        bool receive = false;                    // set if receive mode is activate
-        bool uncomplete = false;                 // bool for uncomplete sysex message
+        bool compare = false;                   // set if compare button is activate
+        bool send_extra_params = false;         // set if send_extra paraameter is activate
+        bool write_extra_params = false;        // set if send_extra paraameter is activate
+        bool mode_tf1 = false;                  // mode tf1 = fonction parameter by sound
+        bool receive = false;                   // set if receive mode is activate
+        bool uncomplete = false;                // bool for uncomplete sysex message
 
         /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
@@ -105,13 +105,14 @@ class Dx7interface : public Gx_module, public Synth {
         St_dx7sysex<128> bank_128_modif;        /* ... */
 
         /* default write format */
-        unsigned int export_config = DX7_32;
-        unsigned int save_type = BANK;
+        unsigned int export_config = DX7_32;     // DX7_1 DX7_32 DX7_128 DX7_RAW DX7_SYX
+        unsigned int save_type = BANK;          // BANK or SOUND
 
         /* Bank */
-        unsigned int bank_nb_sound = 0;                                /* number of sound in the current loaded bank 1/32/128 */
-        unsigned int old_snum = 0;                                     /* old selected sound number memo for set_original_sound */
-        Glib::RefPtr<Gio::File> bank_file=nullptr;              /* pointeur de lecture de fichier */
+        unsigned int bank_nb_sound = 0;                            // number of sound in the current loaded bank 1/32/128
+        unsigned int snum = 0;                                 // selected sound number memo for set_original_sound
+        unsigned int old_snum = 0;                                 // Previous selected sound number memo for set_original_sound
+        Glib::RefPtr<Gio::File> bank_file=nullptr;                  // pointeur de lecture de fichier
         Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
@@ -125,6 +126,9 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> bank_data_model=nullptr; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> bank_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> bank_factory=nullptr;
+
+        template<class ListStoreType>
+        void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name);
 
         /* midi learn */
         /* param list view */
@@ -542,9 +546,11 @@ class Dx7interface : public Gx_module, public Synth {
         void set_bank_sounds(Glib::ustring, Glib::ustring, unsigned int);
         void load_file(Glib::RefPtr<Gio::File>,FunctionPtr3str);
         void receive_bank(std::vector<uint8_t>);
-        void receive_voice(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
-        void receive_voice_by_byte(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
-        void receive_paramters(uint8_t, St_dx7sysex_1*, std::vector<uint8_t>);
+        void receive_voice(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
+        void receive_voice_by_byte(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
+        void receive_paramters(St_dx7sysex_1*, std::vector<uint8_t>);
+        /* update */
+        void update_bank_modif();
         /* restore */
         void restore_origin();
         void on_restore_bank();
@@ -580,8 +586,8 @@ class Dx7interface : public Gx_module, public Synth {
 
         /** VOICE  **/
         /* seek voice value from bank file and write it to sound */
-        void seek_voice(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
-        void seek_voice_by_byte(uint8_t, st_dx7sysex_1*);     // get voice param from file to fill sound struct
+        void seek_voice(st_dx7sysex_1*);     // get voice param from file to fill sound struct
+        void seek_voice_by_byte(st_dx7sysex_1*);     // get voice param from file to fill sound struct
         void seek_parameters(Glib::ustring, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
         void seek_voice_parameters(St_dx7sysex_1*);
         /* send voice over midi */

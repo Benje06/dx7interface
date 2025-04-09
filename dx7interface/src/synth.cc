@@ -137,7 +137,7 @@ void Synth::deconnect_midi(){
 };
 
 void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
-    LOG_IN();
+    //LOG_IN();
     /* TODO; use seq queue */
     //#ifdef USE_ALSA_MIDI
     //std::cerr << (int)block_midi_msg << std::endl;
@@ -175,7 +175,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
             // TODO clear message;
         #endif
     };
-    LOG_OUT();
+    //LOG_OUT();
 };
 
 
