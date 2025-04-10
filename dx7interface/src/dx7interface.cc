@@ -65,7 +65,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODUL
     // create list function
     create_param_list();
     // Save dialog
-    create_save_dialog();
+    create_dialogs();
     // Create rigth click menu
     create_popover_menu();
     // attach GUI signals
@@ -633,7 +633,7 @@ void Dx7interface::create_popover_menu(){
     get_gwidget<Gtk::ColumnView>("columnview_bank")->insert_action_group("menu", action_group);
 };
 
-void Dx7interface::create_save_dialog() {
+void Dx7interface::create_dialogs() {
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
         file_dialog_select = get_gwidget<Gtk::FileDialog>("FileDialog_select");
         file_dialog_save = get_gwidget<Gtk::FileDialog>("FileDialog_save");
@@ -658,17 +658,25 @@ void Dx7interface::create_save_dialog() {
         file_dialog_param_save->add_button("_Cancel", Gtk::ResponseType::CANCEL);
         file_dialog_param_save->set_action(Gtk::FileChooser::Action::SAVE);
     #endif
+    // dialog for
+    file_dialog_select->set_modal(true);
+    file_dialog_save->set_modal(true);
+    file_dialog_param_select->set_modal(true);
+    file_dialog_param_save->set_modal(true);
+    // dialog for save bank and sound params
     button_save = get_gwidget<Gtk::Button>("btn_save");
     dialog_save = get_gwidget<Gtk::Window>("dialog_save");
     dialog_save->set_default_size(20, 10);
     dialog_save->set_hide_on_close(true);
     dialog_save->set_modal(true);
-    file_dialog_select->set_modal(true);
-    file_dialog_save->set_modal(true);
-    file_dialog_param_select->set_modal(true);
-    file_dialog_param_save->set_modal(true);
     get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_32")));
     get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")));
+    // dialog for insert at param
+    button_insert = get_gwidget<Gtk::Button>("btn_insert");
+    dialog_insert = get_gwidget<Gtk::Window>("dialog_insert");
+    dialog_insert->set_default_size(20, 10);
+    dialog_insert->set_hide_on_close(true);
+    dialog_insert->set_modal(true);
 };
 
 void Dx7interface::OpenFileSaveDialog(){
@@ -778,14 +786,13 @@ void Dx7interface::OpenFileSaveDialog(){
         #endif
     };
 };
-
-void Dx7interface::OpenFileSelectDialog(Glib::ustring title,Glib::ustring filename){
+void Dx7interface::OpenDialogSave(Glib::ustring title,Glib::ustring filename){
     // GENERIC ??
     try{
             dialog_save->set_transient_for(*(get_window()));
             dialog_save->set_title(title);
-            Glib::ustring save_label=title+": "+filename;
-            get_gwidget<Gtk::Label>("label_save_name")->set_label(save_label);
+            Glib::ustring label_save_name=title+": "+filename;
+            get_gwidget<Gtk::Label>("label_save_name")->set_label(label_save_name);
             auto spinbutton_save_start = get_gwidget<Gtk::SpinButton>("spinbutton_save_start");
             /* set the upper limit to bank_nb_sound less 32 */
             double lower, upper;
@@ -808,7 +815,27 @@ void Dx7interface::OpenFileSelectDialog(Glib::ustring title,Glib::ustring filena
         //throw std::runtime_error(err_msg);
     };
 };
-
+void Dx7interface::OpenFileInsertDialog(Glib::ustring title,Glib::ustring){
+    // GENERIC ??
+    try{
+        dialog_insert->set_transient_for(*(get_window()));
+        dialog_insert->set_title(title);
+        Glib::ustring label_insert=title+": ";
+        get_gwidget<Gtk::Label>("label_insert")->set_label(label_insert);
+        auto spinbutton_insert_start = get_gwidget<Gtk::SpinButton>("spinbutton_insert_start");
+        /* set the upper limit to bank_nb_sound less 32 */
+        double lower, upper;
+        spinbutton_insert_start->get_range(lower, upper);
+        spinbutton_insert_start->set_range(lower, (bank_nb_sound));
+        /* set visible for bank save */
+        dialog_insert->present();
+    }catch (const std::exception & ex) {
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
+        //throw std::runtime_error(err_msg);
+    };
+};
 
 void Dx7interface::on_midi_learn_param_save(){
     file_dialog_param_save->set_title("Select file");
@@ -917,7 +944,7 @@ void Dx7interface::on_file_select(FunctionPtrFile funct){
     // GENERIC MOOVE TO SYNTH
     LOG_IN();
     try{
-        file_dialog_select->set_title("Select bank");
+        file_dialog_select->set_title("Select File");
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
             file_dialog_select->set_initial_folder(initial_folder_open);
             file_dialog_select->open( *(get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
@@ -1200,6 +1227,7 @@ void Dx7interface::on_restore_sound(){
     LOG_OUT();
 };
 
+/*** INSERT / REPLACE / DELETE ***/
 void Dx7interface::on_replace_sound(Glib::RefPtr<Gio::File> file){
     load_file(file,&Dx7interface::replace_sound);
 }
@@ -1207,40 +1235,14 @@ void Dx7interface::replace_sound(Glib::ustring file_name, Glib::ustring file_bas
     LOG_IN();
     block_ui();
     block_midi();
-    std::cout << "bank nb sound: " << (int)bank_nb_sound << std:: endl;
-    std::cout << "snum: " << (int)snum << std:: endl;
-    /*switch( bank_nb_sound ){
-        case 1:*/
-            std::cout << "Replace sound 1: " << bank_1_modif.sound->name;
-            if( file_size == 128 ){
-                seek_voice(&bank_1_modif.sound[0]);
-            }else{
-                seek_voice_by_byte(&bank_1_modif.sound[0]);
-            }
-            seek_parameters(file_base, &bank_1_modif.sound[0]);
-            std::cout << " With: " << bank_1_modif.sound->name << std::endl;
-    /*        break;
-        case 32:
-            std::cout << "Replace sound 32: " << bank_32_modif.sound->name;
-            if( file_size == 128 ){
-                seek_voice(&bank_32_modif.sound[snum]);
-            }else{
-                seek_voice_by_byte(&bank_32_modif.sound[0]);
-            }
-            seek_parameters(file_base, &bank_32_modif.sound[snum]);;
-            std::cout << " With: " << bank_32_modif.sound->name << std::endl;
-            // break;
-        case 128:
-            std::cout << "Replace sound 128: " << bank_128_modif.sound->name;
-            if( file_size == 128 ){
-                seek_voice(&bank_128_modif.sound[snum]);
-            }else{
-                seek_voice_by_byte(&bank_128_modif.sound[0]);
-            }
-            seek_parameters(file_base, &bank_128_modif.sound[snum]);
-            std::cout << " With: " << bank_128_modif.sound->name << std::endl;
-            break;
-    };*/
+    std::cout << "Replace sound: " << bank_1_modif.sound->name;
+    if( file_size == 128 ){
+        seek_voice(&bank_1_modif.sound[0]);
+    }else{
+        seek_voice_by_byte(&bank_1_modif.sound[0]);
+    }
+    seek_parameters(file_base, &bank_1_modif.sound[0]);
+    std::cout << " With: " << bank_1_modif.sound->name << std::endl;
     save_type=SOUND;
     update_bank_modif();
     set_voice(&bank_1_modif.sound[0]);
@@ -1253,24 +1255,151 @@ void Dx7interface::replace_sound(Glib::ustring file_name, Glib::ustring file_bas
     LOG_OUT();
 };
 
-
-/* insert/replace/delete */
-void Dx7interface::on_insert_at(){
-    /* Open dialog insert at position
-     *  insert at position ? spinbutton
-     * modes :
-     *  default push other sound to next position
-     *  si taille banque = 32 et position 32 => concatene -> banque 128 sons ( 32 + x sons + x init sounds)
-     *  si taille banque = 1 => concatene -> banque 32/128 sons ( 1 + x sons + x init )
-     *  si taille banque 128 => insert at and push out others
-     */
-    LOG_IN();
-    LOG_OUT();
+std::tuple<unsigned int,std::pair<Dx7interface::BankVariant, Dx7interface::BankVariant>> Dx7interface::get_banks_dest(unsigned int total_snd){
+    unsigned int bank_nb_sound_dest;
+    if( total_snd > 32 ){                     // switch to 128 sounds
+        bank_nb_sound = 128;
+        return std::make_tuple(
+            bank_nb_sound,
+            std::make_pair(std::ref(bank_128_origin), std::ref(bank_128_modif))
+        );
+    }else{    // switch to 32 sounds
+        bank_nb_sound = 32;
+        return std::make_tuple(
+            bank_nb_sound,
+            std::make_pair(std::ref(bank_32_origin), std::ref(bank_32_modif))
+        );
+    };
 };
+std::pair<Dx7interface::BankVariant, Dx7interface::BankVariant> Dx7interface::get_banks_source(){
+    switch( bank_nb_sound ){
+        case 1:{
+            return std::make_pair(std::ref(bank_1_origin), std::ref(bank_1_modif));
+            break;
+        };
+        case 32:{
+            return std::make_pair(std::ref(bank_32_origin), std::ref(bank_32_modif));
+            break;
+        };
+        case 128:{
+            return std::make_pair(std::ref(bank_128_origin), std::ref(bank_128_modif));
+            break;
+        };
+        default:
+            throw std::runtime_error("Invalid value for bank_nb_sound");
+    };
+};
+void Dx7interface::copy_bank(BankVariant& bank_origin_src, BankVariant& bank_origin_dest, BankVariant& bank_modif_src, BankVariant& bank_modif_dest, unsigned int src_size, unsigned int dst_size){
+    std::visit([&](auto& src_origin, auto& dest_origin, auto& src_modif, auto& dest_modif) {
+        dest_origin.get().name = src_origin.get().name;
+        dest_modif.get().name = src_modif.get().name;
+        for (unsigned int i = 0; i < dst_size && i < src_size; i++) {
+            dest_modif.get().sound[i] = src_modif.get().sound[i];
+            dest_origin.get().sound[i] = src_origin.get().sound[i];
+        }
+    }, bank_origin_src, bank_origin_dest, bank_modif_src, bank_modif_dest);
+};
+void Dx7interface::read_voice(BankVariant bank_origin_dest, unsigned int max_read_pos, bool byte_flag){
+    std::visit([&](auto& bank_origin) {
+        if(byte_flag){
+            for( ; snum < bank_nb_sound && snum < max_read_pos; snum++ ){
+                seek_voice_by_byte(&bank_origin.get().sound[snum]);
+            };
+        }else{
+            for( ; snum < bank_nb_sound && snum < max_read_pos; snum++ ){
+                seek_voice(&bank_origin.get().sound[snum]);
+            };
+        };
+    }, bank_origin_dest);
+};
+void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int total_snd, bool byte_flag){
+
+    unsigned int bank_nb_sound_src = bank_nb_sound;
+
+    auto [bank_origin_src, bank_modif_src] = get_banks_source();                            // return the destination bank depending of total_snd
+    //BankVariant& bank_origin_src = bank_source_pair.first.get();
+    //BankVariant& bank_modif_src = bank_source_pair.second.get();
+
+    auto [bank_nb_sound_dest, banks_pair] = get_banks_dest(total_snd); // return the destination bank depending of total_snd
+    auto [bank_origin_dest,bank_modif_dest] = banks_pair;
+    if(bank_nb_sound_src != bank_nb_sound_dest){
+        copy_bank(
+            bank_origin_src,
+            bank_origin_dest,
+            bank_modif_src,
+            bank_modif_dest,
+            bank_nb_sound_src,bank_nb_sound_dest);
+    }
+    moove_sound(bank_origin_dest, snum, nb_snd_in_file);
+    moove_sound(bank_modif_dest, snum, nb_snd_in_file);
+    read_voice(bank_origin_dest, total_snd, byte_flag);
+};
+void Dx7interface::moove_sound(BankVariant& bank, unsigned int start, unsigned int nb_snd){
+    std::visit([&](auto& bk) {
+        unsigned int end_insert = start + nb_snd;
+        //                          0       1   bank_nb_sound = 32
+        for( unsigned int i = bank_nb_sound-1, j = start; i > 0 && i >= end_insert ; i--, j--){
+            bk.get().sound[i] = bk.get().sound[i-nb_snd];
+        };
+    }, bank);
+};
+void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,unsigned int file_size){
+    /*
+    * modes :
+    *  default push other sound to next position
+    *  si taille banque = 32 et position 32 => concatene -> banque 128 sons ( 32 + x sons + x init sounds)
+    *  si taille banque = 1 => concatene -> banque 32/128 sons ( 1 + x sons + x init )
+    *  si taille banque 128 => insert at and push out others
+    */
+    block_ui();
+    block_midi();
+    old_snum=snum;
+    snum=get_gwidget<Gtk::SpinButton>("spinbutton_insert_start")->get_value();
+    unsigned int nb_snd_in_file = 0;
+    unsigned int total_snd = 0;
+    bool byte_flag = false;
+
+    if( (file_size % 128) == 0 ){                    // snd multiple de 128
+        nb_snd_in_file = (file_size / 128);
+        total_snd = snum + nb_snd_in_file;
+        byte_flag=false;
+    }else if( (file_size % 128) != 0 ){              // multiple de 155
+        nb_snd_in_file = (file_size / 155);
+        total_snd = snum + nb_snd_in_file;
+        byte_flag=true;
+    };
+    prepare_bank(nb_snd_in_file,total_snd,byte_flag);
+    seek_parameters(file_base, &bank_1_modif.sound[0]);
+    std::cout << " With: " << bank_1_modif.sound->name << std::endl;
+    save_type=BANK;
+    restore_origin();
+};
+
+
+void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
+    dialog_insert->close();
+    block_ui();
+    block_midi();
+    load_file(file,&Dx7interface::insert_at);
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to((unsigned int)snum,nullptr,Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });
+};
+
+void Dx7interface::on_insert_at(){
+    // Open dialog insert at position
+    //LOG_IN();
+    Glib::ustring title = "Insert Sound(s)at";
+    OpenFileInsertDialog(title, bank_1_modif.name);
+    //LOG_OUT();
+};
+
 void Dx7interface::on_delete_sound(){
 
 };
-/*** save/write ***/
+
+/*** SAVE / WRITE ***/
 void Dx7interface::write_file(Glib::RefPtr<Gio::File> file, unsigned char* msg, unsigned int msg_size){
     auto output_stream = file->replace();
     auto data_stream = Gio::DataOutputStream::create(output_stream);
@@ -1288,7 +1417,7 @@ void Dx7interface::on_save_bank(){
         Glib::ustring title = "Saving Bank";
         save_type = BANK;
         save_modif_sound();
-        OpenFileSelectDialog(title, bank_1_modif.name);
+        OpenDialogSave(title, bank_1_modif.name);
     }catch (const std::exception & ex) {
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
@@ -1729,7 +1858,7 @@ void Dx7interface::on_save_sound(){
         save_modif_sound();
         Glib::ustring title = "Saving sound";
         save_type = SOUND;
-        OpenFileSelectDialog(title, bank_1_modif.sound->name);
+        OpenDialogSave(title, bank_1_modif.sound->name);
     }catch (const std::exception & ex) {
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
@@ -2294,8 +2423,13 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
         redraw_all_curve();
         on_txt_freq_op_event();
         unblock_midi();
-        unblock_ui();
-        send_voice(&bank_1_modif.sound[0]);
+        if(compare){
+            send_voice(&bank_1_origin.sound[0]);
+            block_midi();
+        }else{
+            unblock_ui();
+            send_voice(&bank_1_modif.sound[0]);
+        };
         (get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
         return false; // false: Remove the tick callback after execution
     });
@@ -2824,6 +2958,11 @@ void Dx7interface::attach_signals(){
         OpenFileSaveDialog();
         dialog_save->close();
     });
+    button_insert->signal_clicked().connect(
+        sigc::bind(
+            sigc::mem_fun(*this, &Dx7interface::on_file_select),
+            &Dx7interface::on_insert_sound ));
+
 
     /* Sound Name modification */
     slot_sound_name_activate =(get_gwidget<Gtk::Entry>("entry_sound_name"))->signal_activate().connect( sigc::mem_fun(*this, &Dx7interface::on_sound_name_event));
@@ -5526,9 +5665,7 @@ void Dx7interface::on_mono_poly_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.poly_mono.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.poly_mono.val = msg[5];
     if ( (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Monophonic"));
     }else{
@@ -5549,9 +5686,7 @@ void Dx7interface::on_ptch_bnd_rng_event(){
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.ptch_bnd_rng.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.ptch_bnd_rng.val = msg[5];
     LOG_OUT();
 };
 
@@ -5566,9 +5701,7 @@ void Dx7interface::on_ptch_bnd_stp_event(){
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.ptch_bnd_stp.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.ptch_bnd_stp.val = msg[5];
     LOG_OUT();
 };
 
@@ -5584,9 +5717,7 @@ void Dx7interface::on_portamento_md_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.portamento_md.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.portamento_md.val = msg[5];
     if ( (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_label(_("Follow"));
     }else{
@@ -5607,9 +5738,7 @@ void Dx7interface::on_portamento_glss_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.portamento_glss.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.portamento_glss.val = msg[5];
     LOG_OUT();
 };
 
@@ -5624,9 +5753,7 @@ void Dx7interface::on_portamento_tm_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("portamento_tm"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.portamento_tm.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.portamento_tm.val = msg[5];
     LOG_OUT();
 };
 
@@ -5641,9 +5768,7 @@ void Dx7interface::on_md_whl_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("md_whl_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.md_whl_rng.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.md_whl_rng.val = msg[5];
     LOG_OUT();
 };
 
@@ -5660,9 +5785,7 @@ void Dx7interface::on_md_whl_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.md_whl_assgn.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.md_whl_assgn.val = msg[5];
     LOG_OUT();
 };
 
@@ -5677,9 +5800,7 @@ void Dx7interface::on_foot_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("foot_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.foot_rng.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.foot_rng.val = msg[5];
     LOG_OUT();
 };
 
@@ -5696,9 +5817,7 @@ void Dx7interface::on_foot_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("foot_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.foot_assgn.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.foot_assgn.val = msg[5];
     LOG_OUT();
 };
 
@@ -5713,9 +5832,7 @@ void Dx7interface::on_brth_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("brth_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.brth_rng.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.brth_rng.val = msg[5];
     LOG_OUT();
 };
 
@@ -5732,9 +5849,7 @@ void Dx7interface::on_brth_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("brth_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.brth_assgn.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.brth_assgn.val = msg[5];
     LOG_OUT();
 };
 
@@ -5749,9 +5864,7 @@ void Dx7interface::on_aftrtch_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.aftrtch_rng.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.aftrtch_rng.val = msg[5];
     LOG_OUT();
 };
 
@@ -5768,9 +5881,7 @@ void Dx7interface::on_aftrtch_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    if(!compare){
-        bank_1_modif.sound->extra.functions.aftrtch_assgn.val = msg[5];
-    };
+    bank_1_modif.sound->extra.functions.aftrtch_assgn.val = msg[5];
     LOG_OUT();
 };
 
@@ -5783,17 +5894,11 @@ void Dx7interface::on_compare_event(){
         compare=true;
         get_gwidget<Gtk::ToggleButton>("btn_compare")->add_css_class("blink");
         set_voice(&bank_1_origin.sound[0]);
-        send_voice(&bank_1_origin.sound[0]);
-        redraw_all_curve();
-        block_ui();
-        block_midi();
     }else{
         std::cout<< "compare off"<< std::endl;
         compare=false;
         get_gwidget<Gtk::ToggleButton>("btn_compare")->remove_css_class("blink");
         set_voice(&bank_1_modif.sound[0]);
-        send_voice(&bank_1_modif.sound[0]);
-        redraw_all_curve();
     };
 };
 
@@ -5823,6 +5928,7 @@ void Dx7interface::on_panic_event(){
     msg[2]=0x00;
     send_midi(SND_SEQ_EVENT_CONTROLLER, 3, msg);
 };
+
 /* Save box */
 void Dx7interface::on_as_raw_event(){
     if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
@@ -5845,34 +5951,34 @@ void Dx7interface::on_extra_param_event(){
 /* ALGO */
 void Dx7interface::on_algo_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x06;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("algo_number"))->get_value()-1;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x06;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("algo_number"))->get_value()-1;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->algo.algo.val = msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_feedback_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x07;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("feedback"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x07;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("feedback"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->algo.feedback.val = msg[5];
     };
     LOG_OUT();
@@ -5880,19 +5986,19 @@ void Dx7interface::on_feedback_event() {
 
 void Dx7interface::on_transpose_event() {
     LOG_IN();
-    char val =  (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected()
-             +( ((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()-1)*12 );
-    if( val >= 0 && val <= 48){
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x01;
-        msg[4]=0x10;
-        msg[5]=val;
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-        if (!compare){
+    if (!compare){
+        char val =  (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected()
+                 +( ((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()-1)*12 );
+        if( val >= 0 && val <= 48){
+            unsigned char msg[7];
+            msg[0]=0xF0;
+            msg[1]=id_fabricant;
+            msg[2]=sub_status + channel_send;
+            msg[3]=0x01;
+            msg[4]=0x10;
+            msg[5]=val;
+            msg[6]=0xF7;
+            send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
             bank_1_modif.sound->algo.transpose.val = msg[5];
         };
     };
@@ -5901,20 +6007,20 @@ void Dx7interface::on_transpose_event() {
 
 void Dx7interface::on_oks_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x08;
-    if ( (get_gwidget<Gtk::CheckButton>("oks"))->get_active() ) {
-        msg[5]=0x01;
-    }else{
-        msg[5]=0x00;
-    }
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x08;
+        if ( (get_gwidget<Gtk::CheckButton>("oks"))->get_active() ) {
+            msg[5]=0x01;
+        }else{
+            msg[5]=0x00;
+        };
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->algo.oks.val = msg[5];
     };
     LOG_OUT();
@@ -5923,38 +6029,38 @@ void Dx7interface::on_oks_event() {
 /* LFO */
 void Dx7interface::on_lfo_wav_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x0E;
-    msg[5]=(get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x0E;
+        msg[5]=(get_gwidget<Gtk::DropDown>("lfo_wav"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->lfo.wave.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_lfo_wav"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_lfo_wav"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_lfo_sync_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x0D;
-    if ( (get_gwidget<Gtk::CheckButton>("lfo_sync"))->get_active() ) {
-        msg[5]=0x01;
-    }else{
-        msg[5]=0x00;
-    }
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x0D;
+        if ( (get_gwidget<Gtk::CheckButton>("lfo_sync"))->get_active() ) {
+            msg[5]=0x01;
+        }else{
+            msg[5]=0x00;
+        }
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->lfo.sync.val=msg[5];
     };
     LOG_OUT();
@@ -5962,16 +6068,16 @@ void Dx7interface::on_lfo_sync_event() {
 
 void Dx7interface::on_lfo_speed_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x09;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_speed"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x09;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_speed"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->lfo.speed.val = msg[5];
     };
     LOG_OUT();
@@ -5979,16 +6085,16 @@ void Dx7interface::on_lfo_speed_event() {
 
 void Dx7interface::on_lfo_delay_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x0A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_delay"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x0A;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_delay"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->lfo.delay.val = msg[5];
     };
     LOG_OUT();
@@ -5996,16 +6102,16 @@ void Dx7interface::on_lfo_delay_event() {
 
 void Dx7interface::on_lfo_pmd_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x0B;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_pmd"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x0B;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_pmd"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->lfo.pmd.val = msg[5];
     };
     LOG_OUT();
@@ -6013,16 +6119,16 @@ void Dx7interface::on_lfo_pmd_event() {
 
 void Dx7interface::on_lfo_amd_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x0C;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_amd"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x0C;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lfo_amd"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->lfo.amd.val = msg[5];
     };
     LOG_OUT();
@@ -6031,16 +6137,16 @@ void Dx7interface::on_lfo_amd_event() {
 /*LFO MODULATION */
 void Dx7interface::on_pms_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x0F;
-    msg[5]=(get_gwidget<Gtk::Scale>("pms"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x0F;
+        msg[5]=(get_gwidget<Gtk::Scale>("pms"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->lfo.pms.val = msg[5];
     };
     LOG_OUT();
@@ -6049,150 +6155,151 @@ void Dx7interface::on_pms_event() {
 /* PITCH EG */
 void Dx7interface::on_pitch_rt1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x7E;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x7E;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_rt[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_pitch_rt2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x7F;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+    unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x7F;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_rt[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_pitch_rt3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x00;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_rt[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_pitch_rt4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x01;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x01;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_rt[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_pitch_lvl1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x02;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x02;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_lvl[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_pitch_lvl2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x03;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x03;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_lvl[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_pitch_lvl3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x04;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x04;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_lvl[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_pitch_lvl4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x05;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x01;
+        msg[4]=0x05;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_pitch"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->pitch.eg_lvl[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_pitch"))->queue_draw();
     LOG_OUT();
 };
 
 /* MUTE FOR EACH OPERATOR IN DX7 */
 void Dx7interface::on_mute_op_event() {
+    
     unsigned char msg[7];
     uint8_t i,mute_val=0x00;
 
@@ -6207,9 +6314,6 @@ void Dx7interface::on_mute_op_event() {
     if(!compare){
         bank_1_modif.sound->extra.mute.val=mute_val;
     };
-    for(i=1; i<=6;i++){
-        (this->*mute_hexter_functions[i-1])();
-    };
     msg[0]=0xF0;
     msg[1]=id_fabricant;
     msg[2]=sub_status + channel_send;
@@ -6217,10 +6321,190 @@ void Dx7interface::on_mute_op_event() {
     msg[4]=0x1B;
     msg[5]=mute_val;
     msg[6]=0xF7;
-    if (!compare){
-        bank_1_modif.sound->extra.mute.val=msg[5];
-    };
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+
+    for(i=1; i<=6;i++){
+        (this->*mute_hexter_functions[i-1])();
+    };
+};
+
+/* OP1 mute for UI & Hexter */
+void Dx7interface::on_mute_hexter_op1_event(){
+    LOG_IN();
+    uint8_t mute_val;
+    
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
+    
+    mute_val = mute_val >>5;
+    
+    if ( !(mute_val & 0x01) ) {
+        (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_("/* OP1 */"));
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x79;        // volume op1
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{        
+        (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_(" OP1 "));
+        on_lvl_op1_event();        
+    };
+    LOG_OUT();
+};
+/* OP2 mute for UI & Hexter */
+void Dx7interface::on_mute_hexter_op2_event() {
+    LOG_IN();
+    uint8_t mute_val;
+    
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
+    
+    mute_val = mute_val >>4;
+    
+    if ( !(mute_val & 0x01) ) {
+        (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_("/* OP2 */"));
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x64;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_(" OP2 "));
+        on_lvl_op2_event();
+    };
+    LOG_OUT();
+};
+/* OP3 mute for UI & Hexter */
+void Dx7interface::on_mute_hexter_op3_event() {
+    LOG_IN();    
+    uint8_t mute_val;
+    
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
+    
+    mute_val = mute_val >>3;
+    
+    if ( !(mute_val & 0x01) ) {
+        (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_("/* OP3 */"));
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x4F;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_(" OP3 "));
+        on_lvl_op3_event();
+    };
+    LOG_OUT();
+};
+/* OP4 mute for UI & Hexter */
+void Dx7interface::on_mute_hexter_op4_event() {
+    LOG_IN();
+    uint8_t mute_val;
+    
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
+    
+    mute_val = mute_val >>2;
+    
+    if ( !(mute_val & 0x01) ) {
+        (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_("/* OP4 */"));
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3A;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_(" OP4 "));
+        on_lvl_op4_event();
+    };
+    LOG_OUT();
+};
+/* OP5 mute for UI & Hexter */
+void Dx7interface::on_mute_hexter_op5_event() {
+    LOG_IN();
+    uint8_t mute_val;
+    
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
+    
+    mute_val = mute_val >>1;
+    
+    if ( !(mute_val & 0x01) ) {
+        (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_("/* OP5 */"));
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x25;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_(" OP5 "));
+        on_lvl_op5_event();
+    };
+    LOG_OUT();
+};
+/* OP6 mute for UI & Hexter */
+void Dx7interface::on_mute_hexter_op6_event() {
+    LOG_IN();
+    uint8_t mute_val;
+    
+    if(!compare){
+        mute_val = bank_1_modif.sound->extra.mute.val;
+    }else{
+        mute_val = bank_1_origin.sound->extra.mute.val;
+    };
+    
+    if ( !(mute_val & 0x01) ) {
+        (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_("/* OP6 */"));
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x10;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_(" OP6 "));
+        on_lvl_op6_event();
+    };
+    LOG_OUT();
 };
 
 /* view frequence for each operator  */
@@ -6258,16 +6542,16 @@ void Dx7interface::on_txt_freq_op_event()   {
 /* OP1 */
 void Dx7interface::on_ams_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x77;
-    msg[5]=(get_gwidget<Gtk::Scale>("ams_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x77;
+        msg[5]=(get_gwidget<Gtk::Scale>("ams_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].ams.val=msg[5];
     };
     LOG_OUT();
@@ -6276,70 +6560,70 @@ void Dx7interface::on_ams_op1_event() {
 /* OP1 FREQ */
 void Dx7interface::on_freq_mode_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x7A;
-    msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op1"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x7A;
+        msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op1"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].freq_mode.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_coarse_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x7B;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x7B;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].freq_coarse.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_fine_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x7C;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x7C;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].freq_fine.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_dtun_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x7D;
-    msg[5]=(get_gwidget<Gtk::Scale>("dtun_op1"))->get_value()+7;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x7D;
+        msg[5]=(get_gwidget<Gtk::Scale>("dtun_op1"))->get_value()+7;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].dtun.val=msg[5];
     };
     LOG_OUT();
@@ -6348,161 +6632,161 @@ void Dx7interface::on_dtun_op1_event() {
 /* OP1 EG */
 void Dx7interface::on_eg_rt1_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x69;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x69;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_rt[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt2_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x6A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x6A;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_rt[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt3_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x6B;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x6B;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_rt[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt4_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x6C;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x6C;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_rt[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl1_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x6D;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x6D;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_lvl[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl2_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x6E;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x6E;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_lvl[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl3_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x6F;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x6F;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_lvl[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl4_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x70;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x70;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].eg_lvl[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op1"))->queue_draw();
     LOG_OUT();
 };
 
 /* OP1 FRAME VOLUME */
 void Dx7interface::on_krs_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x76;
-    msg[5]=(get_gwidget<Gtk::Scale>("krs_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x76;
+        msg[5]=(get_gwidget<Gtk::Scale>("krs_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].krs.val=msg[5];
     };
     LOG_OUT();
@@ -6510,16 +6794,16 @@ void Dx7interface::on_krs_op1_event() {
 
 void Dx7interface::on_kvs_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x78;
-    msg[5]=(get_gwidget<Gtk::Scale>("kvs_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x78;
+        msg[5]=(get_gwidget<Gtk::Scale>("kvs_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].kvs.val=msg[5];
     };
     LOG_OUT();
@@ -6527,50 +6811,20 @@ void Dx7interface::on_kvs_op1_event() {
 
 void Dx7interface::on_lvl_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x79;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[0].lvl.val=msg[5];
-    };
-    /* logout fonction mute */
-    if ( (get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active() ) {
-        (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(false);
-    };
-    LOG_OUT();
-};
-
-
-/* OP1 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op1_event(){
-    LOG_IN();
-    uint8_t mute_val;
-    if(!compare){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    mute_val = mute_val >>5;
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_("/* OP1 */"));
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x79;
-        msg[5]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op1"))->get_value();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_(" OP1 "));
-        on_lvl_op1_event();
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[0].lvl.val=msg[5];
+        if ( (get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active() ) {
+            (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(false);
+        };
     };
     LOG_OUT();
 };
@@ -6578,98 +6832,98 @@ void Dx7interface::on_mute_hexter_op1_event(){
 /* OP1 KLS */
 void Dx7interface::on_kls_lft_curve_op1_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x74;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[0].kls.lft_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_curve_op1_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x75;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[0].kls.rght_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_lft_dpth_op1_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x72;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[0].kls.lft_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_dpth_op1_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x73;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[0].kls.rght_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_brk_pt_op1_event() {
-    LOG_IN();
-    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->get_selected();
-    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->get_value();
-    if(val_note < 3){
-        val_note = val_note+12;
-    };
-    char val = ((val_note) + (val_octv * 12));
-    if( val >= 0 && val <= 99 ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
-        msg[4]=0x71;
-        msg[5]=val;
+        msg[4]=0x74;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->get_selected();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-        if (!compare){
-            bank_1_modif.sound->op[0].kls.brk_pt.val=msg[5];
-        };
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[0].kls.lft_curve.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_curve_op1_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x75;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op1"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[0].kls.rght_curve.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_lft_dpth_op1_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x72;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[0].kls.lft_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_dpth_op1_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x73;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[0].kls.rght_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_brk_pt_op1_event() {
+    LOG_IN();
+    if (!compare){
+        char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->get_selected();
+        char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->get_value();
+        if(val_note < 3){
+            val_note = val_note+12;
+        };
+        char val = ((val_note) + (val_octv * 12));
+        if( val >= 0 && val <= 99 ){
+            unsigned char msg[7];
+            msg[0]=0xF0;
+            msg[1]=id_fabricant;
+            msg[2]=sub_status + channel_send;
+            msg[3]=0x00;
+            msg[4]=0x71;
+            msg[5]=val;
+            msg[6]=0xF7;
+            send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+            bank_1_modif.sound->op[0].kls.brk_pt.val=msg[5];
+            (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op1"))->queue_draw();
+        };
     };
     LOG_OUT();
 };
@@ -6677,16 +6931,16 @@ void Dx7interface::on_kls_brk_pt_op1_event() {
 /* OP2 */
 void Dx7interface::on_ams_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x62;
-    msg[5]=(get_gwidget<Gtk::Scale>("ams_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x62;
+        msg[5]=(get_gwidget<Gtk::Scale>("ams_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].ams.val=msg[5];
     };
     LOG_OUT();
@@ -6695,70 +6949,70 @@ void Dx7interface::on_ams_op2_event() {
 /* OP2 FREQ */
 void Dx7interface::on_freq_mode_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x65;
-    msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op2"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x65;
+        msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op2"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].freq_mode.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_coarse_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x66;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x66;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].freq_coarse.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_fine_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x67;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x67;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].freq_fine.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_dtun_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x68;
-    msg[5]=(get_gwidget<Gtk::Scale>("dtun_op2"))->get_value()+7;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x68;
+        msg[5]=(get_gwidget<Gtk::Scale>("dtun_op2"))->get_value()+7;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].dtun.val=msg[5];
     };
     LOG_OUT();
@@ -6767,161 +7021,161 @@ void Dx7interface::on_dtun_op2_event() {
 /* OP2 EG */
 void Dx7interface::on_eg_rt1_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x54;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x54;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_rt[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt2_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x55;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x55;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_rt[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt3_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x56;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x56;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_rt[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt4_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x57;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x57;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_rt[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl1_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x58;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x58;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_lvl[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl2_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x59;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x59;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_lvl[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl3_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x5A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x5A;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_lvl[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl4_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x5B;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x5B;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].eg_lvl[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op2"))->queue_draw();
     LOG_OUT();
 };
 
 /* OP2 FRAME VOLUME */
 void Dx7interface::on_krs_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x61;
-    msg[5]=(get_gwidget<Gtk::Scale>("krs_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x61;
+        msg[5]=(get_gwidget<Gtk::Scale>("krs_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].krs.val=msg[5];
     };
     LOG_OUT();
@@ -6929,16 +7183,16 @@ void Dx7interface::on_krs_op2_event() {
 
 void Dx7interface::on_kvs_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x63;
-    msg[5]=(get_gwidget<Gtk::Scale>("kvs_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x63;
+        msg[5]=(get_gwidget<Gtk::Scale>("kvs_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].kvs.val=msg[5];
     };
     LOG_OUT();
@@ -6946,49 +7200,20 @@ void Dx7interface::on_kvs_op2_event() {
 
 void Dx7interface::on_lvl_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x64;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[1].lvl.val=msg[5];
-    };
-    // logout fonction mute
-    if ( (get_gwidget<Gtk::ToggleButton>("mute_op2"))->get_active() ) {
-        (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(false);
-    };
-    LOG_OUT();
-};
-
-/* OP2 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op2_event() {
-    LOG_IN();
-    uint8_t mute_val;
-    if(!compare){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    mute_val = mute_val >>4;
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_("/* OP2 */"));
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x64;
-        msg[5]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op2"))->get_value();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_(" OP2 "));
-        on_lvl_op2_event();
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[1].lvl.val=msg[5];
+        if ( (get_gwidget<Gtk::ToggleButton>("mute_op2"))->get_active() ) {
+            (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(false);
+        };
     };
     LOG_OUT();
 };
@@ -6996,97 +7221,97 @@ void Dx7interface::on_mute_hexter_op2_event() {
 /* OP2 KLS */
 void Dx7interface::on_kls_lft_curve_op2_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x5F;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[1].kls.lft_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_curve_op2_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x60;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[1].kls.rght_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_lft_dpth_op2_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x5D;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[1].kls.lft_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_dpth_op2_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x5E;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[1].kls.rght_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_brk_pt_op2_event() {
-    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->get_selected();
-    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->get_value();
-    if(val_note < 3){
-        val_note = val_note+12;
-    };
-    char val = ((val_note) + (val_octv * 12));
-    if( val >= 0 && val <= 99 ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
-        msg[4]=0x5C;
-        msg[5]=val;
+        msg[4]=0x5F;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op2"))->get_selected();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-        if (!compare){
-            bank_1_modif.sound->op[1].kls.brk_pt.val=msg[5];
-        };
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[1].kls.lft_curve.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_curve_op2_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x60;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op2"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[1].kls.rght_curve.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_lft_dpth_op2_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x5D;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[1].kls.lft_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_dpth_op2_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x5E;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[1].kls.rght_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_brk_pt_op2_event() {
+    if (!compare){
+        char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->get_selected();
+        char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->get_value();
+        if(val_note < 3){
+            val_note = val_note+12;
+        };
+        char val = ((val_note) + (val_octv * 12));
+        if( val >= 0 && val <= 99 ){
+            unsigned char msg[7];
+            msg[0]=0xF0;
+            msg[1]=id_fabricant;
+            msg[2]=sub_status + channel_send;
+            msg[3]=0x00;
+            msg[4]=0x5C;
+            msg[5]=val;
+            msg[6]=0xF7;
+            send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+            bank_1_modif.sound->op[1].kls.brk_pt.val=msg[5];
+            (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
+        };
     };
 };
 
@@ -7094,16 +7319,16 @@ void Dx7interface::on_kls_brk_pt_op2_event() {
 /* OP3 */
 void Dx7interface::on_ams_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x4D;
-    msg[5]=(get_gwidget<Gtk::Scale>("ams_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x4D;
+        msg[5]=(get_gwidget<Gtk::Scale>("ams_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].ams.val=msg[5];
     };
     LOG_OUT();
@@ -7112,70 +7337,70 @@ void Dx7interface::on_ams_op3_event() {
 /* OP3 FREQ */
 void Dx7interface::on_freq_mode_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x50;
-    msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op3"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x50;
+        msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op3"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].freq_mode.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_coarse_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x51;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x51;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].freq_coarse.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_fine_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x52;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x52;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].freq_fine.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_dtun_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x53;
-    msg[5]=(get_gwidget<Gtk::Scale>("dtun_op3"))->get_value()+7;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x53;
+        msg[5]=(get_gwidget<Gtk::Scale>("dtun_op3"))->get_value()+7;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].dtun.val=msg[5];
     };
     LOG_OUT();
@@ -7184,161 +7409,161 @@ void Dx7interface::on_dtun_op3_event() {
 /* OP3 EG */
 void Dx7interface::on_eg_rt1_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x3F;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3F;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_rt[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt2_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x40;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x40;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_rt[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt3_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x41;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x41;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_rt[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt4_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x42;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x42;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_rt[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl1_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x43;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x43;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_lvl[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl2_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x44;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x44;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_lvl[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl3_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x45;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x45;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_lvl[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl4_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x46;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x46;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].eg_lvl[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op3"))->queue_draw();
     LOG_OUT();
 };
 
 /* OP3 FRAME VOLUME */
 void Dx7interface::on_krs_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x4C;
-    msg[5]=(get_gwidget<Gtk::Scale>("krs_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x4C;
+        msg[5]=(get_gwidget<Gtk::Scale>("krs_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].krs.val=msg[5];
     };
     LOG_OUT();
@@ -7346,16 +7571,16 @@ void Dx7interface::on_krs_op3_event() {
 
 void Dx7interface::on_kvs_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x4E;
-    msg[5]=(get_gwidget<Gtk::Scale>("kvs_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x4E;
+        msg[5]=(get_gwidget<Gtk::Scale>("kvs_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[2].kvs.val=msg[5];
     };
     LOG_OUT();
@@ -7363,147 +7588,120 @@ void Dx7interface::on_kvs_op3_event() {
 
 void Dx7interface::on_lvl_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x4F;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[2].lvl.val=msg[5];
-    };
-    // logout fonction mute
-    if ( (get_gwidget<Gtk::ToggleButton>("mute_op3"))->get_active() ) {
-        (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(false);
-    };
-    LOG_OUT();
-};
-/* OP3 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op3_event() {
-    LOG_IN();
-    uint8_t mute_val;
-    if(!compare){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    mute_val = mute_val >>3;
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_("/* OP3 */"));
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x4F;
-        msg[5]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op3"))->get_value();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_(" OP3 "));
-        on_lvl_op3_event();
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[2].lvl.val=msg[5];
+        if ( (get_gwidget<Gtk::ToggleButton>("mute_op3"))->get_active() ) {
+            (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(false);
+        };
     };
     LOG_OUT();
 };
+
 
 /* OP3 KLS */
 void Dx7interface::on_kls_lft_curve_op3_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x4A;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[2].kls.lft_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_curve_op3_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x4B;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[2].kls.rght_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_lft_dpth_op3_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x48;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[2].kls.lft_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_dpth_op3_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x49;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[2].kls.rght_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_brk_pt_op3_event() {
-    LOG_IN();
-    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->get_selected();
-    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->get_value();
-    if(val_note < 3){
-        val_note = val_note+12;
-    };
-    char val = ((val_note) + (val_octv * 12));
-    if( val >= 0 && val <= 99 ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
-        msg[4]=0x47;
-        msg[5]=val;
+        msg[4]=0x4A;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op3"))->get_selected();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-        if (!compare){
-            bank_1_modif.sound->op[2].kls.brk_pt.val=msg[5];
-        };
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[2].kls.lft_curve.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_curve_op3_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x4B;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op3"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[2].kls.rght_curve.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_lft_dpth_op3_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x48;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[2].kls.lft_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_dpth_op3_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x49;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[2].kls.rght_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_brk_pt_op3_event() {
+    LOG_IN();
+    if (!compare){
+        char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->get_selected();
+        char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->get_value();
+        if(val_note < 3){
+            val_note = val_note+12;
+        };
+        char val = ((val_note) + (val_octv * 12));
+        if( val >= 0 && val <= 99 ){
+            unsigned char msg[7];
+            msg[0]=0xF0;
+            msg[1]=id_fabricant;
+            msg[2]=sub_status + channel_send;
+            msg[3]=0x00;
+            msg[4]=0x47;
+            msg[5]=val;
+            msg[6]=0xF7;
+            send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+            bank_1_modif.sound->op[2].kls.brk_pt.val=msg[5];
+            (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
+        };
     };
 };
 
@@ -7511,16 +7709,16 @@ void Dx7interface::on_kls_brk_pt_op3_event() {
 /* OP4 */
 void Dx7interface::on_ams_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x38;
-    msg[5]=(get_gwidget<Gtk::Scale>("ams_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x38;
+        msg[5]=(get_gwidget<Gtk::Scale>("ams_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].ams.val=msg[5];
     };
     LOG_OUT();
@@ -7529,70 +7727,70 @@ void Dx7interface::on_ams_op4_event() {
 /* OP4 FREQ*/
 void Dx7interface::on_freq_mode_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x3B;
-    msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op4"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3B;
+        msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op4"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].freq_mode.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_coarse_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x3C;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3C;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].freq_coarse.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_fine_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x3D;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3D;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].freq_fine.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_dtun_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x3E;
-    msg[5]=(get_gwidget<Gtk::Scale>("dtun_op4"))->get_value()+7;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3E;
+        msg[5]=(get_gwidget<Gtk::Scale>("dtun_op4"))->get_value()+7;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].dtun.val=msg[5];
     };
     LOG_OUT();
@@ -7601,145 +7799,145 @@ void Dx7interface::on_dtun_op4_event() {
 /* OP4 EG*/
 void Dx7interface::on_eg_rt1_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x2A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x2A;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_rt[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt2_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x2B;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x2B;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_rt[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt3_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x2C;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x2C;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_rt[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt4_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x2D;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x2D;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_rt[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl1_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x2E;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x2E;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_lvl[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl2_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x2F;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x2F;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_lvl[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl3_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x30;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x30;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_lvl[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl4_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x31;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x31;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].eg_lvl[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op4"))->queue_draw();
     LOG_OUT();
 };
 
@@ -7747,16 +7945,16 @@ void Dx7interface::on_eg_lvl4_op4_event() {
 /* OP4 FRAME VOLUME */
 void Dx7interface::on_krs_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x37;
-    msg[5]=(get_gwidget<Gtk::Scale>("krs_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x37;
+        msg[5]=(get_gwidget<Gtk::Scale>("krs_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].krs.val=msg[5];
     };
     LOG_OUT();
@@ -7764,16 +7962,16 @@ void Dx7interface::on_krs_op4_event() {
 
 void Dx7interface::on_kvs_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x39;
-    msg[5]=(get_gwidget<Gtk::Scale>("kvs_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+    unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x39;
+        msg[5]=(get_gwidget<Gtk::Scale>("kvs_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[3].kvs.val=msg[5];
     };
     LOG_OUT();
@@ -7781,48 +7979,20 @@ void Dx7interface::on_kvs_op4_event() {
 
 void Dx7interface::on_lvl_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x3A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[3].lvl.val=msg[5];
-    };
-    if ( (get_gwidget<Gtk::ToggleButton>("mute_op4"))->get_active() ) {
-        (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(false);
-    }
-    LOG_OUT();
-};
-
-/* OP4 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op4_event() {
-    LOG_IN();
-    uint8_t mute_val;
-    if(!compare){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    mute_val = mute_val >>2;
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_("/* OP4 */"));
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x3A;
-        msg[5]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op4"))->get_value();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_(" OP4 "));
-        on_lvl_op4_event();
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[3].lvl.val=msg[5];
+        if ( (get_gwidget<Gtk::ToggleButton>("mute_op4"))->get_active() ) {
+            (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(false);
+        };
     };
     LOG_OUT();
 };
@@ -7830,109 +8000,109 @@ void Dx7interface::on_mute_hexter_op4_event() {
 /* OP4 KLS*/
 void Dx7interface::on_kls_lft_curve_op4_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x35;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[3].kls.lft_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_curve_op4_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x36;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[3].kls.rght_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_lft_dpth_op4_event() {
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x33;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[3].kls.lft_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
-};
-
-void Dx7interface::on_kls_rght_dpth_op4_event() {
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x34;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[3].kls.rght_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
-};
-
-void Dx7interface::on_kls_brk_pt_op4_event(){
-    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->get_selected();
-    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->get_value();
-    if(val_note < 3){
-        val_note = val_note+12;
-    };
-    char val = ((val_note) + (val_octv * 12));
-    if( val >= 0 && val <= 99 ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
-        msg[4]=0x32;
-        msg[5]=val;
+        msg[4]=0x35;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->get_selected();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-        if (!compare){
-            bank_1_modif.sound->op[3].kls.brk_pt.val=msg[5];
-        };
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[3].kls.lft_curve.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();   
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_curve_op4_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x36;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op4"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[3].kls.rght_curve.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_lft_dpth_op4_event() {
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x33;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[3].kls.lft_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+    };
+};
+
+void Dx7interface::on_kls_rght_dpth_op4_event() {
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x34;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[3].kls.rght_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+    };
+};
+
+void Dx7interface::on_kls_brk_pt_op4_event(){
+    if (!compare){
+        char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->get_selected();
+        char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->get_value();
+        if(val_note < 3){
+            val_note = val_note+12;
+        };
+        char val = ((val_note) + (val_octv * 12));
+        if( val >= 0 && val <= 99 ){
+            unsigned char msg[7];
+            msg[0]=0xF0;
+            msg[1]=id_fabricant;
+            msg[2]=sub_status + channel_send;
+            msg[3]=0x00;
+            msg[4]=0x32;
+            msg[5]=val;
+            msg[6]=0xF7;
+            send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+            bank_1_modif.sound->op[3].kls.brk_pt.val=msg[5];
+            (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
+        };
     };
 };
 
 /* OP5 */
 void Dx7interface::on_ams_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x23;
-    msg[5]=(get_gwidget<Gtk::Scale>("ams_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x23;
+        msg[5]=(get_gwidget<Gtk::Scale>("ams_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].ams.val=msg[5];
     };
     LOG_OUT();
@@ -7941,70 +8111,70 @@ void Dx7interface::on_ams_op5_event() {
 /* OP5 FREQ */
 void Dx7interface::on_freq_mode_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x26;
-    msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op5"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x26;
+        msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op5"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].freq_mode.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_coarse_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x27;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x27;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].freq_coarse.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_fine_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x28;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x28;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].freq_fine.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_dtun_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x29;
-    msg[5]=(get_gwidget<Gtk::Scale>("dtun_op5"))->get_value()+7;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x29;
+        msg[5]=(get_gwidget<Gtk::Scale>("dtun_op5"))->get_value()+7;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].dtun.val=msg[5];
     };
     LOG_OUT();
@@ -8013,161 +8183,161 @@ void Dx7interface::on_dtun_op5_event() {
 /* OP5 EG */
 void Dx7interface::on_eg_rt1_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x15;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x15;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_rt[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt2_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x16;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x16;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_rt[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt3_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x17;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x17;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_rt[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt4_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x18;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x18;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_rt[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl1_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x19;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+    unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x19;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_lvl[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl2_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x1A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+    unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x1A;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_lvl[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl3_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x1B;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x1B;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_lvl[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl4_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x1C;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x1C;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].eg_lvl[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op5"))->queue_draw();
     LOG_OUT();
 };
 
 /* OP5 FRAME VOLUME */
 void Dx7interface::on_krs_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x22;
-    msg[5]=(get_gwidget<Gtk::Scale>("krs_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x22;
+        msg[5]=(get_gwidget<Gtk::Scale>("krs_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].krs.val=msg[5];
     };
     LOG_OUT();
@@ -8175,16 +8345,16 @@ void Dx7interface::on_krs_op5_event() {
 
 void Dx7interface::on_kvs_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x24;
-    msg[5]=(get_gwidget<Gtk::Scale>("kvs_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x24;
+        msg[5]=(get_gwidget<Gtk::Scale>("kvs_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].kvs.val=msg[5];
     };
     LOG_OUT();
@@ -8192,49 +8362,20 @@ void Dx7interface::on_kvs_op5_event() {
 
 void Dx7interface::on_lvl_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x25;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[4].lvl.val=msg[5];
-    };
-    // logout fonction mute
-    if ( (get_gwidget<Gtk::ToggleButton>("mute_op5"))->get_active() ) {
-        (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(false);
-    };
-    LOG_OUT();
-};
-
-/* OP5 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op5_event() {
-    LOG_IN();
-    uint8_t mute_val;
-    if(!compare){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    mute_val = mute_val >>1;
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_("/* OP5 */"));
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x25;
-        msg[5]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op5"))->get_value();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_(" OP5 "));
-        on_lvl_op5_event();
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[4].lvl.val=msg[5];
+        if ( (get_gwidget<Gtk::ToggleButton>("mute_op5"))->get_active() ) {
+            (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(false);
+        };
     };
     LOG_OUT();
 };
@@ -8242,98 +8383,98 @@ void Dx7interface::on_mute_hexter_op5_event() {
 /* OP5 KLS */
 void Dx7interface::on_kls_lft_curve_op5_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x20;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[4].kls.lft_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_curve_op5_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x21;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[4].kls.rght_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_lft_dpth_op5_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x1E;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[4].kls.lft_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_dpth_op5_event(){
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x1F;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[4].kls.rght_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_brk_pt_op5_event() {
-    LOG_IN();
-    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->get_selected();
-    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->get_value();
-    if(val_note < 3){
-        val_note = val_note+12;
-    };
-    char val = ((val_note) + (val_octv * 12));
-    if( val >= 0 && val <= 99 ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
-        msg[4]=0x1D;
-        msg[5]=val;
+        msg[4]=0x20;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->get_selected();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-        if (!compare){
-            bank_1_modif.sound->op[4].kls.brk_pt.val=msg[5];
-        };
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[4].kls.lft_curve.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_curve_op5_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x21;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op5"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[4].kls.rght_curve.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_lft_dpth_op5_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x1E;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[4].kls.lft_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();   
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_dpth_op5_event(){
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x1F;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[4].kls.rght_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_brk_pt_op5_event() {
+    LOG_IN();
+    if (!compare){
+        char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->get_selected();
+        char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->get_value();
+        if(val_note < 3){
+            val_note = val_note+12;
+        };
+        char val = ((val_note) + (val_octv * 12));
+        if( val >= 0 && val <= 99 ){
+            unsigned char msg[7];
+            msg[0]=0xF0;
+            msg[1]=id_fabricant;
+            msg[2]=sub_status + channel_send;
+            msg[3]=0x00;
+            msg[4]=0x1D;
+            msg[5]=val;
+            msg[6]=0xF7;
+            send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+            bank_1_modif.sound->op[4].kls.brk_pt.val=msg[5];
+            (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
+        };
     };
     LOG_OUT();
 };
@@ -8341,16 +8482,16 @@ void Dx7interface::on_kls_brk_pt_op5_event() {
 /* OP6 */
 void Dx7interface::on_ams_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x0E;
-    msg[5]=(get_gwidget<Gtk::Scale>("ams_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x0E;
+        msg[5]=(get_gwidget<Gtk::Scale>("ams_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].ams.val=msg[5];
     };
     LOG_OUT();
@@ -8359,70 +8500,70 @@ void Dx7interface::on_ams_op6_event() {
 /* OP6 FREQ */
 void Dx7interface::on_freq_mode_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x11;
-    msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op6"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x11;
+        msg[5]=(get_gwidget<Gtk::DropDown>("freq_mode_op6"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].freq_mode.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_coarse_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x12;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x12;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_coarse_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].freq_coarse.val=msg[5];
+        on_txt_freq_op_event(); 
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_freq_fine_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x13;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x13;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("freq_fine_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].freq_fine.val=msg[5];
+        on_txt_freq_op_event();
     };
-    on_txt_freq_op_event();
     LOG_OUT();
 };
 
 void Dx7interface::on_dtun_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x14;
-    msg[5]=(get_gwidget<Gtk::Scale>("dtun_op6"))->get_value()+7;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x14;
+        msg[5]=(get_gwidget<Gtk::Scale>("dtun_op6"))->get_value()+7;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].dtun.val=msg[5];
     };
     LOG_OUT();
@@ -8431,161 +8572,161 @@ void Dx7interface::on_dtun_op6_event() {
 /* OP6 EG */
 void Dx7interface::on_eg_rt1_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x00;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt1_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_rt[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt2_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x01;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x01;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt2_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_rt[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt3_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x02;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x02;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt3_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_rt[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_rt4_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x03;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x03;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_rt4_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_rt[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl1_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x04;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x04;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl1_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_lvl[0].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl2_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x05;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x05;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl2_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_lvl[1].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl3_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x06;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x06;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl3_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_lvl[2].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 void Dx7interface::on_eg_lvl4_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x07;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x07;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("eg_lvl4_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].eg_lvl[3].val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_eg_op6"))->queue_draw();
     LOG_OUT();
 };
 
 /* OP6 FRAME VOLUME */
 void Dx7interface::on_krs_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x0D;
-    msg[5]=(get_gwidget<Gtk::Scale>("krs_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x0D;
+        msg[5]=(get_gwidget<Gtk::Scale>("krs_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].krs.val=msg[5];
     };
     LOG_OUT();
@@ -8593,16 +8734,16 @@ void Dx7interface::on_krs_op6_event() {
 
 void Dx7interface::on_kvs_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x0F;
-    msg[5]=(get_gwidget<Gtk::Scale>("kvs_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x0F;
+        msg[5]=(get_gwidget<Gtk::Scale>("kvs_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].kvs.val=msg[5];
     };
     LOG_OUT();
@@ -8610,48 +8751,20 @@ void Dx7interface::on_kvs_op6_event() {
 
 void Dx7interface::on_lvl_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x10;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[5].lvl.val=msg[5];
-    };
-    // logout fonction mute
-    if ( (get_gwidget<Gtk::ToggleButton>("mute_op6"))->get_active() ) {
-        (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(false);
-    };
-    LOG_OUT();
-};
-
-/* OP6 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op6_event() {
-    LOG_IN();
-    uint8_t mute_val;
-    if(!compare){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_("/* OP6 */"));
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
         msg[4]=0x10;
-        msg[5]=0x00;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op6"))->get_value();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_(" OP6 "));
-        on_lvl_op6_event();
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[5].lvl.val=msg[5]; 
+        if ( (get_gwidget<Gtk::ToggleButton>("mute_op6"))->get_active() ) {
+            (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(false);
+        };
     };
     LOG_OUT();
 };
@@ -8659,97 +8772,97 @@ void Dx7interface::on_mute_hexter_op6_event() {
 /* OP6 KLS */
 void Dx7interface::on_kls_lft_curve_op6_event() {
     LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x0B;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     if (!compare){
-        bank_1_modif.sound->op[5].kls.lft_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_curve_op6_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x0C;
-    msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->get_selected();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[5].kls.rght_curve.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_lft_dpth_op6_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x09;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[5].kls.lft_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_rght_dpth_op6_event() {
-    LOG_IN();
-    unsigned char msg[7];
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x00;
-    msg[4]=0x0A;
-    msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->get_value();
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    if (!compare){
-        bank_1_modif.sound->op[5].kls.rght_dpth.val=msg[5];
-    };
-    (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
-    LOG_OUT();
-};
-
-void Dx7interface::on_kls_brk_pt_op6_event() {
-    char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->get_selected();
-    char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->get_value();
-    if(val_note < 3){
-        val_note = val_note+12;
-    };
-    char val = ((val_note) + (val_octv * 12));
-    if( val >= 0 && val <= 99 ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
         msg[3]=0x00;
-        msg[4]=0x08;
-        msg[5]=val;
+        msg[4]=0x0B;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->get_selected();
         msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-        if (!compare){
-            bank_1_modif.sound->op[5].kls.brk_pt.val=msg[5];
-        };
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[5].kls.lft_curve.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_curve_op6_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x0C;
+        msg[5]=(get_gwidget<Gtk::DropDown>("kls_rght_curve_op6"))->get_selected();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[5].kls.rght_curve.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_lft_dpth_op6_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x09;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[5].kls.lft_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_rght_dpth_op6_event() {
+    LOG_IN();
+    if (!compare){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x0A;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("kls_rght_dpth_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+        bank_1_modif.sound->op[5].kls.rght_dpth.val=msg[5];
+        (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+    };
+    LOG_OUT();
+};
+
+void Dx7interface::on_kls_brk_pt_op6_event() {
+    if (!compare){
+        char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->get_selected();
+        char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->get_value();
+        if(val_note < 3){
+            val_note = val_note+12;
+        };
+        char val = ((val_note) + (val_octv * 12));
+        if( val >= 0 && val <= 99 ){
+            unsigned char msg[7];
+            msg[0]=0xF0;
+            msg[1]=id_fabricant;
+            msg[2]=sub_status + channel_send;
+            msg[3]=0x00;
+            msg[4]=0x08;
+            msg[5]=val;
+            msg[6]=0xF7;
+           	send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+            bank_1_modif.sound->op[5].kls.brk_pt.val=msg[5];
+            (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
+        };
     };
 };
 

@@ -35,6 +35,7 @@
 /* sys */
 //#include <memory>
 /*** APP ***/
+#include <variant>
 #include <gxinterface/0.0.1/common.h>
 #include <gxinterface/0.0.1/gxmodule.h>
 //#include "../gxinterface/src/common.h"
@@ -103,6 +104,11 @@ class Dx7interface : public Gx_module, public Synth {
         St_dx7sysex<32> bank_32_modif;          /* ... */
         St_dx7sysex<128> bank_128_origin;       /* ... */
         St_dx7sysex<128> bank_128_modif;        /* ... */
+
+        using BankVariant = std::variant<
+        std::reference_wrapper<St_dx7sysex<1>>,
+        std::reference_wrapper<St_dx7sysex<32>>,
+        std::reference_wrapper<St_dx7sysex<128>>>;
 
         /* default write format */
         unsigned int export_config = DX7_32;     // DX7_1 DX7_32 DX7_128 DX7_RAW DX7_SYX
@@ -507,7 +513,9 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gio::SimpleActionGroup> action_group=nullptr;
         Gtk::PopoverMenu* m_popover_menu = nullptr;
         /* save dialog */
-        void create_save_dialog();
+        void create_dialogs();
+        Gtk::Window* dialog_insert = nullptr;
+        Gtk::Button* button_insert = nullptr;
         Gtk::Window* dialog_save = nullptr;
         Gtk::Button* button_save = nullptr;
 
@@ -526,7 +534,8 @@ class Dx7interface : public Gx_module, public Synth {
         #endif
 
         void OpenFileSaveDialog();
-        void OpenFileSelectDialog(Glib::ustring,Glib::ustring);
+        void OpenDialogSave(Glib::ustring,Glib::ustring);
+        void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
 
         /*** THREAD ***/
         bool Run();    /* Thread function  */
@@ -556,7 +565,25 @@ class Dx7interface : public Gx_module, public Synth {
         void on_restore_bank();
         void on_restore_sound();
         /* repalce/delete */
-        void on_insert_at();
+        void on_insert_at();                                            // Open dialog insert at position
+        void on_insert_sound(Glib::RefPtr<Gio::File>);                  // call load_file->insert_at
+        void insert_at(Glib::ustring, Glib::ustring, unsigned int);     // do the insert
+
+        /* Prepare bank
+         * to populate it on "insert at" call: get_bank_... , copy, moove, read_voice
+         */
+        void prepare_bank(unsigned int, unsigned int, bool);
+
+        std::pair<
+            Dx7interface::BankVariant,
+            Dx7interface::BankVariant> get_banks_source();
+        std::tuple<unsigned int,std::pair<Dx7interface::BankVariant,
+            Dx7interface::BankVariant>> get_banks_dest(unsigned int);
+        void copy_bank(BankVariant& , BankVariant& , BankVariant& , BankVariant& , unsigned int , unsigned int );
+        void moove_sound(BankVariant&, unsigned int, unsigned int);
+        void read_voice(BankVariant,unsigned int, bool );               // call seek_voice or seek_voice_by_byte
+
+        /* */
         void replace_sound(Glib::ustring, Glib::ustring, unsigned int);
         void on_replace_sound(Glib::RefPtr<Gio::File> file);
         void on_delete_sound();
