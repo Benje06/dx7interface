@@ -135,6 +135,8 @@ class Dx7interface : public Gx_module, public Synth {
 
         template<class ListStoreType>
         void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name);
+        template<class ListStoreType>
+        void update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int i, Glib::ustring name);
 
         /* midi learn */
         /* param list view */

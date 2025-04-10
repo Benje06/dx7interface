@@ -136,7 +136,8 @@ void Dx7interface::create_param_list(){
     param_selection_model=Glib::RefPtr<Gtk::SingleSelection>(get_gwidget<Gtk::SingleSelection>("selection_param"));
     param_selection_model->set_autoselect(false);
     param_selection_model->set_model(param_data_model);
-
+    get_gwidget<Gtk::DropDown>("dropdown_affect_param")->set_sensitive(true);
+    auto param_list_scroller = DropDownScrollController(get_gwidget<Gtk::DropDown>("dropdown_affect_param"));
     // auto factory_param=Glib::RefPtr<Gtk::SignalListItemFactory>(get_gwidget<Gtk::SignalListItemFactory>("factory_param"));
     (get_gwidget<Gtk::SignalListItemFactory>("factory_param"))->signal_setup().connect(
         sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_setup_param_label), Gtk::Align::START));
@@ -145,7 +146,8 @@ void Dx7interface::create_param_list(){
 
     midi_learned.resize(max_param_nb);
     for(int i=0; i<max_param_nb; i++){
-        param_data_model->append(ParamItem::create(function_list[i]));
+        //param_data_model->append(ParamItem::create(function_list[i]));
+        update_param_data_model<ParamItem>(param_data_model, i, function_list[i]);
     };
 };
 
@@ -1338,7 +1340,7 @@ void Dx7interface::moove_sound(BankVariant& bank, unsigned int start, unsigned i
     std::visit([&](auto& bk) {
         unsigned int end_insert = start + nb_snd;
         //                          0       1   bank_nb_sound = 32
-        for( unsigned int i = bank_nb_sound-1, j = start; i > 0 && i >= end_insert ; i--, j--){
+        for( unsigned int i = bank_nb_sound-1; i > 0 && i >= end_insert ; i--){
             bk.get().sound[i] = bk.get().sound[i-nb_snd];
         };
     }, bank);
@@ -2746,7 +2748,7 @@ void Dx7interface::on_setup_sound_number_label(const Glib::RefPtr<Gtk::ListItem>
 
 void Dx7interface::on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>& list_item){
     auto label = dynamic_cast<Gtk::Label*>(list_item->get_child());
-    auto item =  std::dynamic_pointer_cast<SoundBankItem>(list_item->get_item());
+    auto item =  std::dynamic_pointer_cast<ParamItem>(list_item->get_item());
     if( label && item){
         label->set_text(item->get_name());
     };
@@ -2773,16 +2775,24 @@ void Dx7interface::on_midi_learn_event(){ // set the bool for midi learn
 
 void Dx7interface::on_add_midi_learn_event(){
     LOG_IN();
-    auto selected_item = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected_item(); // return selected item
-    auto selected_function = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected(); // return index of selected item
-    if (selected_item) {
-        Glib::ustring function_name = (std::dynamic_pointer_cast<ParamItem>(selected_item))->get_name();
-        Glib::ustring st_midi_param_number = get_gwidget<Gtk::Entry>("entry_affect_param")->get_text();
-        if ( st_midi_param_number != "") {
-            int param_value = std::stoi(st_midi_param_number.raw());
-            add_midi_learned(param_value, selected_function);
-            add_midi_learn_param_widget(function_name, st_midi_param_number, selected_function);
+    try{
+        auto selected_item = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected_item(); // return selected item
+        auto selected_function = get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_selected(); // return index of selected item
+        if (selected_item) {
+            Glib::ustring function_name = (std::dynamic_pointer_cast<ParamItem>(selected_item))->get_name();
+            Glib::ustring st_midi_param_number = get_gwidget<Gtk::Entry>("entry_affect_param")->get_text();
+            if ( st_midi_param_number != "") {
+                unsigned int param_value = std::stoi(st_midi_param_number.raw());
+                if (param_value < 128){
+                    add_midi_learned(param_value, selected_function);
+                    add_midi_learn_param_widget(function_name, st_midi_param_number, selected_function);
+                };
+            };
         };
+    }catch (const std::exception & ex) {
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
     };
     LOG_OUT();
 };
@@ -5614,7 +5624,15 @@ Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
     // LOG_OUT();
     return sound_name;
 };
-
+template<class ListStoreType>
+void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int i, Glib::ustring name){
+    auto param = ListStoreType::create(name);
+    if( !data_model->get_item(i) ){
+        data_model->insert(i, param);
+    }else{
+        data_model->splice(i, 1, {param});  // Replace item at same position
+    };
+};
 template<class ListStoreType>
 void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name){
     auto sound = ListStoreType::create(snum,sound_name);

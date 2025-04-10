@@ -20,8 +20,6 @@ void Factory::on_bind_name(void*, const Glib::RefPtr<Gtk::ListItem>& list_item){
     label->set_text(col->get_name());
 };*/
 
-ParamItem::ParamItem(const Glib::ustring& name) : i_name(name) {};
-
 /*void FactoryParam::on_bind_name(void*, const Glib::RefPtr<Gtk::ListItem>& list_item){
     auto col = std::dynamic_pointer_cast<ParamItem>(list_item->get_item());
     if (!col){ return; };

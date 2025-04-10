@@ -25,11 +25,9 @@ class SoundBankItem : public Glib::Object {
 
         // Setters
         void set_number(unsigned int num) {
-            std::cout <<"SET NUMBER CALLED" << std::endl;
             i_number.set_value(num);
         }
         void set_name(const Glib::ustring& name) {
-            std::cout <<"SET NAME CALLED" << std::endl;
             i_name.set_value(name);
         }
 
@@ -41,13 +39,20 @@ class SoundBankItem : public Glib::Object {
 /* Class to manager Items in ListStore Sound_bank*/
 class ParamItem : public Glib::Object {
     private:
-        Glib::ustring i_name;   /*internal name*/
-        ParamItem(const Glib::ustring&);
+        ParamItem(const Glib::ustring& name)
+        : Glib::ObjectBase("ParamItem"),
+        i_name(*this, "name", name) {}  // Initialize properties
+
+        Glib::Property<Glib::ustring> i_name;   /*internal name*/
     public:
         static Glib::RefPtr<ParamItem> create(const Glib::ustring& name){
             return Glib::make_refptr_for_instance<ParamItem>(new ParamItem(name));
-        };
-        Glib::ustring get_name() { return i_name; };
+        }
+
+        void set_name(const Glib::ustring& name) {
+            i_name.set_value(name);
+        }
+        Glib::ustring get_name() const { return i_name.get_value(); }
 };
 
 class DropDownScrollController{
