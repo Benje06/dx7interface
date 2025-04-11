@@ -1254,7 +1254,7 @@ void Dx7interface::replace_sound(Glib::ustring file_name, Glib::ustring file_bas
 
 /** INSERT AT **/
 std::tuple<unsigned int,std::pair<Dx7interface::BankVariant, Dx7interface::BankVariant>> Dx7interface::get_banks_dest(unsigned int total_snd){
-    if( total_snd >= 32 ){                     // switch to 128 sounds
+    if( total_snd >= 32 || bank_nb_sound == 128 ){          // switch to 128 sounds
         return std::make_tuple(
             128,
             std::make_pair(std::ref(bank_128_origin), std::ref(bank_128_modif))
@@ -1341,16 +1341,6 @@ void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int total_
 
     update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_dest);
 };
-template<class ListStoreType>
-void Dx7interface::update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> list_data_model, BankVariant& bank_modif_dest){
-    unsigned int temp_snum = snum;
-    std::visit([&]( auto& bank_modif ) { // update the datamodel
-        for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
-            update_data_model<ListStoreType>(list_data_model, bank_modif.get().sound[snum].name);
-        };
-    }, bank_modif_dest );
-    snum=temp_snum;
-}
 void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,unsigned int file_size){
     /*
     * modes :
@@ -1389,6 +1379,7 @@ void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,uns
     select_voice(old_snum);
     old_snum=snum;
 };
+
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
     dialog_insert->close();
     load_file(file,&Dx7interface::insert_at);
@@ -1398,6 +1389,7 @@ void Dx7interface::on_insert_at(){
     Glib::ustring title = "Insert Sound(s) at";
     OpenFileInsertDialog(title, bank_1_modif.name);
 };
+
 /* DELETE */
 void Dx7interface::on_delete_sound(){
 
@@ -5636,6 +5628,16 @@ void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>>
     }else{
         data_model->splice(snum, 1, {sound});  // Replace item at same position
     };
+};
+template<class ListStoreType>
+void Dx7interface::update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> list_data_model, BankVariant& bank_modif_dest){
+    unsigned int temp_snum = snum;
+    std::visit([&]( auto& bank_modif ) { // update the datamodel
+        for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
+            update_data_model<ListStoreType>(list_data_model, bank_modif.get().sound[snum].name);
+        };
+    }, bank_modif_dest );
+    snum=temp_snum;
 };
 void Dx7interface::set_sound_name(Glib::ustring sound_name){
     // LOG_IN();
