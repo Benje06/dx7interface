@@ -586,6 +586,7 @@ void Dx7interface::save_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
 #endif
 
 bool Dx7interface::Run2(){
+    // UNUSED for test
     //sleep_for(std::chrono::milliseconds(5000));
     struct timespec ts;
     ts.tv_sec = 0;
@@ -816,7 +817,7 @@ void Dx7interface::OpenDialogSave(Glib::ustring title,Glib::ustring filename){
     };
 };
 void Dx7interface::OpenFileInsertDialog(Glib::ustring title,Glib::ustring){
-    // GENERIC ??
+    // GENERIC
     try{
         dialog_insert->set_transient_for(*(get_window()));
         dialog_insert->set_title(title);
@@ -990,6 +991,7 @@ void Dx7interface::on_file_select(FunctionPtrFile funct){
 };
 
 void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
+    // GENERIC
     LOG_IN();
         m_popover_menu->set_pointing_to(Gdk::Rectangle(x, y, 1, 1));
         m_popover_menu->popup();
@@ -997,6 +999,7 @@ void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
 };
 /* set/load */
 void Dx7interface::clean_bank(){
+    // TO TEMPLATIZE TO BE GENERIC
     LOG_IN();
     int i;
     clear_sound(&bank_1_modif.sound[0],0,false);
@@ -1053,6 +1056,7 @@ void Dx7interface::set_bank_sounds(Glib::ustring file_name,Glib::ustring file_ba
 }
 
 void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
+    // GENERIC
     LOG_IN();
     block_ui();
     //block_midi();
@@ -1240,17 +1244,14 @@ void Dx7interface::replace_sound(Glib::ustring file_name, Glib::ustring file_bas
 
 /** INSERT AT **/
 std::tuple<unsigned int,std::pair<Dx7interface::BankVariant, Dx7interface::BankVariant>> Dx7interface::get_banks_dest(unsigned int total_snd){
-    unsigned int bank_nb_sound_dest;
-    if( total_snd > 32 ){                     // switch to 128 sounds
-        bank_nb_sound = 128;
+    if( total_snd >= 32 ){                     // switch to 128 sounds
         return std::make_tuple(
-            bank_nb_sound,
+            128,
             std::make_pair(std::ref(bank_128_origin), std::ref(bank_128_modif))
         );
     }else{    // switch to 32 sounds
-        bank_nb_sound = 32;
         return std::make_tuple(
-            bank_nb_sound,
+            32,
             std::make_pair(std::ref(bank_32_origin), std::ref(bank_32_modif))
         );
     };
@@ -1274,36 +1275,41 @@ std::pair<Dx7interface::BankVariant, Dx7interface::BankVariant> Dx7interface::ge
     };
 };
 void Dx7interface::copy_bank(BankVariant& bank_origin_src, BankVariant& bank_origin_dest, BankVariant& bank_modif_src, BankVariant& bank_modif_dest, unsigned int src_size, unsigned int dst_size){
-    std::visit([&](auto& src_origin, auto& dest_origin, auto& src_modif, auto& dest_modif) {
+    // ok & for a non copy
+    std::visit([&](auto src_origin, auto& dest_origin, auto src_modif, auto& dest_modif) {
+        // copy sound bank name
         dest_origin.get().name = src_origin.get().name;
-        dest_modif.get().name = src_modif.get().name;
+        dest_modif.get().name = src_origin.get().name;
+        // copy sounds
         for (unsigned int i = 0; i < dst_size && i < src_size; i++) {
-            dest_modif.get().sound[i] = src_modif.get().sound[i];
             dest_origin.get().sound[i] = src_origin.get().sound[i];
+            dest_modif.get().sound[i] = src_modif.get().sound[i];
         }
     }, bank_origin_src, bank_origin_dest, bank_modif_src, bank_modif_dest);
 };
-void Dx7interface::moove_sound(BankVariant& bank, unsigned int start, unsigned int nb_snd){
-    std::visit([&](auto& bk) {
-        unsigned int end_insert = start + nb_snd;
-        //                          0       1   bank_nb_sound = 32
+void Dx7interface::moove_sound(BankVariant& bank_origin_dest, BankVariant& bank_modif_dest, unsigned int end_insert,unsigned int nb_snd){
+    std::visit([&](auto& bank_origin, auto& bank_modif) {
         for( unsigned int i = bank_nb_sound-1; i > 0 && i >= end_insert ; i--){
-            bk.get().sound[i] = bk.get().sound[i-nb_snd];
+            bank_origin.get().sound[i] = bank_origin.get().sound[i-nb_snd];
+            bank_modif.get().sound[i] = bank_modif.get().sound[i-nb_snd];
         };
-    }, bank);
+    }, bank_origin_dest, bank_modif_dest);
 };
-void Dx7interface::read_voice(BankVariant bank_origin_dest, unsigned int max_read_pos, bool byte_flag){
-    std::visit([&](auto& bank_origin) {
+void Dx7interface::read_voice(BankVariant& bank_origin_dest, BankVariant& bank_modif_dest, unsigned int max_write_pos, bool byte_flag){
+    std::visit([&](auto& bank_origin, auto& bank_modif) {
+        unsigned int pos=snum;
         if(byte_flag){
-            for( ; snum < bank_nb_sound && snum < max_read_pos; snum++ ){
-                seek_voice_by_byte(&bank_origin.get().sound[snum]);
+            for( ; pos < bank_nb_sound && pos < max_write_pos; pos++ ){
+                seek_voice_by_byte(&bank_origin.get().sound[pos]);
+                bank_modif.get().sound[pos] = bank_origin.get().sound[pos];
             };
         }else{
-            for( ; snum < bank_nb_sound && snum < max_read_pos; snum++ ){
-                seek_voice(&bank_origin.get().sound[snum]);
+            for( ; pos < bank_nb_sound && pos < max_write_pos; pos++ ){
+                seek_voice(&bank_origin.get().sound[pos]);
+                bank_modif.get().sound[pos] = bank_origin.get().sound[pos];
             };
         };
-    }, bank_origin_dest);
+    }, bank_origin_dest, bank_modif_dest);
 };
 void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int total_snd, bool byte_flag){
     unsigned int bank_nb_sound_src = bank_nb_sound;
@@ -1311,7 +1317,7 @@ void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int total_
     auto [bank_origin_src, bank_modif_src] = get_banks_source();
     auto [bank_nb_sound_dest, banks_pair] = get_banks_dest(total_snd); // return the destination bank depending of total_snd
     auto [bank_origin_dest,bank_modif_dest] = banks_pair;
-    if(bank_nb_sound_src != bank_nb_sound_dest){
+    if(bank_nb_sound_src != bank_nb_sound_dest){ //copy bank in new bank
         copy_bank(
             bank_origin_src,
             bank_origin_dest,
@@ -1319,10 +1325,22 @@ void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int total_
             bank_modif_dest,
             bank_nb_sound_src,bank_nb_sound_dest);
     }
-    moove_sound(bank_origin_dest, snum, nb_snd_in_file);
-    moove_sound(bank_modif_dest, snum, nb_snd_in_file);
-    read_voice(bank_origin_dest, total_snd, byte_flag);
+    bank_nb_sound = bank_nb_sound_dest;
+    moove_sound(bank_origin_dest, bank_modif_dest, total_snd, nb_snd_in_file);
+    read_voice(bank_origin_dest, bank_modif_dest, total_snd, byte_flag);
+
+    update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_dest);
 };
+template<class ListStoreType>
+void Dx7interface::update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> list_data_model, BankVariant& bank_modif_dest){
+    unsigned int temp_snum = snum;
+    std::visit([&]( auto& bank_modif ) { // update the datamodel
+        for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
+            update_data_model<ListStoreType>(list_data_model, bank_modif.get().sound[snum].name);
+        };
+    }, bank_modif_dest );
+    snum=temp_snum;
+}
 void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,unsigned int file_size){
     /*
     * modes :
@@ -1331,12 +1349,15 @@ void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,uns
     *  si taille banque = 1 => concatene -> banque 32/128 sons ( 1 + x sons + x init )
     *  si taille banque 128 => insert at and push out others
     */
-    block_ui(); // needed
-    old_snum=snum;
-    snum=get_gwidget<Gtk::SpinButton>("spinbutton_insert_start")->get_value();
     unsigned int nb_snd_in_file = 0;
     unsigned int total_snd = 0;
     bool byte_flag = false;
+
+    block_ui(); // needed
+
+    update_bank_modif(); // to save change
+    old_snum = snum;
+    snum=get_gwidget<Gtk::SpinButton>("spinbutton_insert_start")->get_value();
 
     if( (file_size % 128) == 0 ){                    // snd multiple de 128
         nb_snd_in_file = (file_size / 128);
@@ -1347,9 +1368,16 @@ void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,uns
         total_snd = snum + nb_snd_in_file;
         byte_flag=true;
     };
+
     prepare_bank(nb_snd_in_file,total_snd,byte_flag);
     seek_parameters(file_base, &bank_1_modif.sound[0]);
-    restore_origin(BANK);
+    if (old_snum >= snum){
+        old_snum=total_snd;
+    }
+
+    update_bank_modif();
+    select_voice(old_snum);
+    old_snum=snum;
 };
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
     dialog_insert->close();

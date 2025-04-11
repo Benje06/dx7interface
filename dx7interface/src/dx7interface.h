@@ -136,6 +136,8 @@ class Dx7interface : public Gx_module, public Synth {
         template<class ListStoreType>
         void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name);
         template<class ListStoreType>
+        void update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> list_data_model, BankVariant& bank_modif_dest);
+        template<class ListStoreType>
         void update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int i, Glib::ustring name);
 
         /* midi learn */
@@ -582,9 +584,9 @@ class Dx7interface : public Gx_module, public Synth {
             Dx7interface::BankVariant> get_banks_source();
         std::tuple<unsigned int,std::pair<Dx7interface::BankVariant,
             Dx7interface::BankVariant>> get_banks_dest(unsigned int);
-        void copy_bank(BankVariant& , BankVariant& , BankVariant& , BankVariant& , unsigned int , unsigned int );
-        void moove_sound(BankVariant&, unsigned int, unsigned int);
-        void read_voice(BankVariant,unsigned int, bool );               // call seek_voice or seek_voice_by_byte
+        void copy_bank(BankVariant&, BankVariant&, BankVariant&, BankVariant&, unsigned int, unsigned int);
+        void moove_sound(BankVariant&, BankVariant&, unsigned int, unsigned int);
+        void read_voice(BankVariant&, BankVariant&, unsigned int, bool); // call seek_voice or seek_voice_by_byte
 
         /* REPLACE */
         void replace_sound(Glib::ustring, Glib::ustring, unsigned int);
