@@ -828,6 +828,7 @@ void Dx7interface::OpenFileInsertDialog(Glib::ustring title,Glib::ustring){
         double lower, upper;
         spinbutton_insert_start->get_range(lower, upper);
         spinbutton_insert_start->set_range(lower, (bank_nb_sound));
+        spinbutton_insert_start->set_value(snum);
         /* set visible for bank save */
         dialog_insert->present();
     }catch (const std::exception & ex) {
@@ -1042,6 +1043,15 @@ void Dx7interface::set_bank_sounds(Glib::ustring file_name,Glib::ustring file_ba
             };
             bank_32_origin.name = file_name;
             break;
+        case 8200: /* 32 voices TF1 bulk 32 */
+            bank_nb_sound = 32;
+            for( ; snum < 32; snum++ ){
+                seek_voice(&bank_32_origin.sound[snum]);
+                //seek_parameters(file_base, &bank_32_origin.sound[snum]);
+            };
+            bank_32_origin.name = file_name;
+            break;
+
         case 16384: /* 128 voices */
             bank_nb_sound = 128;
             for( ; snum < 128; snum++ ){
@@ -1769,7 +1779,7 @@ void Dx7interface::write_voice_as_raw(Glib::RefPtr<Gio::File> file){
     try {
         uint8_t voice_checksum=0;
         unsigned int l = 0;
-        unsigned int msg_size = 155;
+        unsigned int msg_size = 128;
         unsigned char msg[msg_size];
         write_voice_bulk32(&l, msg, &bank_1_modif.sound[0], &voice_checksum );
         write_file(file,msg,msg_size);
@@ -2424,7 +2434,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
 };
 void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
     // called from set_voice in the callback
-    if (mode_tf1) {
+    if( mode_tf1 && !compare ) {
         (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_active(sound->extra.functions.poly_mono.val);
         (get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->set_value(sound->extra.functions.ptch_bnd_rng.val);
         (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->set_value(sound->extra.functions.ptch_bnd_stp.val);
