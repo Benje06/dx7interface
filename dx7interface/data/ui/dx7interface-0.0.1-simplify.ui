@@ -6494,15 +6494,15 @@
         <child>
           <object class="GtkCheckButton" id="checkbutton_as_raw">
             <property name="active">true</property>
-            <property name="label" translatable="yes">as RAW (DX7 data bulk format without the sysex header)</property>
+            <property name="label" translatable="yes">as RAW (128 Bytes per sound like in bulk32, without sysex header)</property>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="label_bulk">
-            <property name="label" translatable="yes">not using RAW, with 128 voices bank, will split it into 4x 32 voices bank to be compatible with Dx7 hardware</property>
-            <property name="wrap">true</property>
-            <property name="wrap-mode">word</property>
-          </object>
+            <object class="GtkLabel" id="label_bulk">
+                <property name="label" translatable="yes">With 128 voices bank, if RAW is not selected, the bank will be split it into 4x 32 voices bank to be compatible with Dx7 hardware</property>
+                <property name="wrap">true</property>
+                <property name="wrap-mode">word</property>
+            </object>
         </child>
         <child>
           <object class="GtkFrame">
