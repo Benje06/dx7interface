@@ -552,6 +552,7 @@ class Dx7interface : public Gx_module, public Synth {
         /** SOUND BANK **/
         /* set/load */
         void set_default_values();
+        void select_voice(unsigned int);
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void set_bank(Glib::RefPtr<Gio::File>);
         void set_bank_sounds(Glib::ustring, Glib::ustring, unsigned int);
@@ -563,7 +564,7 @@ class Dx7interface : public Gx_module, public Synth {
         /* update */
         void update_bank_modif();
         /* restore */
-        void restore_origin();
+        void restore_origin(unsigned int);
         void on_restore_bank();
         void on_restore_sound();
         /* repalce/delete */
@@ -585,7 +586,7 @@ class Dx7interface : public Gx_module, public Synth {
         void moove_sound(BankVariant&, unsigned int, unsigned int);
         void read_voice(BankVariant,unsigned int, bool );               // call seek_voice or seek_voice_by_byte
 
-        /* */
+        /* REPLACE */
         void replace_sound(Glib::ustring, Glib::ustring, unsigned int);
         void on_replace_sound(Glib::RefPtr<Gio::File> file);
         void on_delete_sound();
@@ -599,7 +600,6 @@ class Dx7interface : public Gx_module, public Synth {
         void write_bank_as_raw(Glib::RefPtr<Gio::File> file, unsigned int);
         void on_as_raw_event();
         void on_extra_param_event();
-
         /* VOICE */
         void write_voice_bulk1(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
         void write_voice_bulk32(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
