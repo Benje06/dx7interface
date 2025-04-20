@@ -4,8 +4,8 @@
   <!-- interface-name dx7interface-0.0.1-simplify_4.8.ui -->
   <requires lib="gio" version="2.0"/>
   <requires lib="gtk" version="4.0"/>
-  <object class="GtkFileChooserDialog" id="FileDialog_bank_select"/>
-  <object class="GtkFileChooserDialog" id="FileDialog_bank_save"/>
+  <object class="GtkFileChooserDialog" id="FileDialog_select"/>
+  <object class="GtkFileChooserDialog" id="FileDialog_save"/>
   <object class="GtkFileChooserDialog" id="FileDialog_param_select"/>
   <object class="GtkFileChooserDialog" id="FileDialog_param_save"/>
   <object class="GtkBox" id="box_main">
@@ -1360,6 +1360,24 @@
                                   </object>
                                 </child>
                                 <child>
+                                    <object class="GtkEntry" id="entry_sound_name">
+                                        <property name="css-classes">sound_name</property>
+                                        <property name="halign">fill</property>
+                                        <property name="valign">fill</property>
+                                        <property name="xalign">0.5</property>
+                                        <property name="margin-top">8</property>
+                                        <property name="editable">1</property>
+                                        <property name="focusable">1</property>
+                                        <property name="max-length">10</property>
+                                        <property name="max-width-chars">10</property>
+                                        <layout>
+                                            <property name="column">0</property>
+                                            <property name="column-span">2</property>
+                                            <property name="row">3</property>
+                                        </layout>
+                                    </object>
+                                </child>
+                                <child>
                                   <object class="GtkToggleButton" id="btn_compare">
                                     <property name="focusable">1</property>
                                     <property name="label" translatable="yes">Compare</property>
@@ -1528,11 +1546,11 @@
                                     <child>
                                       <object class="GtkEntry" id="entry_freq_op1">
                                         <property name="editable">0</property>
-                                        <property name="focusable">1</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
+                                        <property name="focusable">0</property>
                                         <property name="max-length">5</property>
                                         <property name="max-width-chars">5</property>
+                                        <property name="margin-top">8</property>
+                                        <property name="halign">center</property>
                                         <property name="valign">center</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -2009,14 +2027,14 @@
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="entry_freq_op2">
-                                        <property name="editable">0</property>
-                                        <property name="focusable">1</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
-                                        <property name="max-length">5</property>
-                                        <property name="max-width-chars">5</property>
-                                        <property name="valign">center</property>
-                                        <property name="xalign">0.5</property>
+                                          <property name="editable">0</property>
+                                          <property name="focusable">0</property>
+                                          <property name="max-length">5</property>
+                                          <property name="max-width-chars">5</property>
+                                          <property name="margin-top">8</property>
+                                          <property name="halign">center</property>
+                                          <property name="valign">center</property>
+                                          <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
                                           <property name="row">0</property>
@@ -2513,13 +2531,14 @@
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="entry_freq_op3">
-                                        <property name="editable">0</property>
-                                        <property name="focusable">1</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
-                                        <property name="max-length">5</property>
-                                        <property name="max-width-chars">5</property>
-                                        <property name="valign">center</property>
+                                          <property name="editable">0</property>
+                                          <property name="focusable">0</property>
+                                          <property name="max-length">5</property>
+                                          <property name="max-width-chars">5</property>
+                                          <property name="margin-top">8</property>
+                                          <property name="halign">center</property>
+                                          <property name="valign">center</property>
+                                          <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
                                           <property name="row">0</property>
@@ -3015,14 +3034,14 @@
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="entry_freq_op4">
-                                        <property name="editable">0</property>
-                                        <property name="focusable">1</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
-                                        <property name="max-length">5</property>
-                                        <property name="max-width-chars">5</property>
-                                        <property name="valign">center</property>
-                                        <property name="xalign">0.5</property>
+                                          <property name="editable">0</property>
+                                          <property name="focusable">0</property>
+                                          <property name="max-length">5</property>
+                                          <property name="max-width-chars">5</property>
+                                          <property name="margin-top">8</property>
+                                          <property name="halign">center</property>
+                                          <property name="valign">center</property>
+                                          <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
                                           <property name="row">0</property>
@@ -3527,13 +3546,14 @@
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="entry_freq_op5">
-                                        <property name="editable">0</property>
-                                        <property name="focusable">1</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
-                                        <property name="max-length">5</property>
-                                        <property name="max-width-chars">5</property>
-                                        <property name="valign">center</property>
+                                          <property name="editable">0</property>
+                                          <property name="focusable">0</property>
+                                          <property name="max-length">5</property>
+                                          <property name="max-width-chars">5</property>
+                                          <property name="margin-top">8</property>
+                                          <property name="halign">center</property>
+                                          <property name="valign">center</property>
+                                          <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
                                           <property name="row">0</property>
@@ -4014,13 +4034,14 @@
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="entry_freq_op6">
-                                        <property name="editable">0</property>
-                                        <property name="focusable">1</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
-                                        <property name="max-length">5</property>
-                                        <property name="max-width-chars">5</property>
-                                        <property name="valign">center</property>
+                                          <property name="editable">0</property>
+                                          <property name="focusable">0</property>
+                                          <property name="max-length">5</property>
+                                          <property name="max-width-chars">5</property>
+                                          <property name="margin-top">8</property>
+                                          <property name="halign">center</property>
+                                          <property name="valign">center</property>
+                                          <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
                                           <property name="row">0</property>
@@ -5533,13 +5554,16 @@
                                 <child>
                                   <object class="GtkToggleButton" id="toggle_midi_learn">
                                     <property name="width-request">160</property>
-                                    <property name="margin-bottom">4</property>
                                     <property name="halign">center</property>
                                     <property name="label">MIDI learn</property>
                                   </object>
                                 </child>
                                 <child>
                                   <object class="GtkBox" id="box_affect_param">
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="halign">center</property>
+                                    <!--property name="valign">fill</property-->
                                     <child>
                                       <object class="GtkDropDown" id="dropdown_affect_param">
                                         <property name="width-request">164</property>
@@ -5561,8 +5585,13 @@
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="entry_affect_param">
-                                        <property name="width-request">50</property>
-                                        <property name="max-width-chars">22</property>
+                                        <!--property name="halign">fill</property-->
+                                        <!--property name="valign">fill</property-->
+                                        <property name="xalign">0.5</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                        <property name="width-request">30</property>
+                                        <property name="max-width-chars">4</property>
                                         <property name="focusable">1</property>
                                       </object>
                                     </child>
@@ -5572,7 +5601,6 @@
                                         <property name="label">add</property>
                                       </object>
                                     </child>
-                                    <property name="halign">fill</property>
                                   </object>
                                 </child>
                               </object>
@@ -6405,7 +6433,13 @@
     <property name="step-increment">1</property>
     <property name="upper">96</property>
   </object>
-  <object class="GtkWindow" id="dialog_bank_save">
+  <object class="GtkAdjustment" id="adj_insert_start">
+      <property name="lower">0</property>
+      <property name="page-increment">1</property>
+      <property name="step-increment">1</property>
+      <property name="upper">127</property>
+  </object>
+  <object class="GtkWindow" id="dialog_save">
     <child>
       <object class="GtkBox">
         <property name="halign">center</property>
@@ -6460,15 +6494,15 @@
         <child>
           <object class="GtkCheckButton" id="checkbutton_as_raw">
             <property name="active">true</property>
-            <property name="label" translatable="yes">as RAW (DX7 data bulk format without the sysex header)</property>
+            <property name="label" translatable="yes">as RAW (128 Bytes per sound like in bulk32, without sysex header)</property>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="label_bulk">
-            <property name="label" translatable="yes">not using RAW, with 128 voices bank, will split it into 4x 32 voices bank to be compatible with Dx7 hardware</property>
-            <property name="wrap">true</property>
-            <property name="wrap-mode">word</property>
-          </object>
+            <object class="GtkLabel" id="label_bulk">
+                <property name="label" translatable="yes">With 128 voices bank, if RAW is not selected, the bank will be split it into 4x 32 voices bank to be compatible with Dx7 hardware</property>
+                <property name="wrap">true</property>
+                <property name="wrap-mode">word</property>
+            </object>
         </child>
         <child>
           <object class="GtkFrame">
@@ -6507,11 +6541,60 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="btn_bank_save">
+          <object class="GtkButton" id="btn_save">
             <property name="label" translatable="yes">select file</property>
           </object>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkWindow" id="dialog_insert">
+      <child>
+          <object class="GtkBox">
+              <property name="halign">center</property>
+              <property name="orientation">vertical</property>
+              <property name="valign">center</property>
+              <child>
+                  <object class="GtkLabel" id="label_insert"/>
+              </child>
+              <child>
+                  <object class="GtkBox" id="box_insert">
+                      <property name="orientation">horizontal</property>
+                      <property name="visible">true</property>
+                      <child>
+                          <object class="GtkFrame">
+                              <property name="child">
+                                  <object class="GtkBox">
+                                      <property name="orientation">horizontal</property>
+                                      <child>
+                                          <object class="GtkLabel">
+                                              <property name="label" translatable="yes">Insert at position: </property>
+                                          </object>
+                                      </child>
+                                      <child>
+                                          <object class="GtkSpinButton" id="spinbutton_insert_start">
+                                              <property name="adjustment">adj_insert_start</property>
+                                              <property name="xalign">0.5</property>
+                                              <property name="focusable">1</property>
+                                              <property name="numeric">1</property>
+                                              <property name="text">0</property>
+                                              <property name="value">0</property>
+                                              <property name="width-chars">3</property>
+                                              <property name="max-width-chars">3</property>
+                                          </object>
+                                      </child>
+                                  </object>
+                              </property>
+                          </object>
+                      </child>
+                  </object>
+              </child>
+              <child>
+                  <object class="GtkButton" id="btn_insert">
+                      <property name="label" translatable="yes">select file</property>
+                  </object>
+              </child>
+          </object>
+      </child>
   </object>
 </interface>

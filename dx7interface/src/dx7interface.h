@@ -719,6 +719,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_selected_sound_change;
         void on_file_select(FunctionPtrFile);
         sigc::connection slot_bank_select;
+        sigc::connection slot_file_dialog_select;
         /* populate columnview */
         void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
         void on_bind_name(const std::shared_ptr<Gtk::ListItem>&);

@@ -426,17 +426,9 @@ void Dx7interface::save_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
                     << "value : " << int(ev->data.control.value)
                     << std::endl;
                     if ( ev->data.control.param == 0 && ( (unsigned int)ev->data.control.value < bank_nb_sound ) ){
-                        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 12)
-                            // get_gwidget<Gtk::ColumnView>("columnview_bank")->scroll_to((unsigned int)ev->data.control.value,nullptr,Gtk::ListScrollFlags::SELECT);
-                           // bank_selection_model->set_selected((unsigned int)ev->data.control.value);
+                     	unsigned int value = (unsigned int)ev->data.control.value;
+                        select_voice(value);
 
-                             unsigned int value = (unsigned int)ev->data.control.value;
-                             select_voice(value);
-                        #else
-                            auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
-                            adjustment->set_value((double)ev->data.control.value);
-                            bank_selection_model->set_selected((unsigned int)ev->data.control.value);
-                        #endif
                     }
                     break;
                 case SND_SEQ_EVENT_SYSEX:
@@ -964,7 +956,7 @@ void Dx7interface::on_file_select(FunctionPtrFile funct){
             }); /* end dialog open function */
         #else
             file_dialog_select->set_transient_for(*(get_window()));
-            file_dialog_select->signal_response().connect([this,funct](int response) {
+            slot_file_dialog_select = file_dialog_select->signal_response().connect([this,funct](int response) {
                 try {
                     if (response == Gtk::ResponseType::ACCEPT) {
                         auto bank_file = file_dialog_select->get_file();
@@ -974,6 +966,7 @@ void Dx7interface::on_file_select(FunctionPtrFile funct){
                         };
                     };
                     file_dialog_select->hide();
+                    slot_file_dialog_select.disconnect();
                 } catch (const std::exception & ex) {
                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                     + "Reason: " + ex.what();
@@ -1226,11 +1219,25 @@ void Dx7interface::on_restore_sound(){
 
 void Dx7interface::select_voice(unsigned int pos){
     slot_selected_sound_change.unblock();
-    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, pos](const Glib::RefPtr<Gdk::FrameClock>&) {
-        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to(pos, nullptr, Gtk::ListScrollFlags::SELECT);
-        return false; // Return false to remove the callback after one executio
-    });
-}
+    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 12)
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, pos](const Glib::RefPtr<Gdk::FrameClock>&) {
+            (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to(pos, nullptr, Gtk::ListScrollFlags::SELECT);
+            return false; // Return false to remove the callback after one executio
+        });
+    #else
+        bool first_run = true;
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, pos, first_run](const Glib::RefPtr<Gdk::FrameClock>&) mutable {
+            if(first_run) { // need to skip first ticks callback to select element
+                first_run = false;
+                return true;
+            };
+            bank_selection_model->set_selected((unsigned int)pos);
+            auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
+            adjustment->set_value((double)pos);
+            return false; // Return false to remove the callback after one executio
+        });
+    #endif
+};
 /*** INSERT / REPLACE / DELETE / MOOVE ***/
 /* REPLACE */
 void Dx7interface::on_replace_sound(Glib::RefPtr<Gio::File> file){
@@ -2417,7 +2424,6 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG_IN();
             unblock_ui();
             send_voice(&bank_1_modif.sound[0]);
         };
-
         (get_window())->set_title(Glib::ustring(MODULE_NAME) + ": "+sound->name.c_str());
 
         return false; // false: Remove the tick callback after execution
