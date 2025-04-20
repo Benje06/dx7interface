@@ -5,7 +5,7 @@ test -z "$srcdir" && srcdir='.'
 DIE=0
 
 #function check_system(){
-    if [[ ${MSYSTEM} == "UCRT64" ]]; then
+    if test ${MSYSTEM} = "UCRT64" ; then
         prefix_path="/ucrt64"
     else
         prefix_path="/usr"
