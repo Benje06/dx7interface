@@ -93,7 +93,7 @@ class Dx7interface : public Gx_module, public Synth {
         bool mode_tf1 = false;                  // mode tf1 = fonction parameter by sound
         bool receive = false;                   // set if receive mode is activate
         bool uncomplete = false;                // bool for uncomplete sysex message
-
+        bool unmooved_sound = true;
         /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
 

@@ -1378,15 +1378,24 @@ void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,uns
 
     prepare_bank(nb_snd_in_file,total_snd,byte_flag);
     seek_parameters(file_base, &bank_1_modif.sound[0]);
-    if (old_snum > snum){ // positionner la selection a la nouvelle position de la voix   en cours pour ne pas changer le son
-        if( total_snd < bank_nb_sound ){
-            old_snum=total_snd;
+    if (old_snum >= snum){ // si le son a ete deplacé
+        // positionner la selection a la nouvelle position de la voix en cours pour ne pas changer le son
+        if ( total_snd < bank_nb_sound){ // si l'ancien son encore present dans la banque
+            old_snum = old_snum + nb_snd_in_file;
+            snum = old_snum;
+            update_bank_modif();
+        }else{ // sinon selectionner le premier son de l'insert et mettre a jour bank_1_X
+            old_snum = snum;
+            unmooved_sound = false;
+            update_bank_modif();
+            unmooved_sound = true;
         };
-    };
-
-    //update_bank_modif(); already done in the start
-    select_voice(old_snum);
-    old_snum=snum;
+    }else{
+        snum = old_snum;
+    }
+    //update_bank_modif();
+    select_voice(snum);
+    //old_snum=snum;
 };
 
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
@@ -1926,14 +1935,18 @@ void Dx7interface::update_bank_modif(){
     switch( bank_nb_sound ){
         case 32:
             // save current sound (0) in bank modif (old_snum)
-            bank_32_modif.sound[old_snum] = bank_1_modif.sound[0];
+            if(unmooved_sound){
+                bank_32_modif.sound[old_snum] = bank_1_modif.sound[0];
+            };
             // copy actual sound index in current
             bank_1_modif.sound[0]= bank_32_modif.sound[snum];
             bank_1_origin.sound[0]= bank_32_origin.sound[snum];
             break;
         case 128:
             // save current sound (0) in bank modif (old_snum)
-            bank_128_modif.sound[old_snum] = bank_1_modif.sound[0];
+            if(unmooved_sound){
+                bank_128_modif.sound[old_snum] = bank_1_modif.sound[0];
+            };
             // copy actual sound index in current
             bank_1_modif.sound[0]= bank_128_modif.sound[snum];
             bank_1_origin.sound[0]= bank_128_origin.sound[snum];
