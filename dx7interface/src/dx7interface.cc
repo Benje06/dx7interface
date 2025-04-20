@@ -1393,9 +1393,7 @@ void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,uns
     }else{
         snum = old_snum;
     }
-    //update_bank_modif();
     select_voice(snum);
-    //old_snum=snum;
 };
 
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
