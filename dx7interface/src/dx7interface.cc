@@ -1231,9 +1231,9 @@ void Dx7interface::select_voice(unsigned int pos){
                 first_run = false;
                 return true;
             };
-            bank_selection_model->set_selected((unsigned int)pos);
             auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
             adjustment->set_value((double)pos);
+            bank_selection_model->set_selected((unsigned int)pos);
             return false; // Return false to remove the callback after one executio
         });
     #endif
@@ -1378,11 +1378,13 @@ void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,uns
 
     prepare_bank(nb_snd_in_file,total_snd,byte_flag);
     seek_parameters(file_base, &bank_1_modif.sound[0]);
-    if (old_snum >= snum){
-        old_snum=total_snd;
-    }
+    if (old_snum > snum){ // positionner la selection a la nouvelle position de la voix   en cours pour ne pas changer le son
+        if( total_snd < bank_nb_sound ){
+            old_snum=total_snd;
+        };
+    };
 
-    update_bank_modif();
+    //update_bank_modif(); already done in the start
     select_voice(old_snum);
     old_snum=snum;
 };

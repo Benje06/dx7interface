@@ -157,8 +157,8 @@
         St_pitch pitch;
         St_algo algo;
         St_lfo lfo;
-        //Glib::ustring name;
-        std::string name;
+        Glib::ustring name;
+        //std::string name;
         uint8_t sum;
         St_extra extra;
     }St_dx7sysex_1;
