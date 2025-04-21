@@ -41,13 +41,17 @@ void Synth::block_midi(){
 void Synth::connect_midi(Glib::ustring name){
     LOG_IN();
     #ifdef __linux__
-        /* 0 can be replace by SND_SEQ_NONBLOCK */
         snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_DUPLEX, 0);
+        //list_midi_ports();
+        int num = get_last_interface_with_name(name);
+        if( num != 0){
+            name.append("_"+tostr<int>(num));
+        };
         snd_seq_set_client_name(seq_handle, name.c_str());
-        port_in =	snd_seq_create_simple_port(seq_handle, name.append("_in").c_str(),
+        port_in =	snd_seq_create_simple_port(seq_handle, (name+"_in").c_str(),
                                                 SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
                                                 SND_SEQ_PORT_TYPE_APPLICATION);
-        port_out =	snd_seq_create_simple_port(seq_handle, name.append("_out").c_str(),
+        port_out =	snd_seq_create_simple_port(seq_handle, (name+"_out").c_str(),
                                                 SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
                                                 SND_SEQ_PORT_TYPE_APPLICATION);
 
@@ -202,6 +206,50 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
     int Synth::get_port_out_number(){
         return port_out;
     };
+    void Synth::list_midi_ports(){
+        snd_seq_client_info_t *cinfo;
+        snd_seq_client_info_alloca(&cinfo);
+        snd_seq_client_info_set_client(cinfo, -1);
+
+        printf("ALSA MIDI Clients and Ports:\n");
+
+        // Loop through all clients
+        while (snd_seq_query_next_client(seq_handle, cinfo) >= 0) {
+            int client = snd_seq_client_info_get_client(cinfo);
+
+            printf("Client %d: %s\n", client, snd_seq_client_info_get_name(cinfo));
+
+            // Prepare to query ports for this client
+            snd_seq_port_info_t *pinfo;
+            snd_seq_port_info_alloca(&pinfo);
+            snd_seq_port_info_set_client(pinfo, client);
+            snd_seq_port_info_set_port(pinfo, -1);
+
+            // Loop through all ports for this client
+            while (snd_seq_query_next_port(seq_handle, pinfo) >= 0) {
+                int port = snd_seq_port_info_get_port(pinfo);
+                const char *port_name = snd_seq_port_info_get_name(pinfo);
+
+                printf("  Port %d: %s\n", port, port_name);
+            }
+        }
+    };
+    int Synth::get_last_interface_with_name(Glib::ustring name){
+        int count = 0;
+        snd_seq_client_info_t *cinfo;
+        snd_seq_client_info_alloca(&cinfo);
+        snd_seq_client_info_set_client(cinfo, -1);
+
+        // Loop through all clients
+        while (snd_seq_query_next_client(seq_handle, cinfo) >= 0) {
+            //int client = snd_seq_client_info_get_client(cinfo);
+            Glib::ustring client_name = snd_seq_client_info_get_name(cinfo);
+            if( client_name.find(name) == 0 ){
+                count += 1;
+            };
+        };
+        return count;
+    };
 #endif
 #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
     /*std::pair<RtMidiIn*, RtMidiOut*> Synth::get_midi_io() {
@@ -214,7 +262,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
         return port_out;
     };*/
 #endif
-
+// threaded loop
 bool Synth::Run() {
     #ifdef __linux__
         listen_midi();

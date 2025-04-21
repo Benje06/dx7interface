@@ -223,7 +223,7 @@ AM_CONDITIONAL([DEV], [test x$dev = xtrue])
 
 AM_COND_IF([DEV],[
 PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/po]
-PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/]
+PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/cfg/]
 PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/images/]
 PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
 PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]

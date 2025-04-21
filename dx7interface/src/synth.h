@@ -131,6 +131,8 @@ class Synth : public Thread {
                 /* seq queue */
                 int spfd;                              /* taille de la file de queue */
                 struct pollfd *pfd;                    /* array de file de queue du sequenceur */
+                void list_midi_ports();
+                int get_last_interface_with_name(Glib::ustring);
         #endif
         #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
                 std::string port_in_name;

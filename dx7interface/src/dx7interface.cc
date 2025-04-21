@@ -5441,9 +5441,9 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     //LOG_OUT();
 };
 
-void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir){
+void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir, double lvl){
     double half_width  = width/2.0;
-    double half_height = height/2.0;
+    double half_height = (height/2.0) + ( (lvl - 40.0)*2 );
     double scale_factor = (100.0 - dpth) +25 ; // +25, to get 85 at max ( 85==100 depth)
     switch( str_const_hash(type_curve.c_str()) ){
         case "EXP+"_hash:{
@@ -5498,15 +5498,15 @@ void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double widt
             (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+num_op))->get_selected_item())
                               )->get_string() ;
     double lft_dpth =(double)(get_gwidget<Gtk::SpinButton>("kls_lft_dpth_op"+num_op))->get_value()+1 ;
-
+    double lvl =(get_gwidget<Gtk::SpinButton>("lvl_op"+num_op))->get_value()+1;
     cr->save();
     cr->translate(0, height);
     cr->scale(1, -1);
     cr->set_source_rgba(line_color[0],line_color[1],line_color[2],1.0);
     cr->set_line_width(line_width);
-    draw_kls_curve(cr,rght_curve,width,height,rght_dpth,"rght");
+    draw_kls_curve(cr,rght_curve,width,height,rght_dpth,"rght", lvl);
     cr->stroke();
-    draw_kls_curve(cr,lft_curve,width,height,lft_dpth,"lft");
+    draw_kls_curve(cr,lft_curve,width,height,lft_dpth,"lft", lvl);
     cr->stroke();
     cr->restore();
     //LOG_OUT();
@@ -5519,7 +5519,7 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
         draw_background(cr);
-        draw_axis(cr,wdth, hght);
+        draw_axis(cr,wdth, hght );
         draw_kls( cr, wdth, hght, num_op);
         draw_keyboard( cr, wdth, hght, num_op );
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op"+num_op))->queue_draw();

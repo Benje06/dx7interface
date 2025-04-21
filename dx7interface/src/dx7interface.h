@@ -658,8 +658,8 @@ class Dx7interface : public Gx_module, public Synth {
         /* Level Scaling */
         void draw_kls(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);         /* dessine la courbe */
         void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);    /*dessine le clavier */
-        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /*dessine le clavier */
-        void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>&,Glib::ustring, double, double, double, Glib::ustring); /* draw kls curve type */
+        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /* dessine les axes */
+        void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>&,Glib::ustring, double, double, double, Glib::ustring, double); /* draw kls curve type */
 
         /* Mouse Gesture */
         void init_gesture_controller();
