@@ -97,6 +97,7 @@
         #include <glibmm/i18n.h>
     #endif
     #include <gtkmm-4.0/gtkmm.h>
+    #include <giomm/settings.h>
     /*** String Convert ***/
     /* convert to string any type of number */
     template <class paramType>

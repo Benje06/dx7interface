@@ -132,6 +132,7 @@ void Gx_module::set_style_file(Glib::ustring file_css){
     };
     LOG_OUT();
 };
+
 void Gx_module::set_custom_font_file(Glib::ustring custom_font_file){
     LOG_IN();
     if( std::filesystem::exists(custom_font_file.c_str()) ){
@@ -390,6 +391,21 @@ void Gx_module::apply_style_to_screen(){
             auto css = Gtk::CssProvider::create();
             auto custom_provider = Gtk::CssProvider::create();
             css->load_from_path(mod.cssfile);
+
+
+            /* Prepare for clear or dark theme
+             * auto giosettings = Gio::Settings::create("org.gnome.desktop.interface");
+
+            giosettings->signal_changed().connect([mod.cssfile](const Glib::ustring& key) {
+                if (key == "gtk-theme" || key == "color-scheme") {
+                    auto theme = settings->get_string("gtk-theme");
+                    auto color_scheme = settings->get_string("color-scheme");
+                    std::cout << "Theme changed! gtk-theme: " << theme
+                    << " color-scheme: " << color_scheme << std::endl;
+                    // Here, update your CSS or UI as needed
+                }
+            });*/
+
 
             #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
                 if(mod.color != ""){
