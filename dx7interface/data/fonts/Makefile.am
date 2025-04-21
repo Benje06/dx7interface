@@ -3,6 +3,6 @@ fonts_DATA = \
 	license.txt
 
 fontsdir = \
-    $(pkgdatadir)/$(PACKAGE_VERSION)/fonts
+    /usr/share/fonts/${PACKAGE_NAME}
 
 ## File created by the gnome-build tools

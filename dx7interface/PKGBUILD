@@ -28,5 +28,5 @@ package() {
     make DESTDIR="$pkgdir" install
 }
 post_install(){
-    fc-cache -fv $pkgdir/$pkgver/fonts
+    fc-cache -f
 }
