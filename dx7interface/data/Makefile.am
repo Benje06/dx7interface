@@ -1,6 +1,6 @@
 SUBDIRS = \
-    config \
-    fonts \
+	cfg \
+	fonts \
 	ui \
 	images \
 	launcher

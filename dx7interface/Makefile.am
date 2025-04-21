@@ -35,6 +35,10 @@ DISTCLEANFILES = \
 	src/Makefile.in\
 	data/Makefile\
 	data/Makefile.in\
+	data/cfg/Makefile\
+	data/cfg/Makefile.in\
+	data/fonts/Makefile\
+	data/fonts/Makefile.in\
 	data/images/Makefile\
 	data/images/Makefile.in\
 	data/launcher/Makefile\
@@ -106,8 +110,8 @@ EXTRA_DIST = \
 	$(m4_DATA) \
 	$(po_DATA) \
 	$(data_DATA) \
-	$(config_DATA) \
-    $(fonts_DATA) \
+	$(cfg_DATA) \
+	$(fonts_DATA) \
 	INTLTOOL_FILES \
 	autogen.sh \
 	configure.ac \

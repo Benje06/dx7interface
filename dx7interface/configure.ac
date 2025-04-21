@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 # tools :
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.72])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([dx7interface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -259,10 +259,12 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  po/Makefile.in
                  data/Makefile
-                 data/ui/Makefile
+                 data/cfg/Makefile
+                 data/fonts/Makefile
                  data/images/Makefile
                  data/launcher/Makefile
                  data/launcher/dx7interface.desktop
+                 data/ui/Makefile
                  src/dx7interface.pc
                  src/tx81zinterface.pc
 ])
