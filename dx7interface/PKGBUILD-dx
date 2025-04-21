@@ -27,4 +27,6 @@ package() {
     cd gtk4/${pkgname}
     GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make DESTDIR="$pkgdir/" install
 }
-
+post_install(){
+    fc-cache -fv $pkgdir/$pkgver/fonts
+}

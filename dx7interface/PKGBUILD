@@ -29,5 +29,4 @@ package() {
 }
 post_install(){
     fc-cache -fv $pkgdir/$pkgver/fonts
-	fc-cache -fv $(DESTDIR)$(fontsdir)
 }
