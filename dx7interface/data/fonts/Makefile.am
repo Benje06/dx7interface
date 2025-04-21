@@ -5,8 +5,4 @@ fonts_DATA = \
 fontsdir = \
     $(pkgdatadir)/$(PACKAGE_VERSION)/fonts
 
-install-data-hook:
-	fc-cache -fv $(DESTDIR)$(fontsdir)
-
 ## File created by the gnome-build tools
-
