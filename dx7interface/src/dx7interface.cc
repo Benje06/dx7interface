@@ -1260,8 +1260,8 @@ void Dx7interface::replace_sound(Glib::ustring file_name, Glib::ustring file_bas
 };
 
 /** INSERT AT **/
-std::tuple<unsigned int,std::pair<Dx7interface::BankVariant, Dx7interface::BankVariant>> Dx7interface::get_banks_dest(unsigned int total_snd){
-    if( total_snd >= 32 || bank_nb_sound == 128 ){          // switch to 128 sounds
+std::tuple<unsigned int,std::pair<Dx7interface::BankVariant, Dx7interface::BankVariant>> Dx7interface::get_banks_dest(unsigned int pos_end_ins){
+    if( pos_end_ins >= 32 || bank_nb_sound == 128 ){          // switch to 128 sounds
         return std::make_tuple(
             128,
             std::make_pair(std::ref(bank_128_origin), std::ref(bank_128_modif))
@@ -1314,7 +1314,7 @@ void Dx7interface::moove_sound(BankVariant& bank_origin_dest, BankVariant& bank_
 };
 void Dx7interface::read_voice(BankVariant& bank_origin_dest, BankVariant& bank_modif_dest, unsigned int max_write_pos, bool byte_flag){
     std::visit([&](auto& bank_origin, auto& bank_modif) {
-        unsigned int pos=snum;
+        unsigned int pos=get_gwidget<Gtk::SpinButton>("spinbutton_insert_start")->get_value();;
         if(byte_flag){
             for( ; pos < bank_nb_sound && pos < max_write_pos; pos++ ){
                 seek_voice_by_byte(&bank_origin.get().sound[pos]);
@@ -1328,12 +1328,12 @@ void Dx7interface::read_voice(BankVariant& bank_origin_dest, BankVariant& bank_m
         };
     }, bank_origin_dest, bank_modif_dest);
 };
-void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int total_snd, bool byte_flag){
+void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int pos_end_ins, bool byte_flag){
     unsigned int bank_nb_sound_src = bank_nb_sound;
 
     auto [bank_origin_src, bank_modif_src] = get_banks_source();
-    auto [bank_nb_sound_dest, banks_pair] = get_banks_dest(total_snd); // return the destination bank depending of total_snd
-    auto [bank_origin_dest,bank_modif_dest] = banks_pair;
+    auto [bank_nb_sound_dest, banks_pair] = get_banks_dest(pos_end_ins); // return the destination bank depending of total_snd
+    auto [bank_origin_dest, bank_modif_dest] = banks_pair;
     if(bank_nb_sound_src != bank_nb_sound_dest){ //copy bank in new bank
         copy_bank(
             bank_origin_src,
@@ -1343,8 +1343,8 @@ void Dx7interface::prepare_bank(unsigned int nb_snd_in_file, unsigned int total_
             bank_nb_sound_src,bank_nb_sound_dest);
     }
     bank_nb_sound = bank_nb_sound_dest;
-    moove_sound(bank_origin_dest, bank_modif_dest, total_snd, nb_snd_in_file);
-    read_voice(bank_origin_dest, bank_modif_dest, total_snd, byte_flag);
+    moove_sound(bank_origin_dest, bank_modif_dest, pos_end_ins, nb_snd_in_file);
+    read_voice(bank_origin_dest, bank_modif_dest, pos_end_ins, byte_flag);
 
     update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_dest);
 };
@@ -1357,41 +1357,39 @@ void Dx7interface::insert_at(Glib::ustring file_name,Glib::ustring file_base,uns
     *  si taille banque 128 => insert at and push out others
     */
     unsigned int nb_snd_in_file = 0;
-    unsigned int total_snd = 0;
+    unsigned int pos_end_ins = 0;
     bool byte_flag = false;
+    unsigned int insert_at_pos = get_gwidget<Gtk::SpinButton>("spinbutton_insert_start")->get_value();
 
     block_ui(); // needed
 
     update_bank_modif(); // to save change
-    old_snum = snum;
-    snum=get_gwidget<Gtk::SpinButton>("spinbutton_insert_start")->get_value();
 
-    if( (file_size % 128) == 0 ){                    // snd multiple de 128
+    if( (file_size % 128) == 0 ){                    // file is multiple of 128
         nb_snd_in_file = (file_size / 128);
-        total_snd = snum + nb_snd_in_file;
         byte_flag=false;
-    }else if( (file_size % 128) != 0 ){              // multiple de 155
+    }else if( (file_size % 128) != 0 ){              // file is multiple of 155
         nb_snd_in_file = (file_size / 155);
-        total_snd = snum + nb_snd_in_file;
         byte_flag=true;
     };
+    pos_end_ins = insert_at_pos + nb_snd_in_file;
 
-    prepare_bank(nb_snd_in_file,total_snd,byte_flag);
+    prepare_bank(nb_snd_in_file, pos_end_ins, byte_flag);
     seek_parameters(file_base, &bank_1_modif.sound[0]);
-    if (old_snum >= snum){ // si le son a ete deplacé
+
+    if (old_snum >= insert_at_pos){ // si le son a ete deplacé
         // positionner la selection a la nouvelle position de la voix en cours pour ne pas changer le son
-        if ( total_snd < bank_nb_sound){ // si l'ancien son encore present dans la banque
-            old_snum = old_snum + nb_snd_in_file;
-            snum = old_snum;
-            update_bank_modif();
+        unsigned int new_pos_selected_snd = old_snum + nb_snd_in_file;
+        if ( new_pos_selected_snd < bank_nb_sound){ // si l'ancien son encore present dans la banque
+            old_snum = new_pos_selected_snd;
+            snum = new_pos_selected_snd;
         }else{ // sinon selectionner le premier son de l'insert et mettre a jour bank_1_X
-            old_snum = snum;
-            unmooved_sound = false;
-            update_bank_modif();
-            unmooved_sound = true;
+            old_snum = insert_at_pos;
+            snum = insert_at_pos;
         };
-    }else{
-        snum = old_snum;
+        unmooved_sound = false;
+        update_bank_modif();
+        unmooved_sound = true;
     }
     select_voice(snum);
 };
