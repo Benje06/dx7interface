@@ -239,10 +239,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
         snd_seq_client_info_t *cinfo;
         snd_seq_client_info_alloca(&cinfo);
         snd_seq_client_info_set_client(cinfo, -1);
-
-        // Loop through all clients
         while (snd_seq_query_next_client(seq_handle, cinfo) >= 0) {
-            //int client = snd_seq_client_info_get_client(cinfo);
             Glib::ustring client_name = snd_seq_client_info_get_name(cinfo);
             if( client_name.find(name) == 0 ){
                 count += 1;

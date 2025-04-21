@@ -23,12 +23,10 @@ multiplateforme (midi/interface) :
 	Package (windows)
 	
 # MIDI
-incrementer le numero du bus (Synth)
 * reception/envoi en midi (send bank(32), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
 listen sysex message
 
 # Interface
-draw kls: point d'origine relatif au volume de l'operateur dependant du volume 
 ? Select midi device from interface ?
 * delete / moove(ctrl+c ctrl+x)
 gestion click appuyer pour déplacer un sons
@@ -41,7 +39,7 @@ randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, e
 
 #Theme
 test css valeur pour themes clair/fonce.
-inclusion de font ( install, chargment dynamic) 
+inclusion de font ( install, chargment dynamic) RAF windows
 
 ### CODE
 factorisation ( ?receive and load bank? )
