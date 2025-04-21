@@ -1,11 +1,11 @@
 Files :
-	PKGBUILD:
+	PKGBUILD PKGBUILD-DX:
 		COPYRIGHT AND LICENSE INFORMATION FOR PKGBUILD FILES
 
-		* The following am file are part of Dx7interface.  All are licensed under the
+		* The following PKGBUILD files are part of Dx7interface.  All are licensed under the
 		  GNU General Public License version 3 (see COPYING) or later.
 
-		File: Makefile.am
+		File: PKGBUILD PKGBUILD-DX
 		  Author: BENHAÏM Jérôme
 		  Copyright (C) 2010-2024 BENHAÏM Jérôme.
 		  
@@ -47,43 +47,86 @@ Files :
 		comes from glade3 project see http://glade.gnome.org/
 		
 Directory :
-	- data/ui :
-		dx7interface-0.0.1.ui		dx7interface interface ui file :
-						
-			COPYRIGHT AND LICENSE INFORMATION FOR .UI FILES
+    - data/config:
+            midi_learn_default_config.cfg :
+        
+            COPYRIGHT AND LICENSE INFORMATION FOR .CFG FILES
 
-			* The following .ui file are part of Dx7interface.  All are licensed under the
+			* The following .cfg file are part of Dx7interface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
 
-			File: libDx7interface-0.0.1.ui
+			File: midi_learn_default_config.cfg
+		    dx7interface-0.0.1-simplify_4.8.ui theme.css
 			  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
 			  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+			  
+			Makefile.am :
+		    COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+		    * The following am file are part of Dx7interface.  All are licensed under the
+		      GNU General Public License version 3 (see COPYING) or later.
+
+		    File: Makefile.am
+		      Author: BENHAÏM Jérôme
+		      Copyright (C) 2010-2024 BENHAÏM Jérôme.
+			  
+    - data/fonts:
+            Araster-fonts-6x8.ttf
+            license.txt :
+            
+            COPYRIGHT AND LICENSE INFORMATION FOR .TTF .TXT FILES
+
+			* The FontStruction “Raster Fonts 6x8”
+			(https://fontstruct.com/fontstructions/show/261025) by “DOS” is licensed
+			under a Creative Commons Attribution Share Alike license
+			(http://creativecommons.org/licenses/by-sa/3.0/).
+
+			File: Araster-fonts-6x8.ttf license.txt
+			  Author: “DOS”
+			  Copyright (C) 2009 "DOS".
+
+			Makefile.am :
+		    COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+		    * The following am file are part of Dx7interface.  All are licensed under the
+		      GNU General Public License version 3 (see COPYING) or later.
+
+		    File: Makefile.am
+		      Author: BENHAÏM Jérôme
+		      Copyright (C) 2010-2024 BENHAÏM Jérôme.
 
 	- data/images :
-		algo2.png
-		algo6.png
-		algo29.png
-		algo30.png
-		algo31.png
-		algo32.png
+		32_algo_dx7_150*105px.svg
 		algo&wave.svg
-		SAW-.png
-		SAW+.png
+		algo.svg
+		algo[1-32].png
+		dx7interface.png
+		icon_dx7interfaces.svg
+		keyboard.png
+		keyboard_background.png
+		lfo_wave_142*48px.svg
+		PianoKeyboard.svg
 		S_HOLD.png
+		SAW+.png
+		SAW-.png
 		SIN.png
 		SQU.png
-		TRI.png
+		touche_b.png
+		touche_w.png
+		TRI.png :
 		
 		COPYRIGHT AND LICENSE INFORMATION FOR IMAGE AND VECTORIEL FILES
 
 			* The following .png and .svg files are part of Dx7interface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
 
-			File: algo2.png	algo6.png algo29.png algo30.png	algo31.png
-				  algo32.png algo&wave.svg SAW-.png	SAW+.png S_HOLD.png
-				  SIN.png SQU.png TRI.png			 
-			  Author: BENHAÏM Jérôme Jean-Michel THIÉMONGE
-			  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+			File: 32_algo_dx7_150*105px.svg algo&wave.svg algo.svg algo[1-32].png
+			      dx7interface.png icon_dx7interfaces.svg keyboard.png keyboard_background.png
+			      lfo_wave_142*48px.svg PianoKeyboard.svg S_HOLD.png SAW+.png SAW-.png SIN.png
+			      SQU.png touche_b.png touche_w.png TRI.png
+			      
+			  Author: BENHAÏM Jérôme THIÉMONGE Jean-Michel 
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme, THIÉMONGE Jean-Michel.
 			   
 		Makefile.am : 
 		
@@ -95,14 +138,60 @@ Directory :
 			File: Makefile.am
 			  Author: BENHAÏM Jérôme
 			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+	
+	- data/launcher :
+	    dx7interface.desktop.in
+					
+		COPYRIGHT AND LICENSE INFORMATION FOR .UI .CSS FILES
+
+		* The following .in file are part of Dx7interface.  All are licensed under the
+		  GNU General Public License version 3 (see COPYING) or later.
+
+		File: dx7interface.desktop.in
+		  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
+		  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+
+		Makefile.am :
+	    COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+	    * The following am file are part of Dx7interface.  All are licensed under the
+	      GNU General Public License version 3 (see COPYING) or later.
+
+	    File: Makefile.am
+	      Author: BENHAÏM Jérôme
+	      Copyright (C) 2010-2024 BENHAÏM Jérôme.
 			  
+	- data/ui :
+		dx7interface interface ui file : 
+		    dx7interface-0.0.1.ui dx7interface-0.0.1-simplify.ui
+		    dx7interface-0.0.1-simplify_4.8.ui theme.css
+						
+			COPYRIGHT AND LICENSE INFORMATION FOR .UI .CSS FILES
+
+			* The following .ui and .css files are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
+
+			File: dx7interface-0.0.1.ui dx7interface-0.0.1-simplify.ui
+		          dx7interface-0.0.1-simplify_4.8.ui theme.css
+			  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+
+			Makefile.am :
+		    COPYRIGHT AND LICENSE INFORMATION FOR .AM FILES
+
+		    * The following am file are part of Dx7interface.  All are licensed under the
+		      GNU General Public License version 3 (see COPYING) or later.
+
+		    File: Makefile.am
+		      Author: BENHAÏM Jérôme
+		      Copyright (C) 2010-2024 BENHAÏM Jérôme.
+			    
 	- po :
 		de.po
 		en.po
 		es.po
 		fr.po
 		fr_FR.po
-		fr_FR.utf8.po
 		dx7interface.pot
 		jap.po
 		languagecode.po
@@ -113,7 +202,7 @@ Directory :
 			* The following .po and .pot files are part of Dx7interface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
 
-			File: de.po en.po es.po fr.po fr_FR.po fr_FR.utf8.po dx7interface.pot jap.po languagecode.po ru.po
+			File: de.po en.po es.po fr.po fr_FR.po dx7interface.pot jap.po languagecode.po ru.po
 			 
 			  Author: BENHAÏM Jérôme
 			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
@@ -130,28 +219,35 @@ Directory :
 			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
 
 	- src : 
+	    synth.h
+	    synth.cc
+	    GtkClass.h
+	    GtkClass.cc
+	    event_macro_helpers.h
+	    tx81zinterface.h
+	    tx81zinterface.cc
+	    tx81zsysex.h
 		dx7interface.cc
 		dx7interface.h
 		dx7sysex.h :
 
-			COPYRIGHT AND LICENSE INFORMATION FOR .H AND .CC FILES
+		COPYRIGHT AND LICENSE INFORMATION FOR .H AND .CC FILES
 
-				* The following headers and sources file are part of Dx7interface.  All are licensed under the
-				  GNU General Public License version 3 (see COPYING) or later.
+			* The following headers and sources file are part of Dx7interface.  All are licensed under the
+			  GNU General Public License version 3 (see COPYING) or later.
 
-				File :  dx7interface.cc	dx7interface.h dx7sysex.h
-				  Author: BENHAÏM Jérôme Jean-Michel THIÉMONGE
-				  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
+			File : dx7interface.cc dx7interface.h dx7sysex.h
+			  Author: BENHAÏM Jérôme THIÉMONGE Jean-Michel 
+			  Copyright (C) 2010-2024 BENHAÏM Jérôme, THIÉMONGE Jean-Michel.
 				
-		Makefile.am
-		dx7interface.pc.in
+		Makefile.am dx7interface.pc.in
 	
 			COPYRIGHT AND LICENSE INFORMATION FOR .AM and .PC FILES
 
-			* The following .am and .pc file are part of Dx7interface.  All are licensed under the
+			* The following .am file are part of Dx7interface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
 
-			File: Makefile.am, dx7interface.pc.in
+			File: Makefile.am dx7interface.pc.in
 			  Author: BENHAÏM Jérôme
 			  Copyright (C) 2010-2024-2024 BENHAÏM Jérôme.		  
 			  

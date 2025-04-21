@@ -106,6 +106,8 @@ EXTRA_DIST = \
 	$(m4_DATA) \
 	$(po_DATA) \
 	$(data_DATA) \
+	$(config_DATA) \
+    $(fonts_DATA) \
 	INTLTOOL_FILES \
 	autogen.sh \
 	configure.ac \

@@ -7,30 +7,38 @@ normalisation gx_module (fonction load,
 
 ## Dossier DX7
 clean dossier ( sous repertoire: utilitaires(bouclemidi), instruments(.ins), banque de sons(.syx/.fct), controller(midilearn), ) 
-ajouter deepmind 12 param
 
 # LANG
 traductions
 
 # Fonctionalitées
 evenements MIDI (temporisation, ?mode omni?)
-ecriture fichier des extra parameters( compatible tf1)
-* reception/envoi en midi (send bank(32), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
-multiplateforme (midi/interface) libremidi (prefered but not compiled for ucrt64), rtmidi(win done with ucrt64)  ??? Juce (license prorietaire), drumkit (sequenceur midi)
+*ecriture fichier des extra parameters( compatible tf1)
+
+multiplateforme (midi/interface) :
+    libremidi (prefered but not compiled for ucrt64),
+    rtmidi(win done with ucrt64)  
+    ??? Juce (license prorietaire), drumkit (sequenceur midi)
 	Listen midi (windows)
 	Package (windows)
+	
+# MIDI
+incrementer le numero du bus (Synth)
+* reception/envoi en midi (send bank(32), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
+listen sysex message
 
 # Interface
+draw kls: point d'origine relatif au volume de l'operateur dependant du volume 
 ? Select midi device from interface ?
-rename midi learn function list
-* insert/delete/(moove)
-fenetre secondaires (option, module)
+* delete / moove(ctrl+c ctrl+x)
+gestion click appuyer pour déplacer un sons
 refonte interface( size/expand des elements)
 * son par defaut (son init)
-randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, en fonction dela frequence, ...) )
+randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, en fonction dela frequence, relatif a d'autres ...) )
 	- que ce soit audible
 	- "musicale"
 	- 
+
 #Theme
 test css valeur pour themes clair/fonce.
 inclusion de font ( install, chargment dynamic) 
