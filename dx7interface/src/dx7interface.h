@@ -94,6 +94,7 @@ class Dx7interface : public Gx_module, public Synth {
         bool receive = false;                   // set if receive mode is activate
         bool uncomplete = false;                // bool for uncomplete sysex message
         bool unmooved_sound = true;
+        bool send_bank = false;
         /*** Dx7 specific ***/
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
 
@@ -596,6 +597,7 @@ class Dx7interface : public Gx_module, public Synth {
         void write_file(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
         void write_voice_extra_parameters(st_dx7sysex_1*, unsigned char*, unsigned int*);
         /* BANK */
+        void on_send_bank();
         void on_save_bank();
         void write_bank(Glib::RefPtr<Gio::File>, unsigned int);
         void write_bank_as_sysex(Glib::RefPtr<Gio::File>, unsigned int);

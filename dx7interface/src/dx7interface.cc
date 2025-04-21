@@ -603,6 +603,7 @@ void Dx7interface::create_popover_menu(){
     auto menu = Gio::Menu::create();
     menu->append("_Save sound", "menu.save_sound");
     menu->append("_Save bank", "menu.save_bank");
+    menu->append("_Send bank", "menu.send_bank");
     menu->append("_Restore sound", "menu.restore_sound");
     menu->append("_Restore bank", "menu.restore_bank");
     menu->append("_Insert At", "menu.insert_at");
@@ -1421,6 +1422,10 @@ void Dx7interface::write_file(Glib::RefPtr<Gio::File> file, unsigned char* msg, 
     output_stream->close();
 };
 /** BANK **/
+void Dx7interface::on_send_bank(){
+    send_bank=true;
+    write_bank_as_sysex(nullptr,0);
+};
 void Dx7interface::on_save_bank(){
     LOG_IN();
     try{
@@ -1524,7 +1529,12 @@ void Dx7interface::write_bank_as_sysex(Glib::RefPtr<Gio::File> file,unsigned int
         };
         msg[l++]=(unsigned char)(voice_checksum & 0x7F) ;
         msg[l]=0xF7;
-        write_file(file,msg,msg_size);
+        if( send_bank ){
+            send_midi(SND_SEQ_EVENT_SYSEX, msg_size, msg);
+            send_bank=false;
+        }else{
+            write_file(file,msg,msg_size);
+        };
     } catch (const std::exception& ex) {
         std::cerr << "Error writing to file: " << std::endl;
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
@@ -2845,6 +2855,7 @@ void Dx7interface::init_global_fonction_parameter(){
 void Dx7interface::attach_action_group_signals(){
     action_group->add_action("save_sound", sigc::mem_fun(*this, &Dx7interface::on_save_sound));
     action_group->add_action("save_bank", sigc::mem_fun(*this, &Dx7interface::on_save_bank));
+    action_group->add_action("send_bank", sigc::mem_fun(*this, &Dx7interface::on_send_bank));
     action_group->add_action("restore_sound", sigc::mem_fun(*this, &Dx7interface::on_restore_sound));
     action_group->add_action("restore_bank", sigc::mem_fun(*this, &Dx7interface::on_restore_bank));
     action_group->add_action("insert_at", sigc::mem_fun(*this, &Dx7interface::on_insert_at));
