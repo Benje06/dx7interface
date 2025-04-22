@@ -586,7 +586,7 @@ class Dx7interface : public Gx_module, public Synth {
         std::tuple<unsigned int,std::pair<Dx7interface::BankVariant,
             Dx7interface::BankVariant>> get_banks_dest(unsigned int);
         void copy_bank(BankVariant&, BankVariant&, BankVariant&, BankVariant&, unsigned int, unsigned int);
-        void moove_sound(BankVariant&, BankVariant&, unsigned int, unsigned int);
+        void moove_sound(BankVariant&, BankVariant&, unsigned int, int);
         void read_voice(BankVariant&, BankVariant&, unsigned int, bool); // call seek_voice or seek_voice_by_byte
 
         /* REPLACE */

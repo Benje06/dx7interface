@@ -93,7 +93,7 @@
 #include <gxinterface/0.0.1/lang.h>
 #include <gxinterface/0.0.1/gxthread.h>
 
-#if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+#if defined(__RtMidi__)
         #include <RtMidi.h>
         #define SND_SEQ_EVENT_NOTEON 0x80
         #define SND_SEQ_EVENT_NOTEOFF 0x90
@@ -105,7 +105,7 @@
         #define SND_SEQ_EVENT_SYSEX 0xF0
         #define SND_SEQ_EVENT_SENSING 0xFE
 #endif
-#ifdef __linux__ 
+#if defined(__ALSA__)
         /*	Alsa */
         #include <alsa/asoundlib.h>
         /* Helpers */
@@ -120,7 +120,7 @@ class Synth : public Thread {
     private:
         bool block_midi_msg;
         Glib::ustring caller="None";
-        #ifdef __linux__
+        #if defined(__ALSA__)
                 /*** ALSA MIDI ***/
                 snd_seq_t* seq_handle;                 /* handler */
                 snd_seq_system_info_t* seq_info;       /* info */
@@ -134,7 +134,7 @@ class Synth : public Thread {
                 void list_midi_ports();
                 int get_last_interface_with_name(Glib::ustring);
         #endif
-        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+        #if defined(__RtMidi__)
                 std::string port_in_name;
                 std::string port_out_name;
                 RtMidiIn* port_in;
@@ -155,7 +155,7 @@ class Synth : public Thread {
         /*** MIDI ***/
         void block_midi();
         void unblock_midi();
-        #ifdef __linux__
+        #if defined(__ALSA__)
                 /* ALSA */
                 void print_event_info(snd_seq_event_t*);
                 snd_seq_event_t* get_seq_event_handler();
@@ -166,7 +166,7 @@ class Synth : public Thread {
                 int get_port_in_number();
                 int get_client_id();
         #endif
-        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+        #if defined(__RtMidi__)
                 std::vector<unsigned char> message;
                 void print_event_info();
                 std::string get_event_name(unsigned char);
@@ -177,10 +177,10 @@ class Synth : public Thread {
         void deconnect_midi();
         void send_midi(char, unsigned int, unsigned char*);
         /* could be overrride in the synthé module itself*/
-        #ifdef __linux__
+        #if defined(__ALSA__)
                 virtual void listen_midi();             /* function that handle midi events */
         #endif
-        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+        #if defined(__RtMidi__)
                 virtual void listen_midi(double, std::vector<unsigned char>*, void*) = 0;
         #endif
         /*** THREAD ***/

@@ -6,7 +6,7 @@ Synth::Synth(Glib::ustring name){
     std::cerr << caller;
     LOG_IN();
     init_nls();
-    #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+    #if defined(__RtMidi__)
         port_in = new RtMidiIn();
         port_out = new RtMidiOut();
     #endif
@@ -40,7 +40,7 @@ void Synth::block_midi(){
 
 void Synth::connect_midi(Glib::ustring name){
     LOG_IN();
-    #ifdef __linux__
+    #if defined(__ALSA__)
         snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_DUPLEX, 0);
         //list_midi_ports();
         int num = get_last_interface_with_name(name);
@@ -67,12 +67,8 @@ void Synth::connect_midi(Glib::ustring name){
         /* Get poll descriptors. */
         snd_seq_poll_descriptors(seq_handle, pfd, spfd, POLLIN|POLLOUT);
     #endif
-    #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+    #if defined(__RtMidi__)
         try {
-            // Create RtMidiIn and RtMidiOut instances
-            //port_in = std::make_unique<RtMidiIn>();
-            //port_out = std::make_unique<RtMidiOut>();
-
             int port_out_index = 0;
             int port_in_index = 0;
 
@@ -123,10 +119,10 @@ void Synth::connect_midi(Glib::ustring name){
 
 void Synth::deconnect_midi(){
     LOG_IN();
-    #ifdef __linux__
+    #if defined(__ALSA__)
         snd_seq_close(seq_handle);
     #endif
-    #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+    #if defined(__RtMidi__)
         if (port_in && port_in->isPortOpen()) {
             port_in->closePort(); // Close the virtual input port
             std::cout << "Disconnected MIDI input port: " << port_in_name << std::endl;
@@ -146,7 +142,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
     //#ifdef USE_ALSA_MIDI
     //std::cerr << (int)block_midi_msg << std::endl;
     if (!block_midi_msg){
-        #ifdef __linux__
+        #if defined(__ALSA__)
             /* seq event */
             snd_seq_event_t ev_out;
             snd_seq_ev_clear(&ev_out);
@@ -166,7 +162,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
             snd_seq_event_output(seq_handle, &ev_out);
             snd_seq_drain_output(seq_handle);
         #endif
-        #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+        #if defined(__RtMidi__)
             if ( ev_type == SND_SEQ_EVENT_CONTROLLER ) {
                 message.push_back(0xB0 | (msg[0] & 0x0F)); // CC + channel
                 message.push_back(msg[1]);  // Controller number
@@ -183,7 +179,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
 };
 
 
-#ifdef __linux__
+#if defined(__ALSA__)
     int Synth::get_client_id(){
         return client_id;
     };
@@ -248,7 +244,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
         return count;
     };
 #endif
-#if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+#if defined(__RtMidi__)
     /*std::pair<RtMidiIn*, RtMidiOut*> Synth::get_midi_io() {
         return std::make_pair(midiIn_.get(), midiOut_.get());
     }*/
@@ -261,10 +257,10 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
 #endif
 // threaded loop
 bool Synth::Run() {
-    #ifdef __linux__
+    #if defined(__ALSA__)
         listen_midi();
     #endif
-    #if defined(__WIN32) || defined(__MINGW32__)
+    #if defined(__RtMidi__)
         while (nanosleep(&ts, NULL) == -1 && errno == EINTR) {
             // Retry if interrupted by a signal
         }
@@ -273,7 +269,7 @@ bool Synth::Run() {
 };
 
 // Function to look up enum name
-#ifdef __linux__
+#if defined(__ALSA__)
     std::string Synth::get_event_name(int value) {
         auto it = enumMap.find(value);
         if (it != enumMap.end()) {
@@ -282,7 +278,7 @@ bool Synth::Run() {
         return "Unknown Event";
     };
 #endif
-#if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+#if defined(__RtMidi__)
     std::string Synth::get_event_name(unsigned char statusByte) {
         switch (statusByte & 0xF0) { // Mask high nibble to get event type
             case 0x80: return "Note Off";
@@ -297,7 +293,7 @@ bool Synth::Run() {
         }
     }
 #endif
-#ifdef __linux__
+#if defined(__ALSA__)
     void Synth::print_event_info(snd_seq_event_t* ev){
         /*
         * typedef struct snd_seq_event {
@@ -413,7 +409,7 @@ bool Synth::Run() {
         std::cout << std::endl;
     };
 #endif
-#if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+#if defined(__RtMidi__)
     void Synth::print_event_info(){
         // Extract the event type from the status byte
         unsigned char status = message[0];
@@ -465,7 +461,7 @@ bool Synth::Run() {
 #endif
 
 
-#ifdef __linux__
+#if defined(__ALSA__)
     void Synth::listen_midi(){
         /* TODO : use all seq event */
         snd_seq_event_input(seq_handle, &ev);
@@ -473,7 +469,7 @@ bool Synth::Run() {
         snd_seq_free_event(ev);
     };
 #endif 
-#if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
+#if defined(__RtMidi__)
     void Synth::midiInCallback(double timestamp, std::vector<unsigned char>* message, void* userData) {
         if (!message || message->empty()) return;
         auto* synth = static_cast<Synth*>(userData); // Cast userData back to Synth instance

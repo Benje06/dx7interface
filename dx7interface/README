@@ -47,16 +47,16 @@ Files :
 		comes from glade3 project see http://glade.gnome.org/
 		
 Directory :
-    - data/config:
-            midi_learn_default_config.cfg :
+    - data/cfg:
+            midi_learn_default_config.cfg
+            DX7_INIT_VOICE.syx :
         
-            COPYRIGHT AND LICENSE INFORMATION FOR .CFG FILES
+            COPYRIGHT AND LICENSE INFORMATION FOR .CFG .SYX FILES
 
 			* The following .cfg file are part of Dx7interface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
 
-			File: midi_learn_default_config.cfg
-		    dx7interface-0.0.1-simplify_4.8.ui theme.css
+			File: midi_learn_default_config.cfg DX7_INIT_VOICE.syx
 			  Author: BENHAÏM Jérôme, Jean-Michel THIÉMONGE
 			  Copyright (C) 2010-2024 BENHAÏM Jérôme, Jean-Michel THIÉMONGE.
 			  

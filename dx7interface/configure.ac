@@ -19,6 +19,20 @@ AC_SUBST([libdir],[$PROGRAMNAME_LIBDIR])
 AC_CONFIG_AUX_DIR([config])
 AC_CANONICAL_HOST
 
+
+AC_ARG_ENABLE([alsa],
+[  --enable-alsa   enable alsa],
+[case "${enableval}" in
+  yes) alsa=true ;;
+  no)  alsa=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-alsa]) ;;
+esac],[alsa=false])
+AM_CONDITIONAL([ALSA], [test x$alsa = xtrue])
+AM_COND_IF([ALSA],[
+AC_DEFINE([__ALSA__], [1], [Define __ALSA__ for ALSA specific code])
+pkg_modules="alsa"
+])
+
 AC_ARG_ENABLE([rtmidi],
 [  --enable-rtmidi    enable rtmidi for windows],
 [case "${enableval}" in
@@ -47,12 +61,12 @@ pkg_modules="juce"
 
 AS_CASE([$host_os],
     [linux*], [
-        pkg_modules="alsa glibmm-2.68 gtkmm-4.0 gthread-2.0 gxinterface cairomm-1.16"
+        pkg_modules="$pkg_modules glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
         AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
         platform_win32=no
     ],
     [mingw*|windows*|pw32*|cygwin*], [
-        pkg_modules="$pkg_modules glibmm-2.68 gtkmm-4.0 gthread-2.0 gxinterface cairomm-1.16"
+        pkg_modules="$pkg_modules glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
         AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
         platform_win32=yes
         m4_define([lt_option], [win32-dll])
@@ -223,7 +237,7 @@ AM_CONDITIONAL([DEV], [test x$dev = xtrue])
 
 AM_COND_IF([DEV],[
 PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/po]
-PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/cfg/]
+PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/]
 PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/images/]
 PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
 PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]

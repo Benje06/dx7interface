@@ -35,8 +35,7 @@ class SoundBankItem : public Glib::Object {
         unsigned int get_number() const { return i_number.get_value(); }
         Glib::ustring get_name() const { return i_name.get_value(); }
 };
-
-/* Class to manager Items in ListStore Sound_bank*/
+/* Class to manager Items in ListStore midi learn*/
 class ParamItem : public Glib::Object {
     private:
         ParamItem(const Glib::ustring& name)

@@ -19,7 +19,7 @@ md5sums=('SKIP')
 
 build() {
     cd gxinterface/${pkgname}/
-    ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2'
+    ./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-alsa 'CFLAGS=-O2' 'CXXFLAGS=-O2'
     make
 }
 

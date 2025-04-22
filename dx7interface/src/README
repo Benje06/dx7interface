@@ -1,4 +1,12 @@
-	  
+Files :
+	    synth.h
+	    synth.cc
+	    GtkClass.h
+	    GtkClass.cc
+	    event_macro_helpers.h
+	    tx81zinterface.h
+	    tx81zinterface.cc
+	    tx81zsysex.h
 		dx7interface.cc
 		dx7interface.h
 		dx7stysex.h :
