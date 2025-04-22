@@ -154,9 +154,6 @@ class Synth : public Thread {
         /* generic  */
         void init_nls();
         bool error();
-        /*** MIDI ***/
-        void block_midi();
-        void unblock_midi();
 
         // GENERIC moove to gxmodule ?
         void load_file(Glib::RefPtr<Gio::File>,std::function<void(Glib::ustring, Glib::ustring, unsigned int)>);
@@ -166,29 +163,36 @@ class Synth : public Thread {
         bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
 
         /** Open File Save Dialog **/
-        bool as_raw = false;
-        unsigned int save_type = BANK;
-        Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
-        Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            // Gtk::FileDialog* file_dialog_select = nullptr;
+            Gtk::FileDialog* file_dialog_select = nullptr;
             Gtk::FileDialog* file_dialog_save = nullptr;
             // Gtk::FileDialog* file_dialog_param_select = nullptr;
             // Gtk::FileDialog* file_dialog_param_save = nullptr;
         #else
-            // Gtk::FileChooserDialog* file_dialog_select = nullptr;
+            Gtk::FileChooserDialog* file_dialog_select = nullptr;
             Gtk::FileChooserDialog* file_dialog_save = nullptr;
             // Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
             // Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
             // Gtk::Button* button_accept = nullptr;
         #endif
+        /* SAVE */
+        bool as_raw = false;
+        unsigned int save_type = BANK;
+        Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
         void OpenFileSaveDialog();
         virtual unsigned int set_save_param() = 0;
         virtual Gtk::Window* get_window()= 0;
         virtual void write_voice_as_raw(Glib::RefPtr<Gio::File>) = 0;
         virtual void write_voice_as_sysex(Glib::RefPtr<Gio::File>) = 0;
         virtual void write_bank(Glib::RefPtr<Gio::File>,unsigned int index ) = 0;
+        /* LOAD */
+        Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
+        void on_file_select(std::function<void(Glib::RefPtr<Gio::File>)>);
 
+        /* MIDI */
+        /*** MIDI ***/
+        void block_midi();
+        void unblock_midi();
         #if defined(__ALSA__)
                 /* ALSA */
                 void print_event_info(snd_seq_event_t*);

@@ -708,6 +708,7 @@ void Dx7interface::create_dialogs() {
     dialog_insert->set_hide_on_close(true);
     dialog_insert->set_modal(true);
 };
+
 unsigned int Dx7interface::set_save_param(){
     Glib::ustring filename;
     unsigned int index = 0;
@@ -759,65 +760,6 @@ unsigned int Dx7interface::set_save_param(){
     std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
     return index;
 };
-
-// void Dx7interface::OpenFileSaveDialog(){
-//         // GENERIC ??
-//         file_dialog_save->set_title(dialog_save->get_title());
-//         unsigned int index = set_save_param();
-//         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-//             file_dialog_save->set_initial_folder(initial_folder_save);
-//             file_dialog_save->save( *(Gx_module::get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
-//                 try {
-//                     Glib::RefPtr<Gio::File> file = file_dialog_save->save_finish(result);
-//                     if (file) {
-//                         std::cout << "writing file: " << file->get_path() << std::endl;
-//                         initial_folder_save = Gio::File::create_for_path(file->get_parent()->get_path());
-//                         //Glib::shell_quote(filename+".dx7");
-//                         if(save_type == SOUND){
-//                             if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
-//                                 write_voice_as_raw(file);
-//                             }else{
-//                                 write_voice_as_sysex(file);
-//                             };
-//                         }else if(save_type == BANK){
-//                             write_bank(file,index);
-//                         };
-//                     };
-//                 } catch (const std::exception & ex) {
-//                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
-//                     " Reason: " + ex.what();
-//                     std::cerr << err_msg << std::endl;
-//                 }
-//             });
-//         #else
-//             file_dialog_save->set_transient_for(*(Gx_module::get_window()));
-//             file_dialog_save->set_current_folder(initial_folder_save);
-//             file_dialog_save->signal_response().connect([this,index](int response) {
-//                 try {
-//                     if (response == Gtk::ResponseType::ACCEPT) {
-//                         auto file = file_dialog_save->get_file();
-//                         if (file) {
-//                             if(save_type == SOUND){
-//                                 if(get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active()){
-//                                     write_voice_as_raw(file);
-//                                 }else{
-//                                     write_voice_as_sysex(file);
-//                                 };
-//                             }else if(save_type == BANK){
-//                                 write_bank(file,index);
-//                             };
-//                         };
-//                     }
-//                     file_dialog_save->hide();
-//                 } catch (const std::exception & ex) {
-//                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)
-//                     + "Reason: " + ex.what();
-//                     std::cerr << err_msg << std::endl;
-//                 };
-//             });
-//             file_dialog_save->show();
-//         #endif
-// };
 
 void Dx7interface::OpenDialogSave(Glib::ustring title,Glib::ustring filename){
     // GENERIC ??
@@ -873,7 +815,6 @@ void Dx7interface::OpenFileInsertDialog(Glib::ustring title,Glib::ustring){
     };
 };
 
-
 /*** BANK ***/
 void Dx7interface::create_bank_voices_list(){
     /* create specific data structure model for voice bank list */
@@ -904,60 +845,10 @@ void Dx7interface::create_bank_voices_list(){
     /* Bank load */
     slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
         sigc::bind(
-            sigc::mem_fun(*this, &Dx7interface::on_file_select), &Dx7interface::set_bank )
+            sigc::mem_fun(*this, &Dx7interface::on_file_select), std::bind(&Dx7interface::set_bank, this, std::placeholders::_1) )
     );
     slot_bank_reveal = (get_gwidget<Gtk::Button>("btn_toolbar_reveal_bank"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_bank_reveal));
-};
-
-void Dx7interface::on_file_select(FunctionPtrFile funct){
-    // GENERIC MOOVE TO SYNTH
-    LOG_IN();
-    try{
-        file_dialog_select->set_title("Select File");
-        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            file_dialog_select->set_initial_folder(initial_folder_open);
-            file_dialog_select->open( *(Gx_module::get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-                try {
-                    Glib::RefPtr<Gio::File> bank_file = file_dialog_select->open_finish(result);
-                    if (bank_file) {
-                        (this->*funct)(bank_file);
-                        initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());
-                    };
-                } catch (const std::exception & ex) {
-                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                    + "Reason: " + ex.what();
-                    std::cerr << err_msg << std::endl;
-                };
-            }); /* end dialog open function */
-        #else
-            file_dialog_select->set_transient_for(*(Gx_module::get_window()));
-            slot_file_dialog_select = file_dialog_select->signal_response().connect([this,funct](int response) {
-                try {
-                    if (response == Gtk::ResponseType::ACCEPT) {
-                        auto bank_file = file_dialog_select->get_file();
-                        if (bank_file) {
-                            (this->*funct)(bank_file);
-                            initial_folder_open= Gio::File::create_for_path(bank_file->get_path());;
-                        };
-                    };
-                    file_dialog_select->hide();
-                    slot_file_dialog_select.disconnect();
-                } catch (const std::exception & ex) {
-                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                    + "Reason: " + ex.what();
-                    std::cerr << err_msg << std::endl;
-                };
-            });
-            file_dialog_select->show();
-        #endif
-    }catch (const std::exception & ex) {
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
-        //throw std::runtime_error(err_msg);
-    };
-    LOG_OUT();
 };
 void Dx7interface::create_popover_menu(){
     auto menu = Gio::Menu::create();
@@ -994,6 +885,9 @@ void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
     LOG_OUT();
 };
 /* set/load */
+void Dx7interface::on_file_select(std::function<void(Glib::RefPtr<Gio::File>)> funct){
+  Synth::on_file_select(funct);
+};
 void Dx7interface::clean_bank(){
     // TO TEMPLATIZE TO BE GENERIC
     LOG_IN();
@@ -1067,7 +961,6 @@ void Dx7interface::set_bank_sounds(Glib::ustring file_name,Glib::ustring file_ba
     snum=0; // reset to first element
     restore_origin(BANK);
 }
-
 void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
     // GENERIC
     LOG_IN();
@@ -1082,58 +975,6 @@ void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
     LOG_OUT();
 };
 
-/* FILE
-void Dx7interface::load_file(Glib::RefPtr<Gio::File> file, FunctionPtr3str funct){
-    // GENERIC moove to synth
-    LOG_IN();
-    try {
-        unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
-        Glib::ustring filename = file->get_path();
-        Glib::ustring file_base = filename.substr(0,filename.find_last_of("."));
-        Glib::ustring file_name = file_base.substr( file_base.find_last_of("/")+1, file_base.length() );
-        std::cout << "Bank name: " << file_name << std::endl;
-
-        data_stream = Gio::DataInputStream::create(file->read());
-        unsigned char data = data_stream->read_byte();
-        if (data == 0xF0 ){
-            for (uint8_t i=0; i < 5; i++){
-                data_stream->read_byte();
-            };
-            file_size -= 8;
-        }else{
-            data_stream->close();
-            data_stream = Gio::DataInputStream::create(file->read());
-            file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
-        };
-        if( std::filesystem::exists( (file_base+"_fct.syx").c_str() ) ){
-            Glib::RefPtr<Gio::File> file_fct=Gio::File::create_for_path( (file_base+"_fct.syx").c_str() );
-            data_stream_param = Gio::DataInputStream::create(file_fct->read());
-        }
-        (this->*funct)(file_name,file_base,file_size);
-        data_stream->close();
-        if(!isStreamClosed(data_stream_param)){
-            data_stream_param->close();
-        };
-    }catch(const std::exception& ex){
-        Glib::ustring filename = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Cannot load: " + filename + "\n"
-        + "Reason: " + ex.what();
-        throw std::runtime_error(err_msg);
-    };
-    LOG_OUT();
-};
-void Dx7interface::write_file(Glib::RefPtr<Gio::File> file, unsigned char* msg, unsigned int msg_size){
-    auto output_stream = file->replace();
-    auto data_stream = Gio::DataOutputStream::create(output_stream);
-    for( unsigned int i=0; i<msg_size; i++ ){
-        data_stream->put_byte(msg[i]);
-    };
-    data_stream->flush();
-    data_stream->close();
-    output_stream->close();
-};
-*/
 void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     old_snum=0;
     snum = 0;
@@ -2876,7 +2717,7 @@ void Dx7interface::attach_action_group_signals(){
     action_group->add_action("insert_at", sigc::mem_fun(*this, &Dx7interface::on_insert_at));
     action_group->add_action("replace_sound", sigc::bind(
         sigc::mem_fun(*this, &Dx7interface::on_file_select),
-        &Dx7interface::on_replace_sound )
+        std::bind(&Dx7interface::on_replace_sound, this, std::placeholders::_1) )
     );
     action_group->add_action("delete_sound", sigc::mem_fun(*this, &Dx7interface::on_delete_sound));
 };
@@ -3001,7 +2842,7 @@ void Dx7interface::attach_signals(){
     button_insert->signal_clicked().connect(
         sigc::bind(
             sigc::mem_fun(*this, &Dx7interface::on_file_select),
-            &Dx7interface::on_insert_sound ));
+            std::bind(&Dx7interface::on_insert_sound, this, std::placeholders::_1) ));
 
 
     /* Sound Name modification */
