@@ -662,7 +662,9 @@ bool Dx7interface::Run2(){
 };
 
 /* Dialogs */
-
+Gtk::Window* Dx7interface::get_window(){
+    return Gx_module::get_window();
+};
 void Dx7interface::create_dialogs() {
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
         file_dialog_select = get_gwidget<Gtk::FileDialog>("FileDialog_select");
@@ -760,38 +762,23 @@ unsigned int Dx7interface::set_save_param(){
     std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
     return index;
 };
-
-void Dx7interface::OpenDialogSave(Glib::ustring title,Glib::ustring filename){
-    // GENERIC ??
-    try{
-        if(bank_nb_sound != 0){
-            dialog_save->set_transient_for(*(Gx_module::get_window()));
-            dialog_save->set_title(title);
-            Glib::ustring label_save_name=title+": "+filename;
-            get_gwidget<Gtk::Label>("label_save_name")->set_label(label_save_name);
-            auto spinbutton_save_start = get_gwidget<Gtk::SpinButton>("spinbutton_save_start");
-            /* set the upper limit to bank_nb_sound less 32 */
-            double lower, upper;
-            spinbutton_save_start->get_range(lower, upper);
-            spinbutton_save_start->set_range(lower, (bank_nb_sound-32));
-
-            /* set visible for bank save */
-            if(save_type == BANK && bank_nb_sound > 32){
-                get_gwidget<Gtk::Box>("box_save_bank")->set_visible(true);
-                get_gwidget<Gtk::Label>("label_bulk")->set_visible(true);
-            }else{
-                get_gwidget<Gtk::Box>("box_save_bank")->set_visible(false);
-                get_gwidget<Gtk::Label>("label_bulk")->set_visible(false);
-            };
-            dialog_save->present();
-        };
-    }catch (const std::exception & ex) {
-        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
-        " Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
-        //throw std::runtime_error(err_msg);
+void Dx7interface::set_save_dialog(Glib::ustring label_save_name){
+    get_gwidget<Gtk::Label>("label_save_name")->set_label(label_save_name);
+    auto spinbutton_save_start = get_gwidget<Gtk::SpinButton>("spinbutton_save_start");
+    /* set the upper limit to bank_nb_sound less 32 */
+    double lower, upper;
+    spinbutton_save_start->get_range(lower, upper);
+    spinbutton_save_start->set_range(lower, (bank_nb_sound-32));
+    /* set visible for bank save */
+    if(save_type == BANK && bank_nb_sound > 32){
+        get_gwidget<Gtk::Box>("box_save_bank")->set_visible(true);
+        get_gwidget<Gtk::Label>("label_bulk")->set_visible(true);
+    }else{
+        get_gwidget<Gtk::Box>("box_save_bank")->set_visible(false);
+        get_gwidget<Gtk::Label>("label_bulk")->set_visible(false);
     };
-};
+}
+
 void Dx7interface::OpenFileInsertDialog(Glib::ustring title,Glib::ustring){
     // GENERIC
     try{
@@ -878,7 +865,7 @@ void Dx7interface::create_popover_menu(){
     get_gwidget<Gtk::ColumnView>("columnview_bank")->insert_action_group("menu", action_group);
 };
 void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
-    // GENERIC
+    // GENERIC except it an event
     LOG_IN();
         m_popover_menu->set_pointing_to(Gdk::Rectangle(x, y, 1, 1));
         m_popover_menu->popup();
@@ -889,7 +876,7 @@ void Dx7interface::on_file_select(std::function<void(Glib::RefPtr<Gio::File>)> f
   Synth::on_file_select(funct);
 };
 void Dx7interface::clean_bank(){
-    // TO TEMPLATIZE TO BE GENERIC
+    // TO TEMPLATIZE TO BE GENERIC ?
     LOG_IN();
     int i;
     clear_sound(&bank_1_modif.sound[0],0,false);
@@ -906,6 +893,12 @@ void Dx7interface::clean_bank(){
     if (n_items != 0) {
         bank_data_model->remove_all();
     };
+    LOG_OUT();
+};
+void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
+    LOG_IN();
+    Synth::set_bank(bank_file,std::bind(&Dx7interface::set_bank_sounds, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    slot_selected_sound_change.unblock();
     LOG_OUT();
 };
 void Dx7interface::set_bank_sounds(Glib::ustring file_name,Glib::ustring file_base,unsigned int file_size){
@@ -961,20 +954,10 @@ void Dx7interface::set_bank_sounds(Glib::ustring file_name,Glib::ustring file_ba
     snum=0; // reset to first element
     restore_origin(BANK);
 }
-void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
-    // GENERIC
-    LOG_IN();
-    block_ui();
-    //block_midi();
-    clean_bank();
-    load_file(bank_file,std::bind(&Dx7interface::set_bank_sounds, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)); //copy file content in _modif et _origin
-    Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
-    Glib::ustring name = filename.substr(0,filename.find_last_of("."));
+void Dx7interface::set_bank_name(Glib::ustring name){
     get_gwidget<Gtk::Button>("bank_select")->set_label(name);
-    slot_selected_sound_change.unblock();
-    LOG_OUT();
 };
-
+/* receive */
 void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     old_snum=0;
     snum = 0;
@@ -1029,6 +1012,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
 void Dx7interface::restore_origin(unsigned int type){
     // TODO: Use BankVariant
     LOG_IN();
+    block_ui();
     switch( bank_nb_sound ){
         case 32:
             if(type == BANK){
@@ -1064,43 +1048,18 @@ void Dx7interface::restore_origin(unsigned int type){
     select_voice(snum);
     LOG_OUT();
 };
-
 // TODO: to factorise on_restore_sound and bank
 void Dx7interface::on_restore_bank(){
     LOG_IN();
-    block_ui(); // to prevent recall of manipulated widgets
     restore_origin(BANK);
     LOG_OUT();
 };
-
 void Dx7interface::on_restore_sound(){
     LOG_IN();
-    block_ui(); // to prevent recall of manipulated widgets
     restore_origin(SOUND);
     LOG_OUT();
 };
 
-void Dx7interface::select_voice(unsigned int pos){
-    slot_selected_sound_change.unblock();
-    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 12)
-        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, pos](const Glib::RefPtr<Gdk::FrameClock>&) {
-            (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to(pos, nullptr, Gtk::ListScrollFlags::SELECT);
-            return false; // Return false to remove the callback after one executio
-        });
-    #else
-        bool first_run = true;
-        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, pos, first_run](const Glib::RefPtr<Gdk::FrameClock>&) mutable {
-            if(first_run) { // need to skip first ticks callback to select element
-                first_run = false;
-                return true;
-            };
-            auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
-            adjustment->set_value((double)pos);
-            bank_selection_model->set_selected((unsigned int)pos);
-            return false; // Return false to remove the callback after one executio
-        });
-    #endif
-};
 /*** INSERT / REPLACE / DELETE / MOOVE ***/
 /* REPLACE */
 void Dx7interface::on_replace_sound(Glib::RefPtr<Gio::File> file){
@@ -1288,7 +1247,7 @@ void Dx7interface::on_delete_sound(){
     LOG_OUT();
 };
 
-/** BANK **/
+/* SEND / SAVE */
 void Dx7interface::on_send_bank(){
     send_bank=true;
     write_bank_as_sysex(nullptr,0);
@@ -1308,7 +1267,6 @@ void Dx7interface::on_save_bank(){
     };
     LOG_OUT();
 };
-
 void Dx7interface::write_bank(Glib::RefPtr<Gio::File> file, unsigned int index){
     LOG_IN();
     switch( export_config ){
@@ -1482,7 +1440,83 @@ void Dx7interface::write_bank_as_raw(Glib::RefPtr<Gio::File> file, unsigned int 
     std::cout << "size: " << size << std::endl ;*/
     LOG_OUT();
 };
-/** VOICE **/
+/*** VOICE ***/
+/* Sound Name modification */
+Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
+    // LOG_IN();
+    sound_name = sound_name.substr(0, 10);
+    unsigned int missing_char = 10 - sound_name.length();
+    for( unsigned int i=0; i < missing_char ;i++){
+        sound_name += ' ';
+    }
+    sound_name = str_to_ascii(sound_name);
+    // LOG_OUT();
+    return sound_name;
+};
+template<class ListStoreType>
+void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int i, Glib::ustring name){
+    auto param = ListStoreType::create(name);
+    if( !data_model->get_item(i) ){
+        data_model->insert(i, param);
+    }else{
+        data_model->splice(i, 1, {param});  // Replace item at same position
+    };
+};
+template<class ListStoreType>
+void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name){
+    auto sound = ListStoreType::create(snum,sound_name);
+    if( !data_model->get_item(snum) ){
+        data_model->insert(snum, sound);
+    }else{
+        data_model->splice(snum, 1, {sound});  // Replace item at same position
+    };
+};
+template<class ListStoreType>
+void Dx7interface::update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, BankVariant& bank_modif_dest){
+    unsigned int temp_snum = snum;
+    std::visit([&]( auto& bank_modif ) { // update the datamodel
+        for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
+            update_data_model<ListStoreType>(data_model, bank_modif.get().sound[snum].name);
+        };
+    }, bank_modif_dest );
+    snum=temp_snum;
+};
+void Dx7interface::set_sound_name(Glib::ustring sound_name){
+    // LOG_IN();
+    bank_1_modif.sound->name = sound_name;
+    update_data_model<SoundBankItem>(bank_data_model, sound_name);
+    // LOG_OUT();
+};
+void Dx7interface::on_sound_name_event(){
+    // LOG_IN();
+    std::string sound_name = (get_gwidget<Gtk::Entry>("entry_sound_name"))->get_text();
+    if( sound_name != (bank_1_modif.sound->name).c_str() ){
+        set_sound_name(check_sound_name(sound_name));
+    };
+    // LOG_OUT();
+};
+
+void Dx7interface::select_voice(unsigned int pos){
+    slot_selected_sound_change.unblock();
+    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 12)
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, pos](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to(pos, nullptr, Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });
+    #else
+    bool first_run = true;
+    (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, pos, first_run](const Glib::RefPtr<Gdk::FrameClock>&) mutable {
+        if(first_run) { // need to skip first ticks callback to select element
+            first_run = false;
+            return true;
+        };
+        auto adjustment = get_gwidget<Gtk::ColumnView>("columnview_bank")->get_vadjustment();
+        adjustment->set_value((double)pos);
+        bank_selection_model->set_selected((unsigned int)pos);
+        return false; // Return false to remove the callback after one executio
+    });
+    #endif
+};
 void Dx7interface::write_voice_bulk1(unsigned int* l, unsigned char* msg, St_dx7sysex_1* sound, uint8_t* voice_checksum){
     /* operator j */
     unsigned int j, k;
@@ -1747,13 +1781,12 @@ void Dx7interface::on_save_sound(){
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
         std::cerr << err_msg << std::endl;
-
         //throw std::runtime_error(err_msg);
     };
     LOG_OUT();
 };
 /* extended sysex */
-void Dx7interface::write_voices_as_n_sysex(St_dx7sysex_1* sound){
+void Dx7interface::write_voices_as_n_sysex(St_dx7sysex_1* sound){  // UNUSED
     /* TODO : check original sound format and other kind */
     uint8_t l=0, j, k;
     unsigned char msg[128];
@@ -1843,7 +1876,6 @@ void Dx7interface::on_selected_sound_change(unsigned int num, unsigned int nb_el
     LOG_OUT();
 };
 
-/*** VOICE ***/
 /* read: seek (in bank file)*/
 void Dx7interface::seek_voice(St_dx7sysex_1* sound){ /* BULK 32 */
     //LOG_IN();
@@ -2126,7 +2158,6 @@ void Dx7interface::receive_voice(St_dx7sysex_1* sound, std::vector<uint8_t> data
         update_data_model<SoundBankItem>(bank_data_model, sound->name);
     //LOG_OUT();
 };
-
 void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8_t> data){
     /* BULK 1 */
     //LOG_IN();
@@ -2183,9 +2214,7 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
     update_data_model<SoundBankItem>(bank_data_model, sound->name);
     //LOG_OUT();
 };
-Gtk::Window* Dx7interface::get_window(){
-    return Gx_module::get_window();
-};
+
 void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> data){
         int i;
         i=6 + (64 * snum);
@@ -2721,7 +2750,6 @@ void Dx7interface::attach_action_group_signals(){
     );
     action_group->add_action("delete_sound", sigc::mem_fun(*this, &Dx7interface::on_delete_sound));
 };
-
 void Dx7interface::attach_drawarea_signals(){
 
     /* Drawing area for pitch */
@@ -2817,7 +2845,6 @@ void Dx7interface::attach_drawarea_signals(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->set_draw_func(
         sigc::bind( sigc::mem_fun(*this, &Dx7interface::on_draw_kls_event), Glib::ustring("6") ) );
 };
-
 void Dx7interface::attach_signals(){
     LOG_IN();
     //slot_OBJECT_NAME = (je recupere l'object)->sur le signal de l'evenement.je connecte( le signal de ( la fonction ));
@@ -5479,63 +5506,6 @@ void Dx7interface::redraw_all_curve(){
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op5"))->queue_draw();
     (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
-};
-
-/* Edit sound name */
-
-/* Sound Name modification */
-Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
-    // LOG_IN();
-    sound_name = sound_name.substr(0, 10);
-    unsigned int missing_char = 10 - sound_name.length();
-    for( unsigned int i=0; i < missing_char ;i++){
-        sound_name += ' ';
-    }
-    sound_name = str_to_ascii(sound_name);
-    // LOG_OUT();
-    return sound_name;
-};
-template<class ListStoreType>
-void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int i, Glib::ustring name){
-    auto param = ListStoreType::create(name);
-    if( !data_model->get_item(i) ){
-        data_model->insert(i, param);
-    }else{
-        data_model->splice(i, 1, {param});  // Replace item at same position
-    };
-};
-template<class ListStoreType>
-void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name){
-    auto sound = ListStoreType::create(snum,sound_name);
-    if( !data_model->get_item(snum) ){
-        data_model->insert(snum, sound);
-    }else{
-        data_model->splice(snum, 1, {sound});  // Replace item at same position
-    };
-};
-template<class ListStoreType>
-void Dx7interface::update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> list_data_model, BankVariant& bank_modif_dest){
-    unsigned int temp_snum = snum;
-    std::visit([&]( auto& bank_modif ) { // update the datamodel
-        for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
-            update_data_model<ListStoreType>(list_data_model, bank_modif.get().sound[snum].name);
-        };
-    }, bank_modif_dest );
-    snum=temp_snum;
-};
-void Dx7interface::set_sound_name(Glib::ustring sound_name){
-    // LOG_IN();
-    bank_1_modif.sound->name = sound_name;
-    update_data_model<SoundBankItem>(bank_data_model, sound_name);
-    // LOG_OUT();
-};
-void Dx7interface::on_sound_name_event(){
-    // LOG_IN();
-    std::string sound_name = (get_gwidget<Gtk::Entry>("entry_sound_name"))->get_text();
-    if( sound_name != (bank_1_modif.sound->name).c_str() ){
-        set_sound_name(check_sound_name(sound_name));
-    };
-    // LOG_OUT();
 };
 
 /* MIDI Functions */

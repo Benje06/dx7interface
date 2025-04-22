@@ -241,6 +241,17 @@ bool Synth::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& stream) {
     };
 };
 /** BANK **/
+void Synth::set_bank( Glib::RefPtr<Gio::File> bank_file,std::function<void(Glib::ustring, Glib::ustring, unsigned int)> funct ){
+    // GENERIC
+    LOG_IN();
+    block_ui();
+    clean_bank();
+    load_file(bank_file,funct); //copy file content in _modif et _origin
+    Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
+    Glib::ustring name = filename.substr(0,filename.find_last_of("."));
+    set_bank_name(name);
+    LOG_OUT();
+};
 void Synth::OpenFileSaveDialog(){
     unsigned int index = set_save_param();
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
@@ -346,7 +357,23 @@ void Synth::on_file_select(std::function<void(Glib::RefPtr<Gio::File>)> funct){
     };
     LOG_OUT();
 };
-
+void Synth::OpenDialogSave(Glib::ustring title, Glib::ustring filename){
+    // GENERIC ??
+    try{
+        if(bank_nb_sound != 0){
+            dialog_save->set_transient_for(*(get_window()));
+            dialog_save->set_title(title);
+            Glib::ustring label_save_name=title+": "+filename;
+            set_save_dialog(label_save_name);
+            dialog_save->present();
+        };
+    }catch (const std::exception & ex) {
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
+        //throw std::runtime_error(err_msg);
+    };
+};
 #if defined(__ALSA__)
     int Synth::get_client_id(){
         return client_id;

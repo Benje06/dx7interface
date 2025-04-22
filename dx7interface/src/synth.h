@@ -151,9 +151,18 @@ class Synth : public Thread {
         uint8_t msb=0x00;
         uint8_t lsb=0x00;
         uint8_t nvoice=0x00;
-        /* generic  */
+        /*** GENERIC  ***/
         void init_nls();
         bool error();
+        /* Boolean */
+        bool lock = false;
+        bool compare = false;                           // set if compare button is activate
+        bool receive = false;                           // set if receive mode is activate
+        bool uncomplete = false;                        // bool for uncomplete sysex message
+        unsigned int bank_nb_sound = 0;                 // number of sound in the current loaded bank 1/32/128
+        unsigned int snum = 0;                          // selected sound number memo for set_original_sound
+        unsigned int old_snum = 0;                      // Previous selected sound number memo for set_original_sound
+        Glib::RefPtr<Gio::File> bank_file=nullptr;       // pointeur de lecture de fichier
 
         // GENERIC moove to gxmodule ?
         void load_file(Glib::RefPtr<Gio::File>,std::function<void(Glib::ustring, Glib::ustring, unsigned int)>);
@@ -176,23 +185,45 @@ class Synth : public Thread {
             // Gtk::Button* button_accept = nullptr;
         #endif
         /* SAVE */
+        virtual Gtk::Window* get_window()= 0;               // function to get the main gtk window
+
+        /* minimals parameters for save  */
         bool as_raw = false;
         unsigned int save_type = BANK;
         Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
-        void OpenFileSaveDialog();
-        virtual unsigned int set_save_param() = 0;
-        virtual Gtk::Window* get_window()= 0;
+        virtual unsigned int set_save_param() = 0;          // function to set the save parameters of the file
+
+        /* dialog file chooser for save */
+        void OpenFileSaveDialog();                          // function to show the select file dialog for save
+
+        /* functions to write file */
         virtual void write_voice_as_raw(Glib::RefPtr<Gio::File>) = 0;
         virtual void write_voice_as_sysex(Glib::RefPtr<Gio::File>) = 0;
         virtual void write_bank(Glib::RefPtr<Gio::File>,unsigned int index ) = 0;
+
+        /* dialog to select parameter for save*/
+        Gtk::Window* dialog_save = nullptr;
+        Gtk::Button* button_save = nullptr;
+        virtual void set_save_dialog(Glib::ustring) = 0;    // function to set the save dialog parameters displayed
+        void OpenDialogSave(Glib::ustring, Glib::ustring);  // fuunction to show the save dialog parameters
+
         /* LOAD */
         Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
         void on_file_select(std::function<void(Glib::RefPtr<Gio::File>)>);
+        /* SET */
+        void set_bank( Glib::RefPtr<Gio::File>, std::function<void(Glib::ustring, Glib::ustring, unsigned int)> );
+        virtual void set_bank_name(Glib::ustring) = 0;      // function to set the name of the loaded bank on the ui
+
+
 
         /* MIDI */
         /*** MIDI ***/
         void block_midi();
         void unblock_midi();
+
+        virtual void block_ui() = 0;
+        virtual void clean_bank() = 0;
+
         #if defined(__ALSA__)
                 /* ALSA */
                 void print_event_info(snd_seq_event_t*);

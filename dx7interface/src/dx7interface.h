@@ -81,16 +81,13 @@ class Dx7interface : public Gx_module, public Synth {
             std::vector<uint8_t> sysex_buffer;              // Buffer to store SysEx fragments
         #endif
         /* Boolean */
-        bool lock = false;
-        bool compare = false;                   // set if compare button is activate
         bool send_extra_params = false;         // set if send_extra paraameter is activate
         bool write_extra_params = false;        // set if send_extra paraameter is activate
-        bool mode_tf1 = false;                  // mode tf1 = fonction parameter by sound
-        bool receive = false;                   // set if receive mode is activate
-        bool uncomplete = false;                // bool for uncomplete sysex message
         bool unmooved_sound = true;
         bool send_bank = false;
+
         /*** Dx7 specific ***/
+        bool mode_tf1 = false;                  // mode tf1 = fonction parameter by sound
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
 
         /* SySeX format (bank/sound/message) */
@@ -110,10 +107,6 @@ class Dx7interface : public Gx_module, public Synth {
         unsigned int export_config = DX7_32;     // DX7_1 DX7_32 DX7_128 DX7_RAW DX7_SYX
 
         /* Bank */
-        unsigned int bank_nb_sound = 0;                        // number of sound in the current loaded bank 1/32/128
-        unsigned int snum = 0;                                 // selected sound number memo for set_original_sound
-        unsigned int old_snum = 0;                                 // Previous selected sound number memo for set_original_sound
-        Glib::RefPtr<Gio::File> bank_file=nullptr;                  // pointeur de lecture de fichier
         Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;
 
@@ -511,8 +504,6 @@ class Dx7interface : public Gx_module, public Synth {
         void create_dialogs();
         Gtk::Window* dialog_insert = nullptr;
         Gtk::Button* button_insert = nullptr;
-        Gtk::Window* dialog_save = nullptr;
-        Gtk::Button* button_save = nullptr;
 
         Gtk::CheckButton* checkbutton_bulk = nullptr;
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
@@ -524,7 +515,8 @@ class Dx7interface : public Gx_module, public Synth {
             Gtk::Button* button_accept = nullptr;
         #endif
         unsigned int set_save_param();
-        void OpenDialogSave(Glib::ustring,Glib::ustring);
+        void set_save_dialog(Glib::ustring);
+
         void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
         Gtk::Window* get_window();
         void on_file_select(std::function<void(Glib::RefPtr<Gio::File>)>);
@@ -545,6 +537,7 @@ class Dx7interface : public Gx_module, public Synth {
         void select_voice(unsigned int);
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void set_bank(Glib::RefPtr<Gio::File>);
+        void set_bank_name(Glib::ustring);
         void set_bank_sounds(Glib::ustring, Glib::ustring, unsigned int);
         void receive_bank(std::vector<uint8_t>);
         void receive_voice(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
