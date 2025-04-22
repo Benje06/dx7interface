@@ -3,4 +3,4 @@ cfg_DATA = \
 	DX7_INIT_VOICE.syx
 
 cfgdir = \
-	$(pkgdatadir)/$(PACKAGE_VERSION)/data
+	$(pkgdatadir)/$(PACKAGE_VERSION)/data/cfg

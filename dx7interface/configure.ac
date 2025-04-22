@@ -305,6 +305,7 @@ Configuration:
       PROGRAMNAME_DATA_DIR: ${PROGRAMNAME_DATA_DIR}
       
       Midi:
+        ALSA: ${alsa}
         JUCE: ${juce}
         RtMidi: ${rtmidi}
 
