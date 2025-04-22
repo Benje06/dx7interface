@@ -1,3 +1,8 @@
+#Questions
+faut-il remplacer la banque chargé lors d'un insert ?
+    - si non le compare n'est pas tres utile,
+    - si oui pas de posibilité de restore bank
+
 ### DOC
 doc d'utilisation* (DEBIAN)
 page html
@@ -13,23 +18,22 @@ traductions
 
 # Fonctionalitées
 evenements MIDI (temporisation, ?mode omni?)
-*ecriture fichier des extra parameters( compatible tf1)
+*ecriture fichier des extra parameters( compatible tf1 )
 
 multiplateforme (midi/interface) :
-    libremidi (prefered but not compiled for ucrt64),
+    libremidi (prefered but not compiled for ucrt64 and does not do virtual midi),
     rtmidi(win done with ucrt64)  
     ??? Juce (license prorietaire), drumkit (sequenceur midi)
 	Listen midi (windows)
 	Package (windows)
 	
 # MIDI
-* reception/envoi en midi (send bank(32), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
+* reception/envoi en midi (send bank(32 done a tester), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
 listen sysex message
 
 # Interface
 ? Select midi device from interface ?
-* delete / moove(ctrl+c ctrl+x)
-gestion click appuyer pour déplacer un sons
+* moove(ctrl+c/ctrl+x/drag and drop) gestion click appuyer pour déplacer un sons
 refonte interface( size/expand des elements)
 * son par defaut (son init)
 randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, en fonction dela frequence, relatif a d'autres ...) )
@@ -43,7 +47,7 @@ inclusion de font ( install, chargment dynamic) RAF windows
 
 ### CODE
 factorisation ( ?receive and load bank? )
-genericité / moove to other class (synth,...) ?midi learn,lecture/ecriture,compare?
+genericité / moove to other class (synth,...) ?midi learn,compare?
 synth generique (voir avec marc)
 gestion d'exceptions
 filtre des variables utilisateurs ???
