@@ -30,8 +30,6 @@
 #define DX7_128 3
 #define DX7_RAW 4
 #define DX7_SYX 5
-#define BANK 0
-#define SOUND 1
 /* sys */
 //#include <memory>
 /*** APP ***/
@@ -75,7 +73,7 @@ class Dx7interface : public Gx_module, public Synth {
         using FunctionPtr = void (Dx7interface::*)();                             /* abstract for function without parameters */
         using FunctionPtrInt = void (Dx7interface::*)(int);                       /* abstract for function with int parameter */
         using FunctionPtrFile = void (Dx7interface::*)(Glib::RefPtr<Gio::File>);  /* abstract for function with file parameter */
-        using FunctionPtr3str = void (Dx7interface::*)(Glib::ustring,Glib::ustring,unsigned int);  /* abstract for function with 3 glib::ustring parameters */
+        //using FunctionPtr3str = void (Dx7interface::*)(Glib::ustring,Glib::ustring,unsigned int);  /* abstract for function with 3 glib::ustring parameters */
 
         #ifdef __linux__ 
             /*** ALSA MIDI ***/
@@ -113,21 +111,22 @@ class Dx7interface : public Gx_module, public Synth {
 
         /* default write format */
         unsigned int export_config = DX7_32;     // DX7_1 DX7_32 DX7_128 DX7_RAW DX7_SYX
-        unsigned int save_type = BANK;          // BANK or SOUND
+        //unsigned int save_type = BANK;          // BANK or SOUND
 
         /* Bank */
         unsigned int bank_nb_sound = 0;                            // number of sound in the current loaded bank 1/32/128
         unsigned int snum = 0;                                 // selected sound number memo for set_original_sound
         unsigned int old_snum = 0;                                 // Previous selected sound number memo for set_original_sound
         Glib::RefPtr<Gio::File> bank_file=nullptr;                  // pointeur de lecture de fichier
-        Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
-        Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
+        // Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
+        // Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;
 
-        Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux du fichier de données */
-        Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;     /* pointer de flux du fichier de parametres */
-        bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
+        //Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux du fichier de données */
+        //Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;     /* pointer de flux du fichier de parametres */
+        //bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
+
         /* bank list view */
         void create_bank_voices_list();
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> bank_data_model=nullptr; /* liste des nom des sons de la banque chargé */
@@ -527,21 +526,21 @@ class Dx7interface : public Gx_module, public Synth {
         Gtk::CheckButton* checkbutton_bulk = nullptr;
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
             Gtk::FileDialog* file_dialog_select = nullptr;
-            Gtk::FileDialog* file_dialog_save = nullptr;
+            //Gtk::FileDialog* file_dialog_save = nullptr;
             Gtk::FileDialog* file_dialog_param_select = nullptr;
             Gtk::FileDialog* file_dialog_param_save = nullptr;
         #else
             Gtk::FileChooserDialog* file_dialog_select = nullptr;
-            Gtk::FileChooserDialog* file_dialog_save = nullptr;
+            //Gtk::FileChooserDialog* file_dialog_save = nullptr;
             Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
             Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
             Gtk::Button* button_accept = nullptr;
         #endif
-
-        void OpenFileSaveDialog();
+        unsigned int set_save_param();
+        //void OpenFileSaveDialog();
         void OpenDialogSave(Glib::ustring,Glib::ustring);
         void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
-
+        Gtk::Window* get_window();
         /*** THREAD ***/
         bool Run();    /* Thread function  */
         bool Run2();    /* Thread function  */
@@ -559,7 +558,7 @@ class Dx7interface : public Gx_module, public Synth {
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void set_bank(Glib::RefPtr<Gio::File>);
         void set_bank_sounds(Glib::ustring, Glib::ustring, unsigned int);
-        void load_file(Glib::RefPtr<Gio::File>,FunctionPtr3str);
+        //void load_file(Glib::RefPtr<Gio::File>,FunctionPtr3str);
         void receive_bank(std::vector<uint8_t>);
         void receive_voice(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
         void receive_voice_by_byte(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
@@ -594,7 +593,7 @@ class Dx7interface : public Gx_module, public Synth {
         void on_replace_sound(Glib::RefPtr<Gio::File> file);
         void on_delete_sound();
         /* save/write */
-        void write_file(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
+        //void write_file(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
         void write_voice_extra_parameters(st_dx7sysex_1*, unsigned char*, unsigned int*);
         /* BANK */
         void on_send_bank();

@@ -111,6 +111,8 @@
         /* Helpers */
         #include "event_macro_helpers.h"
 #endif
+#define BANK 0
+#define SOUND 1
 /* CONSTANTS */
 
 class Synth : public Thread {
@@ -155,6 +157,38 @@ class Synth : public Thread {
         /*** MIDI ***/
         void block_midi();
         void unblock_midi();
+
+        // GENERIC moove to gxmodule ?
+        void load_file(Glib::RefPtr<Gio::File>,std::function<void(Glib::ustring, Glib::ustring, unsigned int)>);
+        void write_file(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
+        Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;           /* pointeur de flux du fichier de données */
+        Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;     /* pointer de flux du fichier de parametres */
+        bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
+
+        /** Open File Save Dialog **/
+        bool as_raw = false;
+        unsigned int save_type = BANK;
+        Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
+        Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            // Gtk::FileDialog* file_dialog_select = nullptr;
+            Gtk::FileDialog* file_dialog_save = nullptr;
+            // Gtk::FileDialog* file_dialog_param_select = nullptr;
+            // Gtk::FileDialog* file_dialog_param_save = nullptr;
+        #else
+            // Gtk::FileChooserDialog* file_dialog_select = nullptr;
+            Gtk::FileChooserDialog* file_dialog_save = nullptr;
+            // Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
+            // Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
+            // Gtk::Button* button_accept = nullptr;
+        #endif
+        void OpenFileSaveDialog();
+        virtual unsigned int set_save_param() = 0;
+        virtual Gtk::Window* get_window()= 0;
+        virtual void write_voice_as_raw(Glib::RefPtr<Gio::File>) = 0;
+        virtual void write_voice_as_sysex(Glib::RefPtr<Gio::File>) = 0;
+        virtual void write_bank(Glib::RefPtr<Gio::File>,unsigned int index ) = 0;
+
         #if defined(__ALSA__)
                 /* ALSA */
                 void print_event_info(snd_seq_event_t*);
