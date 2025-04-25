@@ -39,13 +39,13 @@
 #ifndef interface_COMMON_H
     #define interface_COMMON_H
 
-    #define MOD_DIRECTORY PROGRAMNAME_MOD_DIR
-    #define MOD_IMG_DIRECTORY PROGRAMNAME_IMG_DIR
-    #define MOD_DATA_DIRECTORY PROGRAMNAME_DATA_DIR
-    #define MOD_UI_DIRECTORY PROGRAMNAME_UI_DIR
-
     #ifdef HAVE_CONFIG_H
         #include <config.h>
+    #else
+        #define MOD_DIRECTORY PROGRAMNAME_MOD_DIR
+        #define MOD_IMG_DIR PROGRAMNAME_IMG_DIR
+        #define MOD_DATA_DIRECTORY PROGRAMNAME_DATA_DIR
+        #define MOD_UI_DIRECTORY PROGRAMNAME_UI_DIR
     #endif
     #include "debug.h"
 
@@ -98,6 +98,7 @@
     #endif
     #include <gtkmm-4.0/gtkmm.h>
     #include <giomm/settings.h>
+    #include <glibmm.h>
     /*** String Convert ***/
     /* convert to string any type of number */
     template <class paramType>

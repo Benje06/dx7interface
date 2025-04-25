@@ -24,12 +24,13 @@ gxinterface_SOURCES = \
 ## CFLAG = -g $(CFLAGS)
 
 AM_CPPFLAGS = \
-	$(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)\
-	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
-	-DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"  \
-	-DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-	-DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
-	-DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+	$(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)
+
+	## -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
+	## -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"  \
+	## -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
+	## -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+	## -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 
 ## gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 ## OK gxinterface_LDADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS) $(LIBS) -lpthread -lintl
@@ -37,17 +38,19 @@ AM_CPPFLAGS = \
 
 gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
-gxinterface_LDFLAGS = -static -no-undefined -Wl,--no-undefined,--gc-sections
+gxinterface_LDFLAGS = -static -static-libgcc -static-libstdc++ -no-undefined -Wl,--no-undefined,--gc-sections
 
-# Platform-specific additions
+## Platform-specific additions
+
 if PLATFORM_WINDOWS
-  # Windows/MinGW: PE-specific flags ; ,-rpath,ucrt64\lib
+  ## Windows/MinGW PE-specific flags ,-rpath,ucrt64\lib
+  gxinterface_LDADD += gxinterfaceicon.o
   gxinterface_LDFLAGS += -Wl,--export-all-symbols
 else
-  # Linux/ELF: Equivalent symbol visibility control
-  gxinterface_LDFLAGS += -rdynamic  # Expands to -Wl,--export-dynamic
+  ## Linux/ELF Equivalent symbol visibility control
+  gxinterface_LDFLAGS += -rdynamic  
+  ## Expands to -Wl,--export-dynamic
 endif
 
-
-
-
+gxinterfaceicon.o: seticon.rc ../../dx7interface/data/images/dx7interface.ico
+	$(WINDRES) -i $< -o $@

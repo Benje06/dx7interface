@@ -30,6 +30,7 @@ ldd src/.libs/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $3}' | xargs
 .la -> libdir='ucrt64\share\dx7interface\1.0.0'
 
 set PATH=D:\gxinterface\package\gxinterface\share\dx7interface\1.0.0;%PATH%
+set PATH=D:\gxinterface\package\ucrt64\share\dx7interface\1.0.0;%PATH%
 
 D:\gxinterface\package>bin\gxinterface.exe -m share\dx7interface\1.0.0\dx7interface-0.0.1.la
 

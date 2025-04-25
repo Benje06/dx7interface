@@ -58,8 +58,8 @@ class Gx_module {
 			Glib::ustring cat;
 			Glib::ustring desc;
             Glib::ustring color = "";
-            Glib::ustring cssfile = "";								/* CSS file */
-            std::string custom_font = "";  /* custom font */
+            Glib::ustring cssfile = "";			/* CSS file */
+            std::string custom_font = "";  		/* custom font */
 			uint8_t index;
 		} St_mod;
         St_mod mod;
@@ -87,6 +87,7 @@ class Gx_module {
         void set_custom_font_file(Glib::ustring);
         /* all the app */
         void set_icon_file(Glib::ustring);
+		void set_app_icon(Gtk::Window*);
 		void apply_style_to_screen(); // apply_style to the window
 		void clear_style_for_screen(Glib::RefPtr<Gtk::StyleProvider>);
         /* window */

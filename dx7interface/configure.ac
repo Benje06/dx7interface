@@ -3,6 +3,7 @@
 # tools :
 
 AC_PREREQ([2.72])
+LT_PREREQ([1.0.0])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([dx7interface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -16,57 +17,31 @@ AC_SUBST([MASTER_LOADER], [gxinterface])
 AC_SUBST([MASTER_LOADER_VERSION], [1.0.0])
 PROGRAMNAME_LIBDIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
 AC_SUBST([libdir],[$PROGRAMNAME_LIBDIR])
+
 AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_SRCDIR([src])
+AC_CONFIG_HEADERS([config.h])
+dnl AC_CONFIG_SRCDIR([config.h.in])
+
+dnl ================================================================
+dnl checks for programs
+dnl ================================================================
+AM_INIT_AUTOMAKE
+AM_MAINTAINER_MODE
+
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+m4_ifdef([AC_PROG_AR], [AC_PROG_AR])
+
 AC_CANONICAL_HOST
-
-
-AC_ARG_ENABLE([alsa],
-[  --enable-alsa   enable alsa],
-[case "${enableval}" in
-  yes) alsa=true ;;
-  no)  alsa=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-alsa]) ;;
-esac],[alsa=false])
-AM_CONDITIONAL([ALSA], [test x$alsa = xtrue])
-AM_COND_IF([ALSA],[
-AC_DEFINE([__ALSA__], [1], [Define __ALSA__ for ALSA specific code])
-pkg_modules="alsa"
-])
-
-AC_ARG_ENABLE([rtmidi],
-[  --enable-rtmidi    enable rtmidi for windows],
-[case "${enableval}" in
-  yes) rtmidi=true ;;
-  no)  rtmidi=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-rtmidi]) ;;
-esac],[rtmidi=false])
-AM_CONDITIONAL([RTMIDI], [test x$rtmidi = xtrue])
-AM_COND_IF([RTMIDI],[
-AC_DEFINE([__RtMidi__], [1], [Define __RtMidi__ for RtMidi-specific code])
-pkg_modules="rtmidi"
-])
-
-AC_ARG_ENABLE([juce],
-[  --enable-juce    enable juce for windows],
-[case "${enableval}" in
-  yes) juce=true ;;
-  no)  juce=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-juce]) ;;
-esac],[juce=false])
-AM_CONDITIONAL([JUCE], [test x$juce = xtrue])
-AM_COND_IF([JUCE],[
-AC_DEFINE([__JUCE__], [1], [Define __JUCE__ for JUCE-specific code])
-pkg_modules="juce"
-])
-
 AS_CASE([$host_os],
     [linux*], [
-        pkg_modules="$pkg_modules glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
+        pkg_modules="glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
         AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
         platform_win32=no
     ],
     [mingw*|windows*|pw32*|cygwin*], [
-        pkg_modules="$pkg_modules glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
+        pkg_modules="glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
         AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
         platform_win32=yes
         m4_define([lt_option], [win32-dll])
@@ -75,27 +50,15 @@ AS_CASE([$host_os],
         AC_MSG_ERROR([Unsupported operating system: $host_os])
     ]
 )
+dnl CXXFLAGS="$CXXFLAGS -mwindows"
+dnl AC_SUBST(CXXFLAGS)
+
 AM_CONDITIONAL([PLATFORM_WINDOWS], [test "$platform_win32" = "yes"])
 AM_CONDITIONAL([PLATFORM_LINUX], [test "$platform_win32" = "no"])
-dnl ================================================================
-dnl checks for programs
-dnl ================================================================
-AM_INIT_AUTOMAKE
-AM_MAINTAINER_MODE
-AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([config.h.in])
-AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_SRCDIR([src])
 
-m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
-m4_ifdef([AC_PROG_AR], [AC_PROG_AR])
-
-LT_PREREQ([1.0.0])
 ifdef('lt_option',
     [LT_INIT([lt_option])],
     [LT_INIT])
-
-AC_LANG([C++])
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -106,6 +69,11 @@ AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+
+AC_LANG([C++])
+AC_LANG_COMPILER([C++])
+
+AC_SUBST(CXXFLAGS)
 
 dnl ================================================================
 dnl Check for libraries
@@ -124,7 +92,7 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([libintl.h])
 AC_CHECK_HEADERS([fcntl.h])
 AC_CHECK_HEADERS([unistd.h])
-
+AC_CHECK_DECLS([M_PI])
 dnl ================================================================
 dnl checks for types
 dnl ================================================================
@@ -146,6 +114,47 @@ AC_FUNC_ALLOCA
 AC_FUNC_ERROR_AT_LINE
 AC_CHECK_FUNCS([pow])
 
+AC_ARG_ENABLE([alsa],
+[  --enable-alsa   enable alsa],
+[case "${enableval}" in
+  yes) alsa=true ;;
+  no)  alsa=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-alsa]) ;;
+esac],[alsa=false])
+AM_CONDITIONAL([ALSA], [test x$alsa = xtrue])
+AM_COND_IF([ALSA],[
+AC_DEFINE([__ALSA__], [1], [Define __ALSA__ for ALSA specific code])
+pkg_modules="alsa $pkg_modules"
+])
+
+AC_ARG_ENABLE([rtmidi],
+[  --enable-rtmidi    enable rtmidi for windows],
+[case "${enableval}" in
+  yes) rtmidi=true ;;
+  no)  rtmidi=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-rtmidi]) ;;
+esac],[rtmidi=false])
+AM_CONDITIONAL([RTMIDI], [test x$rtmidi = xtrue])
+AM_COND_IF([RTMIDI],[
+AC_DEFINE([__RtMidi__], [1], [Define __RtMidi__ for RtMidi-specific code])
+pkg_modules="rtmidi $pkg_modules"
+])
+
+AC_ARG_ENABLE([juce],
+[  --enable-juce    enable juce for windows],
+[case "${enableval}" in
+  yes) juce=true ;;
+  no)  juce=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-juce]) ;;
+esac],[juce=false])
+AM_CONDITIONAL([JUCE], [test x$juce = xtrue])
+AM_COND_IF([JUCE],[
+AC_DEFINE([__JUCE__], [1], [Define __JUCE__ for JUCE-specific code])
+pkg_modules="juce $pkg_modules"
+])
+
+
+
 PKG_CHECK_MODULES(DEPS, [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_CPPFLAGS)
@@ -157,25 +166,11 @@ dnl ================================================================
 dnl ================================================================
 dnl Check for windows
 dnl ================================================================
-AM_CONDITIONAL(PLATFORM_WIN32, test x"$platform_win32" = "xyes")
-
-case $host_os in
-  *mingw*)
-    native_win32=yes
-    ;;
-  *)
-    native_win32=no
-    ;;
-esac
-AM_CONDITIONAL(NATIVE_WIN32, test x"$native_win32" = "xyes")
-
-if test "$native_win32" = "yes"; then
-  AC_CHECK_TOOL(WINDRES, windres, no)
-  if test "$WINDRES" = no; then
-    AC_MSG_ERROR([*** Could not find an implementation of windres in your PATH.])
-    
-  fi
-fi
+AM_COND_IF([PLATFORM_WINDOWS],[
+AC_CHECK_TOOL(WINDRES, windres, no)
+],[
+AC_MSG_ERROR([*** Could not find an implementation of windres in your PATH.])
+])
 
 dnl ================================================================
 dnl Check for GDK Quartz and MacOSX integration package 
@@ -201,14 +196,6 @@ if test "x$_gdk_tgt" = xquartz; then
    AC_SUBST(IGE_MAC_LIBS)
    AC_SUBST(IGE_MAC_CFLAGS)
 fi
-
-dnl ================================================================
-dnl Gnome init
-dnl ================================================================
-dnl GNOME_COMMON_INIT
-dnl GNOME_DEBUG_CHECK
-dnl GNOME_COMPILE_WARNINGS([maximum])
-dnl GNOME_MAINTAINER_MODE_DEFINES
 
 dnl ================================================================
 dnl Gettext stuff.
@@ -244,25 +231,32 @@ PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]
 ],[
 PROGRAMNAME_LOCALEDIR=[${datadir}/locale/]
 PROGRAMNAME_DATA_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/data/]
-PROGRAMNAME_IMG_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/images/]
-PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
+PROGRAMNAME_IMG_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/data/images/]
+PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/data/ui/]
 PROGRAMNAME_MOD_DIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
 ])
 
-AC_SUBST([PROGRAMNAME_LOCALEDIR])
-AC_SUBST([PROGRAMNAME_UI_DIR])
-AC_SUBST([PROGRAMNAME_MOD_DIR])
-AC_SUBST([PROGRAMNAME_IMG_DIR])
-AC_SUBST([PROGRAMNAME_DATA_DIR])
+AM_COND_IF([PLATFORM_WINDOWS],[
+PROGRAMNAME_LOCALEDIR=[usr/share/locale/]
+PROGRAMNAME_DATA_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/]
+PROGRAMNAME_UI_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/ui/]
+PROGRAMNAME_IMG_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/images/]
+PROGRAMNAME_MOD_DIR=[usr/share/$PACKAGE_NAME/$VERSION/modules/]
+])
 
+AC_SUBST(PROGRAMNAME_LOCALEDIR)
+AC_SUBST(PROGRAMNAME_UI_DIR)
+AC_SUBST(PROGRAMNAME_MOD_DIR)
+AC_SUBST(PROGRAMNAME_IMG_DIR)
+AC_SUBST(PROGRAMNAME_DATA_DIR)
+AC_DEFINE_UNQUOTED([PROGRAMNAME_LOCALEDIR], ["$PROGRAMNAME_LOCALEDIR"], [Translation directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_UI_DIR], ["$PROGRAMNAME_UI_DIR"], [UI directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_MOD_DIR], ["$PROGRAMNAME_MOD_DIR"], [Module directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_IMG_DIR], ["$PROGRAMNAME_IMG_DIR"], [Images directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_DATA_DIR], ["$PROGRAMNAME_DATA_DIR"], [Data directory])
 dnl ================================================================
 dnl Flags
 dnl ================================================================
-
-dnl Set the correct libdir
-dnl AC_PREFIX_DEFAULT(/usr/local)
-dnl AC_SUBST(prefix)
-dnl AC_SUBST(libdir)
 
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_CFLAGS])
@@ -289,7 +283,11 @@ Configuration:
 
       Source code location:	 ${srcdir}
       Compiler:		 C : ${CC},		C++ : ${CXX}
-      GNOME UI Widgets:		 ${have_gnome}
+
+      env:      ${host_os}
+      Windows:  ${platform_win32}
+      Linux:    ${platform_linux}
+
       CFLAGS:  ${CFLAGS}
       CPPFLAGS: ${CPPFLAGS}
       CXXFLAGS: ${CXXFLAGS}

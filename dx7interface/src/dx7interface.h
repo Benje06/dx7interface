@@ -2,7 +2,7 @@
  * Dx7interface.h -- DX7 Graphic interface
  * dx7 interface Headers                                             header
  * ----------------------------------------------------------------------------
- * copyright © 2006, 2007, 2008, 2009, 2010  Jérôme BENHAÏM <benhaimjerome@gmail.com>,
+ * copyright © 2006-2025  Jérôme BENHAÏM <benhaimjerome@gmail.com>,
  *
  * ----------------------------------------------------------------------------
  * This program is free software ; you can redistribute it and/or 
@@ -19,8 +19,6 @@
  */
 /*
  * TODO :
- * timer
- * receive sysex
 */
 #pragma once
 #define MODULE_NAME "Dx7interface"
@@ -33,6 +31,9 @@
 /* sys */
 //#include <memory>
 /*** APP ***/
+#define _USE_MATH_DEFINES
+#include <cmath>
+//#include <numbers> std=c++20 std::numbers::pi
 #include <variant>
 #include <gxinterface/0.0.1/common.h>
 #include <gxinterface/0.0.1/gxmodule.h>
@@ -48,12 +49,12 @@
 /** CONSTANTS **/
 #define DATA_DIR PROGRAMNAME_DATA_DIR
 #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-        #define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify.ui"
+        #define UI PROGRAMNAME_UI_DIR"dx7interface-0.0.1-simplify.ui"
 #else
-         #define UI MOD_UI_DIRECTORY"dx7interface-0.0.1-simplify_4.8.ui"
+        #define UI PROGRAMNAME_UI_DIR"dx7interface-0.0.1-simplify_4.8.ui"
 #endif
-#define CSSFILE MOD_UI_DIRECTORY"theme.css"
-
+#define CSSFILE PROGRAMNAME_UI_DIR"theme.css"
+#define ICON PROGRAMNAME_IMG_DIR"dx7interface.ico"
 extern "C" {
     std::tuple<std::shared_ptr<void>, St_mod_options> LoadPlug(uint8_t);
 };
@@ -318,7 +319,7 @@ class Dx7interface : public Gx_module, public Synth {
         };
 
         void create_param_list();
-        Glib::RefPtr<Gio::ListStore<ParamItem>> param_data_model=nullptr; /* liste des nom des sons de la banque chargé */
+        Glib::RefPtr<Gio::ListStore<ParamItem>> param_data_model=nullptr; /* liste des noms des sons de la banque chargée */
         Glib::RefPtr<Gtk::SingleSelection> param_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> param_factory=nullptr;
         void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);

@@ -41,11 +41,12 @@ image_DATA = \
 	keyboard.png\
 	keyboard_background.png\
 	touche_b.png\
-	touche_w.png
+	touche_w.png\
+	dx7interface.ico
 
 
 imagedir = \
-	$(pkgdatadir)/$(PACKAGE_VERSION)/images
+	$(pkgdatadir)/$(PACKAGE_VERSION)/data/images
 
 ## File created by the gnome-build tools
 

@@ -22,16 +22,27 @@ libgxinterface_0_0_1_la_SOURCES = \
 libgxinterface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
 	-rdynamic -no-undefined -Wl,--no-undefined
+
+	## Platform-specific additions
+##if PLATFORM_WINDOWS
+##  ## Windows/MinGW: PE-specific flags ; ,-rpath,ucrt64\lib
+##  gxinterface_LDFLAGS += -Wl,--export-all-symbols
+##else
+##  ## Linux/ELF: Equivalent symbol visibility control
+##  gxinterface_LDFLAGS += -rdynamic  # Expands to -Wl,--export-dynamic
+##endif
 ## win32 ,--export-all-symbols
 	
 ##  -rdynamics -no-undefined -Wl,--export-dynamic 
 
 libgxinterface_la_CXXFLAGS = $(AM_CXXFLAGS)
 libgxinterface_0_0_1_la_CPPFLAGS = \
-	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) \
-	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
-	-DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"  \
-	-DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"
+	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) \
+	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
+	
+##	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
+##	-DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"  \
+##	-DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"
 
 ## libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) /ucrt64/bin/libintl-8.dll $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
@@ -40,7 +51,6 @@ libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS)
 #### HEADERS IN INCLUDE ####			
 ## This only works if the directory hierarchy in the
 ## source tree matches the hierarchy at the install location, however.
-library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
 
 library_include_HEADERS = \
 	../src/common.h \
@@ -51,10 +61,16 @@ library_include_HEADERS = \
 	../src/gxthread.h \
 	../src/lang.h
 
-libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
-
-pkgconfigdir = $(datadir)/pkgconfig
-pkgconfig_DATA = ${PACKAGE_NAME}.pc
+if PLATFORM_WINDOWS
+   library_includedir = /ucrt64/include/${PACKAGE_NAME}/$(LIB_VERSION)
+   libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
+   pkgconfigdir = /ucrt64/share/pkgconfig
+else
+  library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
+  libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
+  pkgconfigdir = $(datadir)/pkgconfig
+endif
+pkgconfig_DATA = ${PACKAGE_NAME}.pc	
 
 ## File created by the gnome-build tools
 

@@ -5,5 +5,7 @@ ui_DATA = \
 	theme.css
 
 uidir = \
-	$(PROGRAMNAME_UI_DIR)
+	$(pkgdatadir)/$(PACKAGE_VERSION)/data/ui
+#	$(PROGRAMNAME_UI_DIR)
+	
 

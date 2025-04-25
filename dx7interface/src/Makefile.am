@@ -20,14 +20,16 @@ dx7interface_0_0_1_la_SOURCES = \
         GtkClass.h GtkClass.cc\
         dx7sysex.h dx7interface.h dx7interface.cc
 
+dx7interface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
 dx7interface_0_0_1_la_CPPFLAGS = \
         $(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) \
-        -DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"\
-        -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
-        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
-        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
-        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+        -DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
+
+        # -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
+        # -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
+        # -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
+        # -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+        # -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 
 dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
 
@@ -50,7 +52,7 @@ endif
 ##        dx7interface.h  \
 ##        dx7sysex.h
 
-pkgconfigdir = $(datadir)/pkgconfig
-pkgconfig_DATA = ${PACKAGE_NAME}.pc
+## pkgconfigdir = $(datadir)/pkgconfig
+## pkgconfig_DATA = ${PACKAGE_NAME}.pc
 
 ## File created by the gnome-build tools

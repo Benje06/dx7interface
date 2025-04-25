@@ -29,7 +29,8 @@ Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HAND
     LOG_IN();
     try{
         #ifdef ENABLE_NLS
-            std::locale::global(std::locale(""));
+            //std::setlocale(LC_ALL, "");
+            //std::locale::global(std::locale(""));
             bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
             bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
             textdomain(GETTEXT_PACKAGE);

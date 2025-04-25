@@ -43,6 +43,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODU
     };
     mod_options.cssfile = CSSFILE;
     mod_options.custom_font = "";
+    mod_options.icon = "";
     /* MIDI */
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
@@ -277,11 +278,12 @@ void Dx7interface::read_midi_learned_param(Glib::RefPtr<Gio::File> param_file){
     std::string line;
     Glib::ustring function_name;
     Glib::ustring param_number;
+    std::regex pattern("[^0-9]+");
     data_stream->read_line(line);
     while(data_stream->read_line(line)){
         function_name = line.substr(0,line.find_last_of(","));
         param_number = line.substr(line.find_last_of(",")+1,line.length());
-        std::regex pattern("[^0-9]+");
+
         param_number = std::regex_replace(param_number.c_str(), pattern, "");
         if( param_number != "" ){
             for( int selected_item = 0 ; selected_item < max_param_nb; selected_item++){
@@ -5179,18 +5181,18 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
     //LOG_IN();
     /* key touch */
-    if (std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/touche_b.png"))
-        && std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/touche_w.png"))
-        && std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/keyboard_background.png"))
-        && std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/keyboard.png"))
+    if (std::filesystem::exists(std::string(PROGRAMNAME_IMG_DIR"/touche_b.png"))
+        && std::filesystem::exists(std::string(PROGRAMNAME_IMG_DIR"/touche_w.png"))
+        && std::filesystem::exists(std::string(PROGRAMNAME_IMG_DIR"/keyboard_background.png"))
+        && std::filesystem::exists(std::string(PROGRAMNAME_IMG_DIR"/keyboard.png"))
     ){
         Cairo::RefPtr<Cairo::ImageSurface> touch;
-        Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_b.png");
-        Cairo::RefPtr<Cairo::ImageSurface> touch_w = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/touche_w.png");
+        Cairo::RefPtr<Cairo::ImageSurface> touch_b = Cairo::ImageSurface::create_from_png(PROGRAMNAME_IMG_DIR"/touche_b.png");
+        Cairo::RefPtr<Cairo::ImageSurface> touch_w = Cairo::ImageSurface::create_from_png(PROGRAMNAME_IMG_DIR"/touche_w.png");
         double width_w = (double)touch_w->get_width();
         /* keyboard */
-        Cairo::RefPtr<Cairo::ImageSurface> keyboard_bg_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard_background.png");
-        Cairo::RefPtr<Cairo::ImageSurface> keyboard_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/keyboard.png");
+        Cairo::RefPtr<Cairo::ImageSurface> keyboard_bg_image_surface = Cairo::ImageSurface::create_from_png(PROGRAMNAME_IMG_DIR"/keyboard_background.png");
+        Cairo::RefPtr<Cairo::ImageSurface> keyboard_image_surface = Cairo::ImageSurface::create_from_png(PROGRAMNAME_IMG_DIR"/keyboard.png");
         double keyboard_width = (double)keyboard_image_surface->get_width();
         double keyboard_heigth = (double)keyboard_image_surface->get_height();
         /* UI values */
@@ -5306,7 +5308,7 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
         cr->restore();
     }else{
         std::cerr << "File not found: "<<std::endl;
-        std::cerr<<MOD_IMG_DIRECTORY"/ keyboard or touch .png"<<std::endl;
+        std::cerr<<PROGRAMNAME_IMG_DIR"/ keyboard or touch .png"<<std::endl;
     };
     //LOG_OUT();
 };
@@ -5449,9 +5451,9 @@ void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double 
     // LOG_IN();
     std::string img;
     if(compare){
-        img = std::string(MOD_IMG_DIRECTORY"/algo"+tostr<unsigned int>(bank_1_origin.sound->algo.algo.val+1)+".png");
+        img = std::string(PROGRAMNAME_IMG_DIR"/algo"+tostr<unsigned int>(bank_1_origin.sound->algo.algo.val+1)+".png");
     }else{
-        img = std::string(MOD_IMG_DIRECTORY"/algo"+tostr<unsigned int>(bank_1_modif.sound->algo.algo.val+1)+".png");
+        img = std::string(PROGRAMNAME_IMG_DIR"/algo"+tostr<unsigned int>(bank_1_modif.sound->algo.algo.val+1)+".png");
     }
     if ( std::filesystem::exists(img) ){
         Cairo::RefPtr<Cairo::ImageSurface> algo_image_surface = Cairo::ImageSurface::create_from_png(img);
@@ -5474,8 +5476,8 @@ void Dx7interface::on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr, double w
     if (img == "S/HOLD"){
         img="S_HOLD";
     };
-    if (std::filesystem::exists(std::string(MOD_IMG_DIRECTORY"/"+img+".png"))){
-        Cairo::RefPtr<Cairo::ImageSurface> lfo_image_surface = Cairo::ImageSurface::create_from_png(MOD_IMG_DIRECTORY"/"+img+".png");
+    if (std::filesystem::exists(std::string(PROGRAMNAME_IMG_DIR"/"+img+".png"))){
+        Cairo::RefPtr<Cairo::ImageSurface> lfo_image_surface = Cairo::ImageSurface::create_from_png(PROGRAMNAME_IMG_DIR"/"+img+".png");
         double scale_factor = width / lfo_image_surface->get_width();
         cr->save();
         cr->scale(scale_factor,scale_factor);
@@ -5484,7 +5486,7 @@ void Dx7interface::on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr, double w
         cr->restore();
     }else{
         std::cerr << "File not found: "<<std::endl;
-        std::cerr<<MOD_IMG_DIRECTORY"/"+img+".png"<<std::endl;
+        std::cerr<<PROGRAMNAME_IMG_DIR"/"+img+".png"<<std::endl;
     };
     // LOG_OUT();
 };

@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 # tools :
-AC_PREREQ([2.71])
+AC_PREREQ([2.72])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([gxinterface],[1.0.0],[benhaim_jerome@yahoo.fr])
 dnl ================================================================
@@ -10,43 +10,34 @@ dnl ================================================================
 AC_SUBST([SO_VERSION], [1:0:0])
 AC_SUBST([API_VERSION], [1.0.0])
 AC_SUBST([LIB_VERSION], [0.0.1])
+
 AC_CONFIG_AUX_DIR([config])
-AC_CANONICAL_HOST
-AS_CASE([$host_os],
-    [linux*], [
-        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
-        AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
-        platform_win32=no
-    ],
-    [mingw*|windows*|pw32*|cygwin*], [
-        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
-        AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
-        platform_win32=yes
-    ],
-    [*], [
-        AC_MSG_ERROR([Unsupported operating system: $host_os])
-    ]
-)
-AM_CONDITIONAL([PLATFORM_WINDOWS], [test "$platform_win32" = "yes"])
-AM_CONDITIONAL([PLATFORM_LINUX], [test "$platform_win32" = "no"])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_SRCDIR([src])
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_SRCDIR([config.h.in])
+
+dnl ================================================================
+dnl build without command prompt
+dnl ================================================================
+dnl CXXFLAGS="$CXXFLAGS -mwindows"
+dnl AC_SUBST(CXXFLAGS)
+
 dnl ================================================================
 dnl checks for programs
 dnl ================================================================
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([config.h.in])
-AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_SRCDIR([src])
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 m4_ifdef([AC_PROG_AR], [AC_PROG_AR])
 
 LT_PREREQ([1.0.0])
-
 ifdef('lt_option',
     [LT_INIT([lt_option])],
     [LT_INIT])
+
+AC_CANONICAL_HOST
 
 AC_C_INLINE
 AC_PROG_CC
@@ -62,21 +53,12 @@ AC_PROG_MAKE_SET
 AC_LANG([C++])
 AC_LANG_COMPILER([C++])
 
-dnl CXXFLAGS="$CXXFLAGS -fexceptions -std=c++17 -Wall -Wextra"
 AC_SUBST(CXXFLAGS)
 
 dnl ================================================================
 dnl Check for libraries
 dnl ================================================================
 AC_SEARCH_LIBS([strerror],[cposix])
-dnl AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([POSIX threads library not found])])
-dnl AC_CHECK_LIB([intl], [libintl_fprintf], [], [AC_MSG_ERROR([GNU gettext library not found])])
-dnl PTHREAD_LIBS="-lpthread"
-dnl AC_SUBST(PTHREAD_LIBS)
-dnl INTLLIBS="-lintl"
-dnl AC_SUBST(INTLLIBS)
-
-dnl AX_PTHREAD
 dnl ================================================================
 dnl checks for header files
 dnl ================================================================
@@ -109,8 +91,26 @@ dnl ================================================================
 AC_FUNC_ALLOCA
 AC_FUNC_ERROR_AT_LINE
 
+AS_CASE([$host_os],
+    [linux*], [
+        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
+        AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
+        platform_win32=no
+    ],
+    [mingw*|windows*|pw32*|cygwin*], [
+        pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
+        AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
+        platform_win32=yes
+    ],
+    [*], [
+        AC_MSG_ERROR([Unsupported operating system: $host_os])
+    ]
+)
+
+AM_CONDITIONAL([PLATFORM_WINDOWS], [test x$platform_win32 = xyes])
+AM_CONDITIONAL([PLATFORM_LINUX], [test x$platform_win32 = xno])
+
 PKG_CHECK_MODULES([DEPS], [$pkg_modules])
-dnl redondant ??? AC_SUBST ??
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_CPPFLAGS)
 AC_SUBST(DEPS_LIBS)
@@ -118,14 +118,11 @@ AC_SUBST(DEPS_LIBS)
 dnl ================================================================
 dnl checks for system services
 dnl ================================================================
-
-dnl ================================================================
-dnl Gnome init
-dnl ================================================================
-dnl ##GNOME_COMMON_INIT
-dnl ##GNOME_DEBUG_CHECK
-dnl ##GNOME_COMPILE_WARNINGS([maximum])
-dnl ##GNOME_MAINTAINER_MODE_DEFINES
+AM_COND_IF([PLATFORM_WINDOWS],[
+AC_CHECK_TOOL(WINDRES, windres, no)
+],[
+AC_MSG_ERROR([Could not find an implementation of windres in your PATH.])
+])
 
 dnl ================================================================
 dnl Gettext stuff.
@@ -157,30 +154,37 @@ PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/po]
 PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
 PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]
 PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/]
-PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/pixmaps/$PACKAGE_NAME/]
+PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/$PACKAGE_VERSION/images]
 ],[
 PROGRAMNAME_LOCALEDIR=[${datadir}/locale]
-PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/ui/]
+PROGRAMNAME_DATA_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/data/]
+PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/data/ui/]
+PROGRAMNAME_IMG_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/data/images]
 PROGRAMNAME_MOD_DIR=[${datadir}/$PACKAGE_NAME/modules/]
-PROGRAMNAME_DATA_DIR=[${datadir}/$PACKAGE_NAME/data/]
-PROGRAMNAME_IMG_DIR=[${datadir}/pixmaps/$PACKAGE_NAME/]
 ])
 
+AM_COND_IF([PLATFORM_WINDOWS],[
+PROGRAMNAME_LOCALEDIR=[usr/share/locale/]
+PROGRAMNAME_DATA_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/]
+PROGRAMNAME_UI_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/ui/]
+PROGRAMNAME_IMG_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/images/]
+PROGRAMNAME_MOD_DIR=[usr/share/$PACKAGE_NAME/$VERSION/modules/]
+])
 
-AC_SUBST([PROGRAMNAME_LOCALEDIR])
+AC_SUBST(PROGRAMNAME_LOCALEDIR)
 AC_SUBST(PROGRAMNAME_UI_DIR)
 AC_SUBST(PROGRAMNAME_MOD_DIR)
 AC_SUBST(PROGRAMNAME_IMG_DIR)
 AC_SUBST(PROGRAMNAME_DATA_DIR)
+AC_DEFINE_UNQUOTED([PROGRAMNAME_LOCALEDIR], ["$PROGRAMNAME_LOCALEDIR"], [Translation directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_UI_DIR], ["$PROGRAMNAME_UI_DIR"], [UI directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_MOD_DIR], ["$PROGRAMNAME_MOD_DIR"], [Module directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_IMG_DIR], ["$PROGRAMNAME_IMG_DIR"], [Images directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_DATA_DIR], ["$PROGRAMNAME_DATA_DIR"], [Data directory])
 
 dnl ================================================================
 dnl Flags
 dnl ================================================================
-
-dnl Set the correct libdir
-dnl AC_PREFIX_DEFAULT(/usr/local)
-dnl AC_SUBST(prefix)
-dnl AC_SUBST(libdir)
 
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_CFLAGS])
@@ -205,8 +209,12 @@ echo "
 Configuration:
 
   Source code location:	 ${srcdir}
-  Compiler:		 C : ${CC},		C++ : ${CXX}
-  GNOME UI Widgets:		 ${have_gnome}
+  libdir location:	     ${libdir}
+  Compiler:		 C : ${CC}		C++ : ${CXX}
+
+  env:      ${host_os}
+  Windows:  ${platform_win32}
+  Linux:    ${platform_linux}
 
   CPPFLAGS: ${CPPFLAGS}
   CFLAGS:  ${CFLAGS}
@@ -226,7 +234,9 @@ Configuration:
   PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
   PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
   PROGRAMNAME_DATA_DIR: ${PROGRAMNAME_DATA_DIR}
-  
+  datadir: ${datadir}
+  datarootdir: ${daterootdir}
+  pkgdatadir: ${pkgdatadir}
 "
 
 : variables='
