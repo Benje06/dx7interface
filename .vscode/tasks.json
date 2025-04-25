@@ -1,0 +1,366 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "GX Autogen",
+            "type": "shell",
+            "command": "./autogen.sh",
+            "args": [
+                "--prefix=/usr",
+                "--libdir=/ucrt64/lib",
+                "--target=x86_64-w64-mingw32",
+                "--host=x86_64-w64-mingw32",
+                "--build=$(./config/config.guess)",
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
+                "--disable-maintainer-mode",
+                "'CFLAGS=-O2'",
+                "'CXXFLAGS=-O2'"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Generate configure script",
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface"
+            }
+        },
+        {
+            "label": "GX Autogen_DEBUG",
+            "type": "shell",
+            "command": "./autogen.sh",
+            "args": [
+                "--prefix=/usr",
+                "--libdir=/ucrt64/lib",
+                "--target=x86_64-w64-mingw32",
+                "--host=x86_64-w64-mingw32",
+                "--build=$(./config/config.guess)",
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Generate configure script DEBUG options",
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface",
+                "env": {
+                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}",
+                    "CFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable",
+                    "CXXFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable",
+                    "LDFLAGS": "-ggdb3",
+                    "G_DEBUG": "all",
+                    "G_ENABLE_DEBUG": "1",
+                    "G_ENABLE_DIAGNOSTIC": "1"
+                }
+            }
+        },
+        {
+            "label": "GX Make",
+            "type": "shell",
+            "command": "make -j3",
+            "dependsOn": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Generate the .exe",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface",
+                "env": {
+                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}"
+                }
+            }
+        },
+        {
+            "label": "GX Install",
+            "type": "shell",
+            "command": "make DESTDIR=/d/gxinterface/package install",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "none",
+            "detail": "Install Binary",
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface"
+            }
+        },
+        {
+            "label": "GX Install UCRT64",
+            "type": "shell",
+            "command": "make install",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "none",
+            "detail": "Install Binary",
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface"
+            }
+        },
+        {
+            "label": "GX Add libs",
+            "type": "shell",
+            "command": "ldd /d/gxinterface/package/usr/bin/gxinterface.exe | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/usr/bin/",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "none",
+            "detail": "Install Library",
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface"
+            }
+        },
+        {
+            "label": "GX clean",
+            "type": "shell",
+            "command": "make clean || true",
+            "group": "none",
+            "detail": "Clean make",
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface"
+            }
+        },
+        {
+            "label": "GX distclean",
+            "type": "shell",
+            "command": "make distclean || true",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "dependsOn": [
+                "clean"
+            ],
+            "group": "none",
+            "detail": "Full clean of sources",
+            "options": {
+                "cwd": "${workspaceFolder}/gxinterface"
+            }
+        },
+        {
+            "label": "Gxinterface: Full Build",
+            "dependsOn": [
+                "GX distclean",
+                "GX Autogen",
+                "GX Autogen",
+                "GX Make",
+                "GX Install",
+                "GX Add libs"
+            ],
+            "group": "none",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Dx7interface: Full Build",
+            "dependsOn": [
+                "DX Distclean",
+                "DX Autogen",
+                "DX Autogen",
+                "DX Make",
+                "DX Install",
+                "DX Add libs"
+            ],
+            "group": "none",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "DX Autogen",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "./autogen.sh",
+                "--enable-rtmidi",
+                "--disable-maintainer-mode",
+                "--prefix=/usr",
+                "--libdir=/ucrt64/lib",
+                "--target=x86_64-w64-mingw32",
+                "--host=x86_64-w64-mingw32",
+                "--build=$(./config/config.guess)",
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface",
+                "env": {
+                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}",
+                    "CFLAGS": "-O2",
+                    "CXXFLAGS": "-O2"
+                }
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Generate configure script"
+        },
+        {
+            "label": "DX Autogen_DEBUG",
+            "type": "shell",
+            "command": "./autogen.sh",
+            "args": [
+                "--enable-rtmidi",
+                "--prefix=/usr",
+                "--libdir=/ucrt64/lib",
+                "--target=x86_64-w64-mingw32",
+                "--host=x86_64-w64-mingw32",
+                "--build=$(./config/config.guess)",
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Generate configure script DEBUG options",
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface",
+                "env": {
+                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}",
+                    "CFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable",
+                    "CXXFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable",
+                    "LDFLAGS": "-ggdb3",
+                    "G_DEBUG": "all",
+                    "G_ENABLE_DEBUG": "1",
+                    "G_ENABLE_DIAGNOSTIC": "1"
+                }
+            }
+        },
+        {
+            "label": "DX Make",
+            "type": "shell",
+            "command": "make -j3",
+            "dependsOn": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Generate the dll",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface"
+            }
+        },
+        {
+            "label": "DX Install",
+            "type": "shell",
+            "command": "make DESTDIR=/d/gxinterface/package install",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "none",
+            "detail": "Install Binary",
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface"
+            }
+        },
+        {
+            "label": "DX Add libs",
+            "type": "shell",
+            "command": "ldd src/.libs/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/usr/bin/",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "none",
+            "detail": "Install Library",
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface"
+            }
+        },
+        {
+            "label": "DX Clean",
+            "type": "shell",
+            "command": "make clean || true",
+            "group": "none",
+            "detail": "Clean make",
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface"
+            }
+        },
+        {
+            "label": "DX Distclean",
+            "type": "shell",
+            "command": "make distclean || true",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "dependsOn": [
+                "clean_dx"
+            ],
+            "group": "none",
+            "detail": "Full clean of sources",
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface"
+            }
+        },
+        {
+            "label": "UCRT clean",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "/ucrt64/bin/libgxinterface-0.0.1-1.dll",
+                "/ucrt64/lib/libgxinterface-0.0.1.a",
+                "/ucrt64/lib/libgxinterface-0.0.1.dll.a",
+                "/ucrt64/lib/libgxinterface-0.0.1.la",
+                "/usr/share/gxinterface",
+                "/ucrt64/share/gxinterface",
+                "/usr/bin/gxinterface.exe",
+                "/ucrt64/bin/gxinterface.exe",
+                "/usr/include/gxinterface/",
+                "/ucrt64/include/gxinterface/",
+                "/usr/lib/pkgconfig/gxinterface.pc",
+                "/ucrt64/lib/pkgconfig/gxinterface.pc",
+                "/usr/share/pkgconfig/gxinterface.pc",
+                "/ucrt64/share/pkgconfig/gxinterface.pc",
+                "/usr/share/applications/gxinterface.desktop",
+                "/ucrt64/share/applications/gxinterface.desktop",
+                "/ucrt64/share/locale/de/LC_MESSAGES/gxinterface.mo",
+                "/ucrt64/share/locale/en/LC_MESSAGES/gxinterface.mo",
+                "/ucrt64/share/locale/es/LC_MESSAGES/gxinterface.mo",
+                "/ucrt64/share/locale/fr/LC_MESSAGES/gxinterface.mo",
+                "/ucrt64/share/locale/jap/LC_MESSAGES/gxinterface.mo",
+                "/ucrt64/share/locale/languagecode/LC_MESSAGES/gxinterface.mo",
+                "/ucrt64/share/locale/ru/LC_MESSAGES/gxinterface.mo",
+                "/usr/share/locale/de/LC_MESSAGES/gxinterface.mo",
+                "/usr/share/locale/en/LC_MESSAGES/gxinterface.mo",
+                "/usr/share/locale/es/LC_MESSAGES/gxinterface.mo",
+                "/usr/share/locale/fr/LC_MESSAGES/gxinterface.mo",
+                "/usr/share/locale/jap/LC_MESSAGES/gxinterface.mo",
+                "/usr/share/locale/languagecode/LC_MESSAGES/gxinterface.mo",
+                "/usr/share/locale/ru/LC_MESSAGES/gxinterface.mo",
+                "/ucrt64/share/dx7interface/1.0.0/data/ui/dx7interface-0.0.1-simplify.ui",
+                "/ucrt64/share/dx7interface/1.0.0/data/ui/dx7interface-0.0.1-simplify_4.8.ui",
+                "/ucrt64/share/applications/dx7interface.desktop",
+                "/ucrt64/share/dx7interface/",
+                "/ucrt64/share/locale/de/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/share/locale/en/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/share/locale/es/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/share/locale/fr/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/share/locale/jap/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/share/locale/languagecode/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/share/locale/ru/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/share/pkgconfig/dx7interface.pc",
+                "/usr/share/applications/dx7interface.desktop",
+                "/usr/share/locale/de/LC_MESSAGES/dx7interface.mo",
+                "/usr/share/locale/en/LC_MESSAGES/dx7interface.mo",
+                "/usr/share/locale/es/LC_MESSAGES/dx7interface.mo",
+                "/usr/share/locale/fr/LC_MESSAGES/dx7interface.mo",
+                "/usr/share/locale/jap/LC_MESSAGES/dx7interface.mo",
+                "/usr/share/locale/languagecode/LC_MESSAGES/dx7interface.mo",
+                "/usr/share/locale/ru/LC_MESSAGES/dx7interface.mo"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "dependsOn": [
+                "clean_dx"
+            ],
+            "group": "none",
+            "detail": "Full clean of sources",
+            "options": {
+                "cwd": "${workspaceFolder}/dx7interface"
+            }
+        }
+    ]
+}
