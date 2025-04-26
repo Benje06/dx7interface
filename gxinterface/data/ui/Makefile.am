@@ -4,6 +4,6 @@ ui_DATA = \
 
 uidir = \
 	$(pkgdatadir)/$(PACKAGE_VERSION)/data/ui
-	
+
 ## File created by the gnome-build tools
 

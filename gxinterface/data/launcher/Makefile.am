@@ -3,6 +3,8 @@ launcher_DATA = \
 
 launcherdir = \
 	$(datadir)/applications
-	
+
+all-local:
+	sed -i 's|$${datarootdir}|$(datarootdir)|g' ${PACKAGE_NAME}.desktop
 ## File created by the gnome-build tools
 
