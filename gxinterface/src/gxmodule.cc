@@ -163,7 +163,8 @@ void Gx_module::set_app_icon(Gtk::Window* main_window){
 
         //icon_theme->add_search_path(mod.extpath.path + "../data/images/hicolor/apps/48x48" );
         Glib::ustring icon_path = mod_options.icon.substr( 0, mod_options.icon.find_last_of(DS));
-        Glib::ustring icon_name = mod_options.icon.substr( mod_options.icon.find_last_of(DS) , mod_options.icon.find_last_of('.')  );
+        int end = mod_options.icon.find_last_of(".");
+        Glib::ustring icon_name = mod_options.icon.substr( mod_options.icon.find_last_of(DS)+1 , end );
         std::cout << "***  Icon path added: "<< icon_path << std::endl ;
         std::cout << "***  Icon name: "<< icon_name << std::endl ;
         icon_theme->add_search_path( icon_path );
