@@ -1130,14 +1130,15 @@ void Dx7interface::copy_bank(BankVariant& bank_origin_src, BankVariant& bank_ori
 };
 void Dx7interface::moove_sound(BankVariant& bank_origin_dest, BankVariant& bank_modif_dest, unsigned int end_insert,int nb_snd){
     std::visit([&](auto& bank_origin, auto& bank_modif) {
+        // do not moove origin bank
         if( nb_snd > 0){
             for( unsigned int i = bank_nb_sound-1; i > 0 && i >= end_insert ; i--){
-                bank_origin.get().sound[i] = bank_origin.get().sound[i-nb_snd];
+                //bank_origin.get().sound[i] = bank_origin.get().sound[i-nb_snd];
                 bank_modif.get().sound[i] = bank_modif.get().sound[i-nb_snd];
             };
         }else if( nb_snd < 0 ){
             for( unsigned int i = end_insert; i < bank_nb_sound-1 ; i++){
-                bank_origin.get().sound[i] = bank_origin.get().sound[i-nb_snd];
+                //bank_origin.get().sound[i] = bank_origin.get().sound[i-nb_snd];
                 bank_modif.get().sound[i] = bank_modif.get().sound[i-nb_snd];
             };
         };
