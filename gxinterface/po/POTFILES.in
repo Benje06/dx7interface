@@ -1,6 +1,6 @@
-# List of source files containing translatable strings.
+#List of source files containing translatable strings.
 
-# Main application
+#Main application
 src/main.cc
 src/main.h
 src/gemod.cc

@@ -20,8 +20,18 @@ gxinterface_SOURCES = \
 	main.h main.cc\
 	lang.h
 
-AM_CPPFLAGS = \
-	$(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)
+gxinterface_CXXFLAGS = $(AM_CXXFLAGS)
+gxinterface_CPPFLAGS = \
+	$(AM_CPPFLAGS) $(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)
+
+if PLATFORM_LINUX
+gxinterface_CPPFLAGS += \
+	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
+        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
+        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
+        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+endif
 
 gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
@@ -37,7 +47,7 @@ gxinterfaceicon.o: seticon.rc ../../dx7interface/data/images/dx7interface.ico
 	$(WINDRES) -i $< -o $@
 
 else
-  ## Linux/ELF Equivalent symbol visibility control
-  gxinterface_LDFLAGS += -rdynamic
-  ## Expands to -Wl,--export-dynamic
+## Linux/ELF Equivalent symbol visibility control
+gxinterface_LDFLAGS += -rdynamic
+## Expands to -Wl,--export-dynamic
 endif
