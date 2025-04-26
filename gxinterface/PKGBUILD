@@ -18,13 +18,25 @@ md5sums=('SKIP')
 
 build() {
     cd ${pkgname}/${pkgname}/
+    echo ""
+    echo "*** CLEANING DIRECTORY ***"
+    echo ""
     make clean || true
     make distclean || true
+    echo ""
+    echo "*** AUTOGEN / CONFIGURE ***"
+    echo ""
     ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2'
+    echo ""
+    echo "*** MAKE ***"
+    echo ""
     make
 }
 
 package() {
+    echo ""
+    echo "*** PACKAGING ***"
+    echo ""
     cd ${pkgname}/${pkgname}
     make DESTDIR="$pkgdir/" install
 }
