@@ -28,10 +28,10 @@ dx7interface_0_0_1_la_CPPFLAGS = \
 if PLATFORM_LINUX
 dx7interface_0_0_1_la_CPPFLAGS += \
 	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
-        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
-        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
-        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+	-DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
+	-DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
+	-DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+	-DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 endif
 
 dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
@@ -46,8 +46,8 @@ if PLATFORM_WINDOWS
   dx7interface_0_0_1_la_LDFLAGS += -Wl,--export-all-symbols
 endif
 if PLATFORM_LINUX
-  # Linux/ELF: Equivalent symbol visibility control
-  dx7interface_0_0_1_la_LDFLAGS += -rdynamic  # Expands to -Wl,--export-dynamic
+  # Linux/ELF: Equivalent symbol visibility control # Expands to -Wl,--export-dynamic
+  dx7interface_0_0_1_la_LDFLAGS += -rdynamic
 endif
 
 ## dx7interface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
