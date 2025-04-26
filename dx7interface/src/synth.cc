@@ -314,40 +314,40 @@ void Synth::on_file_select(std::function<void(Glib::RefPtr<Gio::File>)> funct){
     try{
         file_dialog_select->set_title("Select File");
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-        file_dialog_select->set_initial_folder(initial_folder_open);
-        file_dialog_select->open( *(get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-            try {
-                Glib::RefPtr<Gio::File> bank_file = file_dialog_select->open_finish(result);
-                if (bank_file) {
-                    funct(bank_file);
-                    initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());
-                };
-            } catch (const std::exception & ex) {
-                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                + "Reason: " + ex.what();
-                std::cerr << err_msg << std::endl;
-            };
-        }); /* end dialog open function */
-        #else
-        file_dialog_select->set_transient_for(*(get_window()));
-        slot_file_dialog_select = file_dialog_select->signal_response().connect([this,funct](int response) {
-            try {
-                if (response == Gtk::ResponseType::ACCEPT) {
-                    auto bank_file = file_dialog_select->get_file();
+            file_dialog_select->set_initial_folder(initial_folder_open);
+            file_dialog_select->open( *(get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+                try {
+                    Glib::RefPtr<Gio::File> bank_file = file_dialog_select->open_finish(result);
                     if (bank_file) {
                         funct(bank_file);
-                        initial_folder_open= Gio::File::create_for_path(bank_file->get_path());;
+                        initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());
                     };
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                    + "Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
                 };
-                file_dialog_select->hide();
-                slot_file_dialog_select.disconnect();
-            } catch (const std::exception & ex) {
-                std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                + "Reason: " + ex.what();
-                std::cerr << err_msg << std::endl;
-            };
-        });
-        file_dialog_select->show();
+            }); /* end dialog open function */
+        #else
+            file_dialog_select->set_transient_for(*(get_window()));
+            slot_file_dialog_select = file_dialog_select->signal_response().connect([this,funct](int response) {
+                try {
+                    if (response == Gtk::ResponseType::ACCEPT) {
+                        auto bank_file = file_dialog_select->get_file();
+                        if (bank_file) {
+                            funct(bank_file);
+                            initial_folder_open= Gio::File::create_for_path(bank_file->get_path());;
+                        };
+                    };
+                    file_dialog_select->hide();
+                    slot_file_dialog_select.disconnect();
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                    + "Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
+                };
+            });
+            file_dialog_select->show();
         #endif
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\

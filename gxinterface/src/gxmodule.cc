@@ -158,24 +158,26 @@ void Gx_module::set_icon_file(Glib::ustring icon_file){
 };
 void Gx_module::set_app_icon(Gtk::Window* main_window){
     // application icon try
-    auto icon_theme = Gtk::IconTheme::get_for_display(Gdk::Display::get_default());
+    if( std::filesystem::exists(mod_options.icon) ){
+        auto icon_theme = Gtk::IconTheme::get_for_display(Gdk::Display::get_default());
 
-    //icon_theme->add_search_path(mod.extpath.path + "../data/images/hicolor/apps/48x48" );
-    Glib::ustring icon_path = mod_options.icon.substr( 0, mod_options.icon.find_last_of(DS));
-    Glib::ustring icon_name = mod_options.icon.substr( mod_options.icon.find_last_of(DS) , mod_options.icon.find_last_of('.')  );
-    std::cout << "***  Icon path added: "<< icon_path << std::endl ;
-    std::cout << "***  Icon name: "<< icon_name << std::endl ;
-    icon_theme->add_search_path( icon_path );
+        //icon_theme->add_search_path(mod.extpath.path + "../data/images/hicolor/apps/48x48" );
+        Glib::ustring icon_path = mod_options.icon.substr( 0, mod_options.icon.find_last_of(DS));
+        Glib::ustring icon_name = mod_options.icon.substr( mod_options.icon.find_last_of(DS) , mod_options.icon.find_last_of('.')  );
+        std::cout << "***  Icon path added: "<< icon_path << std::endl ;
+        std::cout << "***  Icon name: "<< icon_name << std::endl ;
+        icon_theme->add_search_path( icon_path );
 
-    if (icon_theme->has_icon(icon_name)) {
-        main_window->set_default_icon_name(icon_name);
-        main_window->set_icon_name(icon_name);
-        //std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
-    };//else{
-        //std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
-        //std::cout << "No Icon named "<< get_app_name() << std::endl;
-    //}
-}
+        if (icon_theme->has_icon(icon_name)) {
+            main_window->set_default_icon_name(icon_name);
+            main_window->set_icon_name(icon_name);
+            //std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
+        };//else{
+            //std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
+            //std::cout << "No Icon named "<< get_app_name() << std::endl;
+        //}
+    };
+};
 /* WINDOW */
 void Gx_module::create_window(){
     LOG_IN();

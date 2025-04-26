@@ -55,6 +55,7 @@
 #endif
 #define CSSFILE PROGRAMNAME_UI_DIR"theme.css"
 #define ICON PROGRAMNAME_IMG_DIR"dx7interface.ico"
+
 extern "C" {
     std::tuple<std::shared_ptr<void>, St_mod_options> LoadPlug(uint8_t);
 };
