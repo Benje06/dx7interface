@@ -119,9 +119,10 @@ dnl ================================================================
 dnl checks for system services
 dnl ================================================================
 AM_COND_IF([PLATFORM_WINDOWS],[
-AC_CHECK_TOOL(WINDRES, windres, no)
-],[
-AC_MSG_ERROR([Could not find an implementation of windres in your PATH.])
+    AC_CHECK_TOOL([WINDRES], [windres], no)
+    if test "x$WINDRES" = "xno"; then
+        AC_MSG_ERROR([Could not find an implementation of windres in your PATH.])
+    fi
 ])
 
 dnl ================================================================

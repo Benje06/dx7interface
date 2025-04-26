@@ -163,7 +163,8 @@ void Gx_module::set_app_icon(Gtk::Window* main_window){
     //icon_theme->add_search_path(mod.extpath.path + "../data/images/hicolor/apps/48x48" );
     Glib::ustring icon_path = mod_options.icon.substr( 0, mod_options.icon.find_last_of(DS));
     Glib::ustring icon_name = mod_options.icon.substr( mod_options.icon.find_last_of(DS) , mod_options.icon.find_last_of('.')  );
-    std::cout << "Icon path added: "<< icon_path << std::endl ;
+    std::cout << "***  Icon path added: "<< icon_path << std::endl ;
+    std::cout << "***  Icon name: "<< icon_name << std::endl ;
     icon_theme->add_search_path( icon_path );
 
     if (icon_theme->has_icon(icon_name)) {
@@ -190,7 +191,9 @@ void Gx_module::create_window(){
         main_window->set_default_size(1024, 768);
         //clear_style_of_window(main_window);
         //apply_style_to<Gtk::Window>(main_window);
-        //set_app_icon(main_window);
+        #ifdef __linux__
+            set_app_icon(main_window);
+        #endif
         apply_style_to_screen();
         main_window->set_visible();
         std::static_pointer_cast<Gx_module>(module_pointer)->set_main_window(main_window);
