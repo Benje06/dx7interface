@@ -158,7 +158,7 @@ void Gx_module::set_icon_file(Glib::ustring icon_file){
 };
 void Gx_module::set_app_icon(Gtk::Window* main_window){
     // application icon try
-    if( std::filesystem::exists(mod_options.icon) ){
+    if( std::filesystem::exists(mod_options.icon.c_str()) ){
         auto icon_theme = Gtk::IconTheme::get_for_display(Gdk::Display::get_default());
 
         //icon_theme->add_search_path(mod.extpath.path + "../data/images/hicolor/apps/48x48" );
