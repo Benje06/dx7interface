@@ -52,6 +52,7 @@ AS_CASE([$host_os],
         AC_MSG_ERROR([Unsupported operating system: $host_os])
     ]
 )
+
 dnl CXXFLAGS="$CXXFLAGS -mwindows"
 dnl AC_SUBST(CXXFLAGS)
 
@@ -154,8 +155,6 @@ AM_COND_IF([JUCE],[
 AC_DEFINE([__JUCE__], [1], [Define __JUCE__ for JUCE-specific code])
 pkg_modules="juce $pkg_modules"
 ])
-
-
 
 PKG_CHECK_MODULES(DEPS, [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)

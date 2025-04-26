@@ -147,16 +147,18 @@ void Gx_module::set_custom_font_file(Glib::ustring custom_font_file){
 /* Set app icon */
 void Gx_module::set_icon_file(Glib::ustring icon_file){
     LOG_IN();
-    if( std::filesystem::exists(icon_file.c_str()) ){
-        mod_options.icon=icon_file;
-        std::cout << _("Icon file: ")<< mod_options.icon << std::endl;
-    }else{
-        std::cerr<< _("Warning: the icon file ")<< icon_file << _(" doesn't exist or is not readable")<< std::endl;
-        mod_options.icon="";
+    if( icon_file != ""){
+        if( std::filesystem::exists(icon_file.c_str()) ){
+            mod_options.icon=icon_file;
+            std::cout << _("Icon file: ")<< mod_options.icon << std::endl;
+        }else{
+            std::cerr<< _("Warning: the icon file ")<< icon_file << _(" doesn't exist or is not readable")<< std::endl;
+            mod_options.icon="";
+        };
     };
     LOG_OUT();
 };
-void Gx_module::set_app_icon(Gtk::Window* main_window){
+void Gx_module::set_app_icon(Gtk::Window* main_window){ // UNUSED
     // only for the windows icon on title, doesn't change the panel icon
     if( mod_options.icon != "" ){
         auto icon_theme = Gtk::IconTheme::get_for_display(Gdk::Display::get_default());

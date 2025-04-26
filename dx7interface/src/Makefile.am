@@ -25,11 +25,14 @@ dx7interface_0_0_1_la_CPPFLAGS = \
         $(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) \
         -DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
 
-        # -DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
-        # -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
-        # -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-        # -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
-        # -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+if PLATFORM_LINUX
+dx7interface_0_0_1_la_CPPFLAGS += \
+	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
+        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
+        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
+        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+endif
 
 dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS)
 
@@ -41,7 +44,8 @@ dx7interface_0_0_1_la_LDFLAGS = \
 if PLATFORM_WINDOWS
   # Windows/MinGW: PE-specific flags ; ,-rpath,ucrt64\lib
   dx7interface_0_0_1_la_LDFLAGS += -Wl,--export-all-symbols
-else
+endif
+if PLATFORM_LINUX
   # Linux/ELF: Equivalent symbol visibility control
   dx7interface_0_0_1_la_LDFLAGS += -rdynamic  # Expands to -Wl,--export-dynamic
 endif
