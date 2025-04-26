@@ -8740,7 +8740,7 @@ void Dx7interface::on_kls_brk_pt_op6_event() {
 
 /** UI EVENTs **/
 void Dx7interface::set_aftrtch_assgn_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.aftrtch_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.aftrtch_assgn.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.aftrtch_assgn.max){
@@ -8754,7 +8754,7 @@ void Dx7interface::set_aftrtch_assgn_event(int value){
     */
 };
 void Dx7interface::set_aftrtch_rng_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.aftrtch_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.aftrtch_rng.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.aftrtch_rng.max){
@@ -8764,7 +8764,7 @@ void Dx7interface::set_aftrtch_rng_event(int value){
 };
 void Dx7interface::set_algo_event(int value){
     //LOG_IN();
-    value = value/(127/bank_1_modif.sound->algo.algo.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->algo.algo.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->algo.algo.max){
@@ -8774,7 +8774,7 @@ void Dx7interface::set_algo_event(int value){
     //LOG_OUT();
 };
 void Dx7interface::set_ams_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].ams.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].ams.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].ams.max){
@@ -8784,7 +8784,7 @@ void Dx7interface::set_ams_op1_event(int value){
 };
 
 void Dx7interface::set_ams_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].ams.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].ams.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].ams.max){
@@ -8793,7 +8793,7 @@ void Dx7interface::set_ams_op2_event(int value){
     bank_1_modif.sound->op[1].ams.val=(int)value;
 };
 void Dx7interface::set_ams_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].ams.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].ams.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].ams.max){
@@ -8802,7 +8802,7 @@ void Dx7interface::set_ams_op3_event(int value){
     bank_1_modif.sound->op[2].ams.val=(int)value;
 };
 void Dx7interface::set_ams_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].ams.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].ams.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].ams.max){
@@ -8811,7 +8811,7 @@ void Dx7interface::set_ams_op4_event(int value){
     bank_1_modif.sound->op[3].ams.val=(int)value;
 };
 void Dx7interface::set_ams_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].ams.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].ams.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].ams.max){
@@ -8820,7 +8820,7 @@ void Dx7interface::set_ams_op5_event(int value){
     bank_1_modif.sound->op[4].ams.val=(int)value;
 };
 void Dx7interface::set_ams_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].ams.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].ams.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].ams.max){
@@ -8829,7 +8829,7 @@ void Dx7interface::set_ams_op6_event(int value){
     bank_1_modif.sound->op[5].ams.val=(int)value;
 };
 void Dx7interface::set_brth_assgn_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.brth_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.brth_assgn.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.brth_assgn.max){
@@ -8843,7 +8843,7 @@ void Dx7interface::set_brth_assgn_event(int value){
     */
 };
 void Dx7interface::set_brth_rng_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.brth_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.brth_rng.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.brth_rng.max){
@@ -8852,11 +8852,11 @@ void Dx7interface::set_brth_rng_event(int value){
     bank_1_modif.sound->extra.functions.brth_rng.val=(int)value;
 };
 void Dx7interface::set_compare_event(int value){
-    //value = value/(127/bank_1_modif.sound->;
+    //value = (double)value/(127.0/(double)bank_1_modif.sound->;
 };
 
 void Dx7interface::set_dtun_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].dtun.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].dtun.max);
     if( value < 0 ){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].dtun.max){
@@ -8865,7 +8865,7 @@ void Dx7interface::set_dtun_op1_event(int value){
     bank_1_modif.sound->op[0].dtun.val=(int)value;
 };
 void Dx7interface::set_dtun_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].dtun.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].dtun.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].dtun.max){
@@ -8874,7 +8874,7 @@ void Dx7interface::set_dtun_op2_event(int value){
     bank_1_modif.sound->op[1].dtun.val=(int)value;
 };
 void Dx7interface::set_dtun_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].dtun.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].dtun.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].dtun.max){
@@ -8883,7 +8883,7 @@ void Dx7interface::set_dtun_op3_event(int value){
     bank_1_modif.sound->op[2].dtun.val=(int)value;
 };
 void Dx7interface::set_dtun_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].dtun.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].dtun.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].dtun.max){
@@ -8892,7 +8892,7 @@ void Dx7interface::set_dtun_op4_event(int value){
     bank_1_modif.sound->op[3].dtun.val=(int)value;
 };
 void Dx7interface::set_dtun_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].dtun.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].dtun.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].dtun.max){
@@ -8901,7 +8901,7 @@ void Dx7interface::set_dtun_op5_event(int value){
     bank_1_modif.sound->op[4].dtun.val=(int)value;
 };
 void Dx7interface::set_dtun_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].dtun.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].dtun.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].dtun.max){
@@ -8910,7 +8910,7 @@ void Dx7interface::set_dtun_op6_event(int value){
     bank_1_modif.sound->op[5].dtun.val=(int)value;
 };
 void Dx7interface::set_eg_lvl1_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_lvl[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_lvl[0].max){
@@ -8919,7 +8919,7 @@ void Dx7interface::set_eg_lvl1_op1_event(int value){
     bank_1_modif.sound->op[0].eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_eg_lvl1_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_lvl[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_lvl[0].max){
@@ -8928,7 +8928,7 @@ void Dx7interface::set_eg_lvl1_op2_event(int value){
     bank_1_modif.sound->op[1].eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_eg_lvl1_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_lvl[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_lvl[0].max){
@@ -8937,7 +8937,7 @@ void Dx7interface::set_eg_lvl1_op3_event(int value){
     bank_1_modif.sound->op[2].eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_eg_lvl1_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_lvl[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_lvl[0].max){
@@ -8946,7 +8946,7 @@ void Dx7interface::set_eg_lvl1_op4_event(int value){
     bank_1_modif.sound->op[3].eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_eg_lvl1_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_lvl[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_lvl[0].max){
@@ -8955,7 +8955,7 @@ void Dx7interface::set_eg_lvl1_op5_event(int value){
     bank_1_modif.sound->op[4].eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_eg_lvl1_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_lvl[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_lvl[0].max){
@@ -8964,7 +8964,7 @@ void Dx7interface::set_eg_lvl1_op6_event(int value){
     bank_1_modif.sound->op[5].eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_eg_lvl2_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_lvl[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_lvl[1].max){
@@ -8973,7 +8973,7 @@ void Dx7interface::set_eg_lvl2_op1_event(int value){
     bank_1_modif.sound->op[0].eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_eg_lvl2_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_lvl[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_lvl[1].max){
@@ -8982,7 +8982,7 @@ void Dx7interface::set_eg_lvl2_op2_event(int value){
     bank_1_modif.sound->op[1].eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_eg_lvl2_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_lvl[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_lvl[1].max){
@@ -8991,7 +8991,7 @@ void Dx7interface::set_eg_lvl2_op3_event(int value){
     bank_1_modif.sound->op[2].eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_eg_lvl2_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_lvl[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_lvl[1].max){
@@ -9000,7 +9000,7 @@ void Dx7interface::set_eg_lvl2_op4_event(int value){
     bank_1_modif.sound->op[3].eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_eg_lvl2_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_lvl[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_lvl[1].max){
@@ -9009,7 +9009,7 @@ void Dx7interface::set_eg_lvl2_op5_event(int value){
     bank_1_modif.sound->op[4].eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_eg_lvl2_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_lvl[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_lvl[1].max){
@@ -9018,7 +9018,7 @@ void Dx7interface::set_eg_lvl2_op6_event(int value){
     bank_1_modif.sound->op[5].eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_eg_lvl3_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_lvl[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_lvl[2].max){
@@ -9027,7 +9027,7 @@ void Dx7interface::set_eg_lvl3_op1_event(int value){
     bank_1_modif.sound->op[0].eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_eg_lvl3_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_lvl[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_lvl[2].max){
@@ -9036,7 +9036,7 @@ void Dx7interface::set_eg_lvl3_op2_event(int value){
     bank_1_modif.sound->op[1].eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_eg_lvl3_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_lvl[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_lvl[2].max){
@@ -9045,7 +9045,7 @@ void Dx7interface::set_eg_lvl3_op3_event(int value){
     bank_1_modif.sound->op[2].eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_eg_lvl3_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_lvl[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_lvl[2].max){
@@ -9054,7 +9054,7 @@ void Dx7interface::set_eg_lvl3_op4_event(int value){
     bank_1_modif.sound->op[3].eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_eg_lvl3_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_lvl[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_lvl[2].max){
@@ -9063,7 +9063,7 @@ void Dx7interface::set_eg_lvl3_op5_event(int value){
     bank_1_modif.sound->op[4].eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_eg_lvl3_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_lvl[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_lvl[2].max){
@@ -9072,7 +9072,7 @@ void Dx7interface::set_eg_lvl3_op6_event(int value){
     bank_1_modif.sound->op[5].eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_eg_lvl4_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_lvl[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_lvl[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_lvl[3].max){
@@ -9081,7 +9081,7 @@ void Dx7interface::set_eg_lvl4_op1_event(int value){
     bank_1_modif.sound->op[0].eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_eg_lvl4_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_lvl[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_lvl[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_lvl[3].max){
@@ -9090,7 +9090,7 @@ void Dx7interface::set_eg_lvl4_op2_event(int value){
     bank_1_modif.sound->op[1].eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_eg_lvl4_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_lvl[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_lvl[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_lvl[3].max){
@@ -9099,7 +9099,7 @@ void Dx7interface::set_eg_lvl4_op3_event(int value){
     bank_1_modif.sound->op[2].eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_eg_lvl4_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_lvl[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_lvl[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_lvl[3].max){
@@ -9108,7 +9108,7 @@ void Dx7interface::set_eg_lvl4_op4_event(int value){
     bank_1_modif.sound->op[3].eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_eg_lvl4_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_lvl[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_lvl[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_lvl[3].max){
@@ -9117,7 +9117,7 @@ void Dx7interface::set_eg_lvl4_op5_event(int value){
     bank_1_modif.sound->op[4].eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_eg_lvl4_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_lvl[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_lvl[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_lvl[3].max){
@@ -9126,7 +9126,7 @@ void Dx7interface::set_eg_lvl4_op6_event(int value){
     bank_1_modif.sound->op[5].eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_eg_rt1_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_rt[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_rt[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_rt[0].max){
@@ -9135,7 +9135,7 @@ void Dx7interface::set_eg_rt1_op1_event(int value){
     bank_1_modif.sound->op[0].eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_eg_rt1_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_rt[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_rt[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_rt[0].max){
@@ -9144,7 +9144,7 @@ void Dx7interface::set_eg_rt1_op2_event(int value){
     bank_1_modif.sound->op[1].eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_eg_rt1_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_rt[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_rt[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_rt[0].max){
@@ -9153,7 +9153,7 @@ void Dx7interface::set_eg_rt1_op3_event(int value){
     bank_1_modif.sound->op[2].eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_eg_rt1_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_rt[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_rt[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_rt[0].max){
@@ -9162,7 +9162,7 @@ void Dx7interface::set_eg_rt1_op4_event(int value){
     bank_1_modif.sound->op[3].eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_eg_rt1_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_rt[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_rt[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_rt[0].max){
@@ -9171,7 +9171,7 @@ void Dx7interface::set_eg_rt1_op5_event(int value){
     bank_1_modif.sound->op[4].eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_eg_rt1_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_rt[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_rt[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_rt[0].max){
@@ -9180,7 +9180,7 @@ void Dx7interface::set_eg_rt1_op6_event(int value){
     bank_1_modif.sound->op[5].eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_eg_rt2_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_rt[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_rt[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_rt[1].max){
@@ -9189,7 +9189,7 @@ void Dx7interface::set_eg_rt2_op1_event(int value){
     bank_1_modif.sound->op[0].eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_eg_rt2_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_rt[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_rt[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_rt[1].max){
@@ -9198,7 +9198,7 @@ void Dx7interface::set_eg_rt2_op2_event(int value){
     bank_1_modif.sound->op[1].eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_eg_rt2_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_rt[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_rt[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_rt[1].max){
@@ -9207,7 +9207,7 @@ void Dx7interface::set_eg_rt2_op3_event(int value){
     bank_1_modif.sound->op[2].eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_eg_rt2_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_rt[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_rt[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_rt[1].max){
@@ -9216,7 +9216,7 @@ void Dx7interface::set_eg_rt2_op4_event(int value){
     bank_1_modif.sound->op[3].eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_eg_rt2_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_rt[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_rt[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_rt[1].max){
@@ -9225,7 +9225,7 @@ void Dx7interface::set_eg_rt2_op5_event(int value){
     bank_1_modif.sound->op[4].eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_eg_rt2_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_rt[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_rt[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_rt[1].max){
@@ -9234,7 +9234,7 @@ void Dx7interface::set_eg_rt2_op6_event(int value){
     bank_1_modif.sound->op[5].eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_eg_rt3_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_rt[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_rt[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_rt[2].max){
@@ -9243,7 +9243,7 @@ void Dx7interface::set_eg_rt3_op1_event(int value){
     bank_1_modif.sound->op[0].eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_eg_rt3_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_rt[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_rt[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_rt[2].max){
@@ -9252,7 +9252,7 @@ void Dx7interface::set_eg_rt3_op2_event(int value){
     bank_1_modif.sound->op[1].eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_eg_rt3_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_rt[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_rt[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_rt[2].max){
@@ -9261,7 +9261,7 @@ void Dx7interface::set_eg_rt3_op3_event(int value){
     bank_1_modif.sound->op[2].eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_eg_rt3_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_rt[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_rt[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_rt[2].max){
@@ -9270,7 +9270,7 @@ void Dx7interface::set_eg_rt3_op4_event(int value){
     bank_1_modif.sound->op[3].eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_eg_rt3_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_rt[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_rt[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_rt[2].max){
@@ -9279,7 +9279,7 @@ void Dx7interface::set_eg_rt3_op5_event(int value){
     bank_1_modif.sound->op[4].eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_eg_rt3_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_rt[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_rt[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_rt[2].max){
@@ -9288,7 +9288,7 @@ void Dx7interface::set_eg_rt3_op6_event(int value){
     bank_1_modif.sound->op[5].eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_eg_rt4_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].eg_rt[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].eg_rt[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].eg_rt[3].max){
@@ -9297,7 +9297,7 @@ void Dx7interface::set_eg_rt4_op1_event(int value){
     bank_1_modif.sound->op[0].eg_rt[3].val=(int)value;
 };
 void Dx7interface::set_eg_rt4_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].eg_rt[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].eg_rt[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].eg_rt[3].max){
@@ -9306,7 +9306,7 @@ void Dx7interface::set_eg_rt4_op2_event(int value){
     bank_1_modif.sound->op[1].eg_rt[3].val=(int)value;
 };
 void Dx7interface::set_eg_rt4_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].eg_rt[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].eg_rt[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].eg_rt[3].max){
@@ -9315,7 +9315,7 @@ void Dx7interface::set_eg_rt4_op3_event(int value){
     bank_1_modif.sound->op[2].eg_rt[3].val=(int)value;
 };
 void Dx7interface::set_eg_rt4_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].eg_rt[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].eg_rt[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].eg_rt[3].max){
@@ -9324,7 +9324,7 @@ void Dx7interface::set_eg_rt4_op4_event(int value){
     bank_1_modif.sound->op[3].eg_rt[3].val=(int)value;
 };
 void Dx7interface::set_eg_rt4_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].eg_rt[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].eg_rt[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].eg_rt[3].max){
@@ -9333,7 +9333,7 @@ void Dx7interface::set_eg_rt4_op5_event(int value){
     bank_1_modif.sound->op[4].eg_rt[3].val=(int)value;
 };
 void Dx7interface::set_eg_rt4_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].eg_rt[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].eg_rt[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].eg_rt[3].max){
@@ -9342,7 +9342,7 @@ void Dx7interface::set_eg_rt4_op6_event(int value){
     bank_1_modif.sound->op[5].eg_rt[3].val=(int)value;
 };
 void Dx7interface::set_feedback_event(int value){
-    value = value/(127/bank_1_modif.sound->algo.feedback.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->algo.feedback.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->algo.feedback.max){
@@ -9351,7 +9351,7 @@ void Dx7interface::set_feedback_event(int value){
     bank_1_modif.sound->algo.feedback.val=(int)value;
 };
 void Dx7interface::set_foot_assgn_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.foot_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.foot_assgn.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.foot_assgn.max){
@@ -9364,7 +9364,7 @@ void Dx7interface::set_foot_assgn_event(int value){
     (get_gwidget<Gtk::CheckButton>("foot_gbs"))->set_active((val & 0x04)>>2);*/
 };
 void Dx7interface::set_foot_rng_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.foot_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.foot_rng.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.foot_rng.max){
@@ -9373,7 +9373,7 @@ void Dx7interface::set_foot_rng_event(int value){
     bank_1_modif.sound->extra.functions.foot_rng.val=(int)value;
 };
 void Dx7interface::set_freq_coarse_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].freq_coarse.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].freq_coarse.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].freq_coarse.max){
@@ -9382,7 +9382,7 @@ void Dx7interface::set_freq_coarse_op1_event(int value){
     bank_1_modif.sound->op[0].freq_coarse.val=(int)value;
 };
 void Dx7interface::set_freq_coarse_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].freq_coarse.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].freq_coarse.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].freq_coarse.max){
@@ -9391,7 +9391,7 @@ void Dx7interface::set_freq_coarse_op2_event(int value){
     bank_1_modif.sound->op[1].freq_coarse.val=(int)value;
 };
 void Dx7interface::set_freq_coarse_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].freq_coarse.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].freq_coarse.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].freq_coarse.max){
@@ -9400,7 +9400,7 @@ void Dx7interface::set_freq_coarse_op3_event(int value){
     bank_1_modif.sound->op[2].freq_coarse.val=(int)value;
 };
 void Dx7interface::set_freq_coarse_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].freq_coarse.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].freq_coarse.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].freq_coarse.max){
@@ -9409,7 +9409,7 @@ void Dx7interface::set_freq_coarse_op4_event(int value){
     bank_1_modif.sound->op[3].freq_coarse.val=(int)value;
 };
 void Dx7interface::set_freq_coarse_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].freq_coarse.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].freq_coarse.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].freq_coarse.max){
@@ -9418,7 +9418,7 @@ void Dx7interface::set_freq_coarse_op5_event(int value){
     bank_1_modif.sound->op[4].freq_coarse.val=(int)value;
 };
 void Dx7interface::set_freq_coarse_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].freq_coarse.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].freq_coarse.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].freq_coarse.max){
@@ -9427,7 +9427,7 @@ void Dx7interface::set_freq_coarse_op6_event(int value){
     bank_1_modif.sound->op[5].freq_coarse.val=(int)value;
 };
 void Dx7interface::set_freq_fine_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].freq_fine.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].freq_fine.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].freq_fine.max){
@@ -9436,7 +9436,7 @@ void Dx7interface::set_freq_fine_op1_event(int value){
     bank_1_modif.sound->op[0].freq_fine.val=(int)value;
 };
 void Dx7interface::set_freq_fine_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].freq_fine.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].freq_fine.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].freq_fine.max){
@@ -9445,7 +9445,7 @@ void Dx7interface::set_freq_fine_op2_event(int value){
     bank_1_modif.sound->op[1].freq_fine.val=(int)value;
 };
 void Dx7interface::set_freq_fine_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].freq_fine.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].freq_fine.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].freq_fine.max){
@@ -9454,7 +9454,7 @@ void Dx7interface::set_freq_fine_op3_event(int value){
     bank_1_modif.sound->op[2].freq_fine.val=(int)value;
 };
 void Dx7interface::set_freq_fine_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].freq_fine.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].freq_fine.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].freq_fine.max){
@@ -9463,7 +9463,7 @@ void Dx7interface::set_freq_fine_op4_event(int value){
     bank_1_modif.sound->op[3].freq_fine.val=(int)value;
 };
 void Dx7interface::set_freq_fine_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].freq_fine.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].freq_fine.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].freq_fine.max){
@@ -9472,7 +9472,7 @@ void Dx7interface::set_freq_fine_op5_event(int value){
     bank_1_modif.sound->op[4].freq_fine.val=(int)value;
 };
 void Dx7interface::set_freq_fine_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].freq_fine.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].freq_fine.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].freq_fine.max){
@@ -9481,7 +9481,7 @@ void Dx7interface::set_freq_fine_op6_event(int value){
     bank_1_modif.sound->op[5].freq_fine.val=(int)value;
 };
 void Dx7interface::set_freq_mode_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].freq_mode.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].freq_mode.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].freq_mode.max){
@@ -9490,7 +9490,7 @@ void Dx7interface::set_freq_mode_op1_event(int value){
     bank_1_modif.sound->op[0].freq_mode.val=(int)value;
 };
 void Dx7interface::set_freq_mode_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].freq_mode.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].freq_mode.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].freq_mode.max){
@@ -9499,7 +9499,7 @@ void Dx7interface::set_freq_mode_op2_event(int value){
     bank_1_modif.sound->op[1].freq_mode.val=(int)value;
 };
 void Dx7interface::set_freq_mode_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].freq_mode.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].freq_mode.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].freq_mode.max){
@@ -9508,7 +9508,7 @@ void Dx7interface::set_freq_mode_op3_event(int value){
     bank_1_modif.sound->op[2].freq_mode.val=(int)value;
 };
 void Dx7interface::set_freq_mode_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].freq_mode.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].freq_mode.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].freq_mode.max){
@@ -9517,7 +9517,7 @@ void Dx7interface::set_freq_mode_op4_event(int value){
     bank_1_modif.sound->op[3].freq_mode.val=(int)value;
 };
 void Dx7interface::set_freq_mode_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].freq_mode.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].freq_mode.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].freq_mode.max){
@@ -9526,7 +9526,7 @@ void Dx7interface::set_freq_mode_op5_event(int value){
     bank_1_modif.sound->op[4].freq_mode.val=(int)value;;
 };
 void Dx7interface::set_freq_mode_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].freq_mode.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].freq_mode.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].freq_mode.max){
@@ -9535,7 +9535,7 @@ void Dx7interface::set_freq_mode_op6_event(int value){
     bank_1_modif.sound->op[5].freq_mode.val=(int)value;
 };
 void Dx7interface::set_kls_brk_pt_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].kls.brk_pt.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].kls.brk_pt.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].kls.brk_pt.max){
@@ -9552,7 +9552,7 @@ void Dx7interface::set_kls_brk_pt_op1_event(int value){
     };*/
 };
 void Dx7interface::set_kls_brk_pt_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].kls.brk_pt.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].kls.brk_pt.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].kls.brk_pt.max){
@@ -9568,7 +9568,7 @@ void Dx7interface::set_kls_brk_pt_op2_event(int value){
     };*/
 };
 void Dx7interface::set_kls_brk_pt_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].kls.brk_pt.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].kls.brk_pt.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].kls.brk_pt.max){
@@ -9584,7 +9584,7 @@ void Dx7interface::set_kls_brk_pt_op3_event(int value){
     };*/
 };
 void Dx7interface::set_kls_brk_pt_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].kls.brk_pt.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].kls.brk_pt.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].kls.brk_pt.max){
@@ -9600,7 +9600,7 @@ void Dx7interface::set_kls_brk_pt_op4_event(int value){
     };*/
 };
 void Dx7interface::set_kls_brk_pt_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].kls.brk_pt.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].kls.brk_pt.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].kls.brk_pt.max){
@@ -9617,7 +9617,7 @@ void Dx7interface::set_kls_brk_pt_op5_event(int value){
     */
 };
 void Dx7interface::set_kls_brk_pt_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].kls.brk_pt.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].kls.brk_pt.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].kls.brk_pt.max){
@@ -9634,7 +9634,7 @@ void Dx7interface::set_kls_brk_pt_op6_event(int value){
     */
 };
 void Dx7interface::set_kls_lft_curve_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].kls.lft_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].kls.lft_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].kls.lft_curve.max){
@@ -9643,7 +9643,7 @@ void Dx7interface::set_kls_lft_curve_op1_event(int value){
     bank_1_modif.sound->op[0].kls.lft_curve.val=(int)value;
 };
 void Dx7interface::set_kls_lft_curve_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].kls.lft_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].kls.lft_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].kls.lft_curve.max){
@@ -9652,7 +9652,7 @@ void Dx7interface::set_kls_lft_curve_op2_event(int value){
      bank_1_modif.sound->op[1].kls.lft_curve.val=(int)value;
 };
 void Dx7interface::set_kls_lft_curve_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].kls.lft_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].kls.lft_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].kls.lft_curve.max){
@@ -9661,7 +9661,7 @@ void Dx7interface::set_kls_lft_curve_op3_event(int value){
      bank_1_modif.sound->op[2].kls.lft_curve.val=(int)value;
 };
 void Dx7interface::set_kls_lft_curve_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].kls.lft_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].kls.lft_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].kls.lft_curve.max){
@@ -9670,7 +9670,7 @@ void Dx7interface::set_kls_lft_curve_op4_event(int value){
     bank_1_modif.sound->op[3].kls.lft_curve.val=(int)value;
 };
 void Dx7interface::set_kls_lft_curve_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].kls.lft_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].kls.lft_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].kls.lft_curve.max){
@@ -9679,7 +9679,7 @@ void Dx7interface::set_kls_lft_curve_op5_event(int value){
     bank_1_modif.sound->op[4].kls.lft_curve.val=(int)value;
 };
 void Dx7interface::set_kls_lft_curve_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].kls.lft_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].kls.lft_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].kls.lft_curve.max){
@@ -9688,7 +9688,7 @@ void Dx7interface::set_kls_lft_curve_op6_event(int value){
      bank_1_modif.sound->op[5].kls.lft_curve.val=(int)value;
 };
 void Dx7interface::set_kls_lft_dpth_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].kls.lft_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].kls.lft_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].kls.lft_dpth.max){
@@ -9697,7 +9697,7 @@ void Dx7interface::set_kls_lft_dpth_op1_event(int value){
     bank_1_modif.sound->op[0].kls.lft_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_lft_dpth_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].kls.lft_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].kls.lft_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].kls.lft_dpth.max){
@@ -9706,7 +9706,7 @@ void Dx7interface::set_kls_lft_dpth_op2_event(int value){
     bank_1_modif.sound->op[1].kls.lft_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_lft_dpth_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].kls.lft_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].kls.lft_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].kls.lft_dpth.max){
@@ -9715,7 +9715,7 @@ void Dx7interface::set_kls_lft_dpth_op3_event(int value){
     bank_1_modif.sound->op[2].kls.lft_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_lft_dpth_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].kls.lft_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].kls.lft_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].kls.lft_dpth.max){
@@ -9724,7 +9724,7 @@ void Dx7interface::set_kls_lft_dpth_op4_event(int value){
     bank_1_modif.sound->op[3].kls.lft_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_lft_dpth_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].kls.lft_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].kls.lft_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].kls.lft_dpth.max){
@@ -9733,7 +9733,7 @@ void Dx7interface::set_kls_lft_dpth_op5_event(int value){
     bank_1_modif.sound->op[4].kls.lft_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_lft_dpth_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].kls.lft_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].kls.lft_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].kls.lft_dpth.max){
@@ -9742,7 +9742,7 @@ void Dx7interface::set_kls_lft_dpth_op6_event(int value){
     bank_1_modif.sound->op[5].kls.lft_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_rght_curve_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].kls.rght_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].kls.rght_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].kls.rght_curve.max){
@@ -9751,7 +9751,7 @@ void Dx7interface::set_kls_rght_curve_op1_event(int value){
     bank_1_modif.sound->op[0].kls.rght_curve.val=(int)value;
 };
 void Dx7interface::set_kls_rght_curve_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].kls.rght_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].kls.rght_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].kls.rght_curve.max){
@@ -9760,7 +9760,7 @@ void Dx7interface::set_kls_rght_curve_op2_event(int value){
      bank_1_modif.sound->op[1].kls.rght_curve.val=(int)value;
 };
 void Dx7interface::set_kls_rght_curve_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].kls.rght_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].kls.rght_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].kls.rght_curve.max){
@@ -9769,7 +9769,7 @@ void Dx7interface::set_kls_rght_curve_op3_event(int value){
     bank_1_modif.sound->op[2].kls.rght_curve.val=(int)value;
 };
 void Dx7interface::set_kls_rght_curve_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].kls.rght_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].kls.rght_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].kls.rght_curve.max){
@@ -9778,7 +9778,7 @@ void Dx7interface::set_kls_rght_curve_op4_event(int value){
     bank_1_modif.sound->op[3].kls.rght_curve.val=(int)value;
 };
 void Dx7interface::set_kls_rght_curve_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].kls.rght_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].kls.rght_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].kls.rght_curve.max){
@@ -9787,7 +9787,7 @@ void Dx7interface::set_kls_rght_curve_op5_event(int value){
      bank_1_modif.sound->op[4].kls.rght_curve.val=(int)value;
 };
 void Dx7interface::set_kls_rght_curve_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].kls.rght_curve.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].kls.rght_curve.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].kls.rght_curve.max){
@@ -9796,7 +9796,7 @@ void Dx7interface::set_kls_rght_curve_op6_event(int value){
      bank_1_modif.sound->op[5].kls.rght_curve.val=(int)value;
 };
 void Dx7interface::set_kls_rght_dpth_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].kls.rght_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].kls.rght_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].kls.rght_dpth.max){
@@ -9805,7 +9805,7 @@ void Dx7interface::set_kls_rght_dpth_op1_event(int value){
     bank_1_modif.sound->op[0].kls.rght_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_rght_dpth_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].kls.rght_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].kls.rght_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].kls.rght_dpth.max){
@@ -9814,7 +9814,7 @@ void Dx7interface::set_kls_rght_dpth_op2_event(int value){
     bank_1_modif.sound->op[1].kls.rght_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_rght_dpth_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].kls.rght_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].kls.rght_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].kls.rght_dpth.max){
@@ -9823,7 +9823,7 @@ void Dx7interface::set_kls_rght_dpth_op3_event(int value){
     bank_1_modif.sound->op[2].kls.rght_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_rght_dpth_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].kls.rght_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].kls.rght_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].kls.rght_dpth.max){
@@ -9832,7 +9832,7 @@ void Dx7interface::set_kls_rght_dpth_op4_event(int value){
     bank_1_modif.sound->op[3].kls.rght_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_rght_dpth_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].kls.rght_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].kls.rght_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].kls.rght_dpth.max){
@@ -9841,7 +9841,7 @@ void Dx7interface::set_kls_rght_dpth_op5_event(int value){
     bank_1_modif.sound->op[4].kls.rght_dpth.val=(int)value;
 };
 void Dx7interface::set_kls_rght_dpth_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].kls.rght_dpth.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].kls.rght_dpth.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].kls.rght_dpth.max){
@@ -9850,7 +9850,7 @@ void Dx7interface::set_kls_rght_dpth_op6_event(int value){
     bank_1_modif.sound->op[5].kls.rght_dpth.val=(int)value;
 };
 void Dx7interface::set_krs_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].krs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].krs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].krs.max){
@@ -9859,7 +9859,7 @@ void Dx7interface::set_krs_op1_event(int value){
     bank_1_modif.sound->op[0].krs.val=(int)value;
 };
 void Dx7interface::set_krs_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].krs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].krs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].krs.max){
@@ -9868,7 +9868,7 @@ void Dx7interface::set_krs_op2_event(int value){
     bank_1_modif.sound->op[1].krs.val=(int)value;
 };
 void Dx7interface::set_krs_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].krs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].krs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].krs.max){
@@ -9877,7 +9877,7 @@ void Dx7interface::set_krs_op3_event(int value){
     bank_1_modif.sound->op[2].krs.val=(int)value;
 };
 void Dx7interface::set_krs_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].krs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].krs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].krs.max){
@@ -9886,7 +9886,7 @@ void Dx7interface::set_krs_op4_event(int value){
     bank_1_modif.sound->op[3].krs.val=(int)value;
 };
 void Dx7interface::set_krs_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].krs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].krs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].krs.max){
@@ -9895,7 +9895,7 @@ void Dx7interface::set_krs_op5_event(int value){
     bank_1_modif.sound->op[4].krs.val=(int)value;
 };
 void Dx7interface::set_krs_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].krs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].krs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].krs.max){
@@ -9904,7 +9904,7 @@ void Dx7interface::set_krs_op6_event(int value){
     bank_1_modif.sound->op[5].krs.val = (int)value;
 };
 void Dx7interface::set_kvs_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].kvs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].kvs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].kvs.max){
@@ -9913,7 +9913,7 @@ void Dx7interface::set_kvs_op1_event(int value){
     bank_1_modif.sound->op[0].kvs.val=(int)value;
 };
 void Dx7interface::set_kvs_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].kvs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].kvs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].kvs.max){
@@ -9922,7 +9922,7 @@ void Dx7interface::set_kvs_op2_event(int value){
     bank_1_modif.sound->op[1].kvs.val=(int)value;
 };
 void Dx7interface::set_kvs_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].kvs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].kvs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].kvs.max){
@@ -9931,7 +9931,7 @@ void Dx7interface::set_kvs_op3_event(int value){
     bank_1_modif.sound->op[2].kvs.val=(int)value;
 };
 void Dx7interface::set_kvs_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].kvs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].kvs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].kvs.max){
@@ -9940,7 +9940,7 @@ void Dx7interface::set_kvs_op4_event(int value){
     bank_1_modif.sound->op[3].kvs.val=(int)value;
 };
 void Dx7interface::set_kvs_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].kvs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].kvs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].kvs.max){
@@ -9949,7 +9949,7 @@ void Dx7interface::set_kvs_op5_event(int value){
     bank_1_modif.sound->op[4].kvs.val=(int)value;
 };
 void Dx7interface::set_kvs_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].kvs.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].kvs.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].kvs.max){
@@ -9958,7 +9958,7 @@ void Dx7interface::set_kvs_op6_event(int value){
     bank_1_modif.sound->op[5].kvs.val=(int)value;
 };
 void Dx7interface::set_lfo_amd_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.amd.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->lfo.amd.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->lfo.amd.max){
@@ -9967,7 +9967,7 @@ void Dx7interface::set_lfo_amd_event(int value){
     bank_1_modif.sound->lfo.amd.val = (int)value;
 };
 void Dx7interface::set_lfo_delay_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.delay.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->lfo.delay.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->lfo.delay.max){
@@ -9976,7 +9976,7 @@ void Dx7interface::set_lfo_delay_event(int value){
     bank_1_modif.sound->lfo.delay.val=(int)value;
 };
 void Dx7interface::set_lfo_pmd_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.pmd.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->lfo.pmd.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->lfo.pmd.max){
@@ -9985,7 +9985,7 @@ void Dx7interface::set_lfo_pmd_event(int value){
     bank_1_modif.sound->lfo.pmd.val=(int)value;
 };
 void Dx7interface::set_lfo_speed_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.speed.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->lfo.speed.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->lfo.speed.max){
@@ -9994,7 +9994,7 @@ void Dx7interface::set_lfo_speed_event(int value){
     bank_1_modif.sound->lfo.speed.val=(int)value;
 };
 void Dx7interface::set_lfo_sync_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.sync.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->lfo.sync.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->lfo.sync.max){
@@ -10003,7 +10003,7 @@ void Dx7interface::set_lfo_sync_event(int value){
      bank_1_modif.sound->lfo.sync.val=(int)value;
 };
 void Dx7interface::set_lfo_wav_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.wave.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->lfo.wave.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->lfo.wave.max){
@@ -10012,7 +10012,7 @@ void Dx7interface::set_lfo_wav_event(int value){
      bank_1_modif.sound->lfo.wave.val=(int)value;
 };
 void Dx7interface::set_lvl_op1_event(int value){
-    value = value/(127/bank_1_modif.sound->op[0].lvl.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].lvl.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[0].lvl.max){
@@ -10021,7 +10021,7 @@ void Dx7interface::set_lvl_op1_event(int value){
     bank_1_modif.sound->op[0].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op2_event(int value){
-    value = value/(127/bank_1_modif.sound->op[1].lvl.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[1].lvl.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[1].lvl.max){
@@ -10030,7 +10030,7 @@ void Dx7interface::set_lvl_op2_event(int value){
     bank_1_modif.sound->op[1].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op3_event(int value){
-    value = value/(127/bank_1_modif.sound->op[2].lvl.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[2].lvl.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[2].lvl.max){
@@ -10039,7 +10039,7 @@ void Dx7interface::set_lvl_op3_event(int value){
     bank_1_modif.sound->op[2].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op4_event(int value){
-    value = value/(127/bank_1_modif.sound->op[3].lvl.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[3].lvl.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[3].lvl.max){
@@ -10048,7 +10048,7 @@ void Dx7interface::set_lvl_op4_event(int value){
     bank_1_modif.sound->op[3].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op5_event(int value){
-    value = value/(127/bank_1_modif.sound->op[4].lvl.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[4].lvl.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[4].lvl.max){
@@ -10057,7 +10057,7 @@ void Dx7interface::set_lvl_op5_event(int value){
     bank_1_modif.sound->op[4].lvl.val=(int)value;
 };
 void Dx7interface::set_lvl_op6_event(int value){
-    value = value/(127/bank_1_modif.sound->op[5].lvl.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->op[5].lvl.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->op[5].lvl.max){
@@ -10066,7 +10066,7 @@ void Dx7interface::set_lvl_op6_event(int value){
     bank_1_modif.sound->op[5].lvl.val=(int)value;
 };
 void Dx7interface::set_md_whl_assgn_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.md_whl_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.md_whl_assgn.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.md_whl_assgn.max){
@@ -10080,7 +10080,7 @@ void Dx7interface::set_md_whl_assgn_event(int value){
     */
 };
 void Dx7interface::set_md_whl_rng_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.md_whl_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.md_whl_rng.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.md_whl_rng.max){
@@ -10089,7 +10089,7 @@ void Dx7interface::set_md_whl_rng_event(int value){
     bank_1_modif.sound->extra.functions.md_whl_rng.val=(int)value;
 };
 void Dx7interface::set_mono_poly_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.poly_mono.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.poly_mono.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.poly_mono.max){
@@ -10160,7 +10160,7 @@ void Dx7interface::set_mute_op6_event(int value){
 };
 
 void Dx7interface::set_oks_event(int value){
-    value = value/(127/bank_1_modif.sound->algo.oks.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->algo.oks.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->algo.oks.max){
@@ -10169,7 +10169,7 @@ void Dx7interface::set_oks_event(int value){
     bank_1_modif.sound->algo.oks.val=(int)value;
 };
 void Dx7interface::set_panic_event(int value){
-    //value = value/(127/bank_1_modif.sound->max);
+    //value = (double)value/(127.0/(double)bank_1_modif.sound->max);
     if(value <0){
         value=0;
     }else if(value > 127){
@@ -10177,7 +10177,7 @@ void Dx7interface::set_panic_event(int value){
     };
 };
 void Dx7interface::set_pitch_lvl1_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_lvl[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[0].max){
@@ -10186,7 +10186,7 @@ void Dx7interface::set_pitch_lvl1_event(int value){
     bank_1_modif.sound->pitch.eg_lvl[0].val=(int)value;
 };
 void Dx7interface::set_pitch_lvl2_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_lvl[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[1].max){
@@ -10195,7 +10195,7 @@ void Dx7interface::set_pitch_lvl2_event(int value){
     bank_1_modif.sound->pitch.eg_lvl[1].val=(int)value;
 };
 void Dx7interface::set_pitch_lvl3_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_lvl[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[2].max){
@@ -10204,7 +10204,7 @@ void Dx7interface::set_pitch_lvl3_event(int value){
     bank_1_modif.sound->pitch.eg_lvl[2].val=(int)value;
 };
 void Dx7interface::set_pitch_lvl4_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_lvl[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_lvl[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_lvl[3].max){
@@ -10213,7 +10213,7 @@ void Dx7interface::set_pitch_lvl4_event(int value){
     bank_1_modif.sound->pitch.eg_lvl[3].val=(int)value;
 };
 void Dx7interface::set_pitch_rt1_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_rt[0].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_rt[0].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_rt[0].max){
@@ -10222,7 +10222,7 @@ void Dx7interface::set_pitch_rt1_event(int value){
     bank_1_modif.sound->pitch.eg_rt[0].val=(int)value;
 };
 void Dx7interface::set_pitch_rt2_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_rt[1].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_rt[1].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_rt[1].max){
@@ -10231,7 +10231,7 @@ void Dx7interface::set_pitch_rt2_event(int value){
     bank_1_modif.sound->pitch.eg_rt[1].val=(int)value;
 };
 void Dx7interface::set_pitch_rt3_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_rt[2].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_rt[2].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_rt[2].max){
@@ -10240,7 +10240,7 @@ void Dx7interface::set_pitch_rt3_event(int value){
     bank_1_modif.sound->pitch.eg_rt[2].val=(int)value;
 };
 void Dx7interface::set_pitch_rt4_event(int value){
-    value = value/(127/bank_1_modif.sound->pitch.eg_rt[3].max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->pitch.eg_rt[3].max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->pitch.eg_rt[3].max){
@@ -10250,7 +10250,7 @@ void Dx7interface::set_pitch_rt4_event(int value){
 };
 
 void Dx7interface::set_pms_event(int value){
-    value = value/(127/bank_1_modif.sound->lfo.pms.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->lfo.pms.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->lfo.pms.max){
@@ -10259,7 +10259,7 @@ void Dx7interface::set_pms_event(int value){
     bank_1_modif.sound->lfo.pms.val=(int)value;
 };
 void Dx7interface::set_portamento_glss_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.portamento_glss.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.portamento_glss.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.portamento_glss.max){
@@ -10268,7 +10268,7 @@ void Dx7interface::set_portamento_glss_event(int value){
     bank_1_modif.sound->extra.functions.portamento_glss.val=(int)value;
 };
 void Dx7interface::set_portamento_md_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.portamento_md.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.portamento_md.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.portamento_md.max){
@@ -10277,7 +10277,7 @@ void Dx7interface::set_portamento_md_event(int value){
     bank_1_modif.sound->extra.functions.portamento_md.val=(int)value;
 };
 void Dx7interface::set_portamento_tm_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.portamento_tm.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.portamento_tm.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.portamento_tm.max){
@@ -10286,7 +10286,7 @@ void Dx7interface::set_portamento_tm_event(int value){
     bank_1_modif.sound->extra.functions.portamento_tm.val=(int)value;
 };
 void Dx7interface::set_ptch_bnd_rng_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.ptch_bnd_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.ptch_bnd_rng.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.ptch_bnd_rng.max){
@@ -10295,7 +10295,7 @@ void Dx7interface::set_ptch_bnd_rng_event(int value){
     bank_1_modif.sound->extra.functions.ptch_bnd_rng.val=(int)value;
 };
 void Dx7interface::set_ptch_bnd_stp_event(int value){
-    value = value/(127/bank_1_modif.sound->extra.functions.ptch_bnd_stp.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.ptch_bnd_stp.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->extra.functions.ptch_bnd_stp.max){
@@ -10307,7 +10307,7 @@ void Dx7interface::set_send_extra_parameters_event(int value){
 };
 
 void Dx7interface::set_transpose_event(int value){
-    value = value/(127/bank_1_modif.sound->algo.transpose.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->algo.transpose.max);
     if(value <0){
         value=0;
     }else if(value > bank_1_modif.sound->algo.transpose.max){
