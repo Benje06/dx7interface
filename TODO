@@ -19,19 +19,20 @@ traductions
 # Fonctionalitées
 evenements MIDI (temporisation, ?mode omni?)
 *ecriture fichier des extra parameters( compatible tf1 )
+sépration des mutes (hexter vs natif)
 
 multiplateforme (midi/interface) :
     libremidi (prefered but not compiled for ucrt64 and does not do virtual midi),
     rtmidi(win done with ucrt64)  
     ??? Juce (license prorietaire), drumkit (sequenceur midi)
 	Listen midi (windows)
-	Package (windows)
 	
 # MIDI
-* reception/envoi en midi (send bank(32 done a tester), format TF1(reception 2 message syx(bank et param), envoi firchier tf1) )
-listen sysex message
+* reception/envoi en midi ( format TF1(envoi firchier tf1) )
+listen sysex message (Windows)
 
 # Interface
+rescale la courbe de volume en %
 ? Select midi device from interface ?
 * moove(ctrl+c/ctrl+x/drag and drop) gestion click appuyer pour déplacer un sons
 refonte interface( size/expand des elements)
