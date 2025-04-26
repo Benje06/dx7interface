@@ -38,12 +38,14 @@ AS_CASE([$host_os],
     [linux*], [
         pkg_modules="glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
         AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
+        platform_linux=yes
         platform_win32=no
     ],
     [mingw*|windows*|pw32*|cygwin*], [
         pkg_modules="glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
         AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
         platform_win32=yes
+        platform_linux=no
         m4_define([lt_option], [win32-dll])
     ],
     [*], [

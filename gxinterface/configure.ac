@@ -95,12 +95,14 @@ AS_CASE([$host_os],
     [linux*], [
         pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
         AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
+        platform_linux=yes
         platform_win32=no
     ],
     [mingw*|windows*|pw32*|cygwin*], [
         pkg_modules="glibmm-2.68 giomm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 sigc++-3.0 pangomm-2.48 fontconfig"
         AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
         platform_win32=yes
+        platform_linux=no
     ],
     [*], [
         AC_MSG_ERROR([Unsupported operating system: $host_os])
@@ -108,7 +110,7 @@ AS_CASE([$host_os],
 )
 
 AM_CONDITIONAL([PLATFORM_WINDOWS], [test x$platform_win32 = xyes])
-AM_CONDITIONAL([PLATFORM_LINUX], [test x$platform_win32 = xno])
+AM_CONDITIONAL([PLATFORM_LINUX], [test x$platform_linux = xyes])
 
 PKG_CHECK_MODULES([DEPS], [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)
