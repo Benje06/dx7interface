@@ -16,6 +16,12 @@ conflicts=(${pkgname})
 source=("git+https://git.savannah.nongnu.org/git/${pkgname}.git#branch=gtk4")
 md5sums=('SKIP')
 
+prepare() {
+    cd ${pkgname}/${pkgname}/
+    make clean || true
+    make distclean || true
+}
+
 build() {
     cd ${pkgname}/${pkgname}/
     ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2'

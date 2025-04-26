@@ -16,6 +16,13 @@ conflicts=(${pkgname})
 source=("git+file:///home/jerome/dev/git/gtk4")
 md5sums=('SKIP')
 
+
+prepare() {
+    cd ${pkgname}/${pkgname}/
+    make clean || true
+    make distclean || true
+}
+
 build() {
     cd gtk4/${pkgname}/
     
