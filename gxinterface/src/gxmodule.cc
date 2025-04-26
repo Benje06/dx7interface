@@ -157,26 +157,20 @@ void Gx_module::set_icon_file(Glib::ustring icon_file){
     LOG_OUT();
 };
 void Gx_module::set_app_icon(Gtk::Window* main_window){
-    // application icon try
+    // only for the windows icon on title, doesn't change the panel icon
     if( mod_options.icon != "" ){
         auto icon_theme = Gtk::IconTheme::get_for_display(Gdk::Display::get_default());
-
-        //icon_theme->add_search_path(mod.extpath.path + "../data/images/hicolor/apps/48x48" );
-        Glib::ustring icon_path = mod_options.icon.substr( 0, mod_options.icon.find_last_of(DS));
+        int start = mod_options.icon.find_last_of(DS);
         int end = mod_options.icon.find_last_of(".");
-        Glib::ustring icon_name = mod_options.icon.substr( mod_options.icon.find_last_of(DS)+1 , end );
-        std::cout << "***  Icon path added: "<< icon_path << std::endl ;
-        std::cout << "***  Icon name: "<< icon_name << std::endl ;
+        Glib::ustring icon_path = mod_options.icon.substr( 0, start );
+        Glib::ustring icon_name = mod_options.icon.substr( start+1 , end - (start+1) );
         icon_theme->add_search_path( icon_path );
-
         if (icon_theme->has_icon(icon_name)) {
             main_window->set_default_icon_name(icon_name);
             main_window->set_icon_name(icon_name);
-            //std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
-        };//else{
-            //std::cout << "PAth: " << mod.extpath.path + "../data/images/" << std::endl;
-            //std::cout << "No Icon named "<< get_app_name() << std::endl;
-        //}
+        }else{
+            std::cout << "No icon in theme have this name: "<< icon_name << std::endl ;
+        };
     };
 };
 /* WINDOW */
@@ -194,9 +188,6 @@ void Gx_module::create_window(){
         main_window->set_default_size(1024, 768);
         //clear_style_of_window(main_window);
         //apply_style_to<Gtk::Window>(main_window);
-        #ifdef __linux__
-            set_app_icon(main_window);
-        #endif
         apply_style_to_screen();
         main_window->set_visible();
         std::static_pointer_cast<Gx_module>(module_pointer)->set_main_window(main_window);

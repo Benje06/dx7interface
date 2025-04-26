@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxinterface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-25 22:22+0200\n"
+"POT-Creation-Date: 2025-04-26 09:08+0200\n"
 "PO-Revision-Date: 2025-02-17 01:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -50,7 +50,7 @@ msgid ""
 " => Cannot load : "
 msgstr ""
 
-#: ../src/gxmodule.cc:54 ../src/gxmodule.cc:82 ../src/gxmodule.cc:200
+#: ../src/gxmodule.cc:54 ../src/gxmodule.cc:82 ../src/gxmodule.cc:203
 msgid "Reason "
 msgstr ""
 
@@ -84,15 +84,15 @@ msgstr "Chargment du fichier: "
 msgid "Warning: the icon file "
 msgstr ""
 
-#: ../src/gxmodule.cc:200
+#: ../src/gxmodule.cc:203
 msgid " Creating window failed !!!\n"
 msgstr ""
 
-#: ../src/gxmodule.cc:438
+#: ../src/gxmodule.cc:441
 msgid " Failed to load style: !!!\n"
 msgstr ""
 
-#: ../src/gxmodule.cc:438
+#: ../src/gxmodule.cc:441
 msgid "Reason => "
 msgstr ""
 

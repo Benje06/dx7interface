@@ -54,7 +54,12 @@
         #define UI PROGRAMNAME_UI_DIR"dx7interface-0.0.1-simplify_4.8.ui"
 #endif
 #define CSSFILE PROGRAMNAME_UI_DIR"theme.css"
-#define ICON PROGRAMNAME_IMG_DIR"dx7interface.ico"
+//#ifdef __linux__
+    #define FONT "Araster-fonts-6x8"
+// #else
+//     #define FONT ""
+// #endif
+#define ICON ""
 
 extern "C" {
     std::tuple<std::shared_ptr<void>, St_mod_options> LoadPlug(uint8_t);

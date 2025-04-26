@@ -42,8 +42,8 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODU
         set_app_name(MODULE_NAME+index);
     };
     mod_options.cssfile = CSSFILE;
-    mod_options.custom_font = "";
-    mod_options.icon = "";
+    mod_options.custom_font = FONT;
+    mod_options.icon = ICON;
     /* MIDI */
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
