@@ -14,7 +14,7 @@ provides=(${pkgname})
 conflicts=(${pkgname})
 options=(libtool)
 
-source=("git+https://git.savannah.nongnu.org/git/gxinterface.git#branch=gtk4")
+source=("git+https://git.savannah.nongnu.org/git/gxinterface.git#branch=gtk4&depth=1")
 md5sums=('SKIP')
 
 build() {

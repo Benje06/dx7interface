@@ -13,7 +13,7 @@ makedepends=('breezy' 'intltool' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'autoconf
 provides=(${pkgname})
 conflicts=(${pkgname})
 
-source=("git+https://git.savannah.nongnu.org/git/${pkgname}.git#branch=gtk4")
+source=("git+https://git.savannah.nongnu.org/git/${pkgname}.git#branch=gtk4&depth=1")
 md5sums=('SKIP')
 
 build() {
