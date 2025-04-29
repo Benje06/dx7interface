@@ -6440,6 +6440,7 @@
   <object class="GtkWindow" id="dialog_param">
     <child>
       <object class="GtkBox" id="box_save">
+        <property name="visible">false</property>
         <property name="halign">center</property>
         <property name="orientation">vertical</property>
         <property name="valign">center</property>
@@ -6542,6 +6543,7 @@
     </child>
     <child>
       <object class="GtkBox" id="box_insert">
+          <property name="visible">false</property>
           <property name="halign">center</property>
           <property name="orientation">vertical</property>
           <property name="valign">center</property>
@@ -6551,7 +6553,6 @@
           <child>
               <object class="GtkBox">
                   <property name="orientation">horizontal</property>
-                  <property name="visible">true</property>
                   <child>
                       <object class="GtkFrame">
                           <property name="child">
