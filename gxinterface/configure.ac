@@ -40,6 +40,8 @@ AS_CASE([$host_os],
         AC_DEFINE([PLATFORM_WINDOWS], [1], [Define if the platform is Windows])
         platform_win32=yes
         platform_linux=no
+        m4_define([lt_option], [win32-dll])
+        m4_define([win32], [])
     ],
     [*], [
         AC_MSG_ERROR([Unsupported operating system: $host_os])
@@ -154,11 +156,10 @@ AM_CONDITIONAL([DEBUG_TOOL_AS_ERROR], [test x$debug_deep = xtrue])
 AM_COND_IF([DEBUG_TOOL],[
 AC_DEFINE([DEBUG_TOOL], [], [activate debug tool])
 ],[
-if PLATEFORM_WINDOWS
-dnl build without command prompt
-CXXFLAGS="$CXXFLAGS -mwindows"
-AC_SUBST(CXXFLAGS)
-endif
+if test "x$platform_win32" = "xyes"; then
+    CXXFLAGS="$CXXFLAGS -mwindows"
+    AC_SUBST(CXXFLAGS)
+fi
 ])
 AM_COND_IF([DEBUG_TOOL_AS_ERROR],[
 AC_DEFINE([DEBUG_TOOL_AS_ERROR], [], [Activate deep debug print])
