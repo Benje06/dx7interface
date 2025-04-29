@@ -41,6 +41,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODU
     }else{
         set_app_name(MODULE_NAME+index);
     };
+    action_type = ACT_OPEN;
     mod_options.cssfile = CSSFILE;
     mod_options.custom_font = FONT;
     mod_options.icon = ICON;
@@ -692,56 +693,59 @@ void Dx7interface::create_dialogs() {
 };
 
 void Dx7interface::set_param(){
-    Glib::ustring filename;
-    save_index = 0;
-    bool is_32 = false;
-    bool is_128 = false;
-    as_raw = get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active();
-    if(bank_nb_sound > 32){
-        is_32 = get_gwidget<Gtk::CheckButton>("checkbutton_32")->get_active();
-        is_128 = get_gwidget<Gtk::CheckButton>("checkbutton_128")->get_active();
-    }else{
-        is_32=true;
-    };
-    write_extra_params = get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active();
-    if(save_type == SOUND){
-        export_config = DX7_1;
-        filename = bank_1_modif.sound->name;
-    }else if(save_type == BANK){
-        filename = bank_1_modif.name;
-        if(is_32){
-            export_config = DX7_32;
-            save_index = get_gwidget<Gtk::SpinButton>("spinbutton_save_start")->get_value();
-        }else if(is_128){
-            export_config = DX7_128;
+    if( action_type == ACT_SAVE ){
+        Glib::ustring filename;
+        save_index = 0;
+        bool is_32 = false;
+        bool is_128 = false;
+        as_raw = get_gwidget<Gtk::CheckButton>("checkbutton_as_raw")->get_active();
+        if(bank_nb_sound > 32){
+            is_32 = get_gwidget<Gtk::CheckButton>("checkbutton_32")->get_active();
+            is_128 = get_gwidget<Gtk::CheckButton>("checkbutton_128")->get_active();
         }else{
+            is_32=true;
+        };
+        write_extra_params = get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active();
+        if(save_type == SOUND){
             export_config = DX7_1;
+            filename = bank_1_modif.sound->name;
+        }else if(save_type == BANK){
+            filename = bank_1_modif.name;
+            if(is_32){
+                export_config = DX7_32;
+                save_index = get_gwidget<Gtk::SpinButton>("spinbutton_save_start")->get_value();
+            }else if(is_128){
+                export_config = DX7_128;
+            }else{
+                export_config = DX7_1;
+            };
         };
-    };
 
-    dialog_file_save->set_title(dialog_param->get_title());
-    if(initial_folder_save==nullptr){
-        initial_folder_save=initial_folder_open;
-    }
-    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-        if(as_raw){
-            dialog_file_save->set_initial_name(filename+".dx7");
-            export_config = DX7_RAW;
-        }else{
-            dialog_file_save->set_initial_name(filename+".syx");
-        };
-    #else
-        if(as_raw){
-            dialog_file_save->set_current_name(filename+".dx7");
-            export_config = DX7_RAW;
-        }else{
-            dialog_file_save->set_current_name(filename+".syx");
-        };
-    #endif
-    std::cout << "base filename: " << filename << std::endl;
-    std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
+        dialog_file_save->set_title(dialog_param->get_title());
+        if(initial_folder_save==nullptr){
+            initial_folder_save=initial_folder_open;
+        }
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            if(as_raw){
+                dialog_file_save->set_initial_name(filename+".dx7");
+                export_config = DX7_RAW;
+            }else{
+                dialog_file_save->set_initial_name(filename+".syx");
+            };
+        #else
+            if(as_raw){
+                dialog_file_save->set_current_name(filename+".dx7");
+                export_config = DX7_RAW;
+            }else{
+                dialog_file_save->set_current_name(filename+".syx");
+            };
+        #endif
+        std::cout << "base filename: " << filename << std::endl;
+        std::cout << "with format: " << (as_raw ? "Raw" : "Bulk" ) << std::endl;
+    };
 };
 void Dx7interface::set_dialog(Glib::ustring title){
+    LOG_IN();
     try{
         if( action_type == ACT_SAVE ){
             get_gwidget<Gtk::Box>("box_save")->set_visible(true);
@@ -787,6 +791,7 @@ void Dx7interface::set_dialog(Glib::ustring title){
         std::cerr << err_msg << std::endl;
         //throw std::runtime_error(err_msg);
     };
+    LOG_OUT();
 };
 
 void Dx7interface::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> funct){
@@ -1254,14 +1259,20 @@ void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
 };
 void Dx7interface::on_insert_at(){
     // Open dialog insert at position
-    action_type = ACT_INSERT;
-    auto slot_button_dialog_param = std::make_shared<sigc::scoped_connection>();
-    *slot_button_dialog_param = button_dialog_param->signal_clicked().connect(
-        sigc::bind(
-            sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
-            std::bind(&Dx7interface::on_insert_sound, this, std::placeholders::_1) ));
+    try{
+        action_type = ACT_INSERT;
+        auto slot_button_dialog_param = std::make_shared<sigc::scoped_connection>();
+        *slot_button_dialog_param = button_dialog_param->signal_clicked().connect(
+            sigc::bind(
+                sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
+                std::bind(&Dx7interface::on_insert_sound, this, std::placeholders::_1) ));
 
-    OpenDialogParam("Insert Sound(s) at");
+        OpenDialogParam("Insert Sound(s) at");
+    }catch( std::exception& ex ){
+        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
+        " Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
+    };
 };
 
 /* DELETE */
@@ -1289,13 +1300,14 @@ void Dx7interface::on_save_bank(){
         save_type = BANK;
         save_modif_sound();
 
-        auto slot_button_dialog_param = std::make_shared<sigc::scoped_connection>();
+        /*auto slot_button_dialog_param = std::make_shared<sigc::scoped_connection>();
         *slot_button_dialog_param = button_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
                 std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1) ));
-
-        OpenDialogParam("Saving Bank");
+                */
+        OpenDialogFileSave(std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1));
+        //OpenDialogParam("Saving Bank");
     }catch (const std::exception & ex) {
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
@@ -1391,8 +1403,10 @@ void Dx7interface::write_bank_as_sysex(Glib::RefPtr<Gio::File> file,unsigned int
         msg[l++]=(unsigned char)(voice_checksum & 0x7F) ;
         msg[l]=0xF7;
         if( send_bank ){
-            send_midi(SND_SEQ_EVENT_SYSEX, msg_size, msg);
-            send_bank=false;
+            if( bank_nb_sound > 0){
+                send_midi(SND_SEQ_EVENT_SYSEX, msg_size, msg);
+                send_bank=false;
+            };
         }else{
             write_file_as_datastream(file,msg,msg_size);
         };
@@ -1818,7 +1832,6 @@ void Dx7interface::on_save_sound(){
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
                 std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1) ));
-
         OpenDialogParam("Saving sound");
     }catch (const std::exception & ex) {
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +

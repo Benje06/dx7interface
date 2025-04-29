@@ -6549,7 +6549,7 @@
               <object class="GtkLabel" id="label_insert"/>
           </child>
           <child>
-              <object class="GtkBox" id="box_insert">
+              <object class="GtkBox">
                   <property name="orientation">horizontal</property>
                   <property name="visible">true</property>
                   <child>
