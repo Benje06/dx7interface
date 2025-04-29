@@ -481,14 +481,19 @@ void Gx_module::apply_style_to_screen(){
         };
         auto display = Gdk::Display::get_default();
         if (display) {
-            Gtk::StyleProvider::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+                Gtk::StyleProvider::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            #else
+                Gtk::StyleContext::add_provider_for_display(display, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            #endif
             if(mod.color != ""){
                 #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
                         custom_provider->load_from_string("title { background-color: " + mod.color + "; }");
+                        Gtk::StyleProvider::add_provider_for_display(display, custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
                 #else
                         custom_provider->load_from_data("title { background-color: " + mod.color + "; }");
+                        Gtk::StyleContext::add_provider_for_display(display, custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
                 #endif
-                Gtk::StyleContext::add_provider_for_display(display, custom_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             };
         };
     } catch (const std::exception& ex) {
