@@ -111,6 +111,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                             funct(file);
                             initial_folder_open = Gio::File::create_for_path(file->get_parent()->get_path());
                         };
+                        slot_btn_dialog_param->disconnect();
                     } catch (const std::exception & ex) {
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                         + "Reason: " + ex.what();
@@ -129,6 +130,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                             };
                         };
                         dialog_file_select->hide();
+                        slot_btn_dialog_param->disconnect();
                         slot_dialog_file_select.disconnect();
                     } catch (const std::exception & ex) {
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
@@ -196,6 +198,7 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                                 initial_folder_save = Gio::File::create_for_path(file->get_parent()->get_path());
                                 funct(file);
                             };
+                            slot_btn_dialog_param->disconnect();
                         }catch( const std::exception& ex ){
                             std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
                             " Reason: " + ex.what();
@@ -219,6 +222,7 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                             };
                         }
                         dialog_file_save->hide();
+                        slot_btn_dialog_param->disconnect();
                     } catch (const std::exception & ex) {
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                         + "Reason: " + ex.what();
@@ -294,7 +298,7 @@ void Gx_module::create_window(){
 /*** MODULE ***/
 void Gx_module::analyse_param(char** argv, int argc){
     for ( int i = 1; i <= argc; i++) {
-        if ( (argv[i] != NULL) && ( Glib::ustring(argv[i]) == "-c" || (Glib::ustring(argv[i]) == "-c") )
+        if ( (argv[i] != NULL) && ( Glib::ustring(argv[i]) == "-c" || (Glib::ustring(argv[i]) == "--color") )
             && (argv[i+1] != NULL) && ( Glib::ustring(argv[i+1]) != "" )
         ){  // -c and html color code as argument
             mod.color = Glib::ustring(argv[i+1]);

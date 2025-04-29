@@ -811,7 +811,6 @@ void Dx7interface::on_file_save(Glib::RefPtr<Gio::File> file){
                 write_bank(file,save_index);
             };
         };
-        slot_btn_dialog_param->disconnect();
     }catch( std::exception& ex){
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
         LOG_OUT();

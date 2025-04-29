@@ -121,6 +121,7 @@ class Gx_module {
 		/*** LOAD/SAVE ***/
 		Gtk::Window* dialog_param = nullptr;
 		Gtk::Button* btn_dialog_param = nullptr;
+        std::shared_ptr<sigc::scoped_connection> slot_btn_dialog_param;
 		Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
 		Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
 		Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;
