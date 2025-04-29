@@ -691,7 +691,6 @@ void Dx7interface::create_dialogs() {
     get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_32")));
     get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")));
 };
-
 void Dx7interface::set_param(){
     if( action_type == ACT_SAVE ){
         Glib::ustring filename;
@@ -793,7 +792,6 @@ void Dx7interface::set_dialog(Glib::ustring title){
     };
     LOG_OUT();
 };
-
 void Dx7interface::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> funct){
     Gx_module::OpenDialogFileSave(funct);
 };
@@ -1251,7 +1249,6 @@ void Dx7interface::insert_at(Glib::RefPtr<Gio::File> file,Glib::ustring file_nam
         unmooved_sound = true;
     }
     select_voice(snum);
-    slot_btn_dialog_param->disconnect();
 };
 
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
@@ -1262,7 +1259,6 @@ void Dx7interface::on_insert_at(){
     // Open dialog insert at position
     try{
         action_type = ACT_INSERT;
-        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
         *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
@@ -1301,7 +1297,6 @@ void Dx7interface::on_save_bank(){
         save_type = BANK;
         save_modif_sound();
 
-        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
         *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
@@ -1826,7 +1821,6 @@ void Dx7interface::on_save_sound(){
         save_type = SOUND;
         save_modif_sound();
 
-        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
         *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
