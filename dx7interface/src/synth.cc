@@ -20,16 +20,6 @@ Synth::~Synth(){
     std::cerr << caller;
 };
 
-void Synth::init_nls(){
-    #ifdef ENABLE_NLS
-        //setlocale (LC_ALL, "");
-        //std::locale::global(std::locale(""));
-        textdomain (GETTEXT_PACKAGE);
-        bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
-        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-    #endif
-};
-
 void Synth::unblock_midi(){
     block_midi_msg=false;
 };
@@ -179,201 +169,34 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
 };
 
 /*** File ***/
-void Synth::load_file(Glib::RefPtr<Gio::File> file, std::function<void(Glib::ustring, Glib::ustring, unsigned int)> funct){
-    // GENERIC moove to synth
-    LOG_IN();
-    try {
-        unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
-        Glib::ustring filename = file->get_path();
-        Glib::ustring file_base = filename.substr(0,filename.find_last_of("."));
-        Glib::ustring file_name = file_base.substr( file_base.find_last_of("/")+1, file_base.length() );
-        std::cout << "Bank name: " << file_name << std::endl;
 
-        data_stream = Gio::DataInputStream::create(file->read());
-        unsigned char data = data_stream->read_byte();
-        if (data == 0xF0 ){
-            for (uint8_t i=0; i < 5; i++){
-                data_stream->read_byte();
-            };
-            file_size -= 8;
-        }else{
-            data_stream->close();
-            data_stream = Gio::DataInputStream::create(file->read());
-            file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
+void Synth::parse_sysex( Glib::RefPtr<Gio::File> file, Glib::RefPtr<Gio::DataInputStream>& data_stream, unsigned int& file_size){
+    unsigned char data = data_stream->read_byte();
+    if (data == 0xF0 ){
+        for (uint8_t i=0; i < 5; i++){
+            data_stream->read_byte();
         };
-        if( std::filesystem::exists( (file_base+"_fct.syx").c_str() ) ){
-            Glib::RefPtr<Gio::File> file_fct=Gio::File::create_for_path( (file_base+"_fct.syx").c_str() );
-            data_stream_param = Gio::DataInputStream::create(file_fct->read());
-        }
-        funct(file_name,file_base,file_size);
+        file_size -= 8;
+    }else{
         data_stream->close();
-        if(!isStreamClosed(data_stream_param)){
-            data_stream_param->close();
-        };
-    }catch(const std::exception& ex){
-        Glib::ustring filename = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Cannot load: " + filename + "\n"
-        + "Reason: " + ex.what();
-        throw std::runtime_error(err_msg);
-    };
-    LOG_OUT();
-};
-void Synth::write_file(Glib::RefPtr<Gio::File> file, unsigned char* msg, unsigned int msg_size){
-    auto output_stream = file->replace();
-    auto data_stream = Gio::DataOutputStream::create(output_stream);
-    for( unsigned int i=0; i<msg_size; i++ ){
-        data_stream->put_byte(msg[i]);
-    };
-    data_stream->flush();
-    data_stream->close();
-    output_stream->close();
-};
-bool Synth::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& stream) {
-    try{
-        if( stream ){  return false;
-        }else{         return true;
-        };
-    }catch( const Gio::Error& e ){
-        if( e.code() == Gio::Error::CLOSED ){ return true; // Stream is closed
-        };
-        return true;
+        data_stream = Gio::DataInputStream::create(file->read());
+        file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
     };
 };
+
 /** BANK **/
-void Synth::set_bank( Glib::RefPtr<Gio::File> bank_file,std::function<void(Glib::ustring, Glib::ustring, unsigned int)> funct ){
+void Synth::set_bank( Glib::RefPtr<Gio::File> bank_file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct ){
     // GENERIC
     LOG_IN();
     block_ui();
     clean_bank();
-    load_file(bank_file,funct); //copy file content in _modif et _origin
+    load_file_as_datastream(bank_file,funct); //copy file content in _modif et _origin
     Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
     Glib::ustring name = filename.substr(0,filename.find_last_of("."));
     set_bank_name(name);
     LOG_OUT();
 };
-void Synth::OpenFileSaveDialog(){
-    unsigned int index = set_save_param();
-    #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-    file_dialog_save->set_initial_folder(initial_folder_save);
-    file_dialog_save->save( *(get_window()), [this,index](const Glib::RefPtr<Gio::AsyncResult>& result) {
-        try {
-            Glib::RefPtr<Gio::File> file = file_dialog_save->save_finish(result);
-            if (file) {
-                std::cout << "writing file: " << file->get_path() << std::endl;
-                initial_folder_save = Gio::File::create_for_path(file->get_parent()->get_path());
-                //Glib::shell_quote(filename+".dx7");
-                if(save_type == SOUND){
-                    if(as_raw){
-                        write_voice_as_raw(file);
-                    }else{
-                        write_voice_as_sysex(file);
-                    };
-                }else if(save_type == BANK){
-                    write_bank(file,index);
-                };
-            };
-        } catch (const std::exception & ex) {
-            std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
-            " Reason: " + ex.what();
-            std::cerr << err_msg << std::endl;
-        }
-    });
-    #else
-    file_dialog_save->set_transient_for(*(get_window()));
-    file_dialog_save->set_current_folder(initial_folder_save);
-    file_dialog_save->signal_response().connect([this,index](int response) {
-        try {
-            if (response == Gtk::ResponseType::ACCEPT) {
-                auto file = file_dialog_save->get_file();
-                if (file) {
-                    if(save_type == SOUND){
-                        if(as_raw)){
-                            write_voice_as_raw(file);
-                        }else{
-                            write_voice_as_sysex(file);
-                        };
-                    }else if(save_type == BANK){
-                        write_bank(file,index);
-                    };
-                };
-            }
-            file_dialog_save->hide();
-        } catch (const std::exception & ex) {
-            std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-            + "Reason: " + ex.what();
-            std::cerr << err_msg << std::endl;
-        };
-    });
-    file_dialog_save->show();
-    #endif
-};
-void Synth::on_file_select(std::function<void(Glib::RefPtr<Gio::File>)> funct){
-    // GENERIC MOOVE TO SYNTH
-    LOG_IN();
-    try{
-        file_dialog_select->set_title("Select File");
-        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            file_dialog_select->set_initial_folder(initial_folder_open);
-            file_dialog_select->open( *(get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-                try {
-                    Glib::RefPtr<Gio::File> bank_file = file_dialog_select->open_finish(result);
-                    if (bank_file) {
-                        funct(bank_file);
-                        initial_folder_open = Gio::File::create_for_path(bank_file->get_parent()->get_path());
-                    };
-                } catch (const std::exception & ex) {
-                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                    + "Reason: " + ex.what();
-                    std::cerr << err_msg << std::endl;
-                };
-            }); /* end dialog open function */
-        #else
-            file_dialog_select->set_transient_for(*(get_window()));
-            slot_file_dialog_select = file_dialog_select->signal_response().connect([this,funct](int response) {
-                try {
-                    if (response == Gtk::ResponseType::ACCEPT) {
-                        auto bank_file = file_dialog_select->get_file();
-                        if (bank_file) {
-                            funct(bank_file);
-                            initial_folder_open= Gio::File::create_for_path(bank_file->get_path());;
-                        };
-                    };
-                    file_dialog_select->hide();
-                    slot_file_dialog_select.disconnect();
-                } catch (const std::exception & ex) {
-                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                    + "Reason: " + ex.what();
-                    std::cerr << err_msg << std::endl;
-                };
-            });
-            file_dialog_select->show();
-        #endif
-    }catch (const std::exception & ex) {
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
-        //throw std::runtime_error(err_msg);
-    };
-    LOG_OUT();
-};
-void Synth::OpenDialogSave(Glib::ustring title, Glib::ustring filename){
-    // GENERIC ??
-    try{
-        if(bank_nb_sound != 0){
-            dialog_save->set_transient_for(*(get_window()));
-            dialog_save->set_title(title);
-            Glib::ustring label_save_name=title+": "+filename;
-            set_save_dialog(label_save_name);
-            dialog_save->present();
-        };
-    }catch (const std::exception & ex) {
-        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
-        " Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
-        //throw std::runtime_error(err_msg);
-    };
-};
+
 #if defined(__ALSA__)
     int Synth::get_client_id(){
         return client_id;

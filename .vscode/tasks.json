@@ -3,7 +3,7 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        {     // GX AUTOGEN
+        {
             "label": "GX Autogen",
             "type": "shell",
             "command": "./autogen.sh",
@@ -15,18 +15,20 @@
                 "--build=$(./config/config.guess)",
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
                 "--disable-maintainer-mode",
-                "'CFLAGS=-O2'",
-                "'CXXFLAGS=-O2'",
+                "--enable-debug=2",
+                "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
+                "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
             "problemMatcher": [
-                "$gcc",
+                "$gcc"
             ],
             "group": "build",
             "detail": "Generate configure script",
             "options": {
-                "cwd": "${workspaceFolder}/gxinterface",
-            },
-        },{   // GX AUTOGEN DEBUG
+                "cwd": "${workspaceFolder}/gxinterface"
+            }
+        },
+        {
             "label": "GX Autogen_DEBUG",
             "type": "shell",
             "command": "./autogen.sh",
@@ -36,10 +38,10 @@
                 "--target=x86_64-w64-mingw32",
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
-                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig"
             ],
             "problemMatcher": [
-                "$gcc",
+                "$gcc"
             ],
             "detail": "Generate configure script DEBUG options",
             "options": {
@@ -51,16 +53,17 @@
                     "LDFLAGS": "-ggdb3",
                     "G_DEBUG": "all",
                     "G_ENABLE_DEBUG": "1",
-                    "G_ENABLE_DIAGNOSTIC": "1",
-                },
-            },
-        },{   // GX MAKE
+                    "G_ENABLE_DIAGNOSTIC": "1"
+                }
+            }
+        },
+        {
             "label": "GX Make",
             "type": "shell",
             "command": "make -j3",
             "group": {
                 "kind": "build",
-                "isDefault": true,
+                "isDefault": true
             },
             "detail": "Generate the .exe",
             "options": {
@@ -69,7 +72,8 @@
                     "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}"
                 }
             }
-        },{   // GX INSTALL
+        },
+        {
             "label": "GX Install",
             "type": "shell",
             "command": "make DESTDIR=/d/gxinterface/package install",
@@ -81,7 +85,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/gxinterface"
             }
-        },{   // GX INSTALL UCRT64
+        },
+        {
             "label": "GX Install UCRT64",
             "type": "shell",
             "command": "make install",
@@ -93,7 +98,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/gxinterface"
             }
-        },{   // GX ADD LIBS
+        },
+        {
             "label": "GX Add libs",
             "type": "shell",
             "command": "ldd /d/gxinterface/package/usr/bin/gxinterface.exe | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/usr/bin/",
@@ -105,7 +111,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/gxinterface"
             }
-        },{   // GX CLEAN
+        },
+        {
             "label": "GX Clean",
             "type": "shell",
             "command": "make clean || true",
@@ -113,8 +120,10 @@
             "detail": "Clean make",
             "options": {
                 "cwd": "${workspaceFolder}/gxinterface"
-            }
-        },{   // GX DISTCLEAN
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "GX Distclean",
             "type": "shell",
             "command": "make distclean || true",
@@ -129,7 +138,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/gxinterface"
             }
-        },{   // GX FULL BUILD
+        },
+        {
             "label": "Gxinterface: Full Build",
             "dependsOn": [
                 "GX Distclean",
@@ -140,8 +150,22 @@
                 "GX Add libs"
             ],
             "group": "none",
-            "dependsOrder": "sequence",
-        },{   // DX FULL BUILD
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Gxinterface: Full Build DEBUG",
+            "dependsOn": [
+                "GX Distclean",
+                "GX Autogen",
+                "GX Autogen DEBUG",
+                "GX Make",
+                "GX Install",
+                "GX Add libs"
+            ],
+            "group": "none",
+            "dependsOrder": "sequence"
+        },
+        {
             "label": "Dx7interface: Full Build",
             "dependsOn": [
                 "DX Distclean",
@@ -152,8 +176,22 @@
                 "DX Add libs"
             ],
             "group": "none",
-            "dependsOrder": "sequence",
-        },{   // DX AUTOGEN
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Dx7interface: Full Build DEBUG",
+            "dependsOn": [
+                "DX Distclean",
+                "DX Autogen",
+                "DX Autogen DEBUG",
+                "DX Make",
+                "DX Install",
+                "DX Add libs"
+            ],
+            "group": "none",
+            "dependsOrder": "sequence"
+        },
+        {
             "label": "DX Autogen",
             "type": "shell",
             "command": "bash",
@@ -166,14 +204,15 @@
                 "--target=x86_64-w64-mingw32",
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
-                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig"
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
+                "--enable-debug=2",
+                "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
+                "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface",
                 "env": {
                     "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}",
-                    "CFLAGS": "-O2",
-                    "CXXFLAGS": "-O2"
                 }
             },
             "problemMatcher": [
@@ -181,7 +220,8 @@
             ],
             "group": "build",
             "detail": "Generate configure script"
-        },{   // DX AUTOGEN DEBUG
+        },
+        {
             "label": "DX Autogen_DEBUG",
             "type": "shell",
             "command": "./autogen.sh",
@@ -210,7 +250,8 @@
                     "G_ENABLE_DIAGNOSTIC": "1"
                 }
             }
-        },{   // DX MAKE
+        },
+        {
             "label": "DX Make",
             "type": "shell",
             "command": "make -j3",
@@ -222,7 +263,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface"
             }
-        },{   // DX INSTALL
+        },
+        {
             "label": "DX Install",
             "type": "shell",
             "command": "make DESTDIR=/d/gxinterface/package install",
@@ -234,7 +276,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface"
             }
-        },{   // DX ADD LIBS
+        },
+        {
             "label": "DX Add libs",
             "type": "shell",
             "command": "ldd src/.libs/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/usr/bin/",
@@ -246,7 +289,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface"
             }
-        },{   // DX CLEAN
+        },
+        {
             "label": "DX Clean",
             "type": "shell",
             "command": "make clean || true",
@@ -255,7 +299,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface"
             }
-        },{   // DX DISTCLEAN
+        },
+        {
             "label": "DX Distclean",
             "type": "shell",
             "command": "make distclean || true",
@@ -270,7 +315,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface"
             }
-        },{   // UCRT CLEAN
+        },
+        {
             "label": "UCRT clean",
             "type": "shell",
             "command": "rm",
@@ -335,7 +381,8 @@
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface"
             }
-        },{   // BUILD PACKAGE
+        },
+        {
             "label": "Build PACKAGE",
             "type": "shell",
             "command": "makensis script.nsi",
@@ -344,7 +391,8 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             }
-        },{   // BUILD ALL
+        },
+        {
             "label": "Build ALL",
             "type": "shell",
             "command": "makensis script.nsi",
@@ -353,14 +401,31 @@
                 "Gxinterface: Full Build",
                 "GX Install UCRT64",
                 "Dx7interface: Full Build",
-                "Build PACKAGE",
+                "Build PACKAGE"
             ],
             "dependsOrder": "sequence",
             "group": "none",
             "detail": "FULL Build PACKAGE",
             "options": {
                 "cwd": "${workspaceFolder}"
-            },
+            }
+        },
+        {
+            "label": "Build ALL DEBUG",
+            "type": "shell",
+            "command": "echo \"done\"",
+            "dependsOn": [
+                "UCRT clean",
+                "Gxinterface: Full Build DEBUG",
+                "GX Install UCRT64",
+                "Dx7interface: Full Build DEBUG"
+            ],
+            "dependsOrder": "sequence",
+            "group": "none",
+            "detail": "FULL DEBUG Build PACKAGE",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
         }
     ]
 }

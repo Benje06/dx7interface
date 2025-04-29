@@ -52,20 +52,14 @@
 class Gx_interface: public Gtk::Application {
 	private:
 		/* Application variables */
+		Glib::ustring itype;						/* interface type */
 		Glib::ustring iname;						/* interface name */
 		Gemod* module_manager = nullptr;			/* gestionnaire de module */
-		Glib::ustring itype;						/* interface type */
 		int argc;
         char** argv;
-		/* Error */
-		GError *error;
-		/* UI module*/
-		void create_window();
-
-	protected:
 		Gx_interface();
 		~Gx_interface();
-		// Override default signal handlers:
+		/* Override of Gtk::Application */
 		void on_activate() override;
         int on_command_line( const Glib::RefPtr<Gio::ApplicationCommandLine>& ) override;
 	public:

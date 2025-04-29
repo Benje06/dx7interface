@@ -28,21 +28,13 @@
 
 int main (int argc, char *argv[]){
     LOG_IN ();
-    #ifdef ENABLE_NLS
-        //std::setlocale(LC_ALL, "");
-       // std::locale::global(std::locale(""));
-        textdomain(GETTEXT_PACKAGE);
-        bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
-        bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-    #endif
-
+    init_nls();
     char interface=0;
     /* check params */
     for ( int i = 0 ; i < argc ; i++){
         if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
             interface=gchar(argv[i+1][0]);
             std::cout << _("Interface graphic mode : ") << interface << std::endl;
-            break;
         };
     };
     if ( interface == 0 ){
@@ -57,26 +49,6 @@ int main (int argc, char *argv[]){
                             return g_app->run(argc, argv);
                             break;
                     };
-                    /*case 'k' :
-                        Kinterface *k_app_interface;
-                        k_app_interface = new Kinterface(argc, argv);
-                        delete k_app_interface;
-                    break;
-                    case 'x' :
-                        Xinterface *x_app_interface;
-                        x_app_interface = new Xinterface(argc, argv);
-                        delete x_app_interface;
-                    break;
-                    case 'w' :
-                        Winterface *w_app_interface;
-                        w_app_interface = new Winterface(argc, argv);
-                        delete w_app_interface;
-                    break;
-                    case 'p' :
-                        Pinterface *p_app_interface;
-                        p_app_interface = new Pinterface(argc, argv);
-                        delete p_app_interface;
-                    break;*/
                     default:{
                             std::cout << _("The option : ")<< interface << _(" is not valid for an interface type") << std::endl;
                         break;

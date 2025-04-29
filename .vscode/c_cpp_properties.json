@@ -11,7 +11,8 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "HAVE_CONFIG_H=1"
+                "HAVE_CONFIG_H=1",
+                "ENABLE_NLS=1"
             ],
             "cStandard": "c17",
             "cppStandard": "gnu++17",

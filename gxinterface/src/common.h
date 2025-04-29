@@ -66,6 +66,8 @@
         /* CR+LF */
         #undef EOL
         #define EOL "\r\n"
+        #include <system_error>
+        #include <locale>
         /*typedef unsigned int uint;
         typedef unsigned char u_char;
         typedef unsigned long ulong;*/
@@ -130,6 +132,15 @@
     };
     constexpr std::size_t operator""_hash(const char* str, std::size_t) {
         return str_const_hash(str);
+    };
+    inline void init_nls(){
+        #ifdef ENABLE_NLS
+            setlocale (LC_ALL, "");
+            std::locale::global(std::locale(""));
+            textdomain (GETTEXT_PACKAGE);
+            bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
+            bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+        #endif
     };
 #endif /* interface_COMMON_H */
 

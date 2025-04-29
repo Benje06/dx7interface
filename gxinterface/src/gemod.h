@@ -27,7 +27,6 @@
 #pragma once
 #ifndef Gemod_H
 	#define Gemod_H
-	/* gnome */
 	/* app */
 	#include "common.h"
 	#include "gxmodule.h"
@@ -38,27 +37,24 @@
 class Gemod : public Gx_module {
 	private:
 		Gx_module * modules;        // array of modules
-		uint8_t nb_mod, max_modules;  // nombre de module chargé et max module
+		uint8_t nb_mod=0, max_modules=1, nb_max_module=5;  // nombre de module chargé et max module
 		/* callback function */
 		virtual void attach_signals();
 		virtual void dettach_signals();
+		sigc::connection slot_module_select;
 		/* callback functions */
+		virtual void on_module_select_event();
 		virtual void on_menu_add_module_event();
 		virtual void on_menu_del_module_event();
-	protected:
-		/* objet specifique a l interface de base */		
-
+		virtual bool add_module(Glib::ustring);
+		virtual bool del_module(Glib::ustring);
+		/* objet specifique a l interface de base */
 		uint8_t get_module_count(Glib::ustring);    // count the number of module provided by same file 
 		int8_t get_module_index(Glib::ustring);     // get the index of a module from his name (mod.name)
 		Glib::ustring get_module_name(uint8_t);     // get module name from his index
 		Gtk::Box* get_module_root(uint8_t);         // get box_main from refxml by modules[] index
-		Gtk::Box* get_module_root(Glib::ustring);   // !!! CAUTION !!! get rootbox by module name finding the module index can be empty Gtk::Box	
-
+		Gtk::Box* get_module_root(Glib::ustring);   // !!! CAUTION !!! get rootbox by module name finding the module index can be empty Gtk::Box
 		bool load(Glib::ustring);
-		/* fonctions interface  */
-		virtual void on_module_select_event();
-		virtual bool add_module(Glib::ustring);
-		virtual bool del_module(Glib::ustring);
 		/* Menu construction */
 		//virtual gboolean add_menu(Glib::ustring, Glib::ustring);
 		//virtual gboolean del_menu(Glib::ustring);
@@ -78,7 +74,6 @@ class Gemod : public Gx_module {
 		*/
 	public:
 		/* return the main Gtk::Window for gx as interface xml root is type window */
-		Gtk::Window* get_main();
 		Gtk::Window* get_window();
 		/* for gemod as base module manager not as a module 
 		* ustring name of the .ui
@@ -94,8 +89,7 @@ class Gemod : public Gx_module {
 		* guint : index of the module in the module manager
 		* guint : number of module in the module
 		*/
-		Gemod(Glib::ustring,uint8_t,uint8_t,char**,int);
-		/*Gemod();	*/
+		Gemod(Glib::ustring,uint8_t);
 		virtual ~Gemod();
 };
 #endif  /* gemod_H */

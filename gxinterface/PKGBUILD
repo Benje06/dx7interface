@@ -26,7 +26,7 @@ build() {
     echo ""
     echo "*** AUTOGEN / CONFIGURE ***"
     echo ""
-    ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2'
+    ./autogen.sh --prefix=/usr --disable-maintainer-mode 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math' 'CXXFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math'
     echo ""
     echo "*** MAKE ***"
     echo ""

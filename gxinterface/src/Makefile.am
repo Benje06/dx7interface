@@ -22,7 +22,9 @@ gxinterface_SOURCES = \
 
 gxinterface_CXXFLAGS = $(AM_CXXFLAGS)
 gxinterface_CPPFLAGS = \
-	$(AM_CPPFLAGS) $(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)
+	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)
+
+## $(AM_CPPFLAGS) $(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)
 
 if PLATFORM_LINUX
 gxinterface_CPPFLAGS += \
@@ -33,21 +35,26 @@ gxinterface_CPPFLAGS += \
         -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 endif
 
-gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+gxinterface_LDADD = $(DEPS_LIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+
+## $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
 gxinterface_LDFLAGS = -static -no-undefined -Wl,--no-undefined,--gc-sections
 
 ## Platform-specific additions
 
 if PLATFORM_WINDOWS
-## Windows/MinGW PE-specific flags ,-rpath,ucrt64\lib
 gxinterface_LDADD += gxinterfaceicon.o
-gxinterface_LDFLAGS += -static-libgcc -static-libstdc++ -Wl,--export-all-symbols
+gxinterface_LDFLAGS += -static-libgcc -static-libstdc++ -Wl,--export-all-symbols -lgdi32
 gxinterfaceicon.o: seticon.rc ../../dx7interface/data/images/dx7interface.ico
 	$(WINDRES) -i $< -o $@
+install-exec-hook:
+	cp /ucrt64/bin/gdbus.exe $(DESTDIR)/usr/bin
+	cp /c/WINDOWS/System32/ucrtbase.dll $(DESTDIR)/usr/bin
+	ldd $(DESTDIR)/usr/bin/gdbus.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
+	ldd $(DESTDIR)/usr/bin/gxinterface.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 
 else
-## Linux/ELF Equivalent symbol visibility control
 gxinterface_LDFLAGS += -rdynamic
 ## Expands to -Wl,--export-dynamic
 endif

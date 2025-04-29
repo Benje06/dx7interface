@@ -26,27 +26,29 @@
  */
 #ifndef _TOOLS_DEBUG_H
     #define _TOOLS_DEBUG_H
-
     #include <stdlib.h>
     #include <stdio.h>
 
-    #define DEBUG_TOOL
-    #define DEBUG_TOOL_AS_ERROR
-
     #ifdef DEBUG_TOOL
     #  ifdef DEBUG_TOOL_AS_ERROR
+    #    define PRE_LOG(str1, str2, ...) fprintf(stderr, "%s->%s\n", str1, str2, ##__VA_ARGS__)
+    #    define POST_LOG(str1, str2, ...) fprintf(stderr, "%s<-%s\n", str1, str2, ##__VA_ARGS__)
     #    define LOG_IN()        fprintf ( stderr, " -> %s ligne %i de %s \n", __PRETTY_FUNCTION__, __LINE__ , __FILE__)
     #    define LOG_OUT()       fprintf ( stderr, "<-  %s\n", __PRETTY_FUNCTION__ )
-    #    define TRACE(f, ...)   fprintf ( stderr, f "\n", ## __VA_ARGS__ )
+    #    define TRACE(f, ...)   fprintf ( stderr, f "\n", ##__VA_ARGS__ )
     #  else /* DEBUG_TOOL_AS_ERROR */
-    #    define LOG_IN()        printf ( " -> %s\n", __class__ )
+    #    define PRE_LOG(str1, str2, ...) fprintf(stderr, "%s->%s\n", str1, str2, ##__VA_ARGS__)
+    #    define POST_LOG(str1, str2, ...) fprintf(stderr, "%s<-%s\n", str1, str2, ##__VA_ARGS__)
+    #    define LOG_IN()        printf ( " -> %s\n", __func__ )
     #    define LOG_OUT()       printf ( "<-  %s\n", __func__ )
-    #    define TRACE(f, ...)   printf ( f "\n", ## __VA_ARGS__ )
+    #    define TRACE(f, ...)   printf ( f "\n", ##__VA_ARGS__ )
     #  endif /* DEBUG_TOOL_AS_ERROR */
     #else  /* DEBUG_TOOL */
+    #  define PRE_LOG(str1, str2) (void)(0)
+    #  define POST_LOG(str1, str2) (void)(0)
     #  define LOG_IN()        (void)(0)
     #  define LOG_OUT()       (void)(0)
     #  define TRACE(f, ...)   (void)(0)
     #endif /* DEBUG_TOOL */
-    #define print_error(str, ...)  fprintf(stderr, (str "\n"), ## __VA_ARGS__)
+    #define print_error(str, ...)  fprintf(stderr, (str "\n"), ##__VA_ARGS__)
 #endif /* _TOOLS_DEBUG_H */

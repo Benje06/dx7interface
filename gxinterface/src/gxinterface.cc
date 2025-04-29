@@ -28,19 +28,11 @@
 Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HANDLES_COMMAND_LINE) {
     LOG_IN();
     try{
-        #ifdef ENABLE_NLS
-            //std::setlocale(LC_ALL, "");
-            //std::locale::global(std::locale(""));
-            bindtextdomain(GETTEXT_PACKAGE,PROGRAMNAME_LOCALEDIR);
-            bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-            textdomain(GETTEXT_PACKAGE);
-        #endif
-        /* init of error code */
-        error = NULL;
+        init_nls();
         /* analyse of command line parameters */
         signal_command_line().connect(sigc::mem_fun(*this, &Gx_interface::on_command_line), false);
-        //setup_log_handlers ();
-        /* interface init */
+        /* TODO : set log handler */
+        //setup_log_handlers();
     }catch(const std::exception& ex){
         LOG_OUT();
         throw;
@@ -63,35 +55,22 @@ Glib::RefPtr<Gx_interface> Gx_interface::create(){
 void Gx_interface::on_activate(){
     LOG_IN();
     try{
-        if( itype == Glib::ustring("interface")) {
+        if( itype == Glib::ustring("interface" )) {
             module_manager=new Gemod(iname);
-            if(module_manager){
-                if(module_manager->get_main()){
-                    add_window(*module_manager->get_main());
-                    (*module_manager->get_main()).set_default_size(1024, 768);
-                    (*module_manager->get_main()).set_title(module_manager->get_app_name());
-                    (*module_manager->get_main()).set_visible(true);
-                };
-            };
-        };
-        if(itype == Glib::ustring("module")) {
-            // Create your window here
+        }else if( itype == Glib::ustring("module") ) {
             module_manager=new Gemod(iname,0,argv,argc);
-            if(module_manager){
-                if(module_manager->get_window()){
-                    add_window(*module_manager->get_window());
-                    (*module_manager->get_window()).set_default_size(1024,768);
-                    (*module_manager->get_window()).set_title(module_manager->get_app_name());
-                    (*module_manager->get_window()).set_visible(true);
-                };
-            };
+        };
+        if(module_manager){
+            add_window(*module_manager->get_window());
+            (*module_manager->get_window()).set_default_size(1024, 768);
+            (*module_manager->get_window()).set_title(module_manager->get_app_name());
+            (*module_manager->get_window()).set_visible(true);
         };
     }catch(const std::exception& ex){
         std::cerr << _("Error: in application activate -> ") << ex.what() << std::endl;
     };
     LOG_OUT();
 };
-
 
 int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line){
     LOG_IN();

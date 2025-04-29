@@ -54,22 +54,23 @@
         #define UI PROGRAMNAME_UI_DIR"dx7interface-0.0.1-simplify_4.8.ui"
 #endif
 #define CSSFILE PROGRAMNAME_UI_DIR"theme.css"
-//#ifdef __linux__
-    #define FONT "Araster-fonts-6x8"
-// #else
-//     #define FONT ""
-// #endif
+#ifdef __linux__
+    #define FONT "raster-fonts-6x8"
+#endif
+#if (defined(__WIN32) || defined(__MINGW32__))
+    #define FONT "usr\\share\\fonts\\dx7interface\\Araster-fonts-6x8.ttf"
+#endif
 #define ICON ""
 
 extern "C" {
-    std::tuple<std::shared_ptr<void>, St_mod_options> LoadPlug(uint8_t);
+    std::tuple<std::shared_ptr<void>, Gx_module::St_mod_options> LoadPlug(uint8_t);
 };
 
 class Dx7interface : public Gx_module, public Synth {
     public:
         Dx7interface(Glib::ustring,uint8_t);
         virtual ~Dx7interface();
-        void add_action();
+        //void add_action();
 
     private:
         /**** Generic ****/
@@ -521,13 +522,16 @@ class Dx7interface : public Gx_module, public Synth {
             Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
             Gtk::Button* button_accept = nullptr;
         #endif
-        unsigned int set_save_param();
+        unsigned int save_index = 0;
+        void set_save_param();
         void set_save_dialog(Glib::ustring);
 
         void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
-        Gtk::Window* get_window();
         void on_file_select(std::function<void(Glib::RefPtr<Gio::File>)>);
+        void OpenFileSaveDialog(std::function<void(Glib::RefPtr<Gio::File>)>);
+        void save_file(Glib::RefPtr<Gio::File>);
 
+        Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;
         /*** THREAD ***/
         bool Run();    /* Thread function  */
         bool Run2();    /* Thread function  */
@@ -538,6 +542,9 @@ class Dx7interface : public Gx_module, public Synth {
         #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
                 void listen_midi(double timestamp, std::vector<unsigned char>* _message, void* userData) override;
         #endif
+        /* FILE */
+        void load_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)>);	
+       
         /** SOUND BANK **/
         /* set/load */
         void set_default_values();
@@ -545,7 +552,7 @@ class Dx7interface : public Gx_module, public Synth {
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void set_bank(Glib::RefPtr<Gio::File>);
         void set_bank_name(Glib::ustring);
-        void set_bank_sounds(Glib::ustring, Glib::ustring, unsigned int);
+        void set_bank_sounds(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);
         void receive_bank(std::vector<uint8_t>);
         void receive_voice(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
         void receive_voice_by_byte(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
@@ -559,7 +566,7 @@ class Dx7interface : public Gx_module, public Synth {
         /* repalce/delete */
         void on_insert_at();                                            // Open dialog insert at position
         void on_insert_sound(Glib::RefPtr<Gio::File>);                  // call load_file->insert_at
-        void insert_at(Glib::ustring, Glib::ustring, unsigned int);     // do the insert
+        void insert_at(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);     // do the insert
 
         /* Prepare bank
          * to populate it on "insert at" call: get_bank_... , copy, moove, read_voice
@@ -576,7 +583,7 @@ class Dx7interface : public Gx_module, public Synth {
         void read_voice(BankVariant&, BankVariant&, unsigned int, bool); // call seek_voice or seek_voice_by_byte
 
         /* REPLACE */
-        void replace_sound(Glib::ustring, Glib::ustring, unsigned int);
+        void replace_sound(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);
         void on_replace_sound(Glib::RefPtr<Gio::File> file);
         void on_delete_sound();
         /* save/write */

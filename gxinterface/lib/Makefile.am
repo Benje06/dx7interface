@@ -22,6 +22,9 @@ libgxinterface_0_0_1_la_SOURCES = \
 libgxinterface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
 	-rdynamic -no-undefined -Wl,--no-undefined
+if PLATFORM_WINDOWS
+libgxinterface_0_0_1_la_LDFLAGS += -lgdi32
+endif
 
 	## Platform-specific additions
 ##if PLATFORM_WINDOWS
@@ -43,15 +46,15 @@ libgxinterface_0_0_1_la_CPPFLAGS = \
 if PLATFORM_LINUX
 libgxinterface_0_0_1_la_CPPFLAGS += \
 	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
-        -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
-        -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-        -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
-        -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+    -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
+    -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
+    -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+    -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 endif
 
 ## libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) /ucrt64/bin/libintl-8.dll $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
-libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS)
+libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) 
 
 #### HEADERS IN INCLUDE ####			
 ## This only works if the directory hierarchy in the
@@ -67,14 +70,13 @@ library_include_HEADERS = \
 	../src/lang.h
 
 if PLATFORM_WINDOWS
-   library_includedir = /ucrt64/include/${PACKAGE_NAME}/$(LIB_VERSION)
-   libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
-   pkgconfigdir = /ucrt64/share/pkgconfig
+library_includedir = /ucrt64/include/${PACKAGE_NAME}/$(LIB_VERSION)
+pkgconfigdir = /ucrt64/share/pkgconfig
 else
-  library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
-  libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
-  pkgconfigdir = $(datadir)/pkgconfig
+library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
+pkgconfigdir = $(datadir)/pkgconfig
 endif
+libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 pkgconfig_DATA = ${PACKAGE_NAME}.pc	
 
 ## File created by the gnome-build tools

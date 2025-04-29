@@ -33,17 +33,14 @@
 * Gemod
 */
 
-/* 
-* Gemod as module manager
+/* Gemod as module manager
 * Call by gxinterface if type=interface
 * load the UI and create space for modules
 */
 Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
 	LOG_IN();
-	nb_mod=0;
-	max_modules=5;
 	try{
-		modules=new Gx_module[max_modules];
+		modules=new Gx_module[nb_max_module];
 		attach_signals();
 		LOG_OUT();
 	}catch(const std::exception& ex){
@@ -51,46 +48,43 @@ Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
 		throw;
 	};
 };
-
-/*
-* Gemod as module call if type=module
-*/
+/* Gemod as module module manager with specified numbers of module same as precedent */
+Gemod::Gemod(Glib::ustring module_name, uint8_t max_mod) : Gx_module(module_name, "Gemod"){
+	LOG_IN();
+	try{
+		max_modules=max_mod;
+		modules=new Gx_module[max_mod];
+		attach_signals();
+		LOG_OUT();
+	}catch(const std::exception& ex){
+		LOG_OUT();
+		throw;
+	};
+};
+/* Gemod as module call if type=module */
 Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : Gx_module(module_name,index,"Gemod",argv,argc){
 	LOG_IN();
 	try{
-		nb_mod=0;
-		if( get_ext() != "la" ){ // check if the main is a .la
-			max_modules=5;
-			modules=new Gx_module[max_modules];
-			attach_signals();
-		}else{
-			if(get_rootbox()){
-				set_app_name( (get_rootbox())->get_name() );
-				modules=new Gx_module[0];
-				create_window();
-			};
+		if(get_rootbox()){
+			set_app_name( (get_rootbox())->get_name() );
+			modules=new Gx_module[nb_mod];
+			create_window();
 		};
+		LOG_OUT();
 	}catch(const std::exception& ex){
 		LOG_OUT();
 		throw;
 	};
 };
 
-/* 
-* Gemod as module with specified numbers of module
-*/
-Gemod::Gemod(Glib::ustring module_name, uint8_t index, uint8_t max_mod, char** argv, int argc) : Gx_module(module_name, index,"Gemod",argv, argc){
-	LOG_IN();
-	nb_mod=0;
-	max_modules=max_mod;
-	modules=new Gx_module[max_modules];
-	attach_signals();
-	LOG_OUT();
-};
-
 Gemod::~Gemod(){
 	LOG_IN();
 	// TODO: clean all what is constructed by new
+	if( max_modules != 1 ){
+		dettach_signals();
+	}else{
+		//TODO: ??? delete_windows 
+	}
 	if(modules){
 		delete[] modules;
 	};
@@ -108,7 +102,6 @@ uint8_t Gemod::get_module_count(Glib::ustring module_file){
 	};
 	return nb;	
 };
-
 /* Get module index by module name(mod.name) */
 int8_t Gemod::get_module_index(Glib::ustring name){
 	for (uint8_t i = 0 ; i < nb_mod; i++){
@@ -118,7 +111,6 @@ int8_t Gemod::get_module_index(Glib::ustring name){
 	};
 	return -1;
 }
-
 /* get module name by modules[] index */
 Glib::ustring Gemod::get_module_name(uint8_t index){ 
 	return modules[index].get_name();
@@ -127,27 +119,110 @@ Glib::ustring Gemod::get_module_name(uint8_t index){
 /* get root widget(box_main) from refxml by module index */
 Gtk::Box* Gemod::get_module_root(uint8_t index)	{ 
 	try {
-		return modules[index].get_rootbox(); // before callin was get_boxmain
+		return modules[index].get_rootbox();
 	}catch(const std::exception& ex){
-		std::cerr << ex.what() << std::endl;
-		return nullptr; /* return NULL */
-	}
-};
-
-/* !!! CAUTION !!! get root widget by module name based on module index can be empty */
-Gtk::Box* Gemod::get_module_root(Glib::ustring module_name){
-	/* TODO not return fake gtk::box */
-	LOG_IN();
-	auto index = get_module_index(module_name);
-	if ( index != -1 ){
-		return modules[get_module_index(module_name)].get_rootbox(); /* before was calling get_boxmain */
-	}else{
+		std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + " " + _("Fail to get rootbox") + " !!!\n" + _("Reason") + (" => ") + ex.what();
+		std::cerr << err_msg << std::endl;
 		return nullptr;
 	}
-	LOG_OUT();
+};
+/* !!! CAUTION !!! get root widget by module name based on module index can be empty */
+Gtk::Box* Gemod::get_module_root(Glib::ustring module_name){
+	LOG_IN();
+	try {
+		auto index = get_module_index(module_name);
+		if ( index != -1 ){
+			return modules[index].get_rootbox();
+		}else{
+			return nullptr;
+		}
+		LOG_OUT();
+	}catch( std::exception& ex){
+		std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + " " + _("Fail to get rootbox") + " !!!\n" + _("Reason") + (" => ") + ex.what();
+		std::cerr << err_msg << std::endl;
+		return nullptr;
+	}
 };
 
 /*** Manage Modules ***/
+/*  get root window */
+Gtk::Window* Gemod::get_window() { return Gx_module::get_window(); };				/* return the Gtk::Window created */
+
+/* Events */
+/* attache les signaux sur tous les elements */
+void Gemod::attach_signals(){
+	try{
+		/*(get_gwidget<Gtk::MenuItem>("menu_add_module"))->signal_activate().connect(
+			sigc::mem_fun(*this, &Gemod::on_menu_add_module_event));
+		(get_gwidget<Gtk::MenuItem>("menu_del_module"))->signal_activate().connect(
+			sigc::mem_fun(*this, &Gemod::on_menu_del_module_event));
+		*/
+		slot_module_select = (get_gwidget<Gtk::Button>("module_select"))->signal_clicked().connect(
+			sigc::mem_fun(*this, &Gemod::on_module_select_event));
+	}catch ( std::exception& ex ){
+		std::string err_msg = "from " +std::string(__PRETTY_FUNCTION__) + "\nCannot attach signals !!!\n" + ex.what();
+		throw std::runtime_error(err_msg);
+	}
+};
+void Gemod::dettach_signals(){
+	LOG_IN(); 
+	slot_module_select.disconnect();
+	LOG_OUT();
+};
+
+void Gemod::on_module_select_event(){
+	LOG_IN();
+	// Gtk::FileDialog set_initial_folder
+	//						  select_folder
+    try {
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_module_select");
+            dialog->set_title(_("Select Module .la, .so or .ui"));
+            dialog->set_modal(true);
+            dialog->open( *(get_window()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+                    try {
+                        auto file = dialog->open_finish(result);
+                        if (file) {
+                            std::string filename = file->get_path();
+                            this->add_module(filename);
+                        }
+                    } catch (const std::exception & ex) {
+                        std::cerr << "Error: " << ex.what() << std::endl;
+                    }
+                }
+            );
+        #else
+			GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+			auto dialog = new Gtk::FileChooserDialog(_("Please choose a file"), Gtk::FileChooser::Action::OPEN);
+			dialog->set_transient_for(*(get_window()));
+			dialog->set_modal(true);
+			dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
+            dialog->add_button("_Open", Gtk::ResponseType::ACCEPT);
+            dialog->signal_response().connect(
+                [this, dialog](int response) {
+                    try {
+                        if (response == Gtk::ResponseType::ACCEPT) {
+                            add_module((dialog->get_file())->get_parse_name());
+                        }
+                        dialog->hide();
+                    } catch (const std::exception & ex) {
+                        std::cerr << "Error: " << ex.what() << std::endl;
+                    };
+                });
+            dialog->show();
+	#endif
+    } catch (const std::exception & ex) {
+        std::cerr << "Error: " << ex.what() << std::endl;
+    };
+	LOG_OUT();
+};
+
+void Gemod::on_menu_add_module_event(){ LOG_IN();
+	/*add_module( MODULE_UI_DIR"libgxsynth-0.0.1.la");*/
+LOG_OUT(); };
+void Gemod::on_menu_del_module_event(){ LOG_IN();
+	/*del_module("data/ui/dx7.glade");*/
+LOG_OUT(); };
 bool Gemod::add_module(Glib::ustring module_name){
 	LOG_IN();
 	try{
@@ -157,7 +232,7 @@ bool Gemod::add_module(Glib::ustring module_name){
 				uint8_t nb_mod_ident = get_module_count(module_name);
 				std::cout << "Module: " << modules[nb_mod].get_name() << std::endl;
 				if  ( nb_mod_ident != 0 ){
-					modules[nb_mod].set_app_name( modules[nb_mod].get_app_name() + " (" + tostr<unsigned int>(nb_mod_ident) +")" );
+					modules[nb_mod].set_app_name(nb_mod_ident);
 				};
 				std::cout << "\tNombre de module avec ce nom(nb_mod_ident) : " << tostr<unsigned int>(nb_mod_ident) << std::endl;
 				std::cout << "\tIndex module(nb_mod): " << tostr<unsigned int>(nb_mod)  << std::endl;
@@ -203,86 +278,6 @@ bool Gemod::add_module(Glib::ustring module_name){
 		return false;
 	}
 };
-
-
-/*  get root window */
-Gtk::Window* Gemod::get_main() { return get_gwidget<Gtk::Window>("window_main"); };	/* return the Gtk::Window from the xml file */
-Gtk::Window* Gemod::get_window() { return Gx_module::get_window(); };				/* rutne the Gtk::Window created */
-
-/* attache les signaux sur tous les elements */
-void Gemod::attach_signals(){
-	try{
-	/*(get_gwidget<Gtk::MenuItem>("menu_add_module"))->signal_activate().connect(
-			sigc::mem_fun(*this, &Gemod::on_menu_add_module_event));
-		(get_gwidget<Gtk::MenuItem>("menu_del_module"))->signal_activate().connect(
-			sigc::mem_fun(*this, &Gemod::on_menu_del_module_event));
-		*/
-		(get_gwidget<Gtk::Button>("module_select"))->signal_clicked().connect(
-			sigc::mem_fun(*this, &Gemod::on_module_select_event));
-	}catch ( std::exception& ex ){
-		std::string err_msg = "from " +std::string(__PRETTY_FUNCTION__) + "\nCannot attach signals !!!\n" + ex.what();
-		throw std::runtime_error(err_msg);
-	}
-};
-
-void Gemod::dettach_signals(){LOG_IN(); LOG_OUT();};
-
-/* Events */
-void Gemod::on_module_select_event(){
-	LOG_IN();
-	// Gtk::FileDialog set_initial_folder
-	//						  select_folder
-    try {
-        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            auto dialog = get_gwidget<Gtk::FileDialog>("FileDialog_module_select");
-            dialog->set_title(_("Select Module .la, .so or .ui"));
-            dialog->set_modal(true);
-            dialog->open( *(get_main()), [this,dialog](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-                    try {
-                        auto file = dialog->open_finish(result);
-                        if (file) {
-                            std::string filename = file->get_path();
-                            this->add_module(filename);
-                        }
-                    } catch (const std::exception & ex) {
-                        std::cerr << "Error: " << ex.what() << std::endl;
-                    }
-                }
-            );
-        #else
-			GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-			auto dialog = new Gtk::FileChooserDialog(_("Please choose a file"), Gtk::FileChooser::Action::OPEN);
-			dialog->set_transient_for(*(get_main()));
-			dialog->set_modal(true);
-			dialog->add_button("_Cancel", Gtk::ResponseType::CANCEL);
-            dialog->add_button("_Open", Gtk::ResponseType::ACCEPT);
-            dialog->signal_response().connect(
-                [this, dialog](int response) {
-                    try {
-                        if (response == Gtk::ResponseType::ACCEPT) {
-                            add_module((dialog->get_file())->get_parse_name());
-                        }
-                        dialog->hide();
-                    } catch (const std::exception & ex) {
-                        std::cerr << "Error: " << ex.what() << std::endl;
-                    };
-                });
-            dialog->show();
-	#endif
-    } catch (const std::exception & ex) {
-        std::cerr << "Error: " << ex.what() << std::endl;
-    };
-	LOG_OUT();
-};
-
-void Gemod::on_menu_add_module_event(){ LOG_IN();
-	/*add_module( MODULE_UI_DIR"libgxsynth-0.0.1.la");*/
-LOG_OUT(); };
-
-void Gemod::on_menu_del_module_event(){ LOG_IN();
-	/*del_module("data/ui/dx7.glade");*/
-LOG_OUT(); };
-
 bool Gemod::del_module(Glib::ustring module_name){ 
 	LOG_IN();
 	// must base on app_name
@@ -309,8 +304,7 @@ LOG_OUT();
 	(get_menuitem("Add"))->set_submenu( *(create_submenu()) );
 LOG_OUT(); };*/
 
-/*
-Gtk::Menu* Gemod::create_submenu(Glib::ustring* menu) { 
+/*Gtk::Menu* Gemod::create_submenu(Glib::ustring* menu) { 
 	LOG_IN(); 
 	Gtk::Menu * submenu;
 	submenu = manage (new Gtk::Menu);

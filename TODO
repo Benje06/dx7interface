@@ -26,6 +26,8 @@ multiplateforme (midi/interface) :
     rtmidi(win done with ucrt64)  
     ??? Juce (license prorietaire), drumkit (sequenceur midi)
 	Listen midi (windows)
+	ajouter dbus.exe
+    nettoyer le dossier ucrt64 lors du packging
 	
 # MIDI
 * reception/envoi en midi ( format TF1(envoi firchier tf1) )
@@ -34,7 +36,7 @@ listen sysex message (Windows)
 # Interface
 rescale la courbe de volume en %
 ? Select midi device from interface ?
-* moove(ctrl+c/ctrl+x/drag and drop) gestion click appuyer pour déplacer un sons
+moove(ctrl+c/ctrl+x/drag and drop) gestion click appuyer pour déplacer un sons
 refonte interface( size/expand des elements)
 * son par defaut (son init)
 randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, en fonction dela frequence, relatif a d'autres ...) )
@@ -43,12 +45,12 @@ randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, e
 	- 
 
 #Theme
-test css valeur pour themes clair/fonce.
+* test css valeur pour themes clair/fonce.
 inclusion de font ( install, chargment dynamic) RAF windows
 
 ### CODE
-factorisation ( ?receive and load bank? )
-genericité / moove to other class (synth,...) ?midi learn,compare?
+* factorisation ( ?receive and load bank? )
+* genericité / moove to other class (synth,...) ?midi learn,compare?
 synth generique (voir avec marc)
 gestion d'exceptions
 filtre des variables utilisateurs ???

@@ -46,12 +46,6 @@ AS_CASE([$host_os],
     ]
 )
 
-dnl ================================================================
-dnl build without command prompt
-dnl ================================================================
-dnl CXXFLAGS="$CXXFLAGS -mwindows"
-dnl AC_SUBST(CXXFLAGS)
-
 AM_CONDITIONAL([PLATFORM_WINDOWS], [test x$platform_win32 = xyes])
 AM_CONDITIONAL([PLATFORM_LINUX], [test x$platform_linux = xyes])
 
@@ -144,6 +138,31 @@ AM_GNU_GETTEXT_VERSION([0.18.2])
 dnl ================================================================
 dnl Develloper stuff
 dnl ================================================================
+AC_ARG_ENABLE([debug],
+ [AS_HELP_STRING([--enable-debug@<:@=LEVEL@:>@],
+    [Enable debug mode (0=no, 1=basic, 2=verbose) @<:@default=no@:>@])],
+[case "${enableval}" in
+  0|no)  debug=false; debug_deep=false ;;
+  1|yes) debug=true; debug_deep=false;;
+  2|deep) debug=true; debug_deep=true;;
+  *) AC_MSG_ERROR([Invalid debug level: use 0/1/2 or no/yes/deep]) ;;
+esac],[debug=false; debug_deep=false])
+
+AM_CONDITIONAL([DEBUG_TOOL], [test x$debug = xtrue])
+AM_CONDITIONAL([DEBUG_TOOL_AS_ERROR], [test x$debug_deep = xtrue])
+
+AM_COND_IF([DEBUG_TOOL],[
+AC_DEFINE([DEBUG_TOOL], [], [activate debug tool])
+],[
+dnl build without command prompt
+CXXFLAGS="$CXXFLAGS -mwindows"
+AC_SUBST(CXXFLAGS)
+])
+AM_COND_IF([DEBUG_TOOL_AS_ERROR],[
+AC_DEFINE([DEBUG_TOOL_AS_ERROR], [], [Activate deep debug print])
+],[])
+
+
 
 AC_ARG_ENABLE([dev],
 [  --enable-dev    Turn on folder from dev directory ],
