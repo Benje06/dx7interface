@@ -154,9 +154,11 @@ AM_CONDITIONAL([DEBUG_TOOL_AS_ERROR], [test x$debug_deep = xtrue])
 AM_COND_IF([DEBUG_TOOL],[
 AC_DEFINE([DEBUG_TOOL], [], [activate debug tool])
 ],[
+if PLATEFORM_WINDOWS
 dnl build without command prompt
 CXXFLAGS="$CXXFLAGS -mwindows"
 AC_SUBST(CXXFLAGS)
+endif
 ])
 AM_COND_IF([DEBUG_TOOL_AS_ERROR],[
 AC_DEFINE([DEBUG_TOOL_AS_ERROR], [], [Activate deep debug print])
