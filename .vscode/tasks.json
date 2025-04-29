@@ -15,7 +15,7 @@
                 "--build=$(./config/config.guess)",
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
                 "--disable-maintainer-mode",
-                "--enable-debug=2",
+                "--enable-debug=0",
                 "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
                 "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
@@ -29,7 +29,7 @@
             }
         },
         {
-            "label": "GX Autogen_DEBUG",
+            "label": "GX Autogen DEBUG",
             "type": "shell",
             "command": "./autogen.sh",
             "args": [
@@ -38,7 +38,8 @@
                 "--target=x86_64-w64-mingw32",
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
-                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig"
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
+                "--enable-debug=2"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -100,19 +101,6 @@
             }
         },
         {
-            "label": "GX Add libs",
-            "type": "shell",
-            "command": "ldd /d/gxinterface/package/usr/bin/gxinterface.exe | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/usr/bin/",
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "none",
-            "detail": "Install Library",
-            "options": {
-                "cwd": "${workspaceFolder}/gxinterface"
-            }
-        },
-        {
             "label": "GX Clean",
             "type": "shell",
             "command": "make clean || true",
@@ -146,11 +134,11 @@
                 "GX Autogen",
                 "GX Autogen",
                 "GX Make",
-                "GX Install",
-                "GX Add libs"
+                "GX Install"
             ],
             "group": "none",
-            "dependsOrder": "sequence"
+            "dependsOrder": "sequence",
+            "problemMatcher": []
         },
         {
             "label": "Gxinterface: Full Build DEBUG",
@@ -159,8 +147,7 @@
                 "GX Autogen",
                 "GX Autogen DEBUG",
                 "GX Make",
-                "GX Install",
-                "GX Add libs"
+                "GX Install"
             ],
             "group": "none",
             "dependsOrder": "sequence"
@@ -169,11 +156,10 @@
             "label": "Dx7interface: Full Build",
             "dependsOn": [
                 "DX Distclean",
-                "DX Autogen",
+                "DX Autogen DEBUG",
                 "DX Autogen",
                 "DX Make",
-                "DX Install",
-                "DX Add libs"
+                "DX Install"
             ],
             "group": "none",
             "dependsOrder": "sequence"
@@ -185,8 +171,7 @@
                 "DX Autogen",
                 "DX Autogen DEBUG",
                 "DX Make",
-                "DX Install",
-                "DX Add libs"
+                "DX Install"
             ],
             "group": "none",
             "dependsOrder": "sequence"
@@ -205,14 +190,14 @@
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
-                "--enable-debug=2",
+                "--enable-debug=0",
                 "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
                 "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface",
                 "env": {
-                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}",
+                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}"
                 }
             },
             "problemMatcher": [
@@ -222,7 +207,7 @@
             "detail": "Generate configure script"
         },
         {
-            "label": "DX Autogen_DEBUG",
+            "label": "DX Autogen DEBUG",
             "type": "shell",
             "command": "./autogen.sh",
             "args": [
@@ -232,7 +217,8 @@
                 "--target=x86_64-w64-mingw32",
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
-                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig"
+                "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
+                "--enable-debug=2"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -273,19 +259,6 @@
             ],
             "group": "none",
             "detail": "Install Binary",
-            "options": {
-                "cwd": "${workspaceFolder}/dx7interface"
-            }
-        },
-        {
-            "label": "DX Add libs",
-            "type": "shell",
-            "command": "ldd src/.libs/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $3}' | xargs -I {} cp {} /d/gxinterface/package/usr/bin/",
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "none",
-            "detail": "Install Library",
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface"
             }

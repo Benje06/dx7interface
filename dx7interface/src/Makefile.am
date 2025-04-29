@@ -22,7 +22,7 @@ dx7interface_0_0_1_la_SOURCES = \
 
 dx7interface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
 dx7interface_0_0_1_la_CPPFLAGS = \
-	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) \
+	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)\
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
 
 if PLATFORM_LINUX
@@ -34,7 +34,7 @@ dx7interface_0_0_1_la_CPPFLAGS += \
 	-DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 endif
 
-dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS)
+dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
 dx7interface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
@@ -47,7 +47,6 @@ dx7interface_0_0_1_la_LDFLAGS += -Wl,--export-all-symbols -lgdi32
 install-exec-hook:
 	sed -i "s|\(libdir='\)/\(.*'\)|\1\2|" "$(DESTDIR)$(libdir)/dx7interface-0.0.1.la"
 	ldd $(DESTDIR)$(libdir)/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
-
 endif
 if PLATFORM_LINUX
 ## Linux/ELF: Equivalent symbol visibility control # Expands to -Wl,--export-dynamic

@@ -45,6 +45,7 @@
 #include "synth.h"
 /* sysex */
 #include "dx7sysex.h"
+//#include <gio/gio.h>
 
 /** CONSTANTS **/
 #define DATA_DIR PROGRAMNAME_DATA_DIR
@@ -113,10 +114,6 @@ class Dx7interface : public Gx_module, public Synth {
 
         /* default write format */
         unsigned int export_config = DX7_32;     // DX7_1 DX7_32 DX7_128 DX7_RAW DX7_SYX
-
-        /* Bank */
-        Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
-        Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;
 
         /* bank list view */
         void create_bank_voices_list();
@@ -510,10 +507,12 @@ class Dx7interface : public Gx_module, public Synth {
 
         /* save dialog */
         void create_dialogs();
-        Gtk::Window* dialog_insert = nullptr;
-        Gtk::Button* button_insert = nullptr;
+        unsigned int action_type = 0;
+        Gtk::Window* dialog_param = nullptr;
+        Gtk::Button* btn_dialog_param = nullptr;
 
         Gtk::CheckButton* checkbutton_bulk = nullptr;
+
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
             Gtk::FileDialog* file_dialog_param_select = nullptr;
             Gtk::FileDialog* file_dialog_param_save = nullptr;
@@ -522,16 +521,20 @@ class Dx7interface : public Gx_module, public Synth {
             Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
             Gtk::Button* button_accept = nullptr;
         #endif
-        unsigned int save_index = 0;
-        void set_save_param();
-        void set_save_dialog(Glib::ustring);
-
+        Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
+        Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;        
         void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
-        void on_file_select(std::function<void(Glib::RefPtr<Gio::File>)>);
-        void OpenFileSaveDialog(std::function<void(Glib::RefPtr<Gio::File>)>);
-        void save_file(Glib::RefPtr<Gio::File>);
-
         Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;
+
+        unsigned int save_index = 0;
+        void set_param() override;
+        void set_dialog(Glib::ustring) override;
+        void OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)>);
+        void OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)>);
+        void on_file_save(Glib::RefPtr<Gio::File>);
+
+
+
         /*** THREAD ***/
         bool Run();    /* Thread function  */
         bool Run2();    /* Thread function  */

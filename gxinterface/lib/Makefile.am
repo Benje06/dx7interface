@@ -22,6 +22,7 @@ libgxinterface_0_0_1_la_SOURCES = \
 libgxinterface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
 	-rdynamic -no-undefined -Wl,--no-undefined
+
 if PLATFORM_WINDOWS
 libgxinterface_0_0_1_la_LDFLAGS += -lgdi32
 endif
@@ -40,7 +41,7 @@ endif
 
 libgxinterface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
 libgxinterface_0_0_1_la_CPPFLAGS = \
-	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) \
+	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
 
 if PLATFORM_LINUX
@@ -54,7 +55,7 @@ endif
 
 ## libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) /ucrt64/bin/libintl-8.dll $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
-libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) 
+libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
 #### HEADERS IN INCLUDE ####			
 ## This only works if the directory hierarchy in the

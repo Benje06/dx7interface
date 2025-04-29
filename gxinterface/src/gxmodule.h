@@ -29,6 +29,7 @@
 	// to support font inclusion at load (not working)
     #include <pangomm/cairofontmap.h>
     //#include <fontconfig/fontconfig.h>
+
 /*
  ***** Gx_Module *****
 */
@@ -109,34 +110,31 @@ class Gx_module {
 		/* FILES */
 		/** Open File Save Dialog **/
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            Gtk::FileDialog* file_dialog_select = nullptr;
-            Gtk::FileDialog* file_dialog_save = nullptr;
-            // Gtk::FileDialog* file_dialog_param_select = nullptr;
-            // Gtk::FileDialog* file_dialog_param_save = nullptr;
+            Gtk::FileDialog* dialog_file_select = nullptr;
+            Gtk::FileDialog* dialog_file_save = nullptr;
         #else
-            Gtk::FileChooserDialog* file_dialog_select = nullptr;
-            Gtk::FileChooserDialog* file_dialog_save = nullptr;
-            // Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
-            // Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
-            // Gtk::Button* button_accept = nullptr;
+            Gtk::FileChooserDialog* dialog_file_select = nullptr;
+            Gtk::FileChooserDialog* dialog_file_save = nullptr;
+            Gtk::Button* button_accept = nullptr;
         #endif
 
 		/*** LOAD/SAVE ***/
-		Gtk::Window* dialog_save = nullptr;
-		Gtk::Button* button_save = nullptr;
+		Gtk::Window* dialog_param = nullptr;
+		Gtk::Button* button_dialog_param = nullptr;
 		Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
 		Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
-		Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr; 
-		/* load */
-		void on_file_select(std::function<void(Glib::RefPtr<Gio::File>)>);
+		Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;
+		virtual void set_param();          				// function to set the parameters of action
+		/* LOAD */
+		void OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)>);
 		void load_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct);
 		bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
 		/* SAVE */		
-        void OpenFileSaveDialog(std::function<void(Glib::RefPtr<Gio::File>)>);	// function to show the select file dialog for save
-		void OpenDialogSave(Glib::ustring, Glib::ustring);  					// function to show the save dialog parameters
-		virtual void set_save_dialog(Glib::ustring);    					// function to set the save dialog parameters displayed
-		virtual void set_save_param();          // function to set the save parameters of the file
+        void OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)>);	// function to show the select file dialog for save
 		void write_file_as_datastream(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
+		/* Dialog Paramaters for action */
+		void OpenDialogParam(Glib::ustring);  			// function to show the dialog parameters
+		virtual void set_dialog(Glib::ustring);    		// function to set the dialog parameters displayed
 
 	private:
 		typedef struct st_extPath{             	/* Provided file informations */

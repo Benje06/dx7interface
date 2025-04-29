@@ -230,7 +230,7 @@ AM_CONDITIONAL([DEBUG_TOOL_AS_ERROR], [test x$debug_deep = xtrue])
 AM_COND_IF([DEBUG_TOOL],[
 AC_DEFINE([DEBUG_TOOL], [], [activate debug tool])
 ],[
-if test "x$platform_win32" = "xyes"; then
+if test "x$debug" = "x0"; then
     CXXFLAGS="$CXXFLAGS -mwindows"
     AC_SUBST(CXXFLAGS)
 fi

@@ -6,8 +6,6 @@
   <requires lib="gtk" version="4.16"/>
   <object class="GtkFileDialog" id="FileDialog_select"/>
   <object class="GtkFileDialog" id="FileDialog_save"/>
-  <object class="GtkFileDialog" id="FileDialog_param_select"/>
-  <object class="GtkFileDialog" id="FileDialog_param_save"/>
   <object class="GtkBox" id="box_main">
     <property name="baseline-position">top</property>
     <property name="hexpand">1</property>
@@ -6439,14 +6437,14 @@
       <property name="step-increment">1</property>
       <property name="upper">127</property>
   </object>
-  <object class="GtkWindow" id="dialog_save">
+  <object class="GtkWindow" id="dialog_param">
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="box_save">
         <property name="halign">center</property>
         <property name="orientation">vertical</property>
         <property name="valign">center</property>
         <child>
-          <object class="GtkLabel" id="label_save_name"/>
+          <object class="GtkLabel" id="label_name"/>
         </child>
         <child>
           <object class="GtkBox" id="box_save_bank">
@@ -6540,61 +6538,54 @@
             </property>
           </object>
         </child>
-        <child>
-          <object class="GtkButton" id="btn_save">
-            <property name="label" translatable="yes">select file</property>
-          </object>
-        </child>
       </object>
     </child>
-  </object>
-  <object class="GtkWindow" id="dialog_insert">
-      <child>
-          <object class="GtkBox">
-              <property name="halign">center</property>
-              <property name="orientation">vertical</property>
-              <property name="valign">center</property>
-              <child>
-                  <object class="GtkLabel" id="label_insert"/>
-              </child>
-              <child>
-                  <object class="GtkBox" id="box_insert">
-                      <property name="orientation">horizontal</property>
-                      <property name="visible">true</property>
-                      <child>
-                          <object class="GtkFrame">
-                              <property name="child">
-                                  <object class="GtkBox">
-                                      <property name="orientation">horizontal</property>
-                                      <child>
-                                          <object class="GtkLabel">
-                                              <property name="label" translatable="yes">Insert at position: </property>
-                                          </object>
-                                      </child>
-                                      <child>
-                                          <object class="GtkSpinButton" id="spinbutton_insert_start">
-                                              <property name="adjustment">adj_insert_start</property>
-                                              <property name="xalign">0.5</property>
-                                              <property name="focusable">1</property>
-                                              <property name="numeric">1</property>
-                                              <property name="text">0</property>
-                                              <property name="value">0</property>
-                                              <property name="width-chars">3</property>
-                                              <property name="max-width-chars">3</property>
-                                          </object>
-                                      </child>
-                                  </object>
-                              </property>
-                          </object>
-                      </child>
-                  </object>
-              </child>
-              <child>
-                  <object class="GtkButton" id="btn_insert">
-                      <property name="label" translatable="yes">select file</property>
-                  </object>
-              </child>
-          </object>
-      </child>
+    <child>
+      <object class="GtkBox" id="box_insert">
+          <property name="halign">center</property>
+          <property name="orientation">vertical</property>
+          <property name="valign">center</property>
+          <child>
+              <object class="GtkLabel" id="label_insert"/>
+          </child>
+          <child>
+              <object class="GtkBox" id="box_insert">
+                  <property name="orientation">horizontal</property>
+                  <property name="visible">true</property>
+                  <child>
+                      <object class="GtkFrame">
+                          <property name="child">
+                              <object class="GtkBox">
+                                  <property name="orientation">horizontal</property>
+                                  <child>
+                                      <object class="GtkLabel">
+                                          <property name="label" translatable="yes">Insert at position: </property>
+                                      </object>
+                                  </child>
+                                  <child>
+                                      <object class="GtkSpinButton" id="spinbutton_insert_start">
+                                          <property name="adjustment">adj_insert_start</property>
+                                          <property name="xalign">0.5</property>
+                                          <property name="focusable">1</property>
+                                          <property name="numeric">1</property>
+                                          <property name="text">0</property>
+                                          <property name="value">0</property>
+                                          <property name="width-chars">3</property>
+                                          <property name="max-width-chars">3</property>
+                                      </object>
+                                  </child>
+                              </object>
+                          </property>
+                      </object>
+                  </child>
+              </object>
+          </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="btn_dialog_param">
+        <property name="label" translatable="yes">select file</property>
+      </object>
+    </child>
   </object>
 </interface>

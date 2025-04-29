@@ -101,6 +101,16 @@
     #include <gtkmm-4.0/gtkmm.h>
     #include <giomm/settings.h>
     #include <glibmm.h>
+
+	/*** CONSTANTS ***/
+	// for action_type
+	#define ACT_OPEN 1
+	#define ACT_SAVE 2
+	#define ACT_INSERT 3 
+	#define ACT_DELETE 4
+	#define ACT_REPLACE 5
+	#define ACT_MOOVE 6
+
     /*** String Convert ***/
     /* convert to string any type of number */
     template <class paramType>
