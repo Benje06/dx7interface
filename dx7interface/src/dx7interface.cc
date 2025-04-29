@@ -811,6 +811,7 @@ void Dx7interface::on_file_save(Glib::RefPtr<Gio::File> file){
                 write_bank(file,save_index);
             };
         };
+        slot_btn_dialog_param->disconnect();
     }catch( std::exception& ex){
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
         LOG_OUT();
@@ -1251,6 +1252,7 @@ void Dx7interface::insert_at(Glib::RefPtr<Gio::File> file,Glib::ustring file_nam
         unmooved_sound = true;
     }
     select_voice(snum);
+    slot_btn_dialog_param->disconnect();
 };
 
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
@@ -1261,8 +1263,8 @@ void Dx7interface::on_insert_at(){
     // Open dialog insert at position
     try{
         action_type = ACT_INSERT;
-        auto slot_button_dialog_param = std::make_shared<sigc::scoped_connection>();
-        *slot_button_dialog_param = button_dialog_param->signal_clicked().connect(
+        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
+        *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
                 std::bind(&Dx7interface::on_insert_sound, this, std::placeholders::_1) ));
@@ -1300,14 +1302,12 @@ void Dx7interface::on_save_bank(){
         save_type = BANK;
         save_modif_sound();
 
-        /*auto slot_button_dialog_param = std::make_shared<sigc::scoped_connection>();
-        *slot_button_dialog_param = button_dialog_param->signal_clicked().connect(
+        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
+        *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
-                std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1) ));
-                */
-        OpenDialogFileSave(std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1));
-        //OpenDialogParam("Saving Bank");
+                std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1)));
+        OpenDialogParam("Saving Bank");
     }catch (const std::exception & ex) {
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
@@ -1827,8 +1827,8 @@ void Dx7interface::on_save_sound(){
         save_type = SOUND;
         save_modif_sound();
 
-        auto slot_button_dialog_param = std::make_shared<sigc::scoped_connection>();
-        *slot_button_dialog_param = button_dialog_param->signal_clicked().connect(
+        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
+        *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
                 std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1) ));

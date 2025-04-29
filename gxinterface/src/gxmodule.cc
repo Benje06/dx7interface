@@ -248,10 +248,12 @@ void Gx_module::write_file_as_datastream(Glib::RefPtr<Gio::File> file, unsigned 
 void Gx_module::OpenDialogParam(Glib::ustring title){
     LOG_IN();
     try{
-        dialog_param->set_transient_for(*(get_window()));
-        dialog_param->set_title(title);
-        set_dialog(title);
-        dialog_param->present();
+        if(dialog_param){
+            dialog_param->set_transient_for(*(get_window()));
+            dialog_param->set_title(title);
+            set_dialog(title);
+            dialog_param->present();
+        };
     }catch (const std::exception & ex) {
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();

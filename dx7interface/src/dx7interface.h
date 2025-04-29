@@ -508,9 +508,9 @@ class Dx7interface : public Gx_module, public Synth {
         /* save dialog */
         void create_dialogs();
         unsigned int action_type = 0;
-        Gtk::Window* dialog_param = nullptr;
-        Gtk::Button* btn_dialog_param = nullptr;
-
+        //Gtk::Window* dialog_param = nullptr;
+        //Gtk::Button* btn_dialog_param = nullptr;
+        std::shared_ptr<sigc::scoped_connection> slot_btn_dialog_param;
         Gtk::CheckButton* checkbutton_bulk = nullptr;
 
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
