@@ -173,7 +173,7 @@ class Synth : public Thread {
         virtual void write_bank(Glib::RefPtr<Gio::File>,unsigned int index ) = 0;
 
          /* SET */
-        virtual void load_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>,Glib::ustring, Glib::ustring, unsigned int)> funct) = 0;	
+        virtual void read_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>,Glib::ustring, Glib::ustring, unsigned int)> funct) = 0;
         void parse_sysex(Glib::RefPtr<Gio::File>, Glib::RefPtr<Gio::DataInputStream>&,unsigned int&);
         void set_bank( Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> );
         virtual void set_bank_name(Glib::ustring) = 0;      // function to set the name of the loaded bank on the ui

@@ -190,7 +190,7 @@ void Synth::set_bank( Glib::RefPtr<Gio::File> bank_file, std::function<void(Glib
     LOG_IN();
     block_ui();
     clean_bank();
-    load_file_as_datastream(bank_file,funct); //copy file content in _modif et _origin
+    read_file_as_datastream(bank_file,funct); //copy file content in _modif et _origin
     Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
     Glib::ustring name = filename.substr(0,filename.find_last_of("."));
     set_bank_name(name);

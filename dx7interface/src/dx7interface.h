@@ -543,7 +543,7 @@ class Dx7interface : public Gx_module, public Synth {
                 void listen_midi(double timestamp, std::vector<unsigned char>* _message, void* userData) override;
         #endif
         /* FILE */
-        void load_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)>);	
+        void read_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)>);
        
         /** SOUND BANK **/
         /* set/load */
