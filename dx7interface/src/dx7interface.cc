@@ -811,7 +811,6 @@ void Dx7interface::on_file_save(Glib::RefPtr<Gio::File> file){
                 write_bank(file,save_index);
             };
         };
-        slot_btn_dialog_param->disconnect();
     }catch( std::exception& ex){
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
         LOG_OUT();
@@ -1256,7 +1255,6 @@ void Dx7interface::insert_at(Glib::RefPtr<Gio::File> file,Glib::ustring file_nam
 
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
     dialog_param->close();
-    slot_btn_dialog_param->disconnect();
     load_file_as_datastream(file,std::bind(&Dx7interface::insert_at, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 };
 void Dx7interface::on_insert_at(){
@@ -1265,7 +1263,7 @@ void Dx7interface::on_insert_at(){
         action_type = ACT_INSERT;
         slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
-                sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
+                sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSelect),
                 std::bind(&Dx7interface::on_insert_sound, this, std::placeholders::_1) ));
 
         OpenDialogParam("Insert Sound(s) at");
