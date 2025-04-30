@@ -260,7 +260,7 @@ void Gx_module::OpenDialogParam(Glib::ustring title){
             dialog_param->set_transient_for(*(get_window()));
             dialog_param->set_title(title);
             set_dialog(title);
-            dialog_param.signal_close_request().connect(
+            dialog_param->signal_close_request().connect(
                 [this]() -> bool {
                     slot_btn_dialog_param.disconnect();
                     return false;
