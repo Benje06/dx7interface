@@ -141,7 +141,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                 dialog_file_select->show();
             #endif
         }else{
-            slot_btn_dialog_param.disconnect();³
+            slot_btn_dialog_param.disconnect();
         };
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
