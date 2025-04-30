@@ -1263,8 +1263,7 @@ void Dx7interface::on_insert_at(){
     // Open dialog insert at position
     try{
         action_type = ACT_INSERT;
-        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
-        *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
+        slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
                 std::bind(&Dx7interface::on_insert_sound, this, std::placeholders::_1) ));
@@ -1302,8 +1301,7 @@ void Dx7interface::on_save_bank(){
         save_type = BANK;
         save_modif_sound();
 
-        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
-        *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
+        slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
                 std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1)));
@@ -1827,8 +1825,7 @@ void Dx7interface::on_save_sound(){
         save_type = SOUND;
         save_modif_sound();
 
-        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
-        *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
+        slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
                 std::bind(&Dx7interface::on_file_save, this, std::placeholders::_1) ));
