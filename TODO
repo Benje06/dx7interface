@@ -1,14 +1,10 @@
 #Questions
-faut-il remplacer la banque chargé lors d'un insert ?
-    - si non le compare n'est pas tres utile,
-    - si oui pas de posibilité de restore bank
 
 ### DOC
-doc d'utilisation* (DEBIAN)
+doc d'utilisation* (DEBIAN)(WINDOWS) utilisation generale( cmd line, ...)
 page html
 normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
-normalisation gx_module (fonction load,
 
 ## Dossier DX7
 clean dossier ( sous repertoire: utilitaires(bouclemidi), instruments(.ins), banque de sons(.syx/.fct), controller(midilearn), ) 
@@ -18,19 +14,18 @@ traductions
 
 # Fonctionalitées
 evenements MIDI (temporisation, ?mode omni?)
-*ecriture fichier des extra parameters( compatible tf1 )
+
 sépration des mutes (hexter vs natif)
 
 multiplateforme (midi/interface) :
     libremidi (prefered but not compiled for ucrt64 and does not do virtual midi),
     rtmidi(win done with ucrt64)  
     ??? Juce (license prorietaire), drumkit (sequenceur midi)
-	Listen midi (windows)
-	ajouter dbus.exe
     nettoyer le dossier ucrt64 lors du packging
 	
 # MIDI
 * reception/envoi en midi ( format TF1(envoi firchier tf1) )
+* ecriture fichier des extra parameters( compatible tf1 )
 listen sysex message (Windows)
 
 # Interface
@@ -38,7 +33,7 @@ rescale la courbe de volume en %
 ? Select midi device from interface ?
 moove(ctrl+c/ctrl+x/drag and drop) gestion click appuyer pour déplacer un sons
 refonte interface( size/expand des elements)
-* son par defaut (son init)
+* son par defaut (son init) au demrrage et lors d'extentnion de la banque
 randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, en fonction dela frequence, relatif a d'autres ...) )
 	- que ce soit audible
 	- "musicale"
@@ -46,16 +41,16 @@ randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, e
 
 #Theme
 * test css valeur pour themes clair/fonce.
-inclusion de font ( install, chargment dynamic) RAF windows
 
 ### CODE
-* factorisation ( ?receive and load bank? )
+* factorisation ( ?receive bank? )
 * genericité / moove to other class (synth,...) ?midi learn,compare?
 synth generique (voir avec marc)
 gestion d'exceptions
-filtre des variables utilisateurs ???
+filtre des variables utilisateurs ??? getops ?
 evenement standard (erreur ???)
 fenetre secondaires (option, module) gxinterface
+? LOG / Console integré ? ( mode windows ou sans terminal)
 verifier la récuperations des bon bit du syx(cf tableau.ods)
 
 # ergonomie

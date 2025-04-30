@@ -5384,7 +5384,7 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
 
 void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir, double lvl){
     double half_width  = width/2.0;
-    double half_height = (height/2.0) + ( (lvl - 40.0)*2 );
+    double half_height = (height/2.0) + ( (height)*(lvl - 50.0)/160.0 );
     double scale_factor = (100.0 - dpth) +25 ; // +25, to get 85 at max ( 85==100 depth)
     switch( str_const_hash(type_curve.c_str()) ){
         case "EXP+"_hash:{
