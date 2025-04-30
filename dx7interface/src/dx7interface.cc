@@ -911,8 +911,8 @@ void Dx7interface::clean_bank(){
     };
     LOG_OUT();
 };
-void Dx7interface::load_file_as_datastream(Glib::RefPtr<Gio::File> file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct){
-    Gx_module::load_file_as_datastream(file, funct);
+void Dx7interface::read_file_as_datastream(Glib::RefPtr<Gio::File> file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct){
+    Gx_module::read_file_as_datastream(file, funct);
 };
 void Dx7interface::set_bank(Glib::RefPtr<Gio::File> bank_file){
     LOG_IN();
@@ -1091,7 +1091,7 @@ void Dx7interface::on_restore_sound(){
 /*** INSERT / REPLACE / DELETE / MOOVE ***/
 /* REPLACE */
 void Dx7interface::on_replace_sound(Glib::RefPtr<Gio::File> file){
-    load_file_as_datastream(file,std::bind(&Dx7interface::replace_sound, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,std::placeholders::_4));
+    read_file_as_datastream(file,std::bind(&Dx7interface::replace_sound, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,std::placeholders::_4));
 }
 void Dx7interface::replace_sound(Glib::RefPtr<Gio::File> file, Glib::ustring file_name, Glib::ustring file_base, unsigned int file_size){
     LOG_IN();
@@ -1255,7 +1255,7 @@ void Dx7interface::insert_at(Glib::RefPtr<Gio::File> file,Glib::ustring file_nam
 
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
     dialog_param->close();
-    load_file_as_datastream(file,std::bind(&Dx7interface::insert_at, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+    read_file_as_datastream(file,std::bind(&Dx7interface::insert_at, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 };
 void Dx7interface::on_insert_at(){
     // Open dialog insert at position
@@ -1282,7 +1282,7 @@ void Dx7interface::on_delete_sound(){
     old_snum = bank_nb_sound-1;
     snum = bank_nb_sound-1;
     Glib::RefPtr<Gio::File> init_voice_file = Gio::File::create_for_path( DATA_DIR"cfg/DX7_INIT_VOICE.syx" );
-    load_file_as_datastream(init_voice_file,std::bind(&Dx7interface::replace_sound, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+    read_file_as_datastream(init_voice_file,std::bind(&Dx7interface::replace_sound, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_src);
     LOG_OUT();
 };

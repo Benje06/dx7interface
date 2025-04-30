@@ -95,67 +95,8 @@ Gx_module::~Gx_module(){
 
 /*** DIALOGS ***/
 void Gx_module::set_param(){};
-/* Select/Load File */
-void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)> funct){
-    LOG_IN();
-    try{
-        if( dialog_file_select ){
-            set_param();
-            dialog_file_select->set_title("Select File");
-            #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-                dialog_file_select->set_initial_folder(initial_folder_open);
-                dialog_file_select->open( *(get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
-                    try {
-                        Glib::RefPtr<Gio::File> file = dialog_file_select->open_finish(result);
-                        if (file) {
-                            funct(file);
-                            initial_folder_open = Gio::File::create_for_path(file->get_parent()->get_path());
-                        };
-                    } catch (const std::exception & ex) {
-                        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                        + "Reason: " + ex.what();
-                        std::cerr << err_msg << std::endl;
-                        //slot_btn_dialog_param.disconnect();
-                    };
-                    //slot_btn_dialog_param.disconnect();
-                }); /* end dialog open function */
-            #else
-                dialog_file_select->set_transient_for(*(get_window()));
-                auto slot_dialog_file_select = dialog_file_select->signal_response().connect([this,funct](int response) {
-                    try {
-                        if (response == Gtk::ResponseType::ACCEPT) {
-                            auto file = dialog_file_select->get_file();
-                            if (file) {
-                                funct(file);
-                                initial_folder_open= Gio::File::create_for_path(file->get_path());;
-                            };
-                        };
-                        dialog_file_select->hide();
-                    } catch (const std::exception & ex) {
-                        std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
-                        + "Reason: " + ex.what();
-                        std::cerr << err_msg << std::endl;
-                        //slot_btn_dialog_param.disconnect();
-                        //slot_dialog_file_select.disconnect();
-                    };
-                    //slot_btn_dialog_param.disconnect();
-                    //slot_dialog_file_select.disconnect();
-                });
-                dialog_file_select->show();
-            #endif
-        }else{
-            slot_btn_dialog_param.disconnect();
-        };
-    }catch (const std::exception & ex) {
-        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
-        + "Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
-        slot_btn_dialog_param.disconnect();
-        //throw std::runtime_error(err_msg);
-    };
-    LOG_OUT();
-};
-void Gx_module::load_file_as_datastream(Glib::RefPtr<Gio::File> file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct){
+/* Read/Write File */
+void Gx_module::read_file_as_datastream(Glib::RefPtr<Gio::File> file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct){
     LOG_IN();
     try {
         unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
@@ -178,6 +119,16 @@ void Gx_module::load_file_as_datastream(Glib::RefPtr<Gio::File> file, std::funct
     };
     LOG_OUT();
 };
+void Gx_module::write_file_as_datastream(Glib::RefPtr<Gio::File> file, unsigned char* msg, unsigned int msg_size){
+    auto output_stream = file->replace();
+    auto data_stream = Gio::DataOutputStream::create(output_stream);
+    for( unsigned int i=0; i<msg_size; i++ ){
+        data_stream->put_byte(msg[i]);
+    };
+    data_stream->flush();
+    data_stream->close();
+    output_stream->close();
+};
 bool Gx_module::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& data_stream) {
     try{
         if( data_stream ){  return false;
@@ -189,6 +140,65 @@ bool Gx_module::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& data_stream) 
     };
 };
 /* Select/Save File */
+void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)> funct){
+    LOG_IN();
+    try{
+        if( dialog_file_select ){
+            set_param();
+            dialog_file_select->set_title("Select File");
+            #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+            dialog_file_select->set_initial_folder(initial_folder_open);
+            dialog_file_select->open( *(get_window()), [this,funct](const Glib::RefPtr<Gio::AsyncResult>& result ) {
+                try {
+                    Glib::RefPtr<Gio::File> file = dialog_file_select->open_finish(result);
+                    if (file) {
+                        funct(file);
+                        initial_folder_open = Gio::File::create_for_path(file->get_parent()->get_path());
+                    };
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                    + "Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
+                    //slot_btn_dialog_param.disconnect();
+                };
+                //slot_btn_dialog_param.disconnect();
+            }); /* end dialog open function */
+            #else
+            dialog_file_select->set_transient_for(*(get_window()));
+            auto slot_dialog_file_select = dialog_file_select->signal_response().connect([this,funct](int response) {
+                try {
+                    if (response == Gtk::ResponseType::ACCEPT) {
+                        auto file = dialog_file_select->get_file();
+                        if (file) {
+                            funct(file);
+                            initial_folder_open= Gio::File::create_for_path(file->get_path());;
+                        };
+                    };
+                    dialog_file_select->hide();
+                } catch (const std::exception & ex) {
+                    std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
+                    + "Reason: " + ex.what();
+                    std::cerr << err_msg << std::endl;
+                    //slot_btn_dialog_param.disconnect();
+                    //slot_dialog_file_select.disconnect();
+                };
+                //slot_btn_dialog_param.disconnect();
+                //slot_dialog_file_select.disconnect();
+            });
+            dialog_file_select->show();
+            #endif
+        }else{
+            slot_btn_dialog_param.disconnect();
+        };
+    }catch (const std::exception & ex) {
+        std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
+        + "Reason: " + ex.what();
+        std::cerr << err_msg << std::endl;
+        slot_btn_dialog_param.disconnect();
+        //throw std::runtime_error(err_msg);
+    };
+    LOG_OUT();
+};
 void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> funct){
     try{
         if(dialog_file_save){
@@ -251,16 +261,7 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
         std::cerr << err_msg << std::endl;
     };
 };
-void Gx_module::write_file_as_datastream(Glib::RefPtr<Gio::File> file, unsigned char* msg, unsigned int msg_size){
-    auto output_stream = file->replace();
-    auto data_stream = Gio::DataOutputStream::create(output_stream);
-    for( unsigned int i=0; i<msg_size; i++ ){
-        data_stream->put_byte(msg[i]);
-    };
-    data_stream->flush();
-    data_stream->close();
-    output_stream->close();
-};
+
 /* Parameters */
 void Gx_module::OpenDialogParam(Glib::ustring title){
     LOG_IN();
