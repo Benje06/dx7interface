@@ -33,6 +33,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODU
     /*basic constructor */
     LOG_IN();
     block_midi();
+    block_ui();
     init_nls();
     /* I/O init */
     Gio::init();
@@ -77,6 +78,7 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODU
     set_default_values();
     // start thread
     S_Thread();
+    unblock_ui();
     unblock_midi();
     LOG_OUT();
 };
@@ -91,11 +93,15 @@ Dx7interface::~Dx7interface(){
 };
 
 void Dx7interface::set_default_values(){
+    Glib::RefPtr<Gio::File> init_voice = Gio::File::create_for_path( DATA_DIR"cfg/DX7_INIT_VOICE.syx" );
+    set_bank(init_voice);
+
     bank_1_modif.sound->extra.mute.val=0x7F; // all unmuted
     bank_1_origin.sound->extra.mute.val=0x7F;
     Glib::RefPtr<Gio::File> param_file = Gio::File::create_for_path( DATA_DIR"cfg/midi_learn_default_config.cfg" );
     read_midi_learned_param(param_file);
-}
+
+};
 
 bool Dx7interface::error(){
     std::cout << "erreur fichier syx " << std::endl;
