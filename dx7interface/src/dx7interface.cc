@@ -1265,7 +1265,6 @@ void Dx7interface::on_insert_at(){
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSelect),
                 std::bind(&Dx7interface::on_insert_sound, this, std::placeholders::_1) ));
-
         OpenDialogParam("Insert Sound(s) at");
     }catch( std::exception& ex ){
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +

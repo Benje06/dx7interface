@@ -115,12 +115,13 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                         + "Reason: " + ex.what();
                         std::cerr << err_msg << std::endl;
+                        //slot_btn_dialog_param.disconnect();
                     };
-                    slot_btn_dialog_param.disconnect();
+                    //slot_btn_dialog_param.disconnect();
                 }); /* end dialog open function */
             #else
                 dialog_file_select->set_transient_for(*(get_window()));
-                slot_file_dialog_select = dialog_file_select->signal_response().connect([this,funct](int response) {
+                auto slot_dialog_file_select = dialog_file_select->signal_response().connect([this,funct](int response) {
                     try {
                         if (response == Gtk::ResponseType::ACCEPT) {
                             auto file = dialog_file_select->get_file();
@@ -134,9 +135,11 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                         + "Reason: " + ex.what();
                         std::cerr << err_msg << std::endl;
+                        //slot_btn_dialog_param.disconnect();
+                        //slot_dialog_file_select.disconnect();
                     };
-                    slot_btn_dialog_param.disconnect();
-                    slot_dialog_file_select.disconnect();
+                    //slot_btn_dialog_param.disconnect();
+                    //slot_dialog_file_select.disconnect();
                 });
                 dialog_file_select->show();
             #endif
@@ -147,6 +150,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
         std::cerr << err_msg << std::endl;
+        slot_btn_dialog_param.disconnect();
         //throw std::runtime_error(err_msg);
     };
     LOG_OUT();
@@ -204,18 +208,20 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                             std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
                             " Reason: " + ex.what();
                             std::cerr << err_msg << std::endl;
+                            //slot_btn_dialog_param.disconnect();
                         };
-                        slot_btn_dialog_param.disconnect();
+                        //slot_btn_dialog_param.disconnect();
                     });
                 }catch( const std::exception& ex ){
                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
                     " Reason: " + ex.what();
                     std::cerr << err_msg << std::endl;
+                    //slot_btn_dialog_param.disconnect();
                 };
             #else
                 dialog_file_save->set_transient_for(*(get_window()));
                 dialog_file_save->set_current_folder(initial_folder_save);
-                dialog_file_save->signal_response().connect([this,funct](int response) {
+                auto slot_dialog_file_save = dialog_file_save->signal_response().connect([this,funct](int response) {
                     try {
                         if (response == Gtk::ResponseType::ACCEPT) {
                             auto file = dialog_file_save->get_file();
@@ -228,8 +234,11 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                         + "Reason: " + ex.what();
                         std::cerr << err_msg << std::endl;
+                        //slot_btn_dialog_param.disconnect();
+                        //slot_dialog_file_save.disconnect();
                     };
-                    slot_btn_dialog_param.disconnect();
+                    //slot_btn_dialog_param.disconnect();
+                    //slot_dialog_file_save.disconnect();
                 });
                 dialog_file_save->show();
             #endif

@@ -507,7 +507,7 @@ class Dx7interface : public Gx_module, public Synth {
 
         /* save dialog */
         void create_dialogs();
-        unsigned int action_type = 0;
+        unsigned int action_type = ACT_OPEN;
         Gtk::CheckButton* checkbutton_bulk = nullptr;
 
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
