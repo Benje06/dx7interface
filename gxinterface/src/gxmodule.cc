@@ -194,7 +194,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
         std::cerr << err_msg << std::endl;
-        slot_btn_dialog_param.disconnect();
+        //slot_btn_dialog_param.disconnect();
         //throw std::runtime_error(err_msg);
     };
     LOG_OUT();
