@@ -691,6 +691,7 @@ void Dx7interface::create_dialogs() {
     get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_32")));
     get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")));
 };
+
 void Dx7interface::set_param(){
     if( action_type == ACT_SAVE ){
         Glib::ustring filename;
@@ -792,6 +793,7 @@ void Dx7interface::set_dialog(Glib::ustring title){
     };
     LOG_OUT();
 };
+
 void Dx7interface::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> funct){
     Gx_module::OpenDialogFileSave(funct);
 };
@@ -809,6 +811,7 @@ void Dx7interface::on_file_save(Glib::RefPtr<Gio::File> file){
                 write_bank(file,save_index);
             };
         };
+        slot_btn_dialog_param->disconnect();
     }catch( std::exception& ex){
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
         LOG_OUT();
@@ -1253,12 +1256,14 @@ void Dx7interface::insert_at(Glib::RefPtr<Gio::File> file,Glib::ustring file_nam
 
 void Dx7interface::on_insert_sound(Glib::RefPtr<Gio::File> file){
     dialog_param->close();
+    slot_btn_dialog_param->disconnect();
     load_file_as_datastream(file,std::bind(&Dx7interface::insert_at, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 };
 void Dx7interface::on_insert_at(){
     // Open dialog insert at position
     try{
         action_type = ACT_INSERT;
+        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
         *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
@@ -1297,6 +1302,7 @@ void Dx7interface::on_save_bank(){
         save_type = BANK;
         save_modif_sound();
 
+        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
         *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
@@ -1821,6 +1827,7 @@ void Dx7interface::on_save_sound(){
         save_type = SOUND;
         save_modif_sound();
 
+        slot_btn_dialog_param = std::make_shared<sigc::scoped_connection>();
         *slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
