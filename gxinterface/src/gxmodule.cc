@@ -111,6 +111,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                             funct(file);
                             initial_folder_open = Gio::File::create_for_path(file->get_parent()->get_path());
                         };
+                        slot_btn_dialog_param.disconnect();
                     } catch (const std::exception & ex) {
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                         + "Reason: " + ex.what();
@@ -129,6 +130,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                             };
                         };
                         dialog_file_select->hide();
+                        slot_btn_dialog_param.disconnect();
                         slot_dialog_file_select.disconnect();
                     } catch (const std::exception & ex) {
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
@@ -138,6 +140,8 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                 });
                 dialog_file_select->show();
             #endif
+        }else{
+            slot_btn_dialog_param.disconnect();³
         };
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
@@ -196,6 +200,7 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                                 initial_folder_save = Gio::File::create_for_path(file->get_parent()->get_path());
                                 funct(file);
                             };
+                            slot_btn_dialog_param.disconnect();
                         }catch( const std::exception& ex ){
                             std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
                             " Reason: " + ex.what();
@@ -217,7 +222,8 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                             if (file) {
                                 funct(file);
                             };
-                        }
+                        };
+                        slot_btn_dialog_param.disconnect();
                         dialog_file_save->hide();
                     } catch (const std::exception & ex) {
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
@@ -227,6 +233,8 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                 });
                 dialog_file_save->show();
             #endif
+        }else{
+            slot_btn_dialog_param.disconnect();
         };
     }catch( std::exception& ex){
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
