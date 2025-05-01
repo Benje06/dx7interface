@@ -26,7 +26,7 @@
 	#include "common.h"
 	#include <glibmm/module.h>
 	#include <pangomm.h>
-	// to support font inclusion at load (not working)
+	// to support font inclusion at load
     #include <pangomm/cairofontmap.h>
     //#include <fontconfig/fontconfig.h>
 

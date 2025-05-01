@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-26 09:20+0200\n"
+"POT-Creation-Date: 2025-05-01 17:32+0200\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,72 +17,356 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/dx7interface.cc:5541
+#: ../src/dx7interface.cc:308
+msgid "# Function, midi controller number"
+msgstr ""
+
+#: ../src/dx7interface.cc:337
+#, fuzzy
+msgid "Select file"
+msgstr "Choisir une banque"
+
+#: ../src/dx7interface.cc:356 ../src/dx7interface.cc:1776
+msgid "Cannot write file as raw"
+msgstr ""
+
+#: ../src/dx7interface.cc:390
+#, fuzzy
+msgid "Select config"
+msgstr "Choisir une banque"
+
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
+#. Synth::print_event_info(ev);
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
+#. Synth::print_event_info(ev);
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
+#. Synth::print_event_info(ev);
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
+#. Synth::print_event_info(ev);
+#: ../src/dx7interface.cc:443 ../src/dx7interface.cc:451
+#: ../src/dx7interface.cc:466 ../src/dx7interface.cc:484
+msgid "Channel: "
+msgstr ""
+
+#: ../src/dx7interface.cc:444 ../src/dx7interface.cc:452
+#: ../src/dx7interface.cc:468 ../src/dx7interface.cc:485
+msgid "value: "
+msgstr ""
+
+#: ../src/dx7interface.cc:448
+msgid "Note OFF"
+msgstr ""
+
+#: ../src/dx7interface.cc:467
+msgid "param: "
+msgstr ""
+
+#. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
+#. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
+#. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
+#. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
+#: ../src/dx7interface.cc:491
+msgid "Channel : "
+msgstr ""
+
+#: ../src/dx7interface.cc:492
+msgid "param : "
+msgstr ""
+
+#: ../src/dx7interface.cc:493
+msgid "value : "
+msgstr ""
+
+#: ../src/dx7interface.cc:514
+msgid "Event has fixed length."
+msgstr ""
+
+#: ../src/dx7interface.cc:517
+msgid "Event has variable length."
+msgstr ""
+
+#: ../src/dx7interface.cc:520
+msgid "Unknown length mask."
+msgstr ""
+
+#: ../src/dx7interface.cc:523
+msgid "Length:"
+msgstr ""
+
+#: ../src/dx7interface.cc:663
+msgid " Param: "
+msgstr ""
+
+#: ../src/dx7interface.cc:663
+msgid " Value: "
+msgstr ""
+
+#: ../src/dx7interface.cc:748
+msgid "base filename: "
+msgstr ""
+
+#: ../src/dx7interface.cc:750
+msgid "with format: "
+msgstr ""
+
+#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+#: ../src/dx7interface.cc:827
+msgid "Failed to save file: "
+msgstr ""
+
+#: ../src/dx7interface.cc:937
+msgid "Bank name: "
+msgstr ""
+
+#: ../src/dx7interface.cc:1006
+msgid "Received"
+msgstr ""
+
+#: ../src/dx7interface.cc:1007
+msgid "Buffer size of received bank: "
+msgstr ""
+
+#: ../src/dx7interface.cc:1062 ../src/dx7interface.cc:1078
+msgid "Restore bank: "
+msgstr ""
+
+#: ../src/dx7interface.cc:1062 ../src/dx7interface.cc:1070
+#: ../src/dx7interface.cc:1078 ../src/dx7interface.cc:1086
+msgid " from origin bank."
+msgstr ""
+
+#: ../src/dx7interface.cc:1070 ../src/dx7interface.cc:1086
+msgid "Restore sound: "
+msgstr ""
+
+#. needed
+#. needed
+#. needed
+#. needed
+#: ../src/dx7interface.cc:1118
+msgid "Replaced sound: "
+msgstr ""
+
+#: ../src/dx7interface.cc:1127
+msgid " With: "
+msgstr ""
+
+#: ../src/dx7interface.cc:1290
+msgid "Insert Sound(s) at"
+msgstr ""
+
+#: ../src/dx7interface.cc:1429 ../src/dx7interface.cc:1494
+msgid " Error writing to file: \n"
+msgstr ""
+
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. *                     + _("Cannot construct bulk1") + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. *                     + _("Cannot construct bulk1") + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. *                     + _("Cannot construct bulk1") + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. *                     + _("Cannot construct bulk1") + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#: ../src/dx7interface.cc:1672
+msgid "Cannot construct bulk1"
+msgstr ""
+
+#: ../src/dx7interface.cc:1742
+msgid "Cannot construct bulk32"
+msgstr ""
+
+#: ../src/dx7interface.cc:1763
+msgid "Cannot write file as sysex"
+msgstr ""
+
+#: ../src/dx7interface.cc:1818
+msgid "Cannot write extra parameters"
+msgstr ""
+
+#. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
+#. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
+#. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
+#. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
+#: ../src/dx7interface.cc:1827
+msgid "Saved voice: "
+msgstr ""
+
+#: ../src/dx7interface.cc:1827
+msgid " in modif bank."
+msgstr ""
+
+#: ../src/dx7interface.cc:1854
+msgid " ??? "
+msgstr ""
+
+#: ../src/dx7interface.cc:2085
+msgid "For voice: "
+msgstr ""
+
+#: ../src/dx7interface.cc:2085
+msgid ""
+"\n"
+"\tParameters of function reads from file: "
+msgstr ""
+
+#: ../src/dx7interface.cc:5374 ../src/dx7interface.cc:5531
+#: ../src/dx7interface.cc:5554
+msgid "File not found: "
+msgstr ""
+
+#: ../src/dx7interface.cc:5670
 msgid "Monophonic"
 msgstr "Monophonique"
 
-#: ../src/dx7interface.cc:5543
+#: ../src/dx7interface.cc:5672
 msgid "Polyphonic"
 msgstr "Polyphonique"
 
-#: ../src/dx7interface.cc:5593
+#: ../src/dx7interface.cc:5722
 msgid "Follow"
 msgstr ""
 
-#: ../src/dx7interface.cc:5595
+#: ../src/dx7interface.cc:5724
 msgid "Retain"
 msgstr ""
 
-#: ../src/dx7interface.cc:6216
+#: ../src/dx7interface.cc:6282
 msgid "/* OP1 */"
 msgstr "/* Operateur 1 */"
 
-#: ../src/dx7interface.cc:6227
+#: ../src/dx7interface.cc:6293
 msgid " OP1 "
 msgstr " Operateur 1 "
 
-#: ../src/dx7interface.cc:6246
+#: ../src/dx7interface.cc:6312
 msgid "/* OP2 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6257 ../data/ui/dx7interface-0.0.1-simplify.ui.h:63
+#: ../src/dx7interface.cc:6323 ../data/ui/dx7interface-0.0.1-simplify.ui.h:63
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:63
 msgid " OP2 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6276
+#: ../src/dx7interface.cc:6342
 msgid "/* OP3 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6287
+#: ../src/dx7interface.cc:6353
 msgid " OP3 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6306
+#: ../src/dx7interface.cc:6372
 msgid "/* OP4 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6317 ../data/ui/dx7interface-0.0.1-simplify.ui.h:65
+#: ../src/dx7interface.cc:6383 ../data/ui/dx7interface-0.0.1-simplify.ui.h:65
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:65
 msgid " OP4 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6336
+#: ../src/dx7interface.cc:6402
 msgid "/* OP5 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6347 ../data/ui/dx7interface-0.0.1-simplify.ui.h:66
+#: ../src/dx7interface.cc:6413 ../data/ui/dx7interface-0.0.1-simplify.ui.h:66
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:66
 msgid " OP5 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6364
+#: ../src/dx7interface.cc:6430
 msgid "/* OP6 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6375 ../data/ui/dx7interface-0.0.1-simplify.ui.h:67
+#: ../src/dx7interface.cc:6441 ../data/ui/dx7interface-0.0.1-simplify.ui.h:67
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:67
 msgid " OP6 "
+msgstr ""
+
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
+#. *                     + _("Cannot construct bulk1")                     + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
+#. *                     + _("Cannot construct bulk1")                     + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
+#. *                     + _("Cannot construct bulk1")                     + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
+#. *                     + _("Cannot construct bulk1")                     + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#: ../src/dx7interface.h:83
+msgid "From: "
+msgstr ""
+
+#: ../src/dx7interface.h:85
+msgid "Reason => "
 msgstr ""
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:1
@@ -551,10 +835,10 @@ msgstr ""
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:97
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:97
-msgid "select file"
+msgid "Insert at position: "
 msgstr ""
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:98
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:98
-msgid "Insert at position: "
+msgid "select file"
 msgstr ""

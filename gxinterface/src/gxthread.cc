@@ -52,10 +52,11 @@ void* Thread::T_Loop2(void * thread) {
 
 int Thread::S_Thread(void* (*f) (void*)) {
     if ( (err = pthread_create( &thread, nullptr, f, (void *)this)) ){
-        std::cout << t_fatal  << " " << err << " : " << __func__ << "ne peux CRÉER le thread" << std::endl;
+        std::string msg_err= t_fatal + std::string(" ") + std::to_string(err) + std::string(" : ") + __func__ + std::string("ne peux CRÉER le thread");
+        LOG_ERR(msg_err);
         return err;
     }else{
-        std::cout << "thread: start " << std::endl;
+        LOG("Thread: start ");
     };
     //LOG_OUT();
     return 0;
@@ -65,18 +66,18 @@ int Thread::S_Thread() { return S_Thread(&T_Loop); };
 int Thread::S_Thread2() { return S_Thread(&T_Loop2); };
 
 int Thread::J_Thread() {
-    LOG_IN();
+    LOG(LOG_IN());
     pthread_join(thread, nullptr);
-    LOG_OUT();
+    LOG(LOG_OUT());
     return 0;
 };
 
 int Thread::T_Thread() {
-    LOG_IN();
+    LOG(LOG_IN());
     pthread_cancel(thread);
     J_Thread();
     //pthread_exit(NULL);
-    LOG_OUT();
+    LOG(LOG_OUT());
     return 0;
 };
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxinterface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-26 13:25+0200\n"
+"POT-Creation-Date: 2025-05-01 17:20+0200\n"
 "PO-Revision-Date: 2025-02-17 01:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -20,114 +20,134 @@ msgstr ""
 #. force only supported mode
 #. force only supported mode
 #. force only supported mode
-#: ../src/main.cc:44 ../src/main.cc:50
+#: ../src/main.cc:44 ../src/main.cc:49
 msgid "Interface graphic mode : "
 msgstr "Mode graphique de l'interface : "
 
-#: ../src/main.cc:81
+#: ../src/main.cc:60
 msgid "The option : "
 msgstr "L'option : "
 
-#: ../src/main.cc:81
+#: ../src/main.cc:60
 msgid " is not valid for an interface type"
 msgstr " n'est pas valide pour un type d'interface"
 
-#: ../src/main.cc:86
+#: ../src/main.cc:66
 msgid "Error: in application start -> "
 msgstr "Erreur: au demarrage de l'application -> "
 
-#: ../src/gemod.cc:238
+#: ../src/gemod.cc:124 ../src/gemod.cc:141
+msgid "Fail to get rootbox"
+msgstr ""
+
+#: ../src/gemod.cc:124 ../src/gemod.cc:141
+msgid "Reason"
+msgstr ""
+
+#: ../src/gemod.cc:180
 msgid "Select Module .la, .so or .ui"
 msgstr ""
 
-#: ../src/gemod.cc:254
+#: ../src/gemod.cc:196
 msgid "Please choose a file"
 msgstr ""
 
-#: ../src/gxmodule.cc:54 ../src/gxmodule.cc:82
+#: ../src/gxmodule.cc:55 ../src/gxmodule.cc:71
 msgid ""
 " Cannot be created !!!\n"
 " => Cannot load : "
 msgstr ""
 
-#: ../src/gxmodule.cc:54 ../src/gxmodule.cc:82 ../src/gxmodule.cc:197
+#: ../src/gxmodule.cc:55 ../src/gxmodule.cc:71 ../src/gxmodule.cc:312
 msgid "Reason "
 msgstr ""
 
-#: ../src/gxmodule.cc:128
+#: ../src/gxmodule.cc:312
+msgid " Creating window failed !!!\n"
+msgstr ""
+
+#: ../src/gxmodule.cc:485
 msgid "Css style file: "
 msgstr ""
 
-#: ../src/gxmodule.cc:130
+#: ../src/gxmodule.cc:487
 msgid "Warning: the css style file "
 msgstr ""
 
-#: ../src/gxmodule.cc:130 ../src/gxmodule.cc:142 ../src/gxmodule.cc:154
+#: ../src/gxmodule.cc:487 ../src/gxmodule.cc:581 ../src/gxmodule.cc:788
 #, fuzzy
 msgid " doesn't exist or is not readable"
 msgstr " n'existe pas !!!"
 
-#: ../src/gxmodule.cc:140
+#: ../src/gxmodule.cc:535
+msgid " Failed to load style: !!!\n"
+msgstr ""
+
+#: ../src/gxmodule.cc:535 ../src/gxmodule.cc:617
+msgid "Reason => "
+msgstr ""
+
+#: ../src/gxmodule.cc:579
 msgid "Custom font file: "
 msgstr ""
 
-#: ../src/gxmodule.cc:142
+#: ../src/gxmodule.cc:581
 msgid "Warning: the custom font file "
 msgstr ""
 
-#: ../src/gxmodule.cc:152
+#: ../src/gxmodule.cc:601
+msgid "Error: "
+msgstr ""
+
+#: ../src/gxmodule.cc:617
+msgid " Failed load font: !!!\n"
+msgstr ""
+
+#: ../src/gxmodule.cc:629
+msgid "Fail to list pango font with error: "
+msgstr ""
+
+#: ../src/gxmodule.cc:786
 #, fuzzy
 msgid "Icon file: "
 msgstr "Chargment du fichier: "
 
-#: ../src/gxmodule.cc:154
+#: ../src/gxmodule.cc:788
 msgid "Warning: the icon file "
 msgstr ""
 
-#: ../src/gxmodule.cc:197
-msgid " Creating window failed !!!\n"
-msgstr ""
-
-#: ../src/gxmodule.cc:435
-msgid " Failed to load style: !!!\n"
-msgstr ""
-
-#: ../src/gxmodule.cc:435
-msgid "Reason => "
-msgstr ""
-
-#: ../src/gxinterface.cc:90
+#: ../src/gxinterface.cc:70
 msgid "Error: in application activate -> "
 msgstr "Erreur: à l'activation de l'application ->"
 
-#: ../src/gxinterface.cc:113
+#: ../src/gxinterface.cc:92
 msgid "!!! Module "
 msgstr "!!! le module "
 
-#: ../src/gxinterface.cc:113
+#: ../src/gxinterface.cc:92
 #, fuzzy
 msgid " doesn't exist or could not be read !!!"
 msgstr " n'existe pas !!!"
 
-#: ../src/gxinterface.cc:115
+#: ../src/gxinterface.cc:94
 #, fuzzy
 msgid "!!! Interface file "
 msgstr "!!! Le fichier d'interface "
 
-#: ../src/gxinterface.cc:115
+#: ../src/gxinterface.cc:94
 msgid " does not exist or could not be read !!!"
 msgstr ""
 
-#: ../src/gxinterface.cc:117
+#: ../src/gxinterface.cc:96
 #, fuzzy
 msgid "Loading default interface file."
 msgstr "Chargement du fichier d'interface par defaut. "
 
-#: ../src/gxinterface.cc:121
+#: ../src/gxinterface.cc:100
 msgid "Loading module."
 msgstr "Chargement d'un module."
 
-#: ../src/gxinterface.cc:128
+#: ../src/gxinterface.cc:107
 msgid "Loading file: "
 msgstr "Chargment du fichier: "
 

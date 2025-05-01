@@ -35,9 +35,7 @@
     #define GXTHREAD_H
     #include <pthread.h>
     #include "common.h"
-    #include "debug.h"
-    #include "lang.h"
-
+    #include "lang.h" // for t_fatal
  
 class Thread {
     private:

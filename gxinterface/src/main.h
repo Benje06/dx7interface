@@ -22,11 +22,10 @@
  *
  * ----------------------------------------------------------------------------
  */
-
+#pragma once
 #ifndef main_H
 	#define main_H
 	#include "common.h"
-	#include "debug.h"
 	#include "gxinterface.h"
 	gint err;
 #endif /* main_H */

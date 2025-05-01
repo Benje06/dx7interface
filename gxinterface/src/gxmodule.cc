@@ -41,63 +41,63 @@
  */
 
 Gx_module::Gx_module(Glib::ustring filename,Glib::ustring caller){
-    PRE_LOG(caller.c_str(),"");
-    LOG_IN();
+    LOG(PRE_LOG(caller.c_str(),""));
+    LOG(LOG_IN());
     mod.desc=caller;
     mod.name=filename;
     try{
         load(filename,0);
-        LOG_OUT();
-        POST_LOG(caller.c_str()," ");
+        LOG(LOG_OUT());
+        LOG(POST_LOG(caller.c_str()," "));
     }catch(const std::exception& ex){
-        LOG_OUT();
-        POST_LOG(caller.c_str()," ");
+        LOG(LOG_OUT());
+        LOG(POST_LOG(caller.c_str()," "));
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Cannot be created !!!\n => Cannot load : ") + filename + "\n" + _("Reason ") + ex.what();
         throw std::runtime_error(err_msg);
     };
 };
 /* gx module as .la */
 Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller,char** argv,int argc) {
-    PRE_LOG(caller.c_str(),""); 
-	LOG_IN();
+    LOG(PRE_LOG(caller.c_str(),"")); 
+	LOG(LOG_IN());
     mod.desc=caller;
     mod.name=filename;
     try{
         analyse_param(argv,argc);
         load(filename,index);
-        LOG_OUT();
-        POST_LOG(caller.c_str()," "); 
+        LOG(LOG_OUT());
+        LOG(POST_LOG(caller.c_str()," ")); 
     }catch(const std::exception& ex){
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Cannot be created !!!\n => Cannot load : ") + filename + "\n" + _("Reason ") + ex.what();
-        LOG_OUT();
-        POST_LOG(caller.c_str()," ");
+        LOG(LOG_OUT());
+        LOG(POST_LOG(caller.c_str()," "));
         throw std::runtime_error(err_msg);
     };
 };
 /* array of gx_module */
 Gx_module::Gx_module() {
-	LOG_IN();
+	LOG(LOG_IN());
     mod.desc="part of array";
     mod.name="Gemod";
-	LOG_OUT();
+	LOG(LOG_OUT());
 };
 
 Gx_module::~Gx_module(){
-    PRE_LOG(mod.name.c_str(),mod.desc.c_str());
-	LOG_IN();
+    LOG(PRE_LOG(mod.name.c_str(),mod.desc.c_str()));
+	LOG(LOG_IN());
     if (gmodule){
         module_pointer.reset();
         delete gmodule;
     };
-	LOG_OUT();
-    POST_LOG(mod.name.c_str(),mod.desc.c_str());
+	LOG(LOG_OUT());
+    LOG(POST_LOG(mod.name.c_str(),mod.desc.c_str()));
 };
 
 /*** DIALOGS ***/
 void Gx_module::set_param(){};
 /* Read/Write File */
 void Gx_module::read_file_as_datastream(Glib::RefPtr<Gio::File> file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct){
-    LOG_IN();
+    LOG(LOG_IN());
     try {
         unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
         Glib::ustring filename = file->get_path();
@@ -117,7 +117,7 @@ void Gx_module::read_file_as_datastream(Glib::RefPtr<Gio::File> file, std::funct
         + "Reason: " + ex.what();
         throw std::runtime_error(err_msg);
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 void Gx_module::write_file_as_datastream(Glib::RefPtr<Gio::File> file, unsigned char* msg, unsigned int msg_size){
     auto output_stream = file->replace();
@@ -141,7 +141,7 @@ bool Gx_module::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& data_stream) 
 };
 /* Select/Save File */
 void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)> funct){
-    LOG_IN();
+    LOG(LOG_IN());
     try{
         if( dialog_file_select ){
             set_param();
@@ -158,7 +158,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                 } catch (const std::exception & ex) {
                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                     + "Reason: " + ex.what();
-                    std::cerr << err_msg << std::endl;
+                    LOG_ERR(err_msg);
                     //slot_btn_dialog_param.disconnect();
                 };
                 //slot_btn_dialog_param.disconnect();
@@ -178,7 +178,7 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
                 } catch (const std::exception & ex) {
                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                     + "Reason: " + ex.what();
-                    std::cerr << err_msg << std::endl;
+                    LOG_ERR(err_msg);
                     //slot_btn_dialog_param.disconnect();
                     //slot_dialog_file_select.disconnect();
                 };
@@ -193,11 +193,11 @@ void Gx_module::OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)
     }catch (const std::exception & ex) {
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
+        LOG_ERR(err_msg);
         //slot_btn_dialog_param.disconnect();
         //throw std::runtime_error(err_msg);
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> funct){
     try{
@@ -217,7 +217,7 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                         }catch( const std::exception& ex ){
                             std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
                             " Reason: " + ex.what();
-                            std::cerr << err_msg << std::endl;
+                            LOG_ERR(err_msg);
                             //slot_btn_dialog_param.disconnect();
                         };
                         //slot_btn_dialog_param.disconnect();
@@ -225,7 +225,7 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                 }catch( const std::exception& ex ){
                     std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
                     " Reason: " + ex.what();
-                    std::cerr << err_msg << std::endl;
+                    LOG_ERR(err_msg);
                     //slot_btn_dialog_param.disconnect();
                 };
             #else
@@ -243,7 +243,7 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
                     } catch (const std::exception & ex) {
                         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__)\
                         + "Reason: " + ex.what();
-                        std::cerr << err_msg << std::endl;
+                        LOG_ERR(err_msg);
                         //slot_btn_dialog_param.disconnect();
                         //slot_dialog_file_save.disconnect();
                     };
@@ -258,13 +258,13 @@ void Gx_module::OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)> 
     }catch( std::exception& ex){
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
+        LOG_ERR(err_msg);
     };
 };
 
 /* Parameters */
 void Gx_module::OpenDialogParam(Glib::ustring title){
-    LOG_IN();
+    LOG(LOG_IN());
     try{
         if(dialog_param){
             dialog_param->set_transient_for(*(get_window()));
@@ -282,17 +282,17 @@ void Gx_module::OpenDialogParam(Glib::ustring title){
     }catch (const std::exception & ex) {
         std::string err_msg = "From: " + std::string(__PRETTY_FUNCTION__) +
         " Reason: " + ex.what();
-        std::cerr << err_msg << std::endl;
+        LOG_ERR(err_msg);
         //throw std::runtime_error(err_msg);
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 void Gx_module::set_dialog(Glib::ustring title){};
 
 
 /* WINDOW */
 void Gx_module::create_window(){
-    LOG_IN();
+    LOG(LOG_IN());
     try{
         main_scrolledwindow = new Gtk::ScrolledWindow();
         main_window = new Gtk::Window();
@@ -310,10 +310,10 @@ void Gx_module::create_window(){
         //std::cout << " get_name: " << module_manager->get_name() << std::endl;
     }catch (const std::exception& ex){
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Creating window failed !!!\n") + _("Reason ") + ex.what();
-        LOG_OUT();
+        LOG(LOG_OUT());
         throw std::runtime_error(err_msg);
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 }
 
 /*** MODULE ***/
@@ -327,7 +327,7 @@ void Gx_module::analyse_param(char** argv, int argc){
     };
 };
 void Gx_module::extractPath(Glib::ustring filename){
-	LOG_IN();
+	LOG(LOG_IN());
 	/* extract to extpath ( extention, filename, path ,name ,file ) */
 	int start, end;
 	mod.extpath.file=filename;
@@ -338,23 +338,23 @@ void Gx_module::extractPath(Glib::ustring filename){
 	mod.extpath.ext = filename.substr( end+1, filename.length() );
 	mod.extpath.name = filename.substr(start+1, mod.extpath.filename.length() - mod.extpath.ext.length() -1 );
 	/** TODO remove std **/
-	std::cout << " mod.extpath.name " << mod.extpath.name << std::endl;
-	std::cout << " mod.extpath.ext " << mod.extpath.ext << std::endl;
-	std::cout << " mod.extpath.path " << mod.extpath.path << std::endl;
-	std::cout << " mod.extpath.filename " << mod.extpath.filename << std::endl;
-	std::cout << " mod.extpath.file " << mod.extpath.file << std::endl;
-	LOG_OUT();
+    LOG(" mod.extpath.name " + mod.extpath.name);
+	LOG(" mod.extpath.ext " + mod.extpath.ext);
+	LOG(" mod.extpath.path " + mod.extpath.path);
+	LOG(" mod.extpath.filename " + mod.extpath.filename);
+	LOG(" mod.extpath.file " + mod.extpath.file);
+	LOG(LOG_OUT());
 };
 bool Gx_module::set_refxml(Glib::ustring filename)	{
-    LOG_IN();
+    LOG(LOG_IN());
 	try { 
 	    refXml = Gtk::Builder::create_from_file(filename);
-	    LOG_OUT();
+	    LOG(LOG_OUT());
 		return true;
 	}catch (const std::exception& ex){
         std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
         + "\nSet refXml failed with error : " + ex.what();
-        LOG_OUT();
+        LOG(LOG_OUT());
         throw std::runtime_error(err_msg);
 		return false;
 	};
@@ -362,7 +362,7 @@ bool Gx_module::set_refxml(Glib::ustring filename)	{
 /* load .ui or .la in a module construction */
 bool Gx_module::load(Glib::ustring filename, uint8_t index){
     /* TODO: maybe try catch to throw lower throw */
-    LOG_IN();
+    LOG(LOG_IN());
 	extractPath(filename);
 	if ( (mod.extpath.ext == "ui") ||  (mod.extpath.ext == "xml") ){
 		return load_ui(filename,index);
@@ -373,12 +373,12 @@ bool Gx_module::load(Glib::ustring filename, uint8_t index){
         std::cerr << "\tLes types acceptés sont: " << std::endl;
         std::cerr << "\t\t.ui ou .xml pour une UI" << std::endl;
         std::cerr << "\t\t.la or .so or .lo pour un module" << std::endl;
-		LOG_OUT();
+		LOG(LOG_OUT());
 		return false;
 	};
 };
 bool Gx_module::load_ui(Glib::ustring filename, uint8_t index){
-    LOG_IN();
+    LOG(LOG_IN());
     try{
         /* TODO: maybe throw lower part */
         if(set_refxml(filename)){
@@ -393,32 +393,32 @@ bool Gx_module::load_ui(Glib::ustring filename, uint8_t index){
                     }else{
                         main_window = get_gwidget<Gtk::Window>("window_main");
                     };
-                    LOG_OUT();
+                    LOG(LOG_OUT());
                     return false;
                 };
                 set_app_name( rootbox->get_name() );
                 mod.index=index;
-                LOG_OUT();
+                LOG(LOG_OUT());
                 return true;
             }else{
                 std::string err_msg = "from: " + std::string(__PRETTY_FUNCTION__)\
                                     + "\nGtk::Box 'box_main' not found in UI file";
                 throw std::runtime_error(err_msg);
-                LOG_OUT();
+                LOG(LOG_OUT());
                 return false;
             };
         }else{
-            LOG_OUT();
+            LOG(LOG_OUT());
             return false;
         };
     }catch (const std::exception& ex){
-            LOG_OUT();
+            LOG(LOG_OUT());
             throw;
             return false;
     }
 };
 bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
-    LOG_IN();
+    LOG(LOG_IN());
     gmodule = new Glib::Module(filename);
 	if (gmodule) {
         try{
@@ -434,24 +434,24 @@ bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
                 set_app_name( (rootbox)->get_name() );
                 std::cout << "Name of app: " << get_app_name() << std::endl;
                 mod.index=index;
-		        LOG_OUT();
+		        LOG(LOG_OUT());
 		        return true;
 		    }else{
            		std::cerr << "Error : no function or error. " << std::endl;
            		std::cerr << "\tLast module error : " << gmodule->get_last_error() << std::endl;
                 std::cerr << "\tfor module file: " << filename << std::endl;
-       			LOG_OUT();
+       			LOG(LOG_OUT());
 		        return false;
 	        };
         }catch (const std::exception& ex){
-		    LOG_OUT();
+		    LOG(LOG_OUT());
 		    return false;
 	    };   		
 	}else{
 	    std::cerr << "Error : no module." << std::endl;
         std::cerr << "\tlast module load error: " << gmodule->get_last_error() << std::endl;
         std::cerr << "\tfor the module file: " << filename << std::endl;
-		LOG_OUT();
+		LOG(LOG_OUT());
 		return false;
     };
 };
@@ -465,9 +465,9 @@ Gx_module::St_mod_options Gx_module::get_module_options(){
 };
 /* Widgets */
 void Gx_module::set_main_window(Gtk::Window* window){ // set main window on a module
-    LOG_IN();
+    LOG(LOG_IN());
     main_window=window;
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 Gtk::Window* Gx_module::get_window(){
     return main_window;
@@ -479,7 +479,7 @@ Gtk::Box* Gx_module::get_rootbox() 	{
 /*** CSS STYLE ***/
 /* set the CSS style file provided*/
 void Gx_module::set_style_file(Glib::ustring file_css){
-    LOG_IN();
+    LOG(LOG_IN());
     if( std::filesystem::exists(file_css.c_str()) ){
         mod.cssfile=file_css;
         std::cout << _("Css style file: ")<< mod.cssfile << std::endl;
@@ -487,11 +487,11 @@ void Gx_module::set_style_file(Glib::ustring file_css){
         std::cerr<< _("Warning: the css style file ")<< file_css << _(" doesn't exist or is not readable")<< std::endl;
         mod.cssfile="";
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 /** Apply style **/
 void Gx_module::apply_style_to_screen(){
-    LOG_IN();
+    LOG(LOG_IN());
     //clear_style_of_window(main_window);
     //apply_style_to<Gtk::Window>(main_window);
     try{
@@ -533,15 +533,15 @@ void Gx_module::apply_style_to_screen(){
         };
     } catch (const std::exception& ex) {
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed to load style: !!!\n") + mod.cssfile + "\n" + _("Reason => ") + ex.what();
-        LOG_OUT();
+        LOG(LOG_OUT());
         throw std::runtime_error(err_msg);
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 /*template <class widgetType>
 void Gx_module::apply_style_to(widgetType* widget){
     // TODO: clear style before apply a new one 
-    LOG_IN();
+    LOG(LOG_IN());
     try{
         auto css = Gtk::CssProvider::create();
         css->load_from_path(cssfile);
@@ -552,7 +552,7 @@ void Gx_module::apply_style_to(widgetType* widget){
         std::cout << "Failed to load style:" << ex.what() << std::endl;
         std::cout << "\tCSS file: " << cssfile << std::endl;
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };*/
 /** Clear Style **/
 /*void Gx_module::clear_style_for_screen(Glib::RefPtr<Gtk::StyleProvider> css_provider){
@@ -573,7 +573,7 @@ void Gx_module::clear_style_of(widgetType* widget){
 
 /*** FONTS ***/
 void Gx_module::set_custom_font_file(Glib::ustring custom_font_file){
-    LOG_IN();
+    LOG(LOG_IN());
     if( std::filesystem::exists(custom_font_file.c_str()) ){
         mod.custom_font=custom_font_file;
         std::cout << _("Custom font file: ")<< mod.custom_font << std::endl;
@@ -581,7 +581,7 @@ void Gx_module::set_custom_font_file(Glib::ustring custom_font_file){
         std::cerr<< _("Warning: the custom font file ")<< custom_font_file << _(" doesn't exist or is not readable")<< std::endl;
         mod.custom_font="";
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 void Gx_module::load_custom_font() {
     /*
@@ -599,7 +599,7 @@ void Gx_module::load_custom_font() {
             //};
         }catch(const std::exception& ex){
             std::cerr << _("Error: ") + std::string(__PRETTY_FUNCTION__) +" -> " << ex.what() << std::endl;
-            LOG_OUT();
+            LOG(LOG_OUT());
         };
     };
 };
@@ -615,7 +615,7 @@ void Gx_module::load_font_into_pango() {  // Function to make the custom font av
         };
     }catch(const std::exception & ex){
         std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + _(" Failed load font: !!!\n") + full_path.string() + "\n" + _("Reason => ") + ex.what();
-        LOG_OUT();
+        LOG(LOG_OUT());
         throw std::runtime_error(err_msg);
     };
 };
@@ -751,21 +751,21 @@ void Gx_module::dettach_signals(){};
 /*** MOD ***/
 /* Add/remove */
 bool Gx_module::set_mod( Glib::ustring filename, uint8_t index ) 	{
-    LOG_IN();
+    LOG(LOG_IN());
 	if( load(filename,index) ){
-	    LOG_OUT();
+	    LOG(LOG_OUT());
 	    return true;
 	}else{
-	    LOG_OUT();
+	    LOG(LOG_OUT());
 	    return false;
 	};
 };
-void Gx_module::unset_mod()	{ LOG_IN(); 
+void Gx_module::unset_mod()	{ LOG(LOG_IN()); 
 	/*dettach_signals();
 	if ( mod.extpath.ext == "la" ){
 		delete module;
 	};*/
-    LOG_OUT(); 
+    LOG(LOG_OUT()); 
 };
 /* extpath */
 void Gx_module::set_module_name(Glib::ustring name) { mod.extpath.name = name; };	
@@ -779,7 +779,7 @@ Glib::ustring  Gx_module::get_path(){	return mod.extpath.path ; };
 /* mod */
 /* Set icon */
 void Gx_module::set_icon_file(Glib::ustring icon_file){
-    LOG_IN();
+    LOG(LOG_IN());
     if( icon_file != ""){
         if( std::filesystem::exists(icon_file.c_str()) ){
             mod_options.icon=icon_file;
@@ -789,7 +789,7 @@ void Gx_module::set_icon_file(Glib::ustring icon_file){
             mod_options.icon="";
         };
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 void Gx_module::set_app_icon(Gtk::Window* main_window){ // UNUSED
     // only for the windows icon on title, doesn't change the panel icon

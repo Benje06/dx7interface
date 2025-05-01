@@ -27,19 +27,35 @@
 #include "main.h"
 
 int main (int argc, char *argv[]){
-    LOG_IN ();
+    // Initialize logging system
+    LogManager::instance().add_handler(
+        std::make_shared<Logger>( "app.log", 1 )
+    );
+    /* 
+     *   Debug LOG manager
+     *   auto& lm = LogManager::instance();
+     *   std::cout << "LogManager address (main): " << &lm << std::endl;
+     */
+    LOG("*************************** Starting ***************************** ");
+    LOG("\t" + get_time());
+    LOG("****************************************************************** ");
+
+    LOG(LOG_IN());
     init_nls();
     char interface=0;
+    std::string msg, error_msg;
     /* check params */
     for ( int i = 0 ; i < argc ; i++){
         if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
             interface=gchar(argv[i+1][0]);
-            std::cout << _("Interface graphic mode : ") << interface << std::endl;
+            msg = _("Interface graphic mode : ") + interface;
+            LOG( msg );
         };
     };
     if ( interface == 0 ){
         interface='g'; //force only supported mode
-        std::cout << _("Interface graphic mode : ") << interface << std::endl;
+        std::string msg = _("Interface graphic mode : ") + interface;
+        LOG( msg );
     };
     try{
         switch (interface) {
@@ -50,15 +66,17 @@ int main (int argc, char *argv[]){
                             break;
                     };
                     default:{
-                            std::cout << _("The option : ")<< interface << _(" is not valid for an interface type") << std::endl;
+                        std::string msg = _("The option : ") + interface + _(" is not valid for an interface type");
+                        LOG(msg);
                         break;
                     };
         };
     }catch(const std::exception& ex){
-        std::cerr << _("Error: in application start -> ") << ex.what() << std::endl;
-        LOG_OUT();
+        err_msg = error( __PRETTY_FUNCTION__, _("Error: in application start -> ") , ex.what() );
+        LOG_ERR( err_msg );
+        LOG(LOG_OUT());
         return 1;
     };
-    LOG_OUT ();
+    LOG(LOG_OUT());
     return 0;
 };
