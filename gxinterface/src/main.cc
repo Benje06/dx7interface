@@ -43,7 +43,7 @@ int main (int argc, char *argv[]){
     LOG(LOG_IN());
     init_nls();
     char interface=0;
-    std::string msg, error_msg;
+    std::string msg, err_msg;
     /* check params */
     for ( int i = 0 ; i < argc ; i++){
         if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
@@ -66,7 +66,7 @@ int main (int argc, char *argv[]){
                             break;
                     };
                     default:{
-                        std::string msg = _("The option : ") + interface + _(" is not valid for an interface type");
+                        std::string msg = _("The option : ") + std::to_string(interface) + _(" is not valid for an interface type");
                         LOG(msg);
                         break;
                     };

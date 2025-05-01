@@ -359,3 +359,14 @@ gxinterface/src/.libs/libgxinterface_0_0_1_la-gxinterface.o
 gxinterface/src/.libs/libgxinterface_0_0_1_la-gxmodule.o
 gxinterface/src/.libs/libgxinterface_0_0_1_la-gxthread.o
 gxinterface/src/.libs/libgxinterface_0_0_1_la-logger.o
+gxinterface/src/libgxlogmanager_0_0_1_la-common.lo
+gxinterface/src/libgxlogmanager_0_0_1_la-common.o
+gxinterface/src/libgxlogmanager_0_0_1_la-logger.lo
+gxinterface/src/libgxlogmanager_0_0_1_la-logger.o
+gxinterface/src/.deps/libgxlogmanager_0_0_1_la-common.Plo
+gxinterface/src/.deps/libgxlogmanager_0_0_1_la-logger.Plo
+gxinterface/src/.libs/gxinterface_ltshwrapper
+gxinterface/src/.libs/libgxlogmanager_0_0_1_la-common.o
+gxinterface/src/.libs/libgxlogmanager_0_0_1_la-logger.o
+gxinterface/src/.libs/lt-gxinterface.c
+dx7interface/src/.deps/dx7interface_0_0_1_la-dx7interface.Tpo
