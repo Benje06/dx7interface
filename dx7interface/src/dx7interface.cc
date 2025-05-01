@@ -31,8 +31,11 @@ extern "C" {
 
 Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME) {
     /*basic constructor */
-    auto& lm = LogManager::instance();
-    std::cout << "LogManager address (main): " << &lm << std::endl;
+    /* 
+     * Debug for logmanager
+     * auto& lm = LogManager::instance();
+     * std::cout << "LogManager address (main): " << &lm << std::endl;
+     */
     LOG( LOG_IN() );
     block_midi();
     block_ui();

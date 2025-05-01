@@ -46,7 +46,9 @@
         GXLOG void add_handler(std::shared_ptr<Logger>);
         GXLOG void log(const std::string&);
         GXLOG void log_error(const std::string&);
+        GXLOG void set_log_level(unsigned int);
     private:
+        std::string msg;
         std::mutex manager_mutex;
         std::vector<std::shared_ptr<Logger>> handlers;
         LogManager();

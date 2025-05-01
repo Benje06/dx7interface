@@ -11,21 +11,15 @@ bin_PROGRAMS = \
 	gxinterface
 
 gxinterface_SOURCES = \
-	debug.h\
-	common.h common.cc\
-	gxthread.h gxthread.cc\
-	gxmodule.h gxmodule.cc\
-	gemod.h gemod.cc\
-	gxinterface.h gxinterface.cc\
-	main.h main.cc\
-	lang.h
+	gxinterface.h gxinterface.cc \
+	main.h main.cc
 
 gxinterface_CXXFLAGS = $(AM_CXXFLAGS)
 gxinterface_CPPFLAGS = \
+	-I$(top_srcdir)/lib
 	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
-	-DGXLOG_IMPORTS \
-	-I$(top_srcdir)/lib
+	-DGXLOG_IMPORTS
 
 ## $(AM_CPPFLAGS) $(DEPS_CFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)
 
@@ -39,7 +33,8 @@ gxinterface_CPPFLAGS += \
 endif
 
 gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS) \
-	-L../lib/.libs $(top_builddir)/lib/.libs/libgxlogmanager-0.0.1-1.dll
+	-L../lib/.libs $(top_builddir)/lib/.libs/libgxlogmanager-0.0.1-1.dll \
+	-L../lib/.libs $(top_builddir)/lib/.libs/libgxinterface-0.0.1-1.dll
 
 gxinterface_LDFLAGS = \
 	-no-undefined \

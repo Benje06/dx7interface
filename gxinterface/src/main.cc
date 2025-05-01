@@ -27,34 +27,42 @@
 #include "main.h"
 
 int main (int argc, char *argv[]){
+    char interface=0;
+    std::string msg="", err_msg="";
+    unsigned int log_lvl=2;
     // Initialize logging system
     LogManager::instance().add_handler(
-        std::make_shared<Logger>( "app.log", 1 )
+        std::make_shared<Logger>( "app.log", log_lvl )
     );
     /* 
      *   Debug LOG manager
      *   auto& lm = LogManager::instance();
      *   std::cout << "LogManager address (main): " << &lm << std::endl;
      */
-    LOG("*************************** Starting ***************************** ");
-    LOG("\t" + get_time());
-    LOG("****************************************************************** ");
+    LOG("**************************** Starting *****************************");
+    LOG("\t\t\t\t\t\t" + get_time());
+    LOG("*******************************************************************");
 
     LOG(LOG_IN());
     init_nls();
-    char interface=0;
-    std::string msg, err_msg;
+
     /* check params */
     for ( int i = 0 ; i < argc ; i++){
         if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
             interface=gchar(argv[i+1][0]);
-            msg = _("Interface graphic mode : ") + interface;
+            msg = _("Interface graphic mode : ");
+            msg += interface;
             LOG( msg );
+        };
+        if ( (argc > 1) && std::string(argv[i]) == "-l" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
+            //log_lvl=static_cast<unsigned int>(argv[i+1][0]);
+            LogManager::instance().set_log_level(4);
         };
     };
     if ( interface == 0 ){
         interface='g'; //force only supported mode
-        std::string msg = _("Interface graphic mode : ") + interface;
+         msg = _("Interface graphic mode : ");
+         msg += interface;
         LOG( msg );
     };
     try{
@@ -66,7 +74,9 @@ int main (int argc, char *argv[]){
                             break;
                     };
                     default:{
-                        std::string msg = _("The option : ") + std::to_string(interface) + _(" is not valid for an interface type");
+                        msg = _("The option: ");
+                        msg += interface;
+                        msg +=_(" is not valid for an interface type");
                         LOG(msg);
                         break;
                     };

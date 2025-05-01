@@ -3,7 +3,7 @@
 
 Synth::Synth(Glib::ustring name){
     caller = name;
-    LOG_ERR( caller );
+    LOG( caller );
     LOG( LOG_IN());
     init_nls();
     #if defined(__RtMidi__)
@@ -11,13 +11,13 @@ Synth::Synth(Glib::ustring name){
         port_out = new RtMidiOut();
     #endif
     connect_midi(name);
-    LOG_ERR( caller );
+    LOG( caller );
     LOG( LOG_OUT());
 };
 Synth::~Synth(){
-    LOG_ERR( caller );
+    LOG( caller );
     deconnect_midi();
-    LOG_ERR( caller );
+    LOG( caller );
 };
 
 void Synth::unblock_midi(){

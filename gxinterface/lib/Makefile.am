@@ -7,12 +7,12 @@ AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 
 ## LIBS
+
+## LOGMANAGER
 lib_LTLIBRARIES = \
 	libgxlogmanager-0.0.1.la
 
-## LOGMANAGER
 libgxlogmanager_0_0_1_la_SOURCES = \
-	../src/common.h ../src/common.cc\
 	../src/logger.h ../src/logger.cc
 
 libgxlogmanager_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
@@ -49,19 +49,13 @@ endif
 
 libgxlogmanager_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 
-## libgxinterface
-
+## LIB GXINTERFACE
 lib_LTLIBRARIES += \
     libgxinterface-0.0.1.la
 
 libgxinterface_0_0_1_la_SOURCES = \
-	../src/lang.h\
-	../src/debug.h\
-	../src/common.h ../src/common.cc\
-	../src/gxthread.h ../src/gxthread.cc\
-	../src/gxmodule.h ../src/gxmodule.cc\
-	../src/gemod.h ../src/gemod.cc\
-	../src/gxinterface.cc ./src/gxinterface.h
+	../src/gxmodule.h ../src/gxmodule.cc \
+	../src/gemod.h ../src/gemod.cc
 
 libgxinterface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS) -fPIC
 libgxinterface_0_0_1_la_CPPFLAGS = \
@@ -95,6 +89,50 @@ else
 libgxinterface_0_0_1_la_LDFLAGS += \
     -rdynamic
 endif
+
+## LIB GXTHREAD
+lib_LTLIBRARIES += \
+	libgxthread-0.0.1.la
+
+libgxthread_0_0_1_la_SOURCES = \
+	../src/gxthread.h ../src/gxthread.cc
+
+libgxthread_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
+libgxthread_0_0_1_la_CPPFLAGS = \
+	-I$(top_srcdir)/src \
+    -I$(top_srcdir)/lib \
+	$(AM_CPPFLAGS) $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
+	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
+	-DGXLOG_IMPORTS \
+
+if PLATFORM_LINUX
+libgxthread_0_0_1_la_CPPFLAGS += \
+	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
+    -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\" \
+    -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\" \
+    -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\" \
+    -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+endif
+
+libgxthread_0_0_1_la_LIBADD = \
+	libgxinterface-0.0.1-1.dll \
+	$(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+
+
+libgxthread_0_0_1_la_LDFLAGS = \
+	-version-info $(SO_VERSION) \
+	-no-undefined -Wl,--no-undefined
+
+if PLATFORM_WINDOWS
+libgxthread_0_0_1_la_LDFLAGS += \
+	-Wl,--export-all-symbols \
+	-lgdi32
+else
+libgxthread_0_0_1_la_LDFLAGS += \
+    -rdynamic
+endif
+
+libgxthread_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 
 #### HEADERS IN INCLUDE ####			
 ## This only works if the directory hierarchy in the
