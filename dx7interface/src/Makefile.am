@@ -24,6 +24,8 @@ dx7interface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
 dx7interface_0_0_1_la_CPPFLAGS = \
 	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)\
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
+	-DGXLOG_IMPORTS \
+	-I$(top_srcdir)/../gxinterface/lib
 
 if PLATFORM_LINUX
 dx7interface_0_0_1_la_CPPFLAGS += \
@@ -38,7 +40,8 @@ dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_L
 
 dx7interface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
-	-module -no-undefined -Wl,--no-undefined,--gc-sections
+	-module -no-undefined -Wl,--no-undefined,--gc-sections\
+	-L../../gxinterface/lib/.libs $(top_builddir)/../gxinterface/lib/.libs/libgxinterface-0.0.1-1.dll
 
 ## Platform-specific additions
 if PLATFORM_WINDOWS

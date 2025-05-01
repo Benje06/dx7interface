@@ -2,8 +2,8 @@
 SUBDIRS = \
 	po\
 	data\
-	src\
-	lib
+	lib\
+	src
 
 INTLTOOL_FILES = \
 		intltool-extract.in \

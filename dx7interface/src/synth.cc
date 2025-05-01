@@ -3,21 +3,21 @@
 
 Synth::Synth(Glib::ustring name){
     caller = name;
-    std::cerr << caller;
-    LOG_IN();
+    LOG_ERR( caller );
+    LOG( LOG_IN());
     init_nls();
     #if defined(__RtMidi__)
         port_in = new RtMidiIn();
         port_out = new RtMidiOut();
     #endif
     connect_midi(name);
-    std::cerr << caller;
-    LOG_OUT();
+    LOG_ERR( caller );
+    LOG( LOG_OUT());
 };
 Synth::~Synth(){
-    std::cerr << caller;
+    LOG_ERR( caller );
     deconnect_midi();
-    std::cerr << caller;
+    LOG_ERR( caller );
 };
 
 void Synth::unblock_midi(){
@@ -29,7 +29,7 @@ void Synth::block_midi(){
 };
 
 void Synth::connect_midi(Glib::ustring name){
-    LOG_IN();
+    LOG( LOG_IN());
     #if defined(__ALSA__)
         snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_DUPLEX, 0);
         //list_midi_ports();
@@ -65,72 +65,74 @@ void Synth::connect_midi(Glib::ustring name){
             unsigned int portCount;
             portCount = port_in->getPortCount();
             if (portCount == 0) {
-                std::cout << "No MIDI Input Ports available.\n";
+                LOG( std::string(_("No MIDI Input Ports available.")));
             }else{
-                std::cout << "Available Midi Input Ports"  << std::endl;
+                LOG( std::string(_("Available Midi Input Ports: ")));
                 for (unsigned int i = 0; i < portCount; i++) {
                     std::string portName = port_in->getPortName(i);
                     if( portName.find(name+"_in") == 0 ){
                         port_in_index = i;
                     }
-                    std::cout << i << ": " << portName << std::endl;
+                    LOG( std::string(std::to_string(i) + ": " + std::string(portName) ));
                 }
                 port_in->openPort(port_in_index);
                 port_in_name = port_in->getPortName(port_in_index);
-                std::cout << "Opened MIDI Input Port: " << port_in->getPortName(port_in_index) << "\n";
+                LOG( std::string(_("Opened MIDI Input Port: ")) + std::string(port_in->getPortName(port_in_index)));
                 port_in->setCallback(&Synth::midiInCallback, this);
             }
             portCount = port_out->getPortCount();
             if (portCount == 0) {
-                std::cout << "No MIDI Output Ports available.\n";
+                LOG( std::string(_("No MIDI Output Ports available.")));
             }else{
-                std::cout << "Available Midi Ouput Ports"  << std::endl;
+                LOG( std::string(_("Available Midi Ouput Ports: ")));
                 for (unsigned int i = 0; i < portCount; i++) {
                     std::string portName = port_out->getPortName(i);
                     if( portName.find(name+"_out") == 0 ){
                         port_out_index = i;
                     }
-                    std::cout << i << ": " << portName << std::endl;
+                    LOG( std::string(std::to_string(i) + std::string(": ") + std::string(portName)));
                 }
                 port_out->openPort(port_out_index);
                 port_out_name = port_out->getPortName(port_out_index);
-                std::cout << "Opened MIDI Output Port: " << port_out->getPortName(port_out_index) << "\n";
+                LOG( std::string(_("Opened MIDI Output Port: ")) + std::string(port_out->getPortName(port_out_index)));
             }
             // Open virtual ports with specified names
             //port_in->openVirtualPort(port_in_name);
             //port_out->openVirtualPort(port_out_name);
-        } catch (const RtMidiError& error) {
-            std::cerr << "Error initializing MIDI: " << error.getMessage() << std::endl;
+        } catch (const RtMidiError& ex) {
+            std::string err_msg = _("Error initializing MIDI: ") + std::string(__PRETTY_FUNCTION__)\
+            + _("Reason: ") + ex.getMessage();
+            LOG_ERR(err_msg);
             throw;
         }    
     #endif
-    LOG_OUT();
+    LOG( LOG_OUT());
 };
 
 void Synth::deconnect_midi(){
-    LOG_IN();
+    LOG( LOG_IN());
     #if defined(__ALSA__)
         snd_seq_close(seq_handle);
     #endif
     #if defined(__RtMidi__)
         if (port_in && port_in->isPortOpen()) {
             port_in->closePort(); // Close the virtual input port
-            std::cout << "Disconnected MIDI input port: " << port_in_name << std::endl;
+            LOG( std::string(_("Disconnected MIDI input port: ")) + std::string(port_in_name) );
         }
 
         if (port_out && port_out->isPortOpen()) {
             port_out->closePort(); // Close the virtual output port
-            std::cout << "Disconnected MIDI output port: " << port_out_name << std::endl;
+            LOG( std::string(_("Disconnected MIDI output port: ")) + std::string(port_out_name) );
         };
     #endif
-    LOG_OUT();
+    LOG( LOG_OUT());
 };
 
 void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
-    //LOG_IN();
+    //LOG( LOG_IN());
     /* TODO; use seq queue */
     //#ifdef USE_ALSA_MIDI
-    //std::cerr << (int)block_midi_msg << std::endl;
+    //LOG_ERR( (int)block_midi_msg ));
     if (!block_midi_msg){
         #if defined(__ALSA__)
             /* seq event */
@@ -165,7 +167,7 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
             // TODO clear message;
         #endif
     };
-    //LOG_OUT();
+    //LOG( LOG_OUT());
 };
 
 /*** File ***/
@@ -187,14 +189,14 @@ void Synth::parse_sysex( Glib::RefPtr<Gio::File> file, Glib::RefPtr<Gio::DataInp
 /** BANK **/
 void Synth::set_bank( Glib::RefPtr<Gio::File> bank_file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct ){
     // GENERIC
-    LOG_IN();
+    LOG( LOG_IN() );
     block_ui();
     clean_bank();
     read_file_as_datastream(bank_file,funct); //copy file content in _modif et _origin
     Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
     Glib::ustring name = filename.substr(0,filename.find_last_of("."));
     set_bank_name(name);
-    LOG_OUT();
+    LOG( LOG_OUT() );
 };
 
 #if defined(__ALSA__)
@@ -244,7 +246,7 @@ void Synth::set_bank( Glib::RefPtr<Gio::File> bank_file, std::function<void(Glib
                 int port = snd_seq_port_info_get_port(pinfo);
                 const char *port_name = snd_seq_port_info_get_name(pinfo);
 
-                printf("  Port %d: %s\n", port, port_name);
+                printf(" Port %d: %s\n", port, port_name);
             }
         }
     };
@@ -293,7 +295,7 @@ bool Synth::Run() {
         if (it != enumMap.end()) {
             return it->second;
         }
-        return "Unknown Event";
+        return std::string(_("Unknown Event Type"));
     };
 #endif
 #if defined(__RtMidi__)
@@ -325,41 +327,51 @@ bool Synth::Run() {
         *      snd_seq_event_data_t data;
         * } snd_seq_event_t;
         */
-        std::cout << std::endl;
-        std::cout << "event: " << get_event_name(int(ev->type)) << " "
-        << "type: " << int(ev->type) << std::endl;
-        std::cout << "flags: " << int(ev->flags) << " "
-        << "tag: " << int( ev->tag) << '\t'
-        << "queue: " << int(ev->queue) << std::endl;
-        std::cout << "ticks: " << int(ev->time.tick) << " "
-        << "time: " << int(ev->time.time.tv_sec) << std::endl;
-        std::cout << "source: " << int( ev->source.client) << " " << '\t'
-        << "dest: " << int(ev->dest.client) << std::endl;
-        std::cout << "channel: " << int(ev->data.control.channel)+1 << std::endl;
+        std::string msg;
+        LOG("");
+        msg = _("event: ")) + get_event_name(int(ev->type)) + " "
+        + "type: " + int(ev->type);
+        LOG( msg );
+        msg = "flags: " + int(ev->flags) + " "
+        + "tag: " + int( ev->tag) + '\t'
+        + "queue: " + int(ev->queue) ;
+        LOG( msg );
+        msg = "ticks: " + int(ev->time.tick) + " "
+        + "time: " + int(ev->time.time.tv_sec);
+        LOG( msg );
+        msg = "source: " + int( ev->source.client) + " " + '\t'
+        + "dest: " + int(ev->dest.client);
+        LOG( msg );
+        msg = "channel: " + int(ev->data.control.channel)+1;
+        LOG( msg );
         switch (ev->type) {
             case SND_SEQ_EVENT_NOTEON:
-                std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
-                << "value: " << int(ev->data.note.note) << std::endl;;
+                msg = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
+                + "value: " + int(ev->data.note.note);
+                LOG( msg );
                 break;
             case SND_SEQ_EVENT_NOTEOFF:
-                std::cout << "Channel: "  << (int(ev->data.control.channel) +1) << " " << '\t'
-                << "value: " <<  int(ev->data.note.note) << std::endl;
+                msg = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
+                + "value: " +  int(ev->data.note.note);
+                LOG( msg );
                 break;
             case SND_SEQ_EVENT_CONTROLLER:
-                std::cout << "Channel: " << (int(ev->data.control.channel) +1) << " " << '\t'
-                << "param: "  << ev->data.control.param << " "
-                << "value: " << int(ev->data.control.value) << std::endl;
+                msg = "Channel: " + (int(ev->data.control.channel) +1) + " " + '\t'
+                + "param: "  + ev->data.control.param + " "
+                + "value: " + int(ev->data.control.value);
+                LOG( msg );
                 break;
             case SND_SEQ_EVENT_PITCHBEND:
-                std::cout << "Channel: " << (int(ev->data.control.channel) +1)<< " " << '\t'
-                << "value: " << int(ev->data.control.value) << std::endl;
+                msg ="Channel: " + (int(ev->data.control.channel) +1)+ " " + '\t'
+                + "value: " + int(ev->data.control.value) ;
+                LOG( msg );
                 break;
             case SND_SEQ_EVENT_PGMCHANGE:
                 /*event data type = snd_seq_ev_ctrl_t */
-                std::cout <<  "Channel : "  << (int(ev->data.control.channel) +1) << '\t'
-                << "param : "  << ev->data.control.param << " "
-                << "value : " << int(ev->data.control.value)
-                << std::endl;
+                msg = "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
+                + "param : "  + ev->data.control.param + " "
+                + "value : " + int(ev->data.control.value);
+                LOG( msg );
                 break;
         };
 
@@ -424,7 +436,7 @@ bool Synth::Run() {
             *  SND_SEQ_EVENT_USR_VAR3 	reserved for user apps; event data type = snd_seq_ev_ext_t
             *  SND_SEQ_EVENT_USR_VAR4 	reserved for user apps; event data type = snd_seq_ev_ext_t
             *  SND_SEQ_EVENT_NONE 	NOP; ignored in any case */
-        std::cout << std::endl;
+        LOG("");
     };
 #endif
 #if defined(__RtMidi__)
@@ -435,43 +447,51 @@ bool Synth::Run() {
         unsigned char channel = (status & 0x0F) + 1; // Low nibble indicates the channel (1-based)
 
         // Print event type and channel
-        std::cout << "Event: " << get_event_name(eventType) << " "
-                  << "Type: " << int(eventType) << std::endl;
-        std::cout << "Channel: " << int(channel) << std::endl;
+        std::string msg = _("Event: ") + get_event_name(eventType) + " "
+                  + _("Type: ") + std::to_string(int(eventType));
+        LOG( msg );
+        msg = _("Channel: ") + int(channel);
+        LOG( msg );
         switch (eventType) {
             case 0x90: { // Note On
                 unsigned char note = message[1];
                 unsigned char velocity = message[2];
-                std::cout << "Note: " << int(note)
-                          << ", Velocity: " << int(velocity) << std::endl;
+                msg = _("Note: ") + std::to_string(int(note)) 
+                    + _(", Velocity: ") + std::to_string(int(velocity));
+                LOG( msg );
                 break;
             }
             case 0x80: { // Note Off
                 unsigned char note = message[1];
                 unsigned char velocity = message[2];
-                std::cout << "Note: " << int(note)
-                          << ", Velocity: " << int(velocity) << std::endl;
+                msg = _("Note: ") + std::to_string(int(note))
+                    + _(", Velocity: ") + std::to_string(int(velocity));
+                LOG( msg );
                 break;
             }
             case 0xB0: { // Control Change
                 unsigned char controller = message[1];
                 unsigned char value = message[2];
-                std::cout << "Controller: " << int(controller)
-                          << ", Value: " << int(value) << std::endl;
+                msg = _("Controller: ") + std::to_string(int(controller))
+                    + _(", Value: ") + std::to_string(int(value));
+                LOG( msg );
                 break;
             }
             case 0xE0: { // Pitch Bend
-                unsigned short pitchBend = (message[2] << 7) | message[1]; // Combine MSB and LSB
-                std::cout << "Value: " << pitchBend << std::endl;
+                unsigned short pitchBend = (message[2] + 7) | message[1]; // Combine MSB and LSB
+                msg = _("Value: ") + pitchBend;
+                LOG( msg );
                 break;
             }
             case 0xC0: { // Program Change
                 unsigned char program = message[1];
-                std::cout << "Program: " << int(program) << std::endl;
+                msg = _("Program: ") + std::to_string(int(program));
+                LOG( msg );
                 break;
             }
             default:
-                std::cout << "Unknown or unsupported MIDI event." << std::endl;
+                msg = _("Unknown or unsupported MIDI event.");
+                LOG( msg );
                 break;
         };
     };

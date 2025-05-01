@@ -26,7 +26,7 @@
 #include "gxinterface.h"
 /* class Ge_interface */
 Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HANDLES_COMMAND_LINE) {
-    LOG_IN();
+    LOG(LOG_IN());
     try{
         init_nls();
         /* analyse of command line parameters */
@@ -34,26 +34,28 @@ Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HAND
         /* TODO : set log handler */
         //setup_log_handlers();
     }catch(const std::exception& ex){
-        LOG_OUT();
+        err_msg = error( __PRETTY_FUNCTION__, _("Failed to construct gxinterface"), ex.what() );
+        LOG_ERR( err_msg );
+        LOG(LOG_OUT());
         throw;
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 Gx_interface::~Gx_interface(){
-    LOG_IN();
+    LOG(LOG_IN());
     delete module_manager;
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 Glib::RefPtr<Gx_interface> Gx_interface::create(){
-    LOG_IN();
+    LOG(LOG_IN());
     return Glib::make_refptr_for_instance<Gx_interface>(new Gx_interface());
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 void Gx_interface::on_activate(){
-    LOG_IN();
+    LOG(LOG_IN());
     try{
         if( itype == Glib::ustring("interface" )) {
             module_manager=new Gemod(iname);
@@ -67,13 +69,14 @@ void Gx_interface::on_activate(){
             (*module_manager->get_window()).set_visible(true);
         };
     }catch(const std::exception& ex){
-        std::cerr << _("Error: in application activate -> ") << ex.what() << std::endl;
+        err_msg = error( __PRETTY_FUNCTION__, _("Error: in application activate -> "), ex.what() );
+        LOG_ERR( err_msg );
     };
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line){
-    LOG_IN();
+    LOG(LOG_IN());
     //argc;
     argv = command_line->get_arguments(argc);
     int i;
@@ -89,23 +92,28 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
             if ( file == NULL ) {						// try open fil
                 iname=UI_FILE;
                 if ( Glib::ustring(argv[i]) == "-m" ){
-                    std::cout << _("!!! Module ") << argv[i+1] << _(" doesn't exist or could not be read !!!") << std::endl;
+                    msg = _("Module ") + std::string(argv[i+1]) + _(" doesn't exist or could not be read !!!");
+                    LOG( msg );
                 }else{
-                    std::cout << _("!!! Interface file ") << argv[i+1] << _(" does not exist or could not be read !!!") << std::endl;
+                    msg = _("Interface file ") + std::string(argv[i+1]) + _(" doesn't exist or could not be read !!!");
+                    LOG( msg );
                 };
-                std::cout << _("Loading default interface file.") << std::endl;
+                msg = _("Loading default interface file.");
+                LOG( msg );
             }else{
                 if ( Glib::ustring(argv[i]) == "-m" ){
                     itype="module";
-                    std::cout << _("Loading module.") <<std::endl;
+                    msg = _("Loading module.");
+                    LOG( msg );
                 };
                 iname=Glib::ustring(argv[i+1]);
                 fclose(file);
             };
         };
     };
-    std::cout << _("Loading file: ")<< iname <<std::endl;
-    LOG_OUT();
+    msg = _("Loading file: ") + iname;
+    LOG( msg );
+    LOG(LOG_OUT());
     activate();
     return 0;
 };

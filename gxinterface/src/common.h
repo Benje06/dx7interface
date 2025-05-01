@@ -47,11 +47,18 @@
         #define MOD_DATA_DIRECTORY PROGRAMNAME_DATA_DIR
         #define MOD_UI_DIRECTORY PROGRAMNAME_UI_DIR
     #endif
+    #define STRINGIFY(x) #x
+    #define TOSTRING(x) STRINGIFY(x)
     #include "debug.h"
 
     #include <iostream>
     #include <filesystem>
     #include <regex>
+    #include <chrono>
+    #include <ctime>
+    #include <iomanip>
+    #include <sstream>
+    #include <string>
 
     #if defined(__WIN32) || defined(__MINGW32__)
         #define WIN32_LEAN_AND_MEAN
@@ -143,6 +150,27 @@
     constexpr std::size_t operator""_hash(const char* str, std::size_t) {
         return str_const_hash(str);
     };
+    inline std::string get_time(){
+        auto now = std::chrono::system_clock::now();
+        std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+        
+        std::tm tm_buffer;
+        #if defined(__WIN32) || defined(__MINGW32__)
+            localtime_s(&tm_buffer,&now_time);
+        #else
+            localtime_r(&now_time, &tm_buffer);  // POSIX thread-safe version
+        #endif
+        std::ostringstream ostr;
+        ostr << std::put_time(&tm_buffer, "%Y-%m-%d %H:%M:%S");
+        return ostr.str();
+    };
+    inline std::string error(std::string from, std::string what, std::string why){
+        std::string msg = _("From: ") + from + "\n\t"
+                        + what + "\n\t"
+                        +_("Reason => ") + why;
+        return msg;
+    };
+    /*** INIT NLS ***/
     inline void init_nls(){
         #ifdef ENABLE_NLS
             setlocale (LC_ALL, "");
@@ -152,5 +180,7 @@
             bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
         #endif
     };
+
+    #include "logger.h"
 #endif /* interface_COMMON_H */
 

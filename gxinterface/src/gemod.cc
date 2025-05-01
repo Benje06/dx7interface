@@ -38,47 +38,47 @@
 * load the UI and create space for modules
 */
 Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
-	LOG_IN();
+	LOG(LOG_IN());
 	try{
 		modules=new Gx_module[nb_max_module];
 		attach_signals();
-		LOG_OUT();
+		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
-		LOG_OUT();
+		LOG(LOG_OUT());
 		throw;
 	};
 };
 /* Gemod as module module manager with specified numbers of module same as precedent */
 Gemod::Gemod(Glib::ustring module_name, uint8_t max_mod) : Gx_module(module_name, "Gemod"){
-	LOG_IN();
+	LOG(LOG_IN());
 	try{
 		max_modules=max_mod;
 		modules=new Gx_module[max_mod];
 		attach_signals();
-		LOG_OUT();
+		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
-		LOG_OUT();
+		LOG(LOG_OUT());
 		throw;
 	};
 };
 /* Gemod as module call if type=module */
 Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : Gx_module(module_name,index,"Gemod",argv,argc){
-	LOG_IN();
+	LOG(LOG_IN());
 	try{
 		if(get_rootbox()){
 			set_app_name( (get_rootbox())->get_name() );
 			modules=new Gx_module[nb_mod];
 			create_window();
 		};
-		LOG_OUT();
+		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
-		LOG_OUT();
+		LOG(LOG_OUT());
 		throw;
 	};
 };
 
 Gemod::~Gemod(){
-	LOG_IN();
+	LOG(LOG_IN());
 	// TODO: clean all what is constructed by new
 	if( max_modules != 1 ){
 		dettach_signals();
@@ -88,7 +88,7 @@ Gemod::~Gemod(){
 	if(modules){
 		delete[] modules;
 	};
-	LOG_OUT();
+	LOG(LOG_OUT());
 };
 
 /*** MODULE ***/
@@ -128,7 +128,7 @@ Gtk::Box* Gemod::get_module_root(uint8_t index)	{
 };
 /* !!! CAUTION !!! get root widget by module name based on module index can be empty */
 Gtk::Box* Gemod::get_module_root(Glib::ustring module_name){
-	LOG_IN();
+	LOG(LOG_IN());
 	try {
 		auto index = get_module_index(module_name);
 		if ( index != -1 ){
@@ -136,7 +136,7 @@ Gtk::Box* Gemod::get_module_root(Glib::ustring module_name){
 		}else{
 			return nullptr;
 		}
-		LOG_OUT();
+		LOG(LOG_OUT());
 	}catch( std::exception& ex){
 		std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + " " + _("Fail to get rootbox") + " !!!\n" + _("Reason") + (" => ") + ex.what();
 		std::cerr << err_msg << std::endl;
@@ -165,13 +165,13 @@ void Gemod::attach_signals(){
 	}
 };
 void Gemod::dettach_signals(){
-	LOG_IN(); 
+	LOG(LOG_IN()); 
 	slot_module_select.disconnect();
-	LOG_OUT();
+	LOG(LOG_OUT());
 };
 
 void Gemod::on_module_select_event(){
-	LOG_IN();
+	LOG(LOG_IN());
 	// Gtk::FileDialog set_initial_folder
 	//						  select_folder
     try {
@@ -214,17 +214,17 @@ void Gemod::on_module_select_event(){
     } catch (const std::exception & ex) {
         std::cerr << "Error: " << ex.what() << std::endl;
     };
-	LOG_OUT();
+	LOG(LOG_OUT());
 };
 
-void Gemod::on_menu_add_module_event(){ LOG_IN();
+void Gemod::on_menu_add_module_event(){ LOG(LOG_IN());
 	/*add_module( MODULE_UI_DIR"libgxsynth-0.0.1.la");*/
-LOG_OUT(); };
-void Gemod::on_menu_del_module_event(){ LOG_IN();
+LOG(LOG_OUT()); };
+void Gemod::on_menu_del_module_event(){ LOG(LOG_IN());
 	/*del_module("data/ui/dx7.glade");*/
-LOG_OUT(); };
+LOG(LOG_OUT()); };
 bool Gemod::add_module(Glib::ustring module_name){
-	LOG_IN();
+	LOG(LOG_IN());
 	try{
 		if ( nb_mod < max_modules ){
 			/* */
@@ -251,35 +251,35 @@ bool Gemod::add_module(Glib::ustring module_name){
 						std::cout<< "set menu"<<std::endl;
 						// attacher les signaux
 						//add_menu("menu_modules", modules[nb_mod].get_name());
-						LOG_OUT();
+						LOG(LOG_OUT());
 						return true;
 					}else{
 						// create_window and attach widget widget box
 						modules[nb_mod].create_window();
-						LOG_OUT();
+						LOG(LOG_OUT());
 						return true;
 					};
 				}else{
 					std::cerr << "rootbox from get_rootbox -> null pointer" << std::endl;
-					LOG_OUT();
+					LOG(LOG_OUT());
 					return false;
 				};
 			}else{
 				std::cerr << "cannot set_mod: " << module_name << " n°: " << nb_mod << std::endl;
-				LOG_OUT();
+				LOG(LOG_OUT());
 				return false;
 			};
 		};
-		LOG_OUT(); 
+		LOG(LOG_OUT()); 
 		return false;
 	}catch(const std::exception& ex){
 		std::cout << ex.what() << std::endl;
-		LOG_OUT(); 
+		LOG(LOG_OUT()); 
 		return false;
 	}
 };
 bool Gemod::del_module(Glib::ustring module_name){ 
-	LOG_IN();
+	LOG(LOG_IN());
 	// must base on app_name
 	/** TODO : remove module
 	* call finish on extern or unload
@@ -289,30 +289,32 @@ bool Gemod::del_module(Glib::ustring module_name){
 			//modules[get_module_index(module_name)].unset_mod();
 			//del_menu(module_name);
 			nb_mod--;
-			LOG_OUT(); return true;
+			LOG(LOG_OUT());
+			return true;
 		}else{
 			std::cout << "Le module n'existe pas" << std::endl;
-			LOG_OUT(); return false;
+			LOG(LOG_OUT());
+			return false;
 		};
-LOG_OUT();
+	LOG(LOG_OUT());
 };
 
 /* Menu construction*/
-/*Gtk::MenuItem* Gemod::create_menuitem(Glib::ustring name) { LOG_IN();
+/*Gtk::MenuItem* Gemod::create_menuitem(Glib::ustring name) { LOG(LOG_IN());
 	Gtk::Menu_Helpers::MenuList::iterator iter = (get_menu("menu_modules"))->items().end();
 	(get_menu("menu_modules"))->items().insert(iter,Gtk::Menu_Helpers::MenuElem(name) );
 	(get_menuitem("Add"))->set_submenu( *(create_submenu()) );
-LOG_OUT(); };*/
+LOG(LOG_OUT()); };*/
 
 /*Gtk::Menu* Gemod::create_submenu(Glib::ustring* menu) { 
-	LOG_IN(); 
+	LOG(LOG_IN()); 
 	Gtk::Menu * submenu;
 	submenu = manage (new Gtk::Menu);
 	uint length = sizeof(menu)/sizeof(Glib::ustring);
 	for ( uint i=0 ; i <= length ; i++ ){
 		submenu->items().push_back (Gtk::Menu_Helpers::MenuElem(menu[i]));
 	};
-	LOG_OUT();
+	LOG(LOG_OUT());
 	return (Gtk::Menu *) submenu;
 };
 
@@ -325,7 +327,7 @@ Gtk::MenuItem * Gemod::get_menu_dyn(Glib::ustring menu){
 }
 
 gboolean Gemod::add_menu(Glib::ustring menu_name, Glib::ustring module_name){ 
-	LOG_IN(); 
+	LOG(LOG_IN()); 
 	if (nb_mod >= 0){
 		Gtk::Menu_Helpers::MenuList::iterator iter = (get_gwidget<Gtk::Menu>(menu_name))->items().end();
 		(get_gwidget<Gtk::Menu>(menu_name))->items().insert(iter,Gtk::Menu_Helpers::MenuElem(module_name) );
@@ -333,12 +335,12 @@ gboolean Gemod::add_menu(Glib::ustring menu_name, Glib::ustring module_name){
 		(get_menu_dyn(module_name))->set_submenu( *(create_submenu(menus)) );
 	}else{
 		std::cout << "echec menu" << std::endl;
-		LOG_OUT(); return 0;
+		LOG(LOG_OUT()); return 0;
 	};
-LOG_OUT(); };
+LOG(LOG_OUT()); };
 
 gboolean Gemod::del_menu(Glib::ustring module_name){
-	LOG_IN();
+	LOG(LOG_IN());
 	try {
 		if ( nb_mod > 0 ){
 			Gtk::Menu_Helpers::MenuList::iterator iter_end = (get_gwidget<Gtk::Menu>("menu_modules"))->items().end();
@@ -356,7 +358,7 @@ gboolean Gemod::del_menu(Glib::ustring module_name){
 	}catch (const std::exception & ex){
 			std::cerr << ex.what() << std::endl; 
 	};
-	LOG_OUT(); 
+	LOG(LOG_OUT()); 
 };		
 */
 

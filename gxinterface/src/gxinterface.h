@@ -54,6 +54,7 @@ class Gx_interface: public Gtk::Application {
 		/* Application variables */
 		Glib::ustring itype;						/* interface type */
 		Glib::ustring iname;						/* interface name */
+		std::string err_msg, msg;
 		Gemod* module_manager = nullptr;			/* gestionnaire de module */
 		int argc;
         char** argv;

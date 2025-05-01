@@ -344,7 +344,17 @@
                 "/usr/share/locale/fr/LC_MESSAGES/dx7interface.mo",
                 "/usr/share/locale/jap/LC_MESSAGES/dx7interface.mo",
                 "/usr/share/locale/languagecode/LC_MESSAGES/dx7interface.mo",
-                "/usr/share/locale/ru/LC_MESSAGES/dx7interface.mo"
+                "/usr/share/locale/ru/LC_MESSAGES/dx7interface.mo",
+                "/ucrt64/bin/libgxlogmanager-0.0.1-1.dll",
+                "/ucrt64/lib/libgxinterface-0.0.1-1.dll",
+                "/ucrt64/lib/libgxlogmanager-0.0.1.a",
+                "/ucrt64/lib/libgxlogmanager-0.0.1.dll.a",
+                "/ucrt64/lib/libgxlogmanager-0.0.1.la",
+                "/usr/bin/libgxinterface-0.0.1-1.dll",
+                "/usr/bin/libgxlogmanager-0.0.1-1.dll",
+                "/bin/libgxinterface-0.0.1-1.dll",
+                "/bin/libgxlogmanager-0.0.1-1.dll"
+
             ],
             "problemMatcher": [
                 "$gcc"

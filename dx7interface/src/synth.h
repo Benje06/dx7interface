@@ -151,8 +151,6 @@ class Synth : public Thread {
         uint8_t msb=0x00;
         uint8_t lsb=0x00;
         uint8_t nvoice=0x00;
-        /*** GENERIC  ***/
-        bool error();
         /* Boolean */
         bool lock = false;
         bool compare = false;                           // set if compare button is activate

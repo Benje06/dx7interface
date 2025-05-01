@@ -106,6 +106,11 @@ dnl checks for library functions
 dnl ================================================================
 AC_FUNC_ALLOCA
 AC_FUNC_ERROR_AT_LINE
+AM_COND_IF([PLATFORM_WINDOWS],[
+    AC_CHECK_FUNCS([localtime_s])
+],[
+    AC_CHECK_FUNCS([localtime_r])
+])
 
 PKG_CHECK_MODULES([DEPS], [$pkg_modules])
 AC_SUBST(DEPS_CFLAGS)

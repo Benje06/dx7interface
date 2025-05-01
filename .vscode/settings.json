@@ -116,7 +116,7 @@
         "thread": "cpp",
         "typeindex": "cpp"
     },
-    "C_Cpp.dimInactiveRegions": true,
+    "C_Cpp.dimInactiveRegions": false,
     "C_Cpp.default.intelliSenseMode": "windows-gcc-x64",
     "C_Cpp.intelliSenseEngine": "default",
     "typescript.tsserver.web.projectWideIntellisense.enabled": false,

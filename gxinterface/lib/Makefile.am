@@ -6,8 +6,52 @@ AUTOMAKE_OPTIONS = subdir-objects
 ## to provide a way for the user to supply additional arguments.
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 
-#### LIB ####
+## LIBS
 lib_LTLIBRARIES = \
+	libgxlogmanager-0.0.1.la
+
+## LOGMANAGER
+libgxlogmanager_0_0_1_la_SOURCES = \
+	../src/common.h ../src/common.cc\
+	../src/logger.h ../src/logger.cc
+
+libgxlogmanager_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
+libgxlogmanager_0_0_1_la_CPPFLAGS = \
+	-I$(top_srcdir)/src \
+	$(AM_CPPFLAGS) $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
+	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
+	-DGXLOG_EXPORTS
+
+if PLATFORM_LINUX
+libgxlogmanager_0_0_1_la_CPPFLAGS += \
+	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
+    -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\" \
+    -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\" \
+    -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\" \
+    -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
+endif
+
+libgxlogmanager_0_0_1_la_LIBADD = \
+	$(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+
+libgxlogmanager_0_0_1_la_LDFLAGS = \
+	-version-info $(SO_VERSION) \
+	-no-undefined -Wl,--no-undefined
+
+if PLATFORM_WINDOWS
+libgxlogmanager_0_0_1_la_LDFLAGS += \
+	-Wl,--export-all-symbols \
+	-lgdi32
+else
+libgxlogmanager_0_0_1_la_LDFLAGS += \
+    -rdynamic
+endif
+
+libgxlogmanager_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
+
+## libgxinterface
+
+lib_LTLIBRARIES += \
     libgxinterface-0.0.1.la
 
 libgxinterface_0_0_1_la_SOURCES = \
@@ -18,44 +62,39 @@ libgxinterface_0_0_1_la_SOURCES = \
 	../src/gxmodule.h ../src/gxmodule.cc\
 	../src/gemod.h ../src/gemod.cc\
 	../src/gxinterface.cc ./src/gxinterface.h
-	
-libgxinterface_0_0_1_la_LDFLAGS = \
-	-version-info $(SO_VERSION) \
-	-rdynamic -no-undefined -Wl,--no-undefined
 
-if PLATFORM_WINDOWS
-libgxinterface_0_0_1_la_LDFLAGS += -lgdi32
-endif
-
-	## Platform-specific additions
-##if PLATFORM_WINDOWS
-##  ## Windows/MinGW: PE-specific flags ; ,-rpath,ucrt64\lib
-##  gxinterface_LDFLAGS += -Wl,--export-all-symbols
-##else
-##  ## Linux/ELF: Equivalent symbol visibility control
-##  gxinterface_LDFLAGS += -rdynamic  # Expands to -Wl,--export-dynamic
-##endif
-## win32 ,--export-all-symbols
-	
-##  -rdynamics -no-undefined -Wl,--export-dynamic 
-
-libgxinterface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
+libgxinterface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS) -fPIC
 libgxinterface_0_0_1_la_CPPFLAGS = \
-	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
+	-I$(top_srcdir)/src \
+    -I$(top_srcdir)/lib \
+	$(AM_CPPFLAGS) $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
 
 if PLATFORM_LINUX
 libgxinterface_0_0_1_la_CPPFLAGS += \
-	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\"\
-    -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\"\
-    -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\"\
-    -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\"\
+	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
+    -DPROGRAMNAME_UI_DIR=\"${PROGRAMNAME_UI_DIR}\" \
+    -DPROGRAMNAME_MOD_DIR=\"${PROGRAMNAME_MOD_DIR}\" \
+    -DPROGRAMNAME_IMG_DIR=\"${PROGRAMNAME_IMG_DIR}\" \
     -DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 endif
 
-## libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(PTHREAD_LIBS) $(INTLLIBS) /ucrt64/bin/libintl-8.dll $(GTKMM_LIBS) $(GLIBMM_LIBS)
+libgxinterface_0_0_1_la_LIBADD = \
+	libgxlogmanager-0.0.1.la \
+	$(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
-libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+libgxinterface_0_0_1_la_LDFLAGS = \
+	-version-info $(SO_VERSION) \
+	-no-undefined -Wl,--no-undefined
+
+if PLATFORM_WINDOWS
+libgxinterface_0_0_1_la_LDFLAGS += \
+	-Wl,--export-all-symbols \
+	-lgdi32
+else
+libgxinterface_0_0_1_la_LDFLAGS += \
+    -rdynamic
+endif
 
 #### HEADERS IN INCLUDE ####			
 ## This only works if the directory hierarchy in the
@@ -64,11 +103,14 @@ libgxinterface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM
 library_include_HEADERS = \
 	../src/common.h \
 	../src/debug.h \
+	../src/logger.h \
 	../src/gemod.h \
-	../src/gxmodule.h\
+	../src/gxmodule.h \
 	../src/gxinterface.h \
 	../src/gxthread.h \
 	../src/lang.h
+
+libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 
 if PLATFORM_WINDOWS
 library_includedir = /ucrt64/include/${PACKAGE_NAME}/$(LIB_VERSION)
@@ -77,7 +119,6 @@ else
 library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
 pkgconfigdir = $(datadir)/pkgconfig
 endif
-libgxinterface_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 pkgconfig_DATA = ${PACKAGE_NAME}.pc	
 
 ## File created by the gnome-build tools

@@ -63,6 +63,7 @@ ifdef('lt_option',
     [LT_INIT([lt_option])],
     [LT_INIT])
 
+AC_C_INLINE
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CXXCPP

@@ -29,7 +29,7 @@ extern "C" {
 
 Tx81z::Tx81z(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME) {
     /*basic constructor */
-    LOG_IN();
+    LOG(LOG_IN());
     /* I/O init */
     Gio::init();
     if (index <= 0){
@@ -48,17 +48,17 @@ Tx81z::Tx81z(Glib::ustring ui, uint8_t index) : Gx_module(ui,MODULE_NAME), Synth
     /* UI */
     attach_signals();
     S_Thread();
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 Tx81z::~Tx81z(){
-    LOG_IN();
+    LOG(LOG_IN());
     /* basic destructor*/
     /* terminate thread */
     //block_all();
     T_Thread();
     dettach_signals();
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 bool Tx81z::Run(){
@@ -114,38 +114,38 @@ void Tx81z::listen_midi(){
 }
 
 void Tx81z::load_bank(Glib::RefPtr<Gio::File> file) {
-    LOG_IN();
-    LOG_OUT();
+    LOG(LOG_IN());
+    LOG(LOG_OUT());
 };
 void Tx81z::save_bank(Glib::RefPtr<Gio::File> file){
-    LOG_IN();
-    LOG_OUT();
+    LOG(LOG_IN());
+    LOG(LOG_OUT());
 };
 void Tx81z::save_bank_as(Glib::RefPtr<Gio::File> file){
-    LOG_IN();
-    LOG_OUT();
+    LOG(LOG_IN());
+    LOG(LOG_OUT());
 };
 void Tx81z::clean_bank() {
-    LOG_IN();
-    LOG_OUT();
+    LOG(LOG_IN());
+    LOG(LOG_OUT());
 };
 
 void Tx81z::seek_voice(uint, st_tx81zsysex_1* voice){
-    LOG_IN();
-    LOG_OUT();
+    LOG(LOG_IN());
+    LOG(LOG_OUT());
 };
 void Tx81z::send_voice(st_tx81zsysex_1* voice){
-    LOG_IN();
-    LOG_OUT();
+    LOG(LOG_IN());
+    LOG(LOG_OUT());
 };
 void Tx81z::set_voice(st_tx81zsysex_1* voice){
-        LOG_IN();
-        LOG_OUT();
+        LOG(LOG_IN());
+        LOG(LOG_OUT());
 };
 
 /* UI SIGNALS CONNECTION */
 void Tx81z::attach_signals(){
-    LOG_IN();
+    LOG(LOG_IN());
     /*slot_bank_select = (get_gwidget<Gtk::FileChooserButton>("bank_select"))->signal_selection_changed().connect(
      *   sigc::mem_fun(*this, &Dx7interface::on_bank_select));
      */
@@ -153,38 +153,38 @@ void Tx81z::attach_signals(){
         sigc::mem_fun(*this, &Tx81z::on_bank_reveal));
 
 
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 void Tx81z::on_bank_reveal(){
-    LOG_IN();
+    LOG(LOG_IN());
     (get_gwidget<Gtk::Revealer>("revealer_bank"))->set_reveal_child(!(get_gwidget<Gtk::Revealer>("revealer_bank"))->get_reveal_child());
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 void Tx81z::dettach_signals(){
-    LOG_IN();
+    LOG(LOG_IN());
     slot_bank_reveal.disconnect();
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 void Tx81z::block_all(){
-    LOG_IN();
+    LOG(LOG_IN());
     /*** Block UI ***/
     /* Draw */
     //slot_bank_select.block(true);
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 void Tx81z::unblock_all(){
-    LOG_IN();
+    LOG(LOG_IN());
     /*** Block UI ***/
     /* Draw */
     //slot_bank_select.unblock();
-    LOG_OUT();
+    LOG(LOG_OUT());
 };
 
 void Tx81z::on_bank_select(){
-    LOG_IN();
-    LOG_OUT();
+    LOG(LOG_IN());
+    LOG(LOG_OUT());
 };
