@@ -30,6 +30,7 @@
     #include <stdlib.h>
     #include <stdio.h>
     #ifdef __cplusplus
+        #ifdef PLATFORM_WINDOWS
         #    define TRACE(f, ...)   f "\n", ##__VA_ARGS__
         #    define PRE_LOG(str1, str2, ...) (std::string(str1) + std::string("->") + std::string(str2))
         #    define POST_LOG(str1, str2, ...) (std::string(str1) + std::string("<-") + std::string(str2))
@@ -40,6 +41,18 @@
         #      define LOG_IN()  " -> " __func__
         #      define LOG_OUT() "<-  " __func__
         #    endif /* DEBUG_TOOL_AS_ERROR */
+        #else
+        #    define TRACE(f, ...)   f "\n", ##__VA_ARGS__
+        #    define PRE_LOG(str1, str2, ...) std::string(str1) + std::string("->") + std::string(str2)
+        #    define POST_LOG(str1, str2, ...) std::string(str1) + std::string("<-") + std::string(str2)
+        #    ifdef DEBUG_TOOL
+        #      define LOG_IN() (std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__)
+        #      define LOG_OUT() (std::string("<-  ") + __PRETTY_FUNCTION__)
+        #    else
+        #      define LOG_IN()  std::string(" -> ") + __func__
+        #      define LOG_OUT() std::string("<-  ") + __func__
+        #    endif /* DEBUG_TOOL_AS_ERROR */
+        #endif
     #else
         #ifdef DEBUG_TOOL
         #  ifdef DEBUG_TOOL_AS_ERROR

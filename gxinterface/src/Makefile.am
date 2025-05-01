@@ -16,7 +16,7 @@ gxinterface_SOURCES = \
 
 gxinterface_CXXFLAGS = $(AM_CXXFLAGS)
 gxinterface_CPPFLAGS = \
-	-I$(top_srcdir)/lib
+	-I$(top_srcdir)/lib \
 	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
 	-DGXLOG_IMPORTS
@@ -33,8 +33,8 @@ gxinterface_CPPFLAGS += \
 endif
 
 gxinterface_LDADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS) \
-	-L../lib/.libs $(top_builddir)/lib/.libs/libgxlogmanager-0.0.1-1.dll \
-	-L../lib/.libs $(top_builddir)/lib/.libs/libgxinterface-0.0.1-1.dll
+	-L$(top_builddir)/lib $(top_builddir)/lib/libgxlogmanager-0.0.1.la \
+	-L$(top_builddir)/lib $(top_builddir)/lib/libgxinterface-0.0.1.la
 
 gxinterface_LDFLAGS = \
 	-no-undefined \

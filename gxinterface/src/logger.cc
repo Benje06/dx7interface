@@ -28,9 +28,9 @@ void Logger::log_error(const std::string& err_msg){
             std::lock_guard<std::mutex> lock(log_mutex);
             if( log_file.is_open() ){
                 log_file << "            " << std::endl;
-                log_file << "*************************** ERROR ***************************** " << '\r';
+                log_file << "*************************** ERROR ***************************** " << std::endl;
                 log_file << "\t" << err_msg << std::endl;
-                log_file << "*************************************************************** " << '\r';
+                log_file << "*************************************************************** " << std::endl;
                 log_file << "            " << std::endl;
             };
             if( log_level >= 2){
@@ -61,7 +61,7 @@ void LogManager::add_handler(std::shared_ptr<Logger> handler){
 void LogManager::set_log_level(unsigned int log_level){
     if( log_level >= 0 && log_level <= 2){
         {
-            //std::lock_guard<std::mutex> lock(manager_mutex);
+            std::lock_guard<std::mutex> lock(manager_mutex);
             msg = _("Switching to log level: ") + std::to_string(log_level);
             for (auto& handler : handlers) {
                 handler->set_log_level(log_level);

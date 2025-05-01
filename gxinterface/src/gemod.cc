@@ -187,7 +187,8 @@ void Gemod::on_module_select_event(){
                             this->add_module(filename);
                         }
                     } catch (const std::exception & ex) {
-                        std::cerr << "Error: " << ex.what() << std::endl;
+                        msg = error(__PRETTY_FUNCTION__,_("Couldn't select module: "), ex.what());
+                        LOG_ERR( msg );
                     }
                 }
             );

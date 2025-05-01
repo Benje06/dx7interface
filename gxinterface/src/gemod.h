@@ -38,6 +38,8 @@ class Gemod : public Gx_module {
 	private:
 		Gx_module * modules;        // array of modules
 		uint8_t nb_mod=0, max_modules=1, nb_max_module=5;  // nombre de module chargé et max module
+		std::string msg="", error_msg="";
+
 		/* callback function */
 		virtual void attach_signals();
 		virtual void dettach_signals();

@@ -1,14 +1,14 @@
 ## TODO: 
 SUBDIRS = \
-	po\
-	data\
-	lib\
+	po \
+	data \
+	lib \
 	src
 
 INTLTOOL_FILES = \
-		intltool-extract.in \
-		intltool-merge.in \
-		intltool-update.in
+	intltool-extract.in \
+	intltool-merge.in \
+	intltool-update.in
 
 
 ## If make built it, and it is commonly something that one would want to rebuild

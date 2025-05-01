@@ -55,8 +55,8 @@ int main (int argc, char *argv[]){
             LOG( msg );
         };
         if ( (argc > 1) && std::string(argv[i]) == "-l" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
-            //log_lvl=static_cast<unsigned int>(argv[i+1][0]);
-            LogManager::instance().set_log_level(4);
+            log_lvl=std::stoi(argv[i+1]);
+            LogManager::instance().set_log_level(log_lvl);
         };
     };
     if ( interface == 0 ){

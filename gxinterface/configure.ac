@@ -170,8 +170,6 @@ AM_COND_IF([DEBUG_TOOL_AS_ERROR],[
 AC_DEFINE([DEBUG_TOOL_AS_ERROR], [], [Activate deep debug print])
 ],[])
 
-
-
 AC_ARG_ENABLE([dev],
 [  --enable-dev    Turn on folder from dev directory ],
 [case "${enableval}" in
