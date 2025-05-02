@@ -36,12 +36,14 @@ dx7interface_0_0_1_la_CPPFLAGS += \
 	-DPROGRAMNAME_DATA_DIR=\"${PROGRAMNAME_DATA_DIR}\"
 endif
 
-dx7interface_0_0_1_la_LIBADD = $(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+dx7interface_0_0_1_la_LIBADD = \
+	$(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS) \
+	-L$(top_builddir)/../gxinterface/lib/ $(top_builddir)/../gxinterface/lib/libgxthread-0.0.1.la \
+	-L$(top_builddir)/../gxinterface/lib/ $(top_builddir)/../gxinterface/lib/libgxinterface-0.0.1.la
 
 dx7interface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
-	-module -no-undefined -Wl,--no-undefined,--gc-sections\
-	-L../../gxinterface/lib/.libs $(top_builddir)/../gxinterface/lib/.libs/libgxinterface-0.0.1-1.dll
+	-module -no-undefined -Wl,--no-undefined,--gc-sections
 
 ## Platform-specific additions
 if PLATFORM_WINDOWS

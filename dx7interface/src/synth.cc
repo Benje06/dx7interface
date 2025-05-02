@@ -329,48 +329,48 @@ bool Synth::Run() {
         */
         std::string msg;
         LOG("");
-        msg = _("event: ")) + get_event_name(int(ev->type)) + " "
-        + "type: " + int(ev->type);
+        msg = _("event: ") + get_event_name(int(ev->type)) + " "
+        + "type: " + std::to_string((ev->type));
         LOG( msg );
-        msg = "flags: " + int(ev->flags) + " "
-        + "tag: " + int( ev->tag) + '\t'
-        + "queue: " + int(ev->queue) ;
+        msg = "flags: " + std::to_string((ev->flags)) + " "
+        + "tag: " + std::to_string((ev->tag)) + '\t'
+        + "queue: " + std::to_string((ev->queue)) ;
         LOG( msg );
-        msg = "ticks: " + int(ev->time.tick) + " "
-        + "time: " + int(ev->time.time.tv_sec);
+        msg = "ticks: " + std::to_string((ev->time.tick)) + " "
+        + "time: " + std::to_string((ev->time.time.tv_sec));
         LOG( msg );
-        msg = "source: " + int( ev->source.client) + " " + '\t'
-        + "dest: " + int(ev->dest.client);
+        msg = "source: " + std::to_string((ev->source.client)) + " " + '\t'
+        + "dest: " + std::to_string((ev->dest.client));
         LOG( msg );
-        msg = "channel: " + int(ev->data.control.channel)+1;
+        msg = "channel: " + std::to_string((ev->data.control.channel)+1);
         LOG( msg );
         switch (ev->type) {
             case SND_SEQ_EVENT_NOTEON:
-                msg = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
-                + "value: " + int(ev->data.note.note);
+                msg = "Channel: "  + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
+                + "value: " + std::to_string((ev->data.note.note));
                 LOG( msg );
                 break;
             case SND_SEQ_EVENT_NOTEOFF:
-                msg = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
-                + "value: " +  int(ev->data.note.note);
+                msg = "Channel: "  + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
+                + "value: " +  std::to_string(int(ev->data.note.note));
                 LOG( msg );
                 break;
             case SND_SEQ_EVENT_CONTROLLER:
-                msg = "Channel: " + (int(ev->data.control.channel) +1) + " " + '\t'
-                + "param: "  + ev->data.control.param + " "
-                + "value: " + int(ev->data.control.value);
+                msg = "Channel: " + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
+                + "param: "  + std::to_string(ev->data.control.param) + " "
+                + "value: " + std::to_string((ev->data.control.value));
                 LOG( msg );
                 break;
             case SND_SEQ_EVENT_PITCHBEND:
-                msg ="Channel: " + (int(ev->data.control.channel) +1)+ " " + '\t'
-                + "value: " + int(ev->data.control.value) ;
+                msg ="Channel: " + std::to_string(int(ev->data.control.channel) +1)+ " " + '\t'
+                + "value: " + std::to_string((ev->data.control.value)) ;
                 LOG( msg );
                 break;
             case SND_SEQ_EVENT_PGMCHANGE:
                 /*event data type = snd_seq_ev_ctrl_t */
-                msg = "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
-                + "param : "  + ev->data.control.param + " "
-                + "value : " + int(ev->data.control.value);
+                msg = "Channel : "  + std::to_string(int(ev->data.control.channel) +1) + '\t'
+                + "param : "  + std::to_string(ev->data.control.param) + " "
+                + "value : " + std::to_string((ev->data.control.value));
                 LOG( msg );
                 break;
         };
@@ -448,9 +448,9 @@ bool Synth::Run() {
 
         // Print event type and channel
         std::string msg = _("Event: ") + get_event_name(eventType) + " "
-                  + _("Type: ") + std::to_string(int(eventType));
+                  + _("Type: ") + std::to_stringstd::to_string(int(eventType));
         LOG( msg );
-        msg = _("Channel: ") + int(channel);
+        msg = _("Channel: ") + std::to_string((channel));
         LOG( msg );
         switch (eventType) {
             case 0x90: { // Note On

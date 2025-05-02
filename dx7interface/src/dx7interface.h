@@ -114,12 +114,12 @@ class Dx7interface : public Gx_module, public Synth {
         /* default write format */
         unsigned int export_config = DX7_32;     // DX7_1 DX7_32 DX7_128 DX7_RAW DX7_SYX
 
-        /* bank list view */
+        /* BANK LISTVIEW */
         void create_bank_voices_list();
         Glib::RefPtr<Gio::ListStore<SoundBankItem>> bank_data_model=nullptr; /* liste des nom des sons de la banque chargé */
         Glib::RefPtr<Gtk::SingleSelection> bank_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> bank_factory=nullptr;
-
+        /* update hte listview model */
         template<class ListStoreType>
         void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name);
         template<class ListStoreType>
@@ -127,29 +127,209 @@ class Dx7interface : public Gx_module, public Synth {
         template<class ListStoreType>
         void update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int i, Glib::ustring name);
 
-        /* midi learn */
-        /* param list view */
+        /*** MIDI LEARN ***/
         bool midi_learn=false;
         static const int max_param_nb = 168;
         std::vector<int> midi_param{std::vector<int>(max_param_nb, -1)};
         std::vector<std::vector<int>> midi_learned;
 
-        /* read and write midi learn config file */
-        void read_midi_learned_param(Glib::RefPtr<Gio::File>);
-        void save_midi_learned_param(Glib::RefPtr<Gio::File>);
-        void clean_midi_learn();
+        /** READ/WRITE/CLEAN MIDI LEARN config file **/
+        /* read */
         sigc::connection slot_midi_learn_load;
         void on_midi_learn_param_select();
+        void read_midi_learned_param(Glib::RefPtr<Gio::File>);
+        /* write */
         sigc::connection slot_midi_learn_save;
         void on_midi_learn_param_save();
+        void save_midi_learned_param(Glib::RefPtr<Gio::File>);
+        /* clean */
+        void clean_midi_learn();
 
-        /* manage midi learn event */
+        /* EVENT MIDI LEARN */
         void on_midi_learn_event();
         void on_add_midi_learn_event();
         void add_midi_learned(int, int);
         void add_midi_learn_param_widget(Glib::ustring, Glib::ustring,int);
         void rem_midi_learned(int, int);
-
+        /* CREATE MIDI LEARN LIST */
+        void create_param_list();
+        Glib::RefPtr<Gio::ListStore<ParamItem>> param_data_model=nullptr; /* liste des noms des sons de la banque chargée */
+        Glib::RefPtr<Gtk::SingleSelection> param_selection_model=nullptr;
+        Glib::RefPtr<Gtk::SignalListItemFactory> param_factory=nullptr;
+        void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);
+        void on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
+        /* List of internal function that drive the UI */
+        FunctionPtrInt list_ui_parameters_functions[max_param_nb] = {
+            &Dx7interface::set_aftrtch_assgn_event,
+            &Dx7interface::set_aftrtch_rng_event,
+            &Dx7interface::set_algo_event,
+            &Dx7interface::set_ams_op1_event,
+            &Dx7interface::set_ams_op2_event,
+            &Dx7interface::set_ams_op3_event,
+            &Dx7interface::set_ams_op4_event,
+            &Dx7interface::set_ams_op5_event,
+            &Dx7interface::set_ams_op6_event,
+            &Dx7interface::set_brth_assgn_event,
+            &Dx7interface::set_brth_rng_event,
+            &Dx7interface::set_compare_event,
+            &Dx7interface::set_dtun_op1_event,
+            &Dx7interface::set_dtun_op2_event,
+            &Dx7interface::set_dtun_op3_event,
+            &Dx7interface::set_dtun_op4_event,
+            &Dx7interface::set_dtun_op5_event,
+            &Dx7interface::set_dtun_op6_event,
+            &Dx7interface::set_eg_lvl1_op1_event,
+            &Dx7interface::set_eg_lvl1_op2_event,
+            &Dx7interface::set_eg_lvl1_op3_event,
+            &Dx7interface::set_eg_lvl1_op4_event,
+            &Dx7interface::set_eg_lvl1_op5_event,
+            &Dx7interface::set_eg_lvl1_op6_event,
+            &Dx7interface::set_eg_lvl2_op1_event,
+            &Dx7interface::set_eg_lvl2_op2_event,
+            &Dx7interface::set_eg_lvl2_op3_event,
+            &Dx7interface::set_eg_lvl2_op4_event,
+            &Dx7interface::set_eg_lvl2_op5_event,
+            &Dx7interface::set_eg_lvl2_op6_event,
+            &Dx7interface::set_eg_lvl3_op1_event,
+            &Dx7interface::set_eg_lvl3_op2_event,
+            &Dx7interface::set_eg_lvl3_op3_event,
+            &Dx7interface::set_eg_lvl3_op4_event,
+            &Dx7interface::set_eg_lvl3_op5_event,
+            &Dx7interface::set_eg_lvl3_op6_event,
+            &Dx7interface::set_eg_lvl4_op1_event,
+            &Dx7interface::set_eg_lvl4_op2_event,
+            &Dx7interface::set_eg_lvl4_op3_event,
+            &Dx7interface::set_eg_lvl4_op4_event,
+            &Dx7interface::set_eg_lvl4_op5_event,
+            &Dx7interface::set_eg_lvl4_op6_event,
+            &Dx7interface::set_eg_rt1_op1_event,
+            &Dx7interface::set_eg_rt1_op2_event,
+            &Dx7interface::set_eg_rt1_op3_event,
+            &Dx7interface::set_eg_rt1_op4_event,
+            &Dx7interface::set_eg_rt1_op5_event,
+            &Dx7interface::set_eg_rt1_op6_event,
+            &Dx7interface::set_eg_rt2_op1_event,
+            &Dx7interface::set_eg_rt2_op2_event,
+            &Dx7interface::set_eg_rt2_op3_event,
+            &Dx7interface::set_eg_rt2_op4_event,
+            &Dx7interface::set_eg_rt2_op5_event,
+            &Dx7interface::set_eg_rt2_op6_event,
+            &Dx7interface::set_eg_rt3_op1_event,
+            &Dx7interface::set_eg_rt3_op2_event,
+            &Dx7interface::set_eg_rt3_op3_event,
+            &Dx7interface::set_eg_rt3_op4_event,
+            &Dx7interface::set_eg_rt3_op5_event,
+            &Dx7interface::set_eg_rt3_op6_event,
+            &Dx7interface::set_eg_rt4_op1_event,
+            &Dx7interface::set_eg_rt4_op2_event,
+            &Dx7interface::set_eg_rt4_op3_event,
+            &Dx7interface::set_eg_rt4_op4_event,
+            &Dx7interface::set_eg_rt4_op5_event,
+            &Dx7interface::set_eg_rt4_op6_event,
+            &Dx7interface::set_feedback_event,
+            &Dx7interface::set_foot_assgn_event,
+            &Dx7interface::set_foot_rng_event,
+            &Dx7interface::set_freq_coarse_op1_event,
+            &Dx7interface::set_freq_coarse_op2_event,
+            &Dx7interface::set_freq_coarse_op3_event,
+            &Dx7interface::set_freq_coarse_op4_event,
+            &Dx7interface::set_freq_coarse_op5_event,
+            &Dx7interface::set_freq_coarse_op6_event,
+            &Dx7interface::set_freq_fine_op1_event,
+            &Dx7interface::set_freq_fine_op2_event,
+            &Dx7interface::set_freq_fine_op3_event,
+            &Dx7interface::set_freq_fine_op4_event,
+            &Dx7interface::set_freq_fine_op5_event,
+            &Dx7interface::set_freq_fine_op6_event,
+            &Dx7interface::set_freq_mode_op1_event,
+            &Dx7interface::set_freq_mode_op2_event,
+            &Dx7interface::set_freq_mode_op3_event,
+            &Dx7interface::set_freq_mode_op4_event,
+            &Dx7interface::set_freq_mode_op5_event,
+            &Dx7interface::set_freq_mode_op6_event,
+            &Dx7interface::set_kls_brk_pt_op1_event,
+            &Dx7interface::set_kls_brk_pt_op2_event,
+            &Dx7interface::set_kls_brk_pt_op3_event,
+            &Dx7interface::set_kls_brk_pt_op4_event,
+            &Dx7interface::set_kls_brk_pt_op5_event,
+            &Dx7interface::set_kls_brk_pt_op6_event,
+            &Dx7interface::set_kls_lft_curve_op1_event,
+            &Dx7interface::set_kls_lft_curve_op2_event,
+            &Dx7interface::set_kls_lft_curve_op3_event,
+            &Dx7interface::set_kls_lft_curve_op4_event,
+            &Dx7interface::set_kls_lft_curve_op5_event,
+            &Dx7interface::set_kls_lft_curve_op6_event,
+            &Dx7interface::set_kls_lft_dpth_op1_event,
+            &Dx7interface::set_kls_lft_dpth_op2_event,
+            &Dx7interface::set_kls_lft_dpth_op3_event,
+            &Dx7interface::set_kls_lft_dpth_op4_event,
+            &Dx7interface::set_kls_lft_dpth_op5_event,
+            &Dx7interface::set_kls_lft_dpth_op6_event,
+            &Dx7interface::set_kls_rght_curve_op1_event,
+            &Dx7interface::set_kls_rght_curve_op2_event,
+            &Dx7interface::set_kls_rght_curve_op3_event,
+            &Dx7interface::set_kls_rght_curve_op4_event,
+            &Dx7interface::set_kls_rght_curve_op5_event,
+            &Dx7interface::set_kls_rght_curve_op6_event,
+            &Dx7interface::set_kls_rght_dpth_op1_event,
+            &Dx7interface::set_kls_rght_dpth_op2_event,
+            &Dx7interface::set_kls_rght_dpth_op3_event,
+            &Dx7interface::set_kls_rght_dpth_op4_event,
+            &Dx7interface::set_kls_rght_dpth_op5_event,
+            &Dx7interface::set_kls_rght_dpth_op6_event,
+            &Dx7interface::set_krs_op1_event,
+            &Dx7interface::set_krs_op2_event,
+            &Dx7interface::set_krs_op3_event,
+            &Dx7interface::set_krs_op4_event,
+            &Dx7interface::set_krs_op5_event,
+            &Dx7interface::set_krs_op6_event,
+            &Dx7interface::set_kvs_op1_event,
+            &Dx7interface::set_kvs_op2_event,
+            &Dx7interface::set_kvs_op3_event,
+            &Dx7interface::set_kvs_op4_event,
+            &Dx7interface::set_kvs_op5_event,
+            &Dx7interface::set_kvs_op6_event,
+            &Dx7interface::set_lfo_amd_event,
+            &Dx7interface::set_lfo_delay_event,
+            &Dx7interface::set_lfo_pmd_event,
+            &Dx7interface::set_lfo_speed_event,
+            &Dx7interface::set_lfo_sync_event,
+            &Dx7interface::set_lfo_wav_event,
+            &Dx7interface::set_lvl_op1_event,
+            &Dx7interface::set_lvl_op2_event,
+            &Dx7interface::set_lvl_op3_event,
+            &Dx7interface::set_lvl_op4_event,
+            &Dx7interface::set_lvl_op5_event,
+            &Dx7interface::set_lvl_op6_event,
+            &Dx7interface::set_md_whl_assgn_event,
+            &Dx7interface::set_md_whl_rng_event,
+            &Dx7interface::set_mono_poly_event,
+            &Dx7interface::set_mute_op1_event,
+            &Dx7interface::set_mute_op2_event,
+            &Dx7interface::set_mute_op3_event,
+            &Dx7interface::set_mute_op4_event,
+            &Dx7interface::set_mute_op5_event,
+            &Dx7interface::set_mute_op6_event,
+            &Dx7interface::set_oks_event,
+            &Dx7interface::set_panic_event,
+            &Dx7interface::set_pitch_lvl1_event,
+            &Dx7interface::set_pitch_lvl2_event,
+            &Dx7interface::set_pitch_lvl3_event,
+            &Dx7interface::set_pitch_lvl4_event,
+            &Dx7interface::set_pitch_rt1_event,
+            &Dx7interface::set_pitch_rt2_event,
+            &Dx7interface::set_pitch_rt3_event,
+            &Dx7interface::set_pitch_rt4_event,
+            &Dx7interface::set_pms_event,
+            &Dx7interface::set_portamento_glss_event,
+            &Dx7interface::set_portamento_md_event,
+            &Dx7interface::set_portamento_tm_event,
+            &Dx7interface::set_ptch_bnd_rng_event,
+            &Dx7interface::set_ptch_bnd_stp_event,
+            &Dx7interface::set_send_extra_parameters_event,
+            &Dx7interface::set_transpose_event
+        };
+        /* Translation for the User presentation */
         Glib::ustring function_list[max_param_nb]{
             "Aftertouch Assign",
             "Aftertouch Range",
@@ -321,207 +501,15 @@ class Dx7interface : public Gx_module, public Synth {
             "Transpose"
         };
 
-        void create_param_list();
-        Glib::RefPtr<Gio::ListStore<ParamItem>> param_data_model=nullptr; /* liste des noms des sons de la banque chargée */
-        Glib::RefPtr<Gtk::SingleSelection> param_selection_model=nullptr;
-        Glib::RefPtr<Gtk::SignalListItemFactory> param_factory=nullptr;
-        void on_bind_param_name(const Glib::RefPtr<Gtk::ListItem>&);
-        void on_setup_param_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
-
-        FunctionPtrInt list_ui_parameters_functions[max_param_nb] = {
-            &Dx7interface::set_aftrtch_assgn_event,
-            &Dx7interface::set_aftrtch_rng_event,
-            &Dx7interface::set_algo_event,
-            &Dx7interface::set_ams_op1_event,
-            &Dx7interface::set_ams_op2_event,
-            &Dx7interface::set_ams_op3_event,
-            &Dx7interface::set_ams_op4_event,
-            &Dx7interface::set_ams_op5_event,
-            &Dx7interface::set_ams_op6_event,
-            &Dx7interface::set_brth_assgn_event,
-            &Dx7interface::set_brth_rng_event,
-            &Dx7interface::set_compare_event,
-            &Dx7interface::set_dtun_op1_event,
-            &Dx7interface::set_dtun_op2_event,
-            &Dx7interface::set_dtun_op3_event,
-            &Dx7interface::set_dtun_op4_event,
-            &Dx7interface::set_dtun_op5_event,
-            &Dx7interface::set_dtun_op6_event,
-            &Dx7interface::set_eg_lvl1_op1_event,
-            &Dx7interface::set_eg_lvl1_op2_event,
-            &Dx7interface::set_eg_lvl1_op3_event,
-            &Dx7interface::set_eg_lvl1_op4_event,
-            &Dx7interface::set_eg_lvl1_op5_event,
-            &Dx7interface::set_eg_lvl1_op6_event,
-            &Dx7interface::set_eg_lvl2_op1_event,
-            &Dx7interface::set_eg_lvl2_op2_event,
-            &Dx7interface::set_eg_lvl2_op3_event,
-            &Dx7interface::set_eg_lvl2_op4_event,
-            &Dx7interface::set_eg_lvl2_op5_event,
-            &Dx7interface::set_eg_lvl2_op6_event,
-            &Dx7interface::set_eg_lvl3_op1_event,
-            &Dx7interface::set_eg_lvl3_op2_event,
-            &Dx7interface::set_eg_lvl3_op3_event,
-            &Dx7interface::set_eg_lvl3_op4_event,
-            &Dx7interface::set_eg_lvl3_op5_event,
-            &Dx7interface::set_eg_lvl3_op6_event,
-            &Dx7interface::set_eg_lvl4_op1_event,
-            &Dx7interface::set_eg_lvl4_op2_event,
-            &Dx7interface::set_eg_lvl4_op3_event,
-            &Dx7interface::set_eg_lvl4_op4_event,
-            &Dx7interface::set_eg_lvl4_op5_event,
-            &Dx7interface::set_eg_lvl4_op6_event,
-            &Dx7interface::set_eg_rt1_op1_event,
-            &Dx7interface::set_eg_rt1_op2_event,
-            &Dx7interface::set_eg_rt1_op3_event,
-            &Dx7interface::set_eg_rt1_op4_event,
-            &Dx7interface::set_eg_rt1_op5_event,
-            &Dx7interface::set_eg_rt1_op6_event,
-            &Dx7interface::set_eg_rt2_op1_event,
-            &Dx7interface::set_eg_rt2_op2_event,
-            &Dx7interface::set_eg_rt2_op3_event,
-            &Dx7interface::set_eg_rt2_op4_event,
-            &Dx7interface::set_eg_rt2_op5_event,
-            &Dx7interface::set_eg_rt2_op6_event,
-            &Dx7interface::set_eg_rt3_op1_event,
-            &Dx7interface::set_eg_rt3_op2_event,
-            &Dx7interface::set_eg_rt3_op3_event,
-            &Dx7interface::set_eg_rt3_op4_event,
-            &Dx7interface::set_eg_rt3_op5_event,
-            &Dx7interface::set_eg_rt3_op6_event,
-            &Dx7interface::set_eg_rt4_op1_event,
-            &Dx7interface::set_eg_rt4_op2_event,
-            &Dx7interface::set_eg_rt4_op3_event,
-            &Dx7interface::set_eg_rt4_op4_event,
-            &Dx7interface::set_eg_rt4_op5_event,
-            &Dx7interface::set_eg_rt4_op6_event,
-            &Dx7interface::set_feedback_event,
-            &Dx7interface::set_foot_assgn_event,
-            &Dx7interface::set_foot_rng_event,
-            &Dx7interface::set_freq_coarse_op1_event,
-            &Dx7interface::set_freq_coarse_op2_event,
-            &Dx7interface::set_freq_coarse_op3_event,
-            &Dx7interface::set_freq_coarse_op4_event,
-            &Dx7interface::set_freq_coarse_op5_event,
-            &Dx7interface::set_freq_coarse_op6_event,
-            &Dx7interface::set_freq_fine_op1_event,
-            &Dx7interface::set_freq_fine_op2_event,
-            &Dx7interface::set_freq_fine_op3_event,
-            &Dx7interface::set_freq_fine_op4_event,
-            &Dx7interface::set_freq_fine_op5_event,
-            &Dx7interface::set_freq_fine_op6_event,
-            &Dx7interface::set_freq_mode_op1_event,
-            &Dx7interface::set_freq_mode_op2_event,
-            &Dx7interface::set_freq_mode_op3_event,
-            &Dx7interface::set_freq_mode_op4_event,
-            &Dx7interface::set_freq_mode_op5_event,
-            &Dx7interface::set_freq_mode_op6_event,
-            &Dx7interface::set_kls_brk_pt_op1_event,
-            &Dx7interface::set_kls_brk_pt_op2_event,
-            &Dx7interface::set_kls_brk_pt_op3_event,
-            &Dx7interface::set_kls_brk_pt_op4_event,
-            &Dx7interface::set_kls_brk_pt_op5_event,
-            &Dx7interface::set_kls_brk_pt_op6_event,
-            &Dx7interface::set_kls_lft_curve_op1_event,
-            &Dx7interface::set_kls_lft_curve_op2_event,
-            &Dx7interface::set_kls_lft_curve_op3_event,
-            &Dx7interface::set_kls_lft_curve_op4_event,
-            &Dx7interface::set_kls_lft_curve_op5_event,
-            &Dx7interface::set_kls_lft_curve_op6_event,
-            &Dx7interface::set_kls_lft_dpth_op1_event,
-            &Dx7interface::set_kls_lft_dpth_op2_event,
-            &Dx7interface::set_kls_lft_dpth_op3_event,
-            &Dx7interface::set_kls_lft_dpth_op4_event,
-            &Dx7interface::set_kls_lft_dpth_op5_event,
-            &Dx7interface::set_kls_lft_dpth_op6_event,
-            &Dx7interface::set_kls_rght_curve_op1_event,
-            &Dx7interface::set_kls_rght_curve_op2_event,
-            &Dx7interface::set_kls_rght_curve_op3_event,
-            &Dx7interface::set_kls_rght_curve_op4_event,
-            &Dx7interface::set_kls_rght_curve_op5_event,
-            &Dx7interface::set_kls_rght_curve_op6_event,
-            &Dx7interface::set_kls_rght_dpth_op1_event,
-            &Dx7interface::set_kls_rght_dpth_op2_event,
-            &Dx7interface::set_kls_rght_dpth_op3_event,
-            &Dx7interface::set_kls_rght_dpth_op4_event,
-            &Dx7interface::set_kls_rght_dpth_op5_event,
-            &Dx7interface::set_kls_rght_dpth_op6_event,
-            &Dx7interface::set_krs_op1_event,
-            &Dx7interface::set_krs_op2_event,
-            &Dx7interface::set_krs_op3_event,
-            &Dx7interface::set_krs_op4_event,
-            &Dx7interface::set_krs_op5_event,
-            &Dx7interface::set_krs_op6_event,
-            &Dx7interface::set_kvs_op1_event,
-            &Dx7interface::set_kvs_op2_event,
-            &Dx7interface::set_kvs_op3_event,
-            &Dx7interface::set_kvs_op4_event,
-            &Dx7interface::set_kvs_op5_event,
-            &Dx7interface::set_kvs_op6_event,
-            &Dx7interface::set_lfo_amd_event,
-            &Dx7interface::set_lfo_delay_event,
-            &Dx7interface::set_lfo_pmd_event,
-            &Dx7interface::set_lfo_speed_event,
-            &Dx7interface::set_lfo_sync_event,
-            &Dx7interface::set_lfo_wav_event,
-            &Dx7interface::set_lvl_op1_event,
-            &Dx7interface::set_lvl_op2_event,
-            &Dx7interface::set_lvl_op3_event,
-            &Dx7interface::set_lvl_op4_event,
-            &Dx7interface::set_lvl_op5_event,
-            &Dx7interface::set_lvl_op6_event,
-            &Dx7interface::set_md_whl_assgn_event,
-            &Dx7interface::set_md_whl_rng_event,
-            &Dx7interface::set_mono_poly_event,
-            &Dx7interface::set_mute_op1_event,
-            &Dx7interface::set_mute_op2_event,
-            &Dx7interface::set_mute_op3_event,
-            &Dx7interface::set_mute_op4_event,
-            &Dx7interface::set_mute_op5_event,
-            &Dx7interface::set_mute_op6_event,
-            &Dx7interface::set_oks_event,
-            &Dx7interface::set_panic_event,
-            &Dx7interface::set_pitch_lvl1_event,
-            &Dx7interface::set_pitch_lvl2_event,
-            &Dx7interface::set_pitch_lvl3_event,
-            &Dx7interface::set_pitch_lvl4_event,
-            &Dx7interface::set_pitch_rt1_event,
-            &Dx7interface::set_pitch_rt2_event,
-            &Dx7interface::set_pitch_rt3_event,
-            &Dx7interface::set_pitch_rt4_event,
-            &Dx7interface::set_pms_event,
-            &Dx7interface::set_portamento_glss_event,
-            &Dx7interface::set_portamento_md_event,
-            &Dx7interface::set_portamento_tm_event,
-            &Dx7interface::set_ptch_bnd_rng_event,
-            &Dx7interface::set_ptch_bnd_stp_event,
-            &Dx7interface::set_send_extra_parameters_event,
-            &Dx7interface::set_transpose_event
-        };
-
-        /* pop hover menu */
+        /*** POPHOVER MENU ***/
         void create_popover_menu();
         Glib::RefPtr<Gio::SimpleActionGroup> action_group=nullptr;
         Gtk::PopoverMenu* m_popover_menu = nullptr;
 
-        /* save dialog */
+        /*** SAVE DIALOG ***/
         void create_dialogs();
         unsigned int action_type = ACT_OPEN;
         Gtk::CheckButton* checkbutton_bulk = nullptr;
-
-        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
-            Gtk::FileDialog* file_dialog_param_select = nullptr;
-            Gtk::FileDialog* file_dialog_param_save = nullptr;
-        #else
-            Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
-            Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
-            Gtk::Button* button_accept = nullptr;
-        #endif
-        Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
-        Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;        
-        void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
-        Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;
-
         unsigned int save_index = 0;
         void set_param() override;
         void set_dialog(Glib::ustring) override;
@@ -529,7 +517,19 @@ class Dx7interface : public Gx_module, public Synth {
         void OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)>);
         void on_file_save(Glib::RefPtr<Gio::File>);
 
-
+        /*** TODO: MOOVE THEM TO GX_MODULE ***/
+        #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
+        Gtk::FileDialog* file_dialog_param_select = nullptr;
+        Gtk::FileDialog* file_dialog_param_save = nullptr;
+        #else
+        Gtk::FileChooserDialog* file_dialog_param_select = nullptr;
+        Gtk::FileChooserDialog* file_dialog_param_save = nullptr;
+        Gtk::Button* button_accept = nullptr;
+        #endif
+        Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
+        Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;
+        void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
+        Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;
 
         /*** THREAD ***/
         bool Run();    /* Thread function  */
@@ -542,10 +542,11 @@ class Dx7interface : public Gx_module, public Synth {
                 void listen_midi(double timestamp, std::vector<unsigned char>* _message, void* userData) override;
         #endif
         /* FILE */
+        // call Gx_Module function of the same name
         void read_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)>);
        
-        /** SOUND BANK **/
-        /* set/load */
+        /**** SOUND BANK ****/
+        /** SET/LOAD **/
         void set_default_values();
         void select_voice(unsigned int);
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
@@ -556,71 +557,68 @@ class Dx7interface : public Gx_module, public Synth {
         void receive_voice(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
         void receive_voice_by_byte(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
         void receive_paramters(St_dx7sysex_1*, std::vector<uint8_t>);
-        /* update */
+        /** UPDATE **/
         void update_bank_modif();
-        /* restore */
+        /** RESTORE **/
         void restore_origin(unsigned int);
         void on_restore_bank();
         void on_restore_sound();
-        /* repalce/delete */
-        void on_insert_at();                                            // Open dialog insert at position
-        void on_insert_sound(Glib::RefPtr<Gio::File>);                  // call load_file->insert_at
-        void insert_at(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);     // do the insert
-
-        /* Prepare bank
-         * to populate it on "insert at" call: get_bank_... , copy, moove, read_voice
-         */
+        /** REPLACE **/
+        void replace_sound(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);
+        void on_replace_sound(Glib::RefPtr<Gio::File> file);
+        /** DELETE **/
+        void on_delete_sound();
+        /** INSERT AT **/
+        void on_insert_at();                                                                    // Open dialog insert at position
+        void on_insert_sound(Glib::RefPtr<Gio::File>);                                          // call load_file->insert_at
+        void insert_at(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);    // do the insert
+        /** PREPARE BANK call all necessarry to insert at: get_bank_[src|dest] , copy, moove, read_voice **/
         void prepare_bank(unsigned int, unsigned int, bool);
-
-        std::pair<
-            Dx7interface::BankVariant,
-            Dx7interface::BankVariant> get_banks_source();
-        std::tuple<unsigned int,std::pair<Dx7interface::BankVariant,
-            Dx7interface::BankVariant>> get_banks_dest(unsigned int);
+        /* GET BANKS */
+        /* source */
+        std::pair<Dx7interface::BankVariant,
+                  Dx7interface::BankVariant> get_banks_source();
+        /* destination */
+        std::tuple<unsigned int,
+                   std::pair<Dx7interface::BankVariant,Dx7interface::BankVariant>> get_banks_dest(unsigned int);
+        /* COPY/MOOVE/READ */
         void copy_bank(BankVariant&, BankVariant&, BankVariant&, BankVariant&, unsigned int, unsigned int);
         void moove_sound(BankVariant&, BankVariant&, unsigned int, int);
         void read_voice(BankVariant&, BankVariant&, unsigned int, bool); // call seek_voice or seek_voice_by_byte
 
-        /* REPLACE */
-        void replace_sound(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);
-        void on_replace_sound(Glib::RefPtr<Gio::File> file);
-        void on_delete_sound();
-        /* save/write */
-        void write_voice_extra_parameters(st_dx7sysex_1*, unsigned char*, unsigned int*);
-        /* BANK */
-        void on_send_bank();
+        void set_init_voice_in_origin();                    // load init voice to bank_1_origin
+
+        /**** SEND / SAVE / WRITE ****/
+        /* SEND */
+        void on_send_bank();                                // send bank over midi
+        void send_voice(st_dx7sysex_1*);                    // send voice over midi
+        void send_extra_parameters(st_dx7sysex_1*);         // send voice parameter over midi
+        /* SAVE */
         void on_save_bank();
+        void save_bank_as(Glib::RefPtr<Gio::File>);
+        void save_modif_sound();                            // save internally on origin bank
+        void on_save_sound();                               // save internally and write file
+        void on_as_raw_event();                             // event to manage save dialog parameter  ( save as raw or bulk )
+        void on_extra_param_event();                        // event to manage save dialog parameter ( save extra parameters )
+        /* WRITE */
         void write_bank(Glib::RefPtr<Gio::File>, unsigned int);
         void write_bank_as_sysex(Glib::RefPtr<Gio::File>, unsigned int);
         void write_bank_as_raw(Glib::RefPtr<Gio::File> file, unsigned int);
-        void on_as_raw_event();
-        void on_extra_param_event();
-        /* VOICE */
         void write_voice_bulk1(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
         void write_voice_bulk32(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
         void write_voice_as_sysex(Glib::RefPtr<Gio::File>);
         void write_voice_as_raw(Glib::RefPtr<Gio::File>);
-        void save_modif_sound();    /* save internally on origin bank */
-        void on_save_sound();       /* save internally and write file */
         void write_voices_as_n_sysex(St_dx7sysex_1*);
-        /* */
-        void save_bank_as(Glib::RefPtr<Gio::File>);
-        void clear_sound(St_dx7sysex_1*,uint8_t,bool);     // set 0x00 to all param to voice struct "aka clear struct"
-        void set_as_origin_sound(unsigned int);                // set bank_X_modif.sound as bank_X_origin.sound
-
-        /** VOICE  **/
-        /* seek voice value from bank file and write it to sound */
+        void write_voice_extra_parameters(st_dx7sysex_1*, unsigned char*, unsigned int*);
+        /*** SET / SEEK VOICE ***/
+        /* seek voice value from bank file and set it to sound */
         void seek_voice(st_dx7sysex_1*);     // get voice param from file to fill sound struct
         void seek_voice_by_byte(st_dx7sysex_1*);     // get voice param from file to fill sound struct
         void seek_parameters(Glib::ustring, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
         void seek_voice_parameters(St_dx7sysex_1*);
-        /* send voice over midi */
-        void send_voice(st_dx7sysex_1*);              // send voice to midi
-        void send_extra_parameters(st_dx7sysex_1*);         // send voice to midi
-        /* set voice to interface */
+        /* set voice value from sound in bank to the interface */
         void set_voice(st_dx7sysex_1*);               // set voice in GUI
         void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
-
 
         /*** DRAWING ***/
         /* lines/curves */

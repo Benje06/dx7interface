@@ -168,13 +168,12 @@
         // TODO: use vector
         //std::vector<St_dx7sysex_1> sound;
         St_dx7sysex_1 sound[i];
-        Glib::ustring name;
+        Glib::ustring name = "";
     };
 
-    typedef struct {
+    typedef struct{
         //std::vector<St_dx7sysex_1> sound;
         St_dx7sysex_1 sound[1]; // Flexible array member
-        //Glib::ustring name;
         Glib::ustring name;
     }*Bank_ptr;
 

@@ -156,7 +156,7 @@ class Synth : public Thread {
         bool compare = false;                           // set if compare button is activate
         bool receive = false;                           // set if receive mode is activate
         bool uncomplete = false;                        // bool for uncomplete sysex message
-        unsigned int bank_nb_sound = 0;                 // number of sound in the current loaded bank 1/32/128
+        unsigned int bank_nb_sound = 1;                 // number of sound in the current loaded bank 1/32/128
         unsigned int snum = 0;                          // selected sound number memo for set_original_sound
         unsigned int old_snum = 0;                      // Previous selected sound number memo for set_original_sound
 
