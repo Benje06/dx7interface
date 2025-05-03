@@ -725,8 +725,14 @@ void Dx7interface::set_dialog(Glib::ustring title){
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::OpenDialogFileSave(unsigned int data_stream_index, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
+void Dx7interface::OpenDialogFileSelect(unsigned int data_stream_index, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
+    Gx_module::OpenDialogFileSelect(data_stream_index, funct);
+};
+void Dx7interface::read_file_as_datastream(unsigned int stream_index, Glib::RefPtr<Gio::File> file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
+    Gx_module::read_file_as_datastream(stream_index, file, funct);
+};
 
+void Dx7interface::OpenDialogFileSave(unsigned int data_stream_index, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
     Gx_module::OpenDialogFileSave(data_stream_index, funct);
 };
 void Dx7interface::on_file_save(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file){
@@ -824,9 +830,7 @@ void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
     LOG( LOG_OUT() );
 };
 /* set/load */
-void Dx7interface::OpenDialogFileSelect(unsigned int data_stream_index, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
-    Gx_module::OpenDialogFileSelect(data_stream_index, funct);
-};
+
 
 void Dx7interface::clean_bank(){
     LOG( LOG_IN() );
@@ -859,10 +863,6 @@ void Dx7interface::set_init_voice_in_origin(){
     // restore bank_1 values
     bank_1_origin.name = bank_name;
     bank_nb_sound = bank_nb_sound_origin;
-};
-
-void Dx7interface::read_file_as_datastream(unsigned int stream_index, Glib::RefPtr<Gio::File> file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
-    Gx_module::read_file_as_datastream(stream_index, file, funct);
 };
 
 void Dx7interface::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> bank_file){
