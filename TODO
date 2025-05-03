@@ -1,7 +1,7 @@
 #Questions
 
 ### DOC
-doc d'utilisation* (DEBIAN)(WINDOWS) utilisation generale( cmd line, ...)
+*doc d'utilisation (DEBIAN)(WINDOWS) utilisation generale( cmd line, ...)
 page html
 normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
@@ -14,6 +14,12 @@ traductions
 
 # Fonctionalitées
 evenements MIDI (temporisation, ?mode omni?)
+Boite a outils:
+    send message sysex( interface)
+    fenetre dump
+* indicateur son modifié:
+    reinitialise a restaure sound ou restore bank
+    indicateur a coté du numero du son 1* A.Piano
 
 sépration des mutes (hexter vs natif)
 
@@ -29,11 +35,11 @@ multiplateforme (midi/interface) :
 listen sysex message (Windows)
 
 # Interface
-rescale la courbe de volume en %
+KLS:
+    limite haute de la courbe, 
 ? Select midi device from interface ?
 moove(ctrl+c/ctrl+x/drag and drop) gestion click appuyer pour déplacer un sons
 refonte interface( size/expand des elements)
-* son par defaut (son init) au demrrage et lors d'extentnion de la banque
 randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, en fonction dela frequence, relatif a d'autres ...) )
 	- que ce soit audible
 	- "musicale"
@@ -43,18 +49,21 @@ randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, e
 * test css valeur pour themes clair/fonce.
 
 ### CODE
-* factorisation ( ?receive bank? )
-* genericité / moove to other class (synth,...) ?midi learn,compare?
+* dx7 as shared cf makefile lib gxinterface
+* factorisation/bankvariant: receive bank,... (cf.clean_bank/restore_origin) / gemod/gx_module
+* genericité / moove to other class (synth,gxmodule) ?midi learn,compare,...?
 synth generique (voir avec marc)
-gestion d'exceptions
-filtre des variables utilisateurs ??? getops ?
-evenement standard (erreur ???)
-fenetre secondaires (option, module) gxinterface
-? LOG / Console integré ? ( mode windows ou sans terminal)
+gestion d'exceptions/normalisation: error(,,)+LOG_ERR()
+*filtre des variables utilisateurs ??? getops ?
+
+fenetre secondaires:
+    - (option/parametres, module) gxinterface
+    - parametre supplementaire du fichier des fonction parameter tf1 (C3:HI../ASCII MODE)
+Console integré: messages debug/infos
+* LOG: debug_level de la compilation dans les parametre du logmanager plutot qu'a la compil
+
 verifier la récuperations des bon bit du syx(cf tableau.ods)
 
 # ergonomie
 drag&drop
 tooltype
-
-
