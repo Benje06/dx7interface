@@ -131,9 +131,10 @@ class Gx_module {
 		/* LOAD */
 		void OpenDialogFileSelect(unsigned int,
                                   std::function<void(unsigned int, Glib::RefPtr<Gio::File>)>);
-		void read_file_as_datastream(unsigned int,
-                                    Glib::RefPtr<Gio::File>,
-                                    std::function<void(unsigned int, Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct);
+        void read_file_as_datastream(unsigned int data_stream_index,
+                                    Glib::RefPtr<Gio::File> file,
+                                    std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct);
+        std::tuple<Glib::ustring, Glib::ustring, unsigned int> get_file_attribut(Glib::RefPtr<Gio::File> file);
 		bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
 		/* SAVE */
         void OpenDialogFileSave(unsigned int,

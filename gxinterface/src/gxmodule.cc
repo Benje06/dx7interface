@@ -98,24 +98,32 @@ Gx_module::~Gx_module(){
 /*** DIALOGS ***/
 void Gx_module::set_param(){};
 /* Read/Write File */
-void Gx_module::read_file_as_datastream(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct){
+void Gx_module::read_file_as_datastream(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
     LOG(LOG_IN());
     try {
-        unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
-        Glib::ustring filename = file->get_path();
-        Glib::ustring file_base = filename.substr(0,filename.find_last_of("."));
-        Glib::ustring file_name = file_base.substr( file_base.find_last_of("/")+1, file_base.length() );
-
         data_stream.at(data_stream_index) = Gio::DataInputStream::create(file->read());
-
-        funct(data_stream_index, file, file_name, file_base, file_size);
-
+        funct(data_stream_index, file);
         if(!isStreamClosed(data_stream.at(data_stream_index))){
             data_stream.at(data_stream_index)->close();
         };
-
     }catch(const std::exception& ex){
         std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot Read: ") + file->get_path(), ex.what() );
+        LOG_ERR( err_msg );
+        throw std::runtime_error(err_msg);
+    };
+    LOG(LOG_OUT());
+};
+std::tuple<Glib::ustring, Glib::ustring, unsigned int> Gx_module::get_file_attribut(Glib::RefPtr<Gio::File> file){
+    LOG(LOG_IN());
+    try {
+        unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
+        Glib::ustring path = file->get_path();
+        Glib::ustring file_path = path.substr(0,path.find_last_of("."));
+        Glib::ustring file_name = file_path.substr( file_path.find_last_of("/")+1, file_path.length() );
+        return std::make_tuple(file_name, file_path, file_size);
+
+    }catch(const std::exception& ex){
+        std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot get attributs of: ") + file->get_path(), ex.what() );
         LOG_ERR( err_msg );
         throw std::runtime_error(err_msg);
     };
@@ -210,7 +218,9 @@ void Gx_module::OpenDialogFileSave(unsigned int data_stream_index, std::function
             set_param();
             #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
                 try{
-                    dialog_file_save->set_initial_folder(initial_folder_save);
+                    if(initial_folder_save!=nullptr){
+                        dialog_file_save->set_initial_folder(initial_folder_save);
+                    };
                     dialog_file_save->save(*(get_window()), [this,funct,data_stream_index](const Glib::RefPtr<Gio::AsyncResult>& result) {
                         try{
                             Glib::RefPtr<Gio::File> file = dialog_file_save->save_finish(result);
@@ -233,7 +243,9 @@ void Gx_module::OpenDialogFileSave(unsigned int data_stream_index, std::function
             #else
                 try{
                     dialog_file_save->set_transient_for(*(get_window()));
-                    dialog_file_save->set_current_folder(initial_folder_save);
+                    if(initial_folder_save!=nullptr){
+                        dialog_file_save->set_current_folder(initial_folder_save);
+                    };
                     auto slot_dialog_file_save = dialog_file_save->signal_response().connect([this,funct,data_stream_index](int response) {
                         try {
                             if (response == Gtk::ResponseType::ACCEPT) {
