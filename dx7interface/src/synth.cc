@@ -172,27 +172,33 @@ void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
 
 /*** File ***/
 
-void Synth::parse_sysex( Glib::RefPtr<Gio::File> file, Glib::RefPtr<Gio::DataInputStream>& data_stream, unsigned int& file_size){
-    unsigned char data = data_stream->read_byte();
-    if (data == 0xF0 ){
-        for (uint8_t i=0; i < 5; i++){
-            data_stream->read_byte();
+void Synth::parse_sysex(Glib::RefPtr<Gio::File> file, Glib::RefPtr<Gio::DataInputStream>& data_stream, unsigned int& file_size){
+    try{
+        unsigned char data = data_stream->read_byte();
+        if (data == 0xF0 ){
+            for (uint8_t i=0; i < 5; i++){
+                data_stream->read_byte();
+            };
+            file_size -= 8;
+        }else{
+            data_stream->close();
+            data_stream = Gio::DataInputStream::create(file->read());
+            file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
         };
-        file_size -= 8;
-    }else{
-        data_stream->close();
-        data_stream = Gio::DataInputStream::create(file->read());
-        file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
-    };
+    }catch( const std::exception&  ex){
+        std::string err_msg = error( __PRETTY_FUNCTION__, "Cannot Parse Sysex file", ex.what() );
+        LOG_ERR( err_msg );
+        LOG( LOG_OUT() );
+    }
 };
 
 /** BANK **/
-void Synth::set_bank( Glib::RefPtr<Gio::File> bank_file, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct ){
+void Synth::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> bank_file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct ){
     // GENERIC
     LOG( LOG_IN() );
     block_ui();
     clean_bank();
-    read_file_as_datastream(bank_file,funct); //copy file content in _modif et _origin
+    read_file_as_datastream(data_stream_index, bank_file, funct); //copy file content in _modif et _origin
     Glib::ustring filename = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
     Glib::ustring name = filename.substr(0,filename.find_last_of("."));
     set_bank_name(name);

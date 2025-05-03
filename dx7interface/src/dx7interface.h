@@ -69,7 +69,7 @@ extern "C" {
 
 class Dx7interface : public Gx_module, public Synth {
     public:
-        Dx7interface(Glib::ustring,uint8_t);
+        Dx7interface(Glib::ustring ui, uint8_t index);
         virtual ~Dx7interface();
         //void add_action();
 
@@ -121,11 +121,15 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::SignalListItemFactory> bank_factory=nullptr;
         /* update hte listview model */
         template<class ListStoreType>
-        void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name);
+        void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
+                               Glib::ustring sound_name);
         template<class ListStoreType>
-        void update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> list_data_model, BankVariant& bank_modif_dest);
+        void update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
+                                    BankVariant& bank_modif_dest);
         template<class ListStoreType>
-        void update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int i, Glib::ustring name);
+        void update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
+                                     unsigned int index_element,
+                                     Glib::ustring name);
 
         /*** MIDI LEARN ***/
         bool midi_learn=false;
@@ -137,20 +141,24 @@ class Dx7interface : public Gx_module, public Synth {
         /* read */
         sigc::connection slot_midi_learn_load;
         void on_midi_learn_param_select();
-        void read_midi_learned_param(Glib::RefPtr<Gio::File>);
+        void read_midi_learned_param(Glib::RefPtr<Gio::File> file);
         /* write */
         sigc::connection slot_midi_learn_save;
         void on_midi_learn_param_save();
-        void save_midi_learned_param(Glib::RefPtr<Gio::File>);
+        void save_midi_learned_param(Glib::RefPtr<Gio::File> file);
         /* clean */
         void clean_midi_learn();
 
         /* EVENT MIDI LEARN */
         void on_midi_learn_event();
         void on_add_midi_learn_event();
-        void add_midi_learned(int, int);
-        void add_midi_learn_param_widget(Glib::ustring, Glib::ustring,int);
-        void rem_midi_learned(int, int);
+        void add_midi_learned(int param_number,
+                              int function_index);
+        void rem_midi_learned(int param_number,
+                              int function_index);
+        void add_midi_learn_param_widget(Glib::ustring function_name,
+                                         Glib::ustring param_number,
+                                         int selected_item);
         /* CREATE MIDI LEARN LIST */
         void create_param_list();
         Glib::RefPtr<Gio::ListStore<ParamItem>> param_data_model=nullptr; /* liste des noms des sons de la banque chargée */
@@ -509,13 +517,18 @@ class Dx7interface : public Gx_module, public Synth {
         /*** SAVE DIALOG ***/
         void create_dialogs();
         unsigned int action_type = ACT_OPEN;
-        Gtk::CheckButton* checkbutton_bulk = nullptr;
         unsigned int save_index = 0;
+        Gtk::CheckButton* checkbutton_bulk = nullptr;
         void set_param() override;
-        void set_dialog(Glib::ustring) override;
-        void OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)>);
-        void OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)>);
-        void on_file_save(Glib::RefPtr<Gio::File>);
+        void set_dialog(Glib::ustring title) override;
+        void OpenDialogFileSelect(unsigned int data_stream_index,
+                                  std::function<void(unsigned int data_stream_index,
+                                                     Glib::RefPtr<Gio::File> file)>);
+        void OpenDialogFileSave(unsigned int data_stream_index,
+                                std::function<void(unsigned int data_stream_index,
+                                                   Glib::RefPtr<Gio::File> file)>);
+        void on_file_save(unsigned int data_stream_index,
+                         Glib::RefPtr<Gio::File> file);
 
         /*** TODO: MOOVE THEM TO GX_MODULE ***/
         #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 10)
@@ -528,7 +541,6 @@ class Dx7interface : public Gx_module, public Synth {
         #endif
         Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;
-        void OpenFileInsertDialog(Glib::ustring,Glib::ustring);
         Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;
 
         /*** THREAD ***/
@@ -539,86 +551,145 @@ class Dx7interface : public Gx_module, public Synth {
                 void listen_midi() override;
         #endif
         #if (defined(__WIN32) || defined(__MINGW32__) && defined(__RtMidi__))
-                void listen_midi(double timestamp, std::vector<unsigned char>* _message, void* userData) override;
+                void listen_midi(double timestamp,
+                                 std::vector<unsigned char>* message,
+                                 void* userData) override;
         #endif
         /* FILE */
         // call Gx_Module function of the same name
-        void read_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)>);
+        void read_file_as_datastream(unsigned int data_stream_index,
+                                    Glib::RefPtr<Gio::File> file,
+                                    std::function<void(unsigned int data_stream_index,
+                                                       Glib::RefPtr<Gio::File> file,
+                                                       Glib::ustring file_name,
+                                                       Glib::ustring file_base,
+                                                       unsigned int file_size)>);
        
         /**** SOUND BANK ****/
         /** SET/LOAD **/
         void set_default_values();
-        void select_voice(unsigned int);
+        void select_voice(unsigned int position);
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
-        void set_bank(Glib::RefPtr<Gio::File>);
-        void set_bank_name(Glib::ustring);
-        void set_bank_sounds(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);
-        void receive_bank(std::vector<uint8_t>);
-        void receive_voice(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
-        void receive_voice_by_byte(St_dx7sysex_1*, std::vector<uint8_t>);     // get voice param from midi message to fill sound struct
-        void receive_paramters(St_dx7sysex_1*, std::vector<uint8_t>);
+        void set_bank(unsigned int, Glib::RefPtr<Gio::File> file);
+        void set_bank_name(Glib::ustring name);
+        void set_bank_sounds(unsigned int datat_stream_index,
+                             Glib::RefPtr<Gio::File> file,
+                             Glib::ustring file_name,
+                             Glib::ustring file_base,
+                             unsigned int file_size);
+        void receive_bank(std::vector<uint8_t> sysex_buffer);
+        void receive_voice(St_dx7sysex_1* sound,
+                           std::vector<uint8_t> sysex_buffer);          // get voice param from midi message to fill sound struct
+        void receive_voice_by_byte(St_dx7sysex_1* sound,
+                                   std::vector<uint8_t> sysex_buffer);  // get voice param from midi message to fill sound struct
+        void receive_paramters(St_dx7sysex_1* sound,
+                               std::vector<uint8_t> sysex_buffer);
         /** UPDATE **/
         void update_bank_modif();
         /** RESTORE **/
-        void restore_origin(unsigned int);
+        void restore_origin(unsigned int type);
         void on_restore_bank();
         void on_restore_sound();
         /** REPLACE **/
-        void replace_sound(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);
-        void on_replace_sound(Glib::RefPtr<Gio::File> file);
+        void replace_sound(unsigned int data_stream_index,
+                           Glib::RefPtr<Gio::File> file,
+                           Glib::ustring filename,
+                           Glib::ustring file_base,
+                           unsigned int file_size);
+        void on_replace_sound(unsigned int data_stream_index,
+                              Glib::RefPtr<Gio::File> file);
         /** DELETE **/
         void on_delete_sound();
         /** INSERT AT **/
         void on_insert_at();                                                                    // Open dialog insert at position
-        void on_insert_sound(Glib::RefPtr<Gio::File>);                                          // call load_file->insert_at
-        void insert_at(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int);    // do the insert
+        void on_insert_sound(unsigned int data_stream_index,
+                             Glib::RefPtr<Gio::File> file);                                          // call load_file->insert_at
+        void insert_at(unsigned int data_stream_index,
+                       Glib::RefPtr<Gio::File> file,
+                       Glib::ustring file_name,
+                       Glib::ustring file_base,
+                       unsigned int file_size);    // do the insert
         /** PREPARE BANK call all necessarry to insert at: get_bank_[src|dest] , copy, moove, read_voice **/
-        void prepare_bank(unsigned int, unsigned int, bool);
+        void prepare_bank(unsigned int data_stream_index,
+                          unsigned int nb_snd_in_file,
+                          unsigned int pos_end_ins,
+                          bool byte_flag);
         /* GET BANKS */
         /* source */
         std::pair<Dx7interface::BankVariant,
                   Dx7interface::BankVariant> get_banks_source();
         /* destination */
         std::tuple<unsigned int,
-                   std::pair<Dx7interface::BankVariant,Dx7interface::BankVariant>> get_banks_dest(unsigned int);
+                   std::pair<Dx7interface::BankVariant,Dx7interface::BankVariant>> get_banks_dest(unsigned int pos_end_ins);
         /* COPY/MOOVE/READ */
-        void copy_bank(BankVariant&, BankVariant&, BankVariant&, BankVariant&, unsigned int, unsigned int);
-        void moove_sound(BankVariant&, BankVariant&, unsigned int, int);
-        void read_voice(BankVariant&, BankVariant&, unsigned int, bool); // call seek_voice or seek_voice_by_byte
+        void copy_bank(BankVariant& bank_origin_src,
+                       BankVariant& bank_origin_dest,
+                       BankVariant& bank_modif_src,
+                       BankVariant& bank_modif_dest,
+                       unsigned int src_size,
+                       unsigned int dst_size);
+        void moove_sound(BankVariant& bank_origin_dest,
+                         BankVariant& bank_modif_dest,
+                         unsigned int end_insert,
+                         int nb_snd);
+        void read_voice(unsigned int data_stream_index,
+                        BankVariant& bank_origin_dest,
+                        BankVariant& bank_modif_dest,
+                        unsigned int max_write_pos,
+                        bool byte_flag); // call seek_voice or seek_voice_by_byte
 
         void set_init_voice_in_origin();                    // load init voice to bank_1_origin
 
         /**** SEND / SAVE / WRITE ****/
         /* SEND */
         void on_send_bank();                                // send bank over midi
-        void send_voice(st_dx7sysex_1*);                    // send voice over midi
-        void send_extra_parameters(st_dx7sysex_1*);         // send voice parameter over midi
+        void send_voice(st_dx7sysex_1* sound);                    // send voice over midi
+        void send_extra_parameters(st_dx7sysex_1* sound);         // send voice parameter over midi
         /* SAVE */
         void on_save_bank();
-        void save_bank_as(Glib::RefPtr<Gio::File>);
+        void save_bank_as(Glib::RefPtr<Gio::File> file);
         void save_modif_sound();                            // save internally on origin bank
         void on_save_sound();                               // save internally and write file
         void on_as_raw_event();                             // event to manage save dialog parameter  ( save as raw or bulk )
         void on_extra_param_event();                        // event to manage save dialog parameter ( save extra parameters )
         /* WRITE */
-        void write_bank(Glib::RefPtr<Gio::File>, unsigned int);
-        void write_bank_as_sysex(Glib::RefPtr<Gio::File>, unsigned int);
-        void write_bank_as_raw(Glib::RefPtr<Gio::File> file, unsigned int);
-        void write_voice_bulk1(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
-        void write_voice_bulk32(unsigned int*, unsigned char*, St_dx7sysex_1*, uint8_t*);
-        void write_voice_as_sysex(Glib::RefPtr<Gio::File>);
-        void write_voice_as_raw(Glib::RefPtr<Gio::File>);
-        void write_voices_as_n_sysex(St_dx7sysex_1*);
-        void write_voice_extra_parameters(st_dx7sysex_1*, unsigned char*, unsigned int*);
+        void write_bank(unsigned int data_stream_index,
+                        Glib::RefPtr<Gio::File> file,
+                        unsigned int index);
+        void write_bank_as_sysex(unsigned int data_stream_index,
+                                 Glib::RefPtr<Gio::File> file,
+                                 unsigned int index);
+        void write_bank_as_raw(unsigned int data_stream_index,
+                               Glib::RefPtr<Gio::File> file,
+                               unsigned int index);
+        void write_voice_bulk1(unsigned int* msg_index,
+                               unsigned char* msg,
+                               St_dx7sysex_1* sound,
+                               uint8_t* voice_checksum);
+        void write_voice_bulk32(unsigned int* msg_index,
+                                unsigned char* msg,
+                                St_dx7sysex_1* sound,
+                                uint8_t* voice_checksum);
+        void write_voice_as_sysex(unsigned int data_stream_index,
+                                  Glib::RefPtr<Gio::File> file);
+        void write_voice_as_raw(unsigned int data_stream_index,
+                                Glib::RefPtr<Gio::File> file);
+        void write_voices_as_n_sysex(St_dx7sysex_1* sound);
+        void write_voice_extra_parameters(st_dx7sysex_1* sound,
+                                          unsigned char*,
+                                          unsigned int*);
         /*** SET / SEEK VOICE ***/
         /* seek voice value from bank file and set it to sound */
-        void seek_voice(st_dx7sysex_1*);     // get voice param from file to fill sound struct
-        void seek_voice_by_byte(st_dx7sysex_1*);     // get voice param from file to fill sound struct
-        void seek_parameters(Glib::ustring, St_dx7sysex_1*); // get sound parameter from file to fill sound extra param struct
-        void seek_voice_parameters(St_dx7sysex_1*);
+        void seek_voice(Glib::RefPtr<Gio::DataInputStream> data_stream,
+                        st_dx7sysex_1* sound);     // get voice param from file to fill sound struct
+        void seek_voice_by_byte(Glib::RefPtr<Gio::DataInputStream> data_stream,
+                                st_dx7sysex_1* sound);     // get voice param from file to fill sound struct
+        void seek_parameters(Glib::ustring file_base,
+                             St_dx7sysex_1* sound); // get sound parameter from file to fill sound extra param struct
+        void seek_voice_parameters(St_dx7sysex_1* sound);
         /* set voice value from sound in bank to the interface */
-        void set_voice(st_dx7sysex_1*);               // set voice in GUI
-        void set_voice_parameters(St_dx7sysex_1*);    // set sound parameter
+        void set_voice(st_dx7sysex_1* sound);               // set voice in GUI
+        void set_voice_parameters(St_dx7sysex_1* sound);    // set sound parameter
 
         /*** DRAWING ***/
         /* lines/curves */
@@ -638,19 +709,45 @@ class Dx7interface : public Gx_module, public Synth {
         std::array<double, 4> text_color = {1.0, 0.5, 0.2, 0.8};
         std::array<double, 4> bg_color = {0.0, 0.0, 0.0, 0.0};
         /* Cairomm context helpers */
-        int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>&, Glib::ustring);  /* retourne la taille de sla zone visible */
+        int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>& cr,
+                                 Glib::ustring name);  /* retourne la taille de sla zone visible */
         /* ADSR */
         void redraw_all_curve();
-        void draw_background(const Cairo::RefPtr<Cairo::Context>&);                                 /* dessine le fond */
-        void draw_grid(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /* dessisne la grille */
-        void draw_adsr(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);        /* dessine la courbe */
-        void draw_point(const Cairo::RefPtr<Cairo::Context>&, double, double,double,bool);          /* dessine un point */
-        void draw_note_off(const Cairo::RefPtr<Cairo::Context>&, double, double);
+        void draw_background(const Cairo::RefPtr<Cairo::Context>& cr);                                 /* dessine le fond */
+        void draw_grid(const Cairo::RefPtr<Cairo::Context>& cr,
+                       double width,
+                       double height);                       /* dessisne la grille */
+        void draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr,
+                       double width,
+                       double height,
+                       Glib::ustring name);        /* dessine la courbe */
+        void draw_point(const Cairo::RefPtr<Cairo::Context>& cr,
+                        double x,
+                        double y,
+                        double width,
+                        bool orange);          /* dessine un point */
+        void draw_note_off(const Cairo::RefPtr<Cairo::Context>& cr,
+                          double x_noteoff,
+                          double height);
         /* Level Scaling */
-        void draw_kls(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);         /* dessine la courbe */
-        void draw_keyboard(const Cairo::RefPtr<Cairo::Context>&, double, double, Glib::ustring);    /*dessine le clavier */
-        void draw_axis(const Cairo::RefPtr<Cairo::Context>&, double, double);                       /* dessine les axes */
-        void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>&,Glib::ustring, double, double, double, Glib::ustring, double); /* draw kls curve type */
+        void draw_kls(const Cairo::RefPtr<Cairo::Context>& cr,
+                      double width,
+                      double height,
+                      Glib::ustring);         /* dessine la courbe */
+        void draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr,
+                           double width,
+                           double height,
+                           Glib::ustring num_op);    /*dessine le clavier */
+        void draw_axis(const Cairo::RefPtr<Cairo::Context>& cr,
+                       double width,
+                       double height);                       /* dessine les axes */
+        void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,
+                            Glib::ustring type_curve,
+                            double width,
+                            double height,
+                            double dpth,
+                            Glib::ustring dir,
+                            double lvl); /* draw kls curve type */
 
         /* Mouse Gesture */
         void init_gesture_controller();
@@ -664,8 +761,14 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op5;
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_op6;
         Glib::RefPtr<Gtk::GestureClick> controller_mouse_button_pitch;
-        void mouse_click(int, double, double, Glib::ustring);
-        void mouse_click_release(int, double, double, Glib::ustring);
+        void mouse_click(int n_press,
+                         double x,
+                         double y,
+                         Glib::ustring name);
+        void mouse_click_release(int n_press,
+                                 double x,
+                                 double y,
+                                 Glib::ustring name);
         /* Mouse mooves */
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op1;
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op2;
@@ -674,7 +777,9 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op5;
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op6;
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_pitch;
-        void mouse_mooves(double, double, Glib::ustring);
+        void mouse_mooves(double x,
+                          double y,
+                          Glib::ustring name);
 
         /*** UI ***/
         FunctionPtr mute_hexter_functions[6] = {
@@ -694,30 +799,45 @@ class Dx7interface : public Gx_module, public Synth {
 
         /** Drawing **/
         void attach_drawarea_signals();
-        void on_draw_algo(const Cairo::RefPtr<Cairo::Context>&, double, double);
-        void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>&, double, double);
-        void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>&, int, int);
-        void on_draw_op_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
-        void on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>&, int, int, Glib::ustring);
+        void on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr,
+                          double width,
+                          double height);
+        void on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr,
+                         double width,
+                         double height);
+        void on_draw_pitch_event(const Cairo::RefPtr<Cairo::Context>& cr,
+                                 int width,
+                                 int height);
+        void on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,
+                              int width,
+                              int height,
+                              Glib::ustring num_op);
+        void on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,
+                               int width,
+                               int height,
+                               Glib::ustring num_op);
 
         /*** EVENTS and SIGC ::connection slot for blocking ***/
         /** BANK **/
         void on_bank_reveal();
         sigc::connection slot_bank_reveal;
-        void on_columnview_right_click(int, double, double);
+        void on_columnview_right_click(int n_press,
+                                       double x,
+                                       double y);
         sigc::connection slot_columnview_right_click;
-        void on_selected_sound_change(unsigned int,unsigned int);
+        void on_selected_sound_change(unsigned int num,
+                                      unsigned int nb_elmnt);
         sigc::connection slot_selected_sound_change;
         sigc::connection slot_bank_select;
         sigc::connection slot_file_dialog_select;
         /* populate columnview */
-        void on_bind_num(const Glib::RefPtr<Gtk::ListItem>&);
-        void on_bind_name(const std::shared_ptr<Gtk::ListItem>&);
-        void on_setup_sound_number_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
-        void on_setup_sound_name_label(const Glib::RefPtr<Gtk::ListItem>&, Gtk::Align);
+        void on_bind_num(const Glib::RefPtr<Gtk::ListItem>& list_item);
+        void on_bind_name(const std::shared_ptr<Gtk::ListItem>& list_item);
+        void on_setup_sound_number_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align);
+        void on_setup_sound_name_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align);
         void on_sound_name_event();
-        Glib::ustring check_sound_name(Glib::ustring);
-        void set_sound_name(Glib::ustring);
+        Glib::ustring check_sound_name(Glib::ustring ssound_name); // check valid caracter for soundname entered in textbox
+        void set_sound_name(Glib::ustring sound_name);
         sigc::connection slot_sound_name_activate;
         sigc::connection slot_sound_name_change;
         /** Functions parameters **/
