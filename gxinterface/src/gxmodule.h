@@ -124,11 +124,13 @@ class Gx_module {
         sigc::connection slot_btn_dialog_param;
 		Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
 		Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
-		Glib::RefPtr<Gio::DataInputStream> data_stream=nullptr;
+
+        std::vector<Glib::RefPtr<Gio::DataInputStream>> data_stream = std::vector<Glib::RefPtr<Gio::DataInputStream>>(3, nullptr);
+
 		virtual void set_param();          				// function to set the parameters of action
 		/* LOAD */
 		void OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)>);
-		void read_file_as_datastream(Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct);
+		void read_file_as_datastream(unsigned int, Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct);
 		bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
 		/* SAVE */		
         void OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)>);	// function to show the select file dialog for save
