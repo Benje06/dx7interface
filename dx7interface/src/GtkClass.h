@@ -9,22 +9,22 @@
 class SoundBankItem : public Glib::Object {
     private:
         // Protected constructor to enforce the use of the factory method
-        SoundBankItem(unsigned int number, const Glib::ustring& name)
+        SoundBankItem(const Glib::ustring& number, const Glib::ustring& name)
         : Glib::ObjectBase("SoundBankItem"),
         i_number(*this, "number", number),  // Initialize properties
         i_name(*this, "name", name) {}
         // Properties
-        Glib::Property<unsigned int> i_number;  // Internal number property
+        Glib::Property<Glib::ustring> i_number;  // Internal number property
         Glib::Property<Glib::ustring> i_name;   // Internal name property
 
     public:
         // Factory method for creating instances
-        static Glib::RefPtr<SoundBankItem> create(unsigned int number, const Glib::ustring& name) {
+        static Glib::RefPtr<SoundBankItem> create(const Glib::ustring& number, const Glib::ustring& name) {
             return Glib::make_refptr_for_instance<SoundBankItem>(new SoundBankItem(number, name));
         }
 
         // Setters
-        void set_number(unsigned int num) {
+        void set_number(const Glib::ustring& num) {
             i_number.set_value(num);
         }
         void set_name(const Glib::ustring& name) {
@@ -32,7 +32,7 @@ class SoundBankItem : public Glib::Object {
         }
 
         // Getters (marked as const)
-        unsigned int get_number() const { return i_number.get_value(); }
+        Glib::ustring get_number() const { return i_number.get_value(); }
         Glib::ustring get_name() const { return i_name.get_value(); }
 };
 /* Class to manager Items in ListStore midi learn*/

@@ -776,13 +776,13 @@ class Dx7interface : public Gx_module, public Synth {
                           Glib::ustring name);
 
         /*** UI ***/
-        FunctionPtr mute_hexter_functions[6] = {
-            &Dx7interface::on_mute_hexter_op1_event,
-            &Dx7interface::on_mute_hexter_op2_event,
-            &Dx7interface::on_mute_hexter_op3_event,
-            &Dx7interface::on_mute_hexter_op4_event,
-            &Dx7interface::on_mute_hexter_op5_event,
-            &Dx7interface::on_mute_hexter_op6_event
+        FunctionPtr mute_by_level_functions[6] = {
+            &Dx7interface::on_mute_by_level_op1_event,
+            &Dx7interface::on_mute_by_level_op2_event,
+            &Dx7interface::on_mute_by_level_op3_event,
+            &Dx7interface::on_mute_by_level_op4_event,
+            &Dx7interface::on_mute_by_level_op5_event,
+            &Dx7interface::on_mute_by_level_op6_event
         };
         /** EVENTS / SIGNAL **/
         void block_ui();                       /* block all interface events */
@@ -947,12 +947,12 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_mute_op5;
         sigc::connection slot_mute_op6;
         /* mute operator FOR HEXTER DX7 modeling DSSI plugin */
-        void on_mute_hexter_op1_event();
-        void on_mute_hexter_op2_event();
-        void on_mute_hexter_op3_event();
-        void on_mute_hexter_op4_event();
-        void on_mute_hexter_op5_event();
-        void on_mute_hexter_op6_event();
+        void on_mute_by_level_op1_event();
+        void on_mute_by_level_op2_event();
+        void on_mute_by_level_op3_event();
+        void on_mute_by_level_op4_event();
+        void on_mute_by_level_op5_event();
+        void on_mute_by_level_op6_event();
 
         /* update show freq label value */
         void on_txt_freq_op_event();

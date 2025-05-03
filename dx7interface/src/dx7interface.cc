@@ -1471,7 +1471,7 @@ Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
 };
 void Dx7interface::update_modified(){
     if(!bank_1_modif.sound->modified){
-        update_data_model_number<SoundBankItem>(bank_data_model, "*" + snum);
+        update_data_model_number<SoundBankItem>(bank_data_model, std::to_string(snum)+"*");
         bank_1_modif.sound->modified = true;
     };
 };
@@ -1486,7 +1486,7 @@ void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStore
 };
 template<class ListStoreType>
 void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name){
-    auto sound = ListStoreType::create(snum,sound_name);
+    auto sound = ListStoreType::create(std::to_string(snum),sound_name);
     if( !data_model->get_item(snum) ){
         data_model->insert(snum, sound);
     }else{
@@ -1495,11 +1495,11 @@ void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>>
 };
 template<class ListStoreType>
 void Dx7interface::update_data_model_number(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring number){
-    auto sound = ListStoreType::create(snum, sound_name);
+    auto sound = ListStoreType::create(number, bank_1_modif.sound->name);
     if( !data_model->get_item(snum) ){
-        data_model->insert(number, sound);
+        data_model->insert(snum, sound);
     }else{
-        data_model->splice(number, 1, {sound});  // Replace item at same position
+        data_model->splice(snum, 1, {sound});  // Replace item at same position
     };
 };
 template<class ListStoreType>
@@ -5783,9 +5783,9 @@ void Dx7interface::on_aftrtch_assgn_event(){
 };
 
 /* ALGO */
-void Dx7interface::on_algo_event() {
+void Dx7interface::on_algo_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
         update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
@@ -5802,9 +5802,10 @@ void Dx7interface::on_algo_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_feedback_event() {
+void Dx7interface::on_feedback_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5819,9 +5820,10 @@ void Dx7interface::on_feedback_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_transpose_event() {
+void Dx7interface::on_transpose_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         char val =  (get_gwidget<Gtk::DropDown>("note_transpose"))->get_selected()
                  +( ((get_gwidget<Gtk::SpinButton>("octv_transpose"))->get_value()-1)*12 );
         if( val >= 0 && val <= 48){
@@ -5840,9 +5842,10 @@ void Dx7interface::on_transpose_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_oks_event() {
+void Dx7interface::on_oks_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5862,9 +5865,10 @@ void Dx7interface::on_oks_event() {
 };
 
 /* LFO */
-void Dx7interface::on_lfo_wav_event() {
+void Dx7interface::on_lfo_wav_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5880,9 +5884,10 @@ void Dx7interface::on_lfo_wav_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lfo_sync_event() {
+void Dx7interface::on_lfo_sync_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5901,9 +5906,10 @@ void Dx7interface::on_lfo_sync_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lfo_speed_event() {
+void Dx7interface::on_lfo_speed_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5918,9 +5924,10 @@ void Dx7interface::on_lfo_speed_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lfo_delay_event() {
+void Dx7interface::on_lfo_delay_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5935,9 +5942,10 @@ void Dx7interface::on_lfo_delay_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lfo_pmd_event() {
+void Dx7interface::on_lfo_pmd_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5952,9 +5960,10 @@ void Dx7interface::on_lfo_pmd_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lfo_amd_event() {
+void Dx7interface::on_lfo_amd_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5970,9 +5979,10 @@ void Dx7interface::on_lfo_amd_event() {
 };
 
 /*LFO MODULATION */
-void Dx7interface::on_pms_event() {
+void Dx7interface::on_pms_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -5988,9 +5998,10 @@ void Dx7interface::on_pms_event() {
 };
 
 /* PITCH EG */
-void Dx7interface::on_pitch_rt1_event() {
+void Dx7interface::on_pitch_rt1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6006,10 +6017,11 @@ void Dx7interface::on_pitch_rt1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_pitch_rt2_event() {
+void Dx7interface::on_pitch_rt2_event(){
     LOG( LOG_IN() );
-    if (!compare){
-    unsigned char msg[7];
+    if( !compare ){
+        update_modified();
+        unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
         msg[2]=sub_status + channel_send;
@@ -6024,9 +6036,10 @@ void Dx7interface::on_pitch_rt2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_pitch_rt3_event() {
+void Dx7interface::on_pitch_rt3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6042,9 +6055,10 @@ void Dx7interface::on_pitch_rt3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_pitch_rt4_event() {
+void Dx7interface::on_pitch_rt4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6060,9 +6074,10 @@ void Dx7interface::on_pitch_rt4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_pitch_lvl1_event() {
+void Dx7interface::on_pitch_lvl1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6078,9 +6093,10 @@ void Dx7interface::on_pitch_lvl1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_pitch_lvl2_event() {
+void Dx7interface::on_pitch_lvl2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6096,9 +6112,10 @@ void Dx7interface::on_pitch_lvl2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_pitch_lvl3_event() {
+void Dx7interface::on_pitch_lvl3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6114,9 +6131,10 @@ void Dx7interface::on_pitch_lvl3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_pitch_lvl4_event() {
+void Dx7interface::on_pitch_lvl4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6146,7 +6164,7 @@ void Dx7interface::on_mute_op_event() {
         };
         //msg = "on_mute_op mute_val : " + std::bitset<8>(mute_val) +std::endl;
     };
-    if(!compare){
+    if( !compare ){
         bank_1_modif.sound->extra.mute.val=mute_val;
     };
     msg[0]=0xF0;
@@ -6158,17 +6176,19 @@ void Dx7interface::on_mute_op_event() {
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
 
-    for(i=1; i<=6;i++){
-        (this->*mute_hexter_functions[i-1])();
+    if( get_gwidget<Gtk::CheckButton>("mute_by_level")->get_active() ){
+        for(i=1; i<=6;i++){
+            (this->*mute_by_level_functions[i-1])();
+        };
     };
 };
 
 /* OP1 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op1_event(){
+void Dx7interface::on_mute_by_level_op1_event(){
     LOG( LOG_IN() );
     uint8_t mute_val;
     
-    if(!compare){
+    if( !compare ){
         mute_val = bank_1_modif.sound->extra.mute.val;
     }else{
         mute_val = bank_1_origin.sound->extra.mute.val;
@@ -6194,11 +6214,11 @@ void Dx7interface::on_mute_hexter_op1_event(){
     LOG( LOG_OUT() );
 };
 /* OP2 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op2_event() {
+void Dx7interface::on_mute_by_level_op2_event(){
     LOG( LOG_IN() );
     uint8_t mute_val;
     
-    if(!compare){
+    if( !compare ){
         mute_val = bank_1_modif.sound->extra.mute.val;
     }else{
         mute_val = bank_1_origin.sound->extra.mute.val;
@@ -6224,11 +6244,11 @@ void Dx7interface::on_mute_hexter_op2_event() {
     LOG( LOG_OUT() );
 };
 /* OP3 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op3_event() {
-    LOG( LOG_IN() );    
+void Dx7interface::on_mute_by_level_op3_event(){
+    LOG( LOG_IN() );
     uint8_t mute_val;
     
-    if(!compare){
+    if( !compare ){
         mute_val = bank_1_modif.sound->extra.mute.val;
     }else{
         mute_val = bank_1_origin.sound->extra.mute.val;
@@ -6254,11 +6274,11 @@ void Dx7interface::on_mute_hexter_op3_event() {
     LOG( LOG_OUT() );
 };
 /* OP4 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op4_event() {
+void Dx7interface::on_mute_by_level_op4_event(){
     LOG( LOG_IN() );
     uint8_t mute_val;
     
-    if(!compare){
+    if( !compare ){
         mute_val = bank_1_modif.sound->extra.mute.val;
     }else{
         mute_val = bank_1_origin.sound->extra.mute.val;
@@ -6284,11 +6304,11 @@ void Dx7interface::on_mute_hexter_op4_event() {
     LOG( LOG_OUT() );
 };
 /* OP5 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op5_event() {
+void Dx7interface::on_mute_by_level_op5_event(){
     LOG( LOG_IN() );
     uint8_t mute_val;
     
-    if(!compare){
+    if( !compare ){
         mute_val = bank_1_modif.sound->extra.mute.val;
     }else{
         mute_val = bank_1_origin.sound->extra.mute.val;
@@ -6314,11 +6334,11 @@ void Dx7interface::on_mute_hexter_op5_event() {
     LOG( LOG_OUT() );
 };
 /* OP6 mute for UI & Hexter */
-void Dx7interface::on_mute_hexter_op6_event() {
+void Dx7interface::on_mute_by_level_op6_event(){
     LOG( LOG_IN() );
     uint8_t mute_val;
     
-    if(!compare){
+    if( !compare ){
         mute_val = bank_1_modif.sound->extra.mute.val;
     }else{
         mute_val = bank_1_origin.sound->extra.mute.val;
@@ -6375,9 +6395,10 @@ void Dx7interface::on_txt_freq_op_event()   {
 };
 
 /* OP1 */
-void Dx7interface::on_ams_op1_event() {
+void Dx7interface::on_ams_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6393,9 +6414,10 @@ void Dx7interface::on_ams_op1_event() {
 };
 
 /* OP1 FREQ */
-void Dx7interface::on_freq_mode_op1_event() {
+void Dx7interface::on_freq_mode_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6411,9 +6433,10 @@ void Dx7interface::on_freq_mode_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_coarse_op1_event() {
+void Dx7interface::on_freq_coarse_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6429,9 +6452,10 @@ void Dx7interface::on_freq_coarse_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_fine_op1_event() {
+void Dx7interface::on_freq_fine_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6447,9 +6471,10 @@ void Dx7interface::on_freq_fine_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_dtun_op1_event() {
+void Dx7interface::on_dtun_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6465,9 +6490,10 @@ void Dx7interface::on_dtun_op1_event() {
 };
 
 /* OP1 EG */
-void Dx7interface::on_eg_rt1_op1_event() {
+void Dx7interface::on_eg_rt1_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6483,9 +6509,10 @@ void Dx7interface::on_eg_rt1_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt2_op1_event() {
+void Dx7interface::on_eg_rt2_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6501,9 +6528,10 @@ void Dx7interface::on_eg_rt2_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt3_op1_event() {
+void Dx7interface::on_eg_rt3_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6519,9 +6547,10 @@ void Dx7interface::on_eg_rt3_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt4_op1_event() {
+void Dx7interface::on_eg_rt4_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6537,9 +6566,10 @@ void Dx7interface::on_eg_rt4_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl1_op1_event() {
+void Dx7interface::on_eg_lvl1_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6555,9 +6585,10 @@ void Dx7interface::on_eg_lvl1_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl2_op1_event() {
+void Dx7interface::on_eg_lvl2_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6573,9 +6604,10 @@ void Dx7interface::on_eg_lvl2_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl3_op1_event() {
+void Dx7interface::on_eg_lvl3_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6591,9 +6623,10 @@ void Dx7interface::on_eg_lvl3_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl4_op1_event() {
+void Dx7interface::on_eg_lvl4_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6610,9 +6643,10 @@ void Dx7interface::on_eg_lvl4_op1_event() {
 };
 
 /* OP1 FRAME VOLUME */
-void Dx7interface::on_krs_op1_event() {
+void Dx7interface::on_krs_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6627,9 +6661,10 @@ void Dx7interface::on_krs_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kvs_op1_event() {
+void Dx7interface::on_kvs_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6644,9 +6679,10 @@ void Dx7interface::on_kvs_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op1_event() {
+void Dx7interface::on_lvl_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6665,9 +6701,10 @@ void Dx7interface::on_lvl_op1_event() {
 };
 
 /* OP1 KLS */
-void Dx7interface::on_kls_lft_curve_op1_event() {
+void Dx7interface::on_kls_lft_curve_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6683,9 +6720,10 @@ void Dx7interface::on_kls_lft_curve_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_curve_op1_event() {
+void Dx7interface::on_kls_rght_curve_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6701,9 +6739,10 @@ void Dx7interface::on_kls_rght_curve_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_lft_dpth_op1_event() {
+void Dx7interface::on_kls_lft_dpth_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6719,9 +6758,10 @@ void Dx7interface::on_kls_lft_dpth_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_dpth_op1_event() {
+void Dx7interface::on_kls_rght_dpth_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6737,9 +6777,10 @@ void Dx7interface::on_kls_rght_dpth_op1_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_brk_pt_op1_event() {
+void Dx7interface::on_kls_brk_pt_op1_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op1"))->get_selected();
         char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op1"))->get_value();
         if(val_note < 3){
@@ -6764,9 +6805,10 @@ void Dx7interface::on_kls_brk_pt_op1_event() {
 };
 
 /* OP2 */
-void Dx7interface::on_ams_op2_event() {
+void Dx7interface::on_ams_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6782,9 +6824,10 @@ void Dx7interface::on_ams_op2_event() {
 };
 
 /* OP2 FREQ */
-void Dx7interface::on_freq_mode_op2_event() {
+void Dx7interface::on_freq_mode_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6800,9 +6843,10 @@ void Dx7interface::on_freq_mode_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_coarse_op2_event() {
+void Dx7interface::on_freq_coarse_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6818,9 +6862,10 @@ void Dx7interface::on_freq_coarse_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_fine_op2_event() {
+void Dx7interface::on_freq_fine_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6836,9 +6881,10 @@ void Dx7interface::on_freq_fine_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_dtun_op2_event() {
+void Dx7interface::on_dtun_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6854,9 +6900,10 @@ void Dx7interface::on_dtun_op2_event() {
 };
 
 /* OP2 EG */
-void Dx7interface::on_eg_rt1_op2_event() {
+void Dx7interface::on_eg_rt1_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6872,9 +6919,10 @@ void Dx7interface::on_eg_rt1_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt2_op2_event() {
+void Dx7interface::on_eg_rt2_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6890,9 +6938,10 @@ void Dx7interface::on_eg_rt2_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt3_op2_event() {
+void Dx7interface::on_eg_rt3_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6908,9 +6957,10 @@ void Dx7interface::on_eg_rt3_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt4_op2_event() {
+void Dx7interface::on_eg_rt4_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6926,9 +6976,10 @@ void Dx7interface::on_eg_rt4_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl1_op2_event() {
+void Dx7interface::on_eg_lvl1_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6944,9 +6995,10 @@ void Dx7interface::on_eg_lvl1_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl2_op2_event() {
+void Dx7interface::on_eg_lvl2_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6962,9 +7014,10 @@ void Dx7interface::on_eg_lvl2_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl3_op2_event() {
+void Dx7interface::on_eg_lvl3_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6980,9 +7033,10 @@ void Dx7interface::on_eg_lvl3_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl4_op2_event() {
+void Dx7interface::on_eg_lvl4_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6999,9 +7053,10 @@ void Dx7interface::on_eg_lvl4_op2_event() {
 };
 
 /* OP2 FRAME VOLUME */
-void Dx7interface::on_krs_op2_event() {
+void Dx7interface::on_krs_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7016,9 +7071,10 @@ void Dx7interface::on_krs_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kvs_op2_event() {
+void Dx7interface::on_kvs_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7033,9 +7089,10 @@ void Dx7interface::on_kvs_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op2_event() {
+void Dx7interface::on_lvl_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7054,9 +7111,10 @@ void Dx7interface::on_lvl_op2_event() {
 };
 
 /* OP2 KLS */
-void Dx7interface::on_kls_lft_curve_op2_event() {
+void Dx7interface::on_kls_lft_curve_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7072,9 +7130,10 @@ void Dx7interface::on_kls_lft_curve_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_curve_op2_event() {
+void Dx7interface::on_kls_rght_curve_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7090,9 +7149,10 @@ void Dx7interface::on_kls_rght_curve_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_lft_dpth_op2_event() {
+void Dx7interface::on_kls_lft_dpth_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7108,9 +7168,10 @@ void Dx7interface::on_kls_lft_dpth_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_dpth_op2_event() {
+void Dx7interface::on_kls_rght_dpth_op2_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7126,8 +7187,10 @@ void Dx7interface::on_kls_rght_dpth_op2_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_brk_pt_op2_event() {
-    if (!compare){
+void Dx7interface::on_kls_brk_pt_op2_event(){
+    LOG( LOG_IN() );
+    if( !compare ){
+        update_modified();
         char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op2"))->get_selected();
         char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op2"))->get_value();
         if(val_note < 3){
@@ -7148,13 +7211,15 @@ void Dx7interface::on_kls_brk_pt_op2_event() {
             (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op2"))->queue_draw();
         };
     };
+    LOG( LOG_OUT() );
 };
 
 
 /* OP3 */
-void Dx7interface::on_ams_op3_event() {
+void Dx7interface::on_ams_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7170,9 +7235,10 @@ void Dx7interface::on_ams_op3_event() {
 };
 
 /* OP3 FREQ */
-void Dx7interface::on_freq_mode_op3_event() {
+void Dx7interface::on_freq_mode_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7188,9 +7254,10 @@ void Dx7interface::on_freq_mode_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_coarse_op3_event() {
+void Dx7interface::on_freq_coarse_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7206,9 +7273,10 @@ void Dx7interface::on_freq_coarse_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_fine_op3_event() {
+void Dx7interface::on_freq_fine_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7224,9 +7292,10 @@ void Dx7interface::on_freq_fine_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_dtun_op3_event() {
+void Dx7interface::on_dtun_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7242,9 +7311,10 @@ void Dx7interface::on_dtun_op3_event() {
 };
 
 /* OP3 EG */
-void Dx7interface::on_eg_rt1_op3_event() {
+void Dx7interface::on_eg_rt1_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7260,9 +7330,10 @@ void Dx7interface::on_eg_rt1_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt2_op3_event() {
+void Dx7interface::on_eg_rt2_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7278,9 +7349,10 @@ void Dx7interface::on_eg_rt2_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt3_op3_event() {
+void Dx7interface::on_eg_rt3_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7296,9 +7368,10 @@ void Dx7interface::on_eg_rt3_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt4_op3_event() {
+void Dx7interface::on_eg_rt4_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7314,9 +7387,10 @@ void Dx7interface::on_eg_rt4_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl1_op3_event() {
+void Dx7interface::on_eg_lvl1_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7332,9 +7406,10 @@ void Dx7interface::on_eg_lvl1_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl2_op3_event() {
+void Dx7interface::on_eg_lvl2_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7350,9 +7425,10 @@ void Dx7interface::on_eg_lvl2_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl3_op3_event() {
+void Dx7interface::on_eg_lvl3_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7368,9 +7444,10 @@ void Dx7interface::on_eg_lvl3_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl4_op3_event() {
+void Dx7interface::on_eg_lvl4_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7387,9 +7464,10 @@ void Dx7interface::on_eg_lvl4_op3_event() {
 };
 
 /* OP3 FRAME VOLUME */
-void Dx7interface::on_krs_op3_event() {
+void Dx7interface::on_krs_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7404,9 +7482,10 @@ void Dx7interface::on_krs_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kvs_op3_event() {
+void Dx7interface::on_kvs_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7421,9 +7500,10 @@ void Dx7interface::on_kvs_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op3_event() {
+void Dx7interface::on_lvl_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7443,9 +7523,10 @@ void Dx7interface::on_lvl_op3_event() {
 
 
 /* OP3 KLS */
-void Dx7interface::on_kls_lft_curve_op3_event() {
+void Dx7interface::on_kls_lft_curve_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7461,9 +7542,10 @@ void Dx7interface::on_kls_lft_curve_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_curve_op3_event() {
+void Dx7interface::on_kls_rght_curve_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7479,9 +7561,10 @@ void Dx7interface::on_kls_rght_curve_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_lft_dpth_op3_event() {
+void Dx7interface::on_kls_lft_dpth_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7497,9 +7580,10 @@ void Dx7interface::on_kls_lft_dpth_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_dpth_op3_event() {
+void Dx7interface::on_kls_rght_dpth_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7515,9 +7599,10 @@ void Dx7interface::on_kls_rght_dpth_op3_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_brk_pt_op3_event() {
+void Dx7interface::on_kls_brk_pt_op3_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op3"))->get_selected();
         char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op3"))->get_value();
         if(val_note < 3){
@@ -7538,13 +7623,15 @@ void Dx7interface::on_kls_brk_pt_op3_event() {
             (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op3"))->queue_draw();
         };
     };
+    LOG( LOG_OUT() );
 };
 
 
 /* OP4 */
-void Dx7interface::on_ams_op4_event() {
+void Dx7interface::on_ams_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7560,9 +7647,10 @@ void Dx7interface::on_ams_op4_event() {
 };
 
 /* OP4 FREQ*/
-void Dx7interface::on_freq_mode_op4_event() {
+void Dx7interface::on_freq_mode_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7578,9 +7666,10 @@ void Dx7interface::on_freq_mode_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_coarse_op4_event() {
+void Dx7interface::on_freq_coarse_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7596,9 +7685,10 @@ void Dx7interface::on_freq_coarse_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_fine_op4_event() {
+void Dx7interface::on_freq_fine_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7614,9 +7704,10 @@ void Dx7interface::on_freq_fine_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_dtun_op4_event() {
+void Dx7interface::on_dtun_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7632,9 +7723,10 @@ void Dx7interface::on_dtun_op4_event() {
 };
 
 /* OP4 EG*/
-void Dx7interface::on_eg_rt1_op4_event() {
+void Dx7interface::on_eg_rt1_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7650,9 +7742,10 @@ void Dx7interface::on_eg_rt1_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt2_op4_event() {
+void Dx7interface::on_eg_rt2_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7668,9 +7761,10 @@ void Dx7interface::on_eg_rt2_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt3_op4_event() {
+void Dx7interface::on_eg_rt3_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7686,9 +7780,10 @@ void Dx7interface::on_eg_rt3_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt4_op4_event() {
+void Dx7interface::on_eg_rt4_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7704,9 +7799,10 @@ void Dx7interface::on_eg_rt4_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl1_op4_event() {
+void Dx7interface::on_eg_lvl1_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7722,9 +7818,10 @@ void Dx7interface::on_eg_lvl1_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl2_op4_event() {
+void Dx7interface::on_eg_lvl2_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7740,9 +7837,10 @@ void Dx7interface::on_eg_lvl2_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl3_op4_event() {
+void Dx7interface::on_eg_lvl3_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7758,9 +7856,10 @@ void Dx7interface::on_eg_lvl3_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl4_op4_event() {
+void Dx7interface::on_eg_lvl4_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7778,9 +7877,10 @@ void Dx7interface::on_eg_lvl4_op4_event() {
 
 
 /* OP4 FRAME VOLUME */
-void Dx7interface::on_krs_op4_event() {
+void Dx7interface::on_krs_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7795,9 +7895,10 @@ void Dx7interface::on_krs_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kvs_op4_event() {
+void Dx7interface::on_kvs_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
     unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7812,9 +7913,10 @@ void Dx7interface::on_kvs_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op4_event() {
+void Dx7interface::on_lvl_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7833,9 +7935,10 @@ void Dx7interface::on_lvl_op4_event() {
 };
 
 /* OP4 KLS*/
-void Dx7interface::on_kls_lft_curve_op4_event() {
+void Dx7interface::on_kls_lft_curve_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7851,9 +7954,10 @@ void Dx7interface::on_kls_lft_curve_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_curve_op4_event() {
+void Dx7interface::on_kls_rght_curve_op4_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7869,8 +7973,9 @@ void Dx7interface::on_kls_rght_curve_op4_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_lft_dpth_op4_event() {
-    if (!compare){
+void Dx7interface::on_kls_lft_dpth_op4_event(){
+    LOG( LOG_IN() );
+    if( !compare ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7883,10 +7988,12 @@ void Dx7interface::on_kls_lft_dpth_op4_event() {
         bank_1_modif.sound->op[3].kls.lft_dpth.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
     };
+    LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_dpth_op4_event() {
-    if (!compare){
+void Dx7interface::on_kls_rght_dpth_op4_event(){
+    LOG( LOG_IN() );
+    if( !compare ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7899,10 +8006,13 @@ void Dx7interface::on_kls_rght_dpth_op4_event() {
         bank_1_modif.sound->op[3].kls.rght_dpth.val=msg[5];
         (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
     };
+    LOG( LOG_OUT() );
 };
 
 void Dx7interface::on_kls_brk_pt_op4_event(){
-    if (!compare){
+    LOG( LOG_IN() );
+    if( !compare ){
+        update_modified();
         char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op4"))->get_selected();
         char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op4"))->get_value();
         if(val_note < 3){
@@ -7923,12 +8033,14 @@ void Dx7interface::on_kls_brk_pt_op4_event(){
             (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op4"))->queue_draw();
         };
     };
+    LOG( LOG_OUT() );
 };
 
 /* OP5 */
-void Dx7interface::on_ams_op5_event() {
+void Dx7interface::on_ams_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7944,9 +8056,10 @@ void Dx7interface::on_ams_op5_event() {
 };
 
 /* OP5 FREQ */
-void Dx7interface::on_freq_mode_op5_event() {
+void Dx7interface::on_freq_mode_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7962,9 +8075,10 @@ void Dx7interface::on_freq_mode_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_coarse_op5_event() {
+void Dx7interface::on_freq_coarse_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7980,9 +8094,10 @@ void Dx7interface::on_freq_coarse_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_fine_op5_event() {
+void Dx7interface::on_freq_fine_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -7998,9 +8113,10 @@ void Dx7interface::on_freq_fine_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_dtun_op5_event() {
+void Dx7interface::on_dtun_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8016,9 +8132,10 @@ void Dx7interface::on_dtun_op5_event() {
 };
 
 /* OP5 EG */
-void Dx7interface::on_eg_rt1_op5_event() {
+void Dx7interface::on_eg_rt1_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8034,9 +8151,10 @@ void Dx7interface::on_eg_rt1_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt2_op5_event() {
+void Dx7interface::on_eg_rt2_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8052,9 +8170,10 @@ void Dx7interface::on_eg_rt2_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt3_op5_event() {
+void Dx7interface::on_eg_rt3_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8070,9 +8189,10 @@ void Dx7interface::on_eg_rt3_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt4_op5_event() {
+void Dx7interface::on_eg_rt4_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8088,9 +8208,10 @@ void Dx7interface::on_eg_rt4_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl1_op5_event() {
+void Dx7interface::on_eg_lvl1_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
     unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8106,9 +8227,10 @@ void Dx7interface::on_eg_lvl1_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl2_op5_event() {
+void Dx7interface::on_eg_lvl2_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
     unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8124,9 +8246,10 @@ void Dx7interface::on_eg_lvl2_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl3_op5_event() {
+void Dx7interface::on_eg_lvl3_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8142,9 +8265,10 @@ void Dx7interface::on_eg_lvl3_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl4_op5_event() {
+void Dx7interface::on_eg_lvl4_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8161,9 +8285,10 @@ void Dx7interface::on_eg_lvl4_op5_event() {
 };
 
 /* OP5 FRAME VOLUME */
-void Dx7interface::on_krs_op5_event() {
+void Dx7interface::on_krs_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8178,9 +8303,10 @@ void Dx7interface::on_krs_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kvs_op5_event() {
+void Dx7interface::on_kvs_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8195,9 +8321,10 @@ void Dx7interface::on_kvs_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op5_event() {
+void Dx7interface::on_lvl_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8216,9 +8343,10 @@ void Dx7interface::on_lvl_op5_event() {
 };
 
 /* OP5 KLS */
-void Dx7interface::on_kls_lft_curve_op5_event() {
+void Dx7interface::on_kls_lft_curve_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8234,9 +8362,10 @@ void Dx7interface::on_kls_lft_curve_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_curve_op5_event() {
+void Dx7interface::on_kls_rght_curve_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8252,9 +8381,10 @@ void Dx7interface::on_kls_rght_curve_op5_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_lft_dpth_op5_event() {
+void Dx7interface::on_kls_lft_dpth_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8272,7 +8402,7 @@ void Dx7interface::on_kls_lft_dpth_op5_event() {
 
 void Dx7interface::on_kls_rght_dpth_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8288,9 +8418,10 @@ void Dx7interface::on_kls_rght_dpth_op5_event(){
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_brk_pt_op5_event() {
+void Dx7interface::on_kls_brk_pt_op5_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op5"))->get_selected();
         char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op5"))->get_value();
         if(val_note < 3){
@@ -8315,9 +8446,10 @@ void Dx7interface::on_kls_brk_pt_op5_event() {
 };
 
 /* OP6 */
-void Dx7interface::on_ams_op6_event() {
+void Dx7interface::on_ams_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8333,9 +8465,10 @@ void Dx7interface::on_ams_op6_event() {
 };
 
 /* OP6 FREQ */
-void Dx7interface::on_freq_mode_op6_event() {
+void Dx7interface::on_freq_mode_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8351,9 +8484,10 @@ void Dx7interface::on_freq_mode_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_coarse_op6_event() {
+void Dx7interface::on_freq_coarse_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8369,9 +8503,10 @@ void Dx7interface::on_freq_coarse_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_freq_fine_op6_event() {
+void Dx7interface::on_freq_fine_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8387,9 +8522,10 @@ void Dx7interface::on_freq_fine_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_dtun_op6_event() {
+void Dx7interface::on_dtun_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8405,9 +8541,10 @@ void Dx7interface::on_dtun_op6_event() {
 };
 
 /* OP6 EG */
-void Dx7interface::on_eg_rt1_op6_event() {
+void Dx7interface::on_eg_rt1_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8423,9 +8560,10 @@ void Dx7interface::on_eg_rt1_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt2_op6_event() {
+void Dx7interface::on_eg_rt2_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8441,9 +8579,10 @@ void Dx7interface::on_eg_rt2_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt3_op6_event() {
+void Dx7interface::on_eg_rt3_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8459,9 +8598,10 @@ void Dx7interface::on_eg_rt3_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_rt4_op6_event() {
+void Dx7interface::on_eg_rt4_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8477,9 +8617,10 @@ void Dx7interface::on_eg_rt4_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl1_op6_event() {
+void Dx7interface::on_eg_lvl1_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8495,9 +8636,10 @@ void Dx7interface::on_eg_lvl1_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl2_op6_event() {
+void Dx7interface::on_eg_lvl2_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8513,9 +8655,10 @@ void Dx7interface::on_eg_lvl2_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl3_op6_event() {
+void Dx7interface::on_eg_lvl3_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8531,9 +8674,10 @@ void Dx7interface::on_eg_lvl3_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_eg_lvl4_op6_event() {
+void Dx7interface::on_eg_lvl4_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8550,9 +8694,10 @@ void Dx7interface::on_eg_lvl4_op6_event() {
 };
 
 /* OP6 FRAME VOLUME */
-void Dx7interface::on_krs_op6_event() {
+void Dx7interface::on_krs_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8567,9 +8712,10 @@ void Dx7interface::on_krs_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kvs_op6_event() {
+void Dx7interface::on_kvs_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8584,9 +8730,10 @@ void Dx7interface::on_kvs_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op6_event() {
+void Dx7interface::on_lvl_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8605,9 +8752,10 @@ void Dx7interface::on_lvl_op6_event() {
 };
 
 /* OP6 KLS */
-void Dx7interface::on_kls_lft_curve_op6_event() {
+void Dx7interface::on_kls_lft_curve_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8623,9 +8771,10 @@ void Dx7interface::on_kls_lft_curve_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_curve_op6_event() {
+void Dx7interface::on_kls_rght_curve_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8641,9 +8790,10 @@ void Dx7interface::on_kls_rght_curve_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_lft_dpth_op6_event() {
+void Dx7interface::on_kls_lft_dpth_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8659,9 +8809,10 @@ void Dx7interface::on_kls_lft_dpth_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_rght_dpth_op6_event() {
+void Dx7interface::on_kls_rght_dpth_op6_event(){
     LOG( LOG_IN() );
-    if (!compare){
+    if( !compare ){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -8677,8 +8828,10 @@ void Dx7interface::on_kls_rght_dpth_op6_event() {
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_kls_brk_pt_op6_event() {
-    if (!compare){
+void Dx7interface::on_kls_brk_pt_op6_event(){
+    LOG( LOG_IN() );
+    if( !compare ){
+        update_modified();
         char val_note =(get_gwidget<Gtk::DropDown>("note_brk_pt_op6"))->get_selected();
         char val_octv =(get_gwidget<Gtk::SpinButton>("octv_brk_pt_op6"))->get_value();
         if(val_note < 3){
@@ -8699,6 +8852,7 @@ void Dx7interface::on_kls_brk_pt_op6_event() {
             (get_gwidget<Gtk::DrawingArea>("drawingarea_kls_op6"))->queue_draw();
         };
     };
+    LOG( LOG_OUT() );
 };
 
 /** UI EVENTs **/
