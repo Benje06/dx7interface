@@ -120,6 +120,10 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::SingleSelection> bank_selection_model=nullptr;
         Glib::RefPtr<Gtk::SignalListItemFactory> bank_factory=nullptr;
         /* update hte listview model */
+        void update_modified();
+        template<class ListStoreType>
+        void update_data_model_number(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
+                               Glib::ustring number);
         template<class ListStoreType>
         void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
                                Glib::ustring sound_name);

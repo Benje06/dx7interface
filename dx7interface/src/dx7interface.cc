@@ -1472,6 +1472,12 @@ Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
     // LOG( LOG_OUT() );
     return sound_name;
 };
+void Dx7interface::update_modified(){
+    if(!bank_1_modif.sound->modified){
+        update_data_model_number<SoundBankItem>(bank_data_model, "*" + snum);
+        bank_1_modif.sound->modified = true;
+    };
+};
 template<class ListStoreType>
 void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int index_element, Glib::ustring name){
     auto param = ListStoreType::create(name);
@@ -1488,6 +1494,15 @@ void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>>
         data_model->insert(snum, sound);
     }else{
         data_model->splice(snum, 1, {sound});  // Replace item at same position
+    };
+};
+template<class ListStoreType>
+void Dx7interface::update_data_model_number(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring number){
+    auto sound = ListStoreType::create(snum, sound_name);
+    if( !data_model->get_item(snum) ){
+        data_model->insert(number, sound);
+    }else{
+        data_model->splice(number, 1, {sound});  // Replace item at same position
     };
 };
 template<class ListStoreType>
@@ -5775,6 +5790,7 @@ void Dx7interface::on_aftrtch_assgn_event(){
 void Dx7interface::on_algo_event() {
     LOG( LOG_IN() );
     if (!compare){
+        update_modified();
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;

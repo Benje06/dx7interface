@@ -161,6 +161,7 @@
         //std::string name;
         uint8_t sum;
         St_extra extra;
+        bool modified = false;
     }St_dx7sysex_1;
 
     template <unsigned int i>
