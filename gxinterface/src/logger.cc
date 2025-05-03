@@ -29,7 +29,7 @@ void Logger::log_error(const std::string& err_msg){
             if( log_file.is_open() ){
                 log_file << "            " << std::endl;
                 log_file << "*************************** ERROR ***************************** " << std::endl;
-                log_file << "\t" << err_msg << std::endl;
+                log_file << err_msg << std::endl;
                 log_file << "*************************************************************** " << std::endl;
                 log_file << "            " << std::endl;
             };
