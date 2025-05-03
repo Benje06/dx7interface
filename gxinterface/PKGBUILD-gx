@@ -27,17 +27,21 @@ build() {
     echo ""
     echo "*** AUTOGEN / CONFIGURE ***"
     echo ""
+    echo "GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 ./autogen.sh --prefix=/usr --enable-maintainer-mode  --enable-debug=2 'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable' 'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable'"
+
     GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 ./autogen.sh --prefix=/usr --enable-maintainer-mode  --enable-debug=2 'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable' 'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable'
     echo ""
     echo "*** MAKE ***"
     echo ""
-    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make
+    echo "GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make -j3"
+    GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make -j3
 }
 
 package() {
     echo ""
     echo "*** PACKAGING ***"
     echo ""
+    echo "GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make DESTDIR=\"$pkgdir/\" install"
     cd gtk4/${pkgname}/
     GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make DESTDIR="$pkgdir/" install
 }
