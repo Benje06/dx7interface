@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-01 17:32+0200\n"
+"POT-Creation-Date: 2025-05-03 13:18+0200\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,24 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/dx7interface.cc:308
+#: ../src/dx7interface.cc:311
 msgid "# Function, midi controller number"
 msgstr ""
 
-#: ../src/dx7interface.cc:337
-#, fuzzy
-msgid "Select file"
-msgstr "Choisir une banque"
-
-#: ../src/dx7interface.cc:356 ../src/dx7interface.cc:1776
-msgid "Cannot write file as raw"
-msgstr ""
-
-#: ../src/dx7interface.cc:390
-#, fuzzy
-msgid "Select config"
-msgstr "Choisir une banque"
-
 #. Synth::print_event_info(ev);
 #. typedef union snd_seq_event_data {
 #. snd_seq_ev_raw8_t raw8;
@@ -79,21 +65,21 @@ msgstr "Choisir une banque"
 #. snd_seq_result_t result;
 #. } snd_seq_event_data_t;
 #. Synth::print_event_info(ev);
-#: ../src/dx7interface.cc:443 ../src/dx7interface.cc:451
-#: ../src/dx7interface.cc:466 ../src/dx7interface.cc:484
+#: ../src/dx7interface.cc:364 ../src/dx7interface.cc:372
+#: ../src/dx7interface.cc:387 ../src/dx7interface.cc:405
 msgid "Channel: "
 msgstr ""
 
-#: ../src/dx7interface.cc:444 ../src/dx7interface.cc:452
-#: ../src/dx7interface.cc:468 ../src/dx7interface.cc:485
+#: ../src/dx7interface.cc:365 ../src/dx7interface.cc:373
+#: ../src/dx7interface.cc:389 ../src/dx7interface.cc:406
 msgid "value: "
 msgstr ""
 
-#: ../src/dx7interface.cc:448
+#: ../src/dx7interface.cc:369
 msgid "Note OFF"
 msgstr ""
 
-#: ../src/dx7interface.cc:467
+#: ../src/dx7interface.cc:388
 msgid "param: "
 msgstr ""
 
@@ -105,47 +91,47 @@ msgstr ""
 #. event data type = snd_seq_ev_ctrl_t
 #. Synth::print_event_info(ev);
 #. event data type = snd_seq_ev_ctrl_t
-#: ../src/dx7interface.cc:491
+#: ../src/dx7interface.cc:412
 msgid "Channel : "
 msgstr ""
 
-#: ../src/dx7interface.cc:492
+#: ../src/dx7interface.cc:413
 msgid "param : "
 msgstr ""
 
-#: ../src/dx7interface.cc:493
+#: ../src/dx7interface.cc:414
 msgid "value : "
 msgstr ""
 
-#: ../src/dx7interface.cc:514
+#: ../src/dx7interface.cc:435
 msgid "Event has fixed length."
 msgstr ""
 
-#: ../src/dx7interface.cc:517
+#: ../src/dx7interface.cc:438
 msgid "Event has variable length."
 msgstr ""
 
-#: ../src/dx7interface.cc:520
+#: ../src/dx7interface.cc:441
 msgid "Unknown length mask."
 msgstr ""
 
-#: ../src/dx7interface.cc:523
+#: ../src/dx7interface.cc:444
 msgid "Length:"
 msgstr ""
 
-#: ../src/dx7interface.cc:663
+#: ../src/dx7interface.cc:584
 msgid " Param: "
 msgstr ""
 
-#: ../src/dx7interface.cc:663
+#: ../src/dx7interface.cc:584
 msgid " Value: "
 msgstr ""
 
-#: ../src/dx7interface.cc:748
+#: ../src/dx7interface.cc:659
 msgid "base filename: "
 msgstr ""
 
-#: ../src/dx7interface.cc:750
+#: ../src/dx7interface.cc:661
 msgid "with format: "
 msgstr ""
 
@@ -153,52 +139,47 @@ msgstr ""
 #. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
 #. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
 #. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
-#: ../src/dx7interface.cc:827
+#: ../src/dx7interface.cc:748
 msgid "Failed to save file: "
 msgstr ""
 
-#: ../src/dx7interface.cc:937
+#: ../src/dx7interface.cc:882
 msgid "Bank name: "
 msgstr ""
 
-#: ../src/dx7interface.cc:1006
+#: ../src/dx7interface.cc:948
 msgid "Received"
 msgstr ""
 
-#: ../src/dx7interface.cc:1007
+#: ../src/dx7interface.cc:949
 msgid "Buffer size of received bank: "
 msgstr ""
 
-#: ../src/dx7interface.cc:1062 ../src/dx7interface.cc:1078
+#: ../src/dx7interface.cc:1003
 msgid "Restore bank: "
 msgstr ""
 
-#: ../src/dx7interface.cc:1062 ../src/dx7interface.cc:1070
-#: ../src/dx7interface.cc:1078 ../src/dx7interface.cc:1086
+#: ../src/dx7interface.cc:1003 ../src/dx7interface.cc:1012
 msgid " from origin bank."
 msgstr ""
 
-#: ../src/dx7interface.cc:1070 ../src/dx7interface.cc:1086
+#: ../src/dx7interface.cc:1012
 msgid "Restore sound: "
 msgstr ""
 
-#. needed
-#. needed
-#. needed
-#. needed
-#: ../src/dx7interface.cc:1118
+#: ../src/dx7interface.cc:1049
 msgid "Replaced sound: "
 msgstr ""
 
-#: ../src/dx7interface.cc:1127
+#: ../src/dx7interface.cc:1058
 msgid " With: "
 msgstr ""
 
-#: ../src/dx7interface.cc:1290
+#: ../src/dx7interface.cc:1238
 msgid "Insert Sound(s) at"
 msgstr ""
 
-#: ../src/dx7interface.cc:1429 ../src/dx7interface.cc:1494
+#: ../src/dx7interface.cc:1382 ../src/dx7interface.cc:1447
 msgid " Error writing to file: \n"
 msgstr ""
 
@@ -222,19 +203,23 @@ msgstr ""
 #. *                     + _("Cannot construct bulk1") + "\n\t"
 #. *                     + _("Reason: ") + ex.what();
 #.
-#: ../src/dx7interface.cc:1672
+#: ../src/dx7interface.cc:1625
 msgid "Cannot construct bulk1"
 msgstr ""
 
-#: ../src/dx7interface.cc:1742
+#: ../src/dx7interface.cc:1695
 msgid "Cannot construct bulk32"
 msgstr ""
 
-#: ../src/dx7interface.cc:1763
+#: ../src/dx7interface.cc:1716
 msgid "Cannot write file as sysex"
 msgstr ""
 
-#: ../src/dx7interface.cc:1818
+#: ../src/dx7interface.cc:1729
+msgid "Cannot write file as raw"
+msgstr ""
+
+#: ../src/dx7interface.cc:1771
 msgid "Cannot write extra parameters"
 msgstr ""
 
@@ -246,127 +231,99 @@ msgstr ""
 #. comment => Et origin
 #. save current sound (0) in bank modif (old_snum)
 #. comment => Et origin
-#: ../src/dx7interface.cc:1827
+#: ../src/dx7interface.cc:1780
 msgid "Saved voice: "
 msgstr ""
 
-#: ../src/dx7interface.cc:1827
+#: ../src/dx7interface.cc:1780
 msgid " in modif bank."
 msgstr ""
 
-#: ../src/dx7interface.cc:1854
+#: ../src/dx7interface.cc:1809
 msgid " ??? "
 msgstr ""
 
-#: ../src/dx7interface.cc:2085
+#: ../src/dx7interface.cc:2040
 msgid "For voice: "
 msgstr ""
 
-#: ../src/dx7interface.cc:2085
+#: ../src/dx7interface.cc:2040
 msgid ""
 "\n"
 "\tParameters of function reads from file: "
 msgstr ""
 
-#: ../src/dx7interface.cc:5374 ../src/dx7interface.cc:5531
-#: ../src/dx7interface.cc:5554
+#: ../src/dx7interface.cc:5260 ../src/dx7interface.cc:5417
+#: ../src/dx7interface.cc:5440
 msgid "File not found: "
 msgstr ""
 
-#: ../src/dx7interface.cc:5670
+#: ../src/dx7interface.cc:5556
 msgid "Monophonic"
 msgstr "Monophonique"
 
-#: ../src/dx7interface.cc:5672
+#: ../src/dx7interface.cc:5558
 msgid "Polyphonic"
 msgstr "Polyphonique"
 
-#: ../src/dx7interface.cc:5722
+#: ../src/dx7interface.cc:5608
 msgid "Follow"
 msgstr ""
 
-#: ../src/dx7interface.cc:5724
+#: ../src/dx7interface.cc:5610
 msgid "Retain"
 msgstr ""
 
-#: ../src/dx7interface.cc:6282
+#: ../src/dx7interface.cc:6168
 msgid "/* OP1 */"
 msgstr "/* Operateur 1 */"
 
-#: ../src/dx7interface.cc:6293
+#: ../src/dx7interface.cc:6179
 msgid " OP1 "
 msgstr " Operateur 1 "
 
-#: ../src/dx7interface.cc:6312
+#: ../src/dx7interface.cc:6198
 msgid "/* OP2 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6323 ../data/ui/dx7interface-0.0.1-simplify.ui.h:63
+#: ../src/dx7interface.cc:6209 ../data/ui/dx7interface-0.0.1-simplify.ui.h:63
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:63
 msgid " OP2 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6342
+#: ../src/dx7interface.cc:6228
 msgid "/* OP3 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6353
+#: ../src/dx7interface.cc:6239
 msgid " OP3 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6372
+#: ../src/dx7interface.cc:6258
 msgid "/* OP4 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6383 ../data/ui/dx7interface-0.0.1-simplify.ui.h:65
+#: ../src/dx7interface.cc:6269 ../data/ui/dx7interface-0.0.1-simplify.ui.h:65
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:65
 msgid " OP4 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6402
+#: ../src/dx7interface.cc:6288
 msgid "/* OP5 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6413 ../data/ui/dx7interface-0.0.1-simplify.ui.h:66
+#: ../src/dx7interface.cc:6299 ../data/ui/dx7interface-0.0.1-simplify.ui.h:66
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:66
 msgid " OP5 "
 msgstr ""
 
-#: ../src/dx7interface.cc:6430
+#: ../src/dx7interface.cc:6316
 msgid "/* OP6 */"
 msgstr ""
 
-#: ../src/dx7interface.cc:6441 ../data/ui/dx7interface-0.0.1-simplify.ui.h:67
+#: ../src/dx7interface.cc:6327 ../data/ui/dx7interface-0.0.1-simplify.ui.h:67
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:67
 msgid " OP6 "
-msgstr ""
-
-#.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
-#. *                     + _("Cannot construct bulk1")                     + "\n\t"
-#. *                     + _("Reason: ") + ex.what();
-#.
-#.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
-#. *                     + _("Cannot construct bulk1")                     + "\n\t"
-#. *                     + _("Reason: ") + ex.what();
-#.
-#.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
-#. *                     + _("Cannot construct bulk1")                     + "\n\t"
-#. *                     + _("Reason: ") + ex.what();
-#.
-#.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__)  + "\n\t"
-#. *                     + _("Cannot construct bulk1")                     + "\n\t"
-#. *                     + _("Reason: ") + ex.what();
-#.
-#: ../src/dx7interface.h:83
-msgid "From: "
-msgstr ""
-
-#: ../src/dx7interface.h:85
-msgid "Reason => "
 msgstr ""
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:1
@@ -842,3 +799,11 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:98
 msgid "select file"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Select file"
+#~ msgstr "Choisir une banque"
+
+#, fuzzy
+#~ msgid "Select config"
+#~ msgstr "Choisir une banque"
