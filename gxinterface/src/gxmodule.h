@@ -126,15 +126,22 @@ class Gx_module {
 		Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
 
         std::vector<Glib::RefPtr<Gio::DataInputStream>> data_stream = std::vector<Glib::RefPtr<Gio::DataInputStream>>(3, nullptr);
-
+        std::vector<Glib::RefPtr<Gio::DataOutputStream>>data_stream_out = std::vector<Glib::RefPtr<Gio::DataOutputStream>>(3, nullptr);
 		virtual void set_param();          				// function to set the parameters of action
 		/* LOAD */
-		void OpenDialogFileSelect(std::function<void(Glib::RefPtr<Gio::File>)>);
-		void read_file_as_datastream(unsigned int, Glib::RefPtr<Gio::File>, std::function<void(Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct);
+		void OpenDialogFileSelect(unsigned int,
+                                  std::function<void(unsigned int, Glib::RefPtr<Gio::File>)>);
+		void read_file_as_datastream(unsigned int,
+                                    Glib::RefPtr<Gio::File>,
+                                    std::function<void(unsigned int, Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct);
 		bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
-		/* SAVE */		
-        void OpenDialogFileSave(std::function<void(Glib::RefPtr<Gio::File>)>);	// function to show the select file dialog for save
-		void write_file_as_datastream(Glib::RefPtr<Gio::File>, unsigned char*, unsigned int);
+		/* SAVE */
+        void OpenDialogFileSave(unsigned int,
+                                std::function<void(unsigned int, Glib::RefPtr<Gio::File>)>);	// function to show the select file dialog for save
+		void write_file_as_datastream(unsigned int,
+                                     Glib::RefPtr<Gio::File>,
+                                     unsigned char*,
+                                     unsigned int);
 		/* Dialog Paramaters for action */
 		void OpenDialogParam(Glib::ustring);  			// function to show the dialog parameters
 		virtual void set_dialog(Glib::ustring);    		// function to set the dialog parameters displayed
