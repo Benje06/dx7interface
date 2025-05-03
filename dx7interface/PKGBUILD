@@ -18,7 +18,7 @@ source=("git+https://github.com/Benje06/${pkgname}.git")
 md5sums=('SKIP')
 
 build() {
-    cd gxinterface/${pkgname}/
+    cd ${pkgname}/${pkgname}/
     echo ""
     echo "*** CLEANING DIRECTORY ***"
     echo ""
@@ -38,7 +38,7 @@ package() {
     echo ""
     echo "*** PACKAGING ***"
     echo ""
-    cd gxinterface/${pkgname}
+    cd ${pkgname}/${pkgname}/
     make DESTDIR="$pkgdir" install
 }
 post_install(){

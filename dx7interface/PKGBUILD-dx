@@ -38,7 +38,7 @@ package() {
     echo ""
     echo "*** PACKAGING ***"
     echo ""
-    cd gtk4/${pkgname}
+    cd gtk4/${pkgname}/
     GTK_DEBUG=builder,modules,layout,interactive G_DEBUG=all G_ENABLE_DIAGNOSTIC=1 make DESTDIR="$pkgdir/" install
 }
 post_install(){
