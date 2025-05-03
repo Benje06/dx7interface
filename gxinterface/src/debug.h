@@ -38,8 +38,8 @@
         #      define LOG_IN() (std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__)
         #      define LOG_OUT() (std::string("<-  ") + __PRETTY_FUNCTION__)
         #    else
-        #      define LOG_IN()  " -> " __func__
-        #      define LOG_OUT() "<-  " __func__
+        #      define LOG_IN()  std::string(" -> ") + __func__
+        #      define LOG_OUT() std::string("<-  ") + __func__
         #    endif /* DEBUG_TOOL_AS_ERROR */
         #else
         #    define TRACE(f, ...)   f "\n", ##__VA_ARGS__
