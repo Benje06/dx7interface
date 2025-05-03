@@ -454,7 +454,7 @@ bool Synth::Run() {
 
         // Print event type and channel
         std::string msg = _("Event: ") + get_event_name(eventType) + " "
-                  + _("Type: ") + std::to_stringstd::to_string(int(eventType));
+                  + _("Type: ") + std::to_string(int(eventType));
         LOG( msg );
         msg = _("Channel: ") + std::to_string((channel));
         LOG( msg );
