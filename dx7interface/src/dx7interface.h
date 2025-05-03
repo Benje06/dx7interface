@@ -141,11 +141,13 @@ class Dx7interface : public Gx_module, public Synth {
         /* read */
         sigc::connection slot_midi_learn_load;
         void on_midi_learn_param_select();
-        void read_midi_learned_param(Glib::RefPtr<Gio::File> file);
+        void read_midi_learned_param(unsigned int data_stream_index,
+                                     Glib::RefPtr<Gio::File> file);
         /* write */
         sigc::connection slot_midi_learn_save;
         void on_midi_learn_param_save();
-        void save_midi_learned_param(Glib::RefPtr<Gio::File> file);
+        void save_midi_learned_param(unsigned int data_stream_index,
+                                     Glib::RefPtr<Gio::File> param_file);
         /* clean */
         void clean_midi_learn();
 
@@ -560,10 +562,7 @@ class Dx7interface : public Gx_module, public Synth {
         void read_file_as_datastream(unsigned int data_stream_index,
                                     Glib::RefPtr<Gio::File> file,
                                     std::function<void(unsigned int data_stream_index,
-                                                       Glib::RefPtr<Gio::File> file,
-                                                       Glib::ustring file_name,
-                                                       Glib::ustring file_base,
-                                                       unsigned int file_size)>);
+                                                       Glib::RefPtr<Gio::File> file)>);
        
         /**** SOUND BANK ****/
         /** SET/LOAD **/
@@ -573,10 +572,7 @@ class Dx7interface : public Gx_module, public Synth {
         void set_bank(unsigned int, Glib::RefPtr<Gio::File> file);
         void set_bank_name(Glib::ustring name);
         void set_bank_sounds(unsigned int datat_stream_index,
-                             Glib::RefPtr<Gio::File> file,
-                             Glib::ustring file_name,
-                             Glib::ustring file_base,
-                             unsigned int file_size);
+                             Glib::RefPtr<Gio::File> file);
         void receive_bank(std::vector<uint8_t> sysex_buffer);
         void receive_voice(St_dx7sysex_1* sound,
                            std::vector<uint8_t> sysex_buffer);          // get voice param from midi message to fill sound struct
@@ -592,10 +588,7 @@ class Dx7interface : public Gx_module, public Synth {
         void on_restore_sound();
         /** REPLACE **/
         void replace_sound(unsigned int data_stream_index,
-                           Glib::RefPtr<Gio::File> file,
-                           Glib::ustring filename,
-                           Glib::ustring file_base,
-                           unsigned int file_size);
+                           Glib::RefPtr<Gio::File> file);
         void on_replace_sound(unsigned int data_stream_index,
                               Glib::RefPtr<Gio::File> file);
         /** DELETE **/
@@ -605,10 +598,7 @@ class Dx7interface : public Gx_module, public Synth {
         void on_insert_sound(unsigned int data_stream_index,
                              Glib::RefPtr<Gio::File> file);                                          // call load_file->insert_at
         void insert_at(unsigned int data_stream_index,
-                       Glib::RefPtr<Gio::File> file,
-                       Glib::ustring file_name,
-                       Glib::ustring file_base,
-                       unsigned int file_size);    // do the insert
+                       Glib::RefPtr<Gio::File> file);    // do the insert
         /** PREPARE BANK call all necessarry to insert at: get_bank_[src|dest] , copy, moove, read_voice **/
         void prepare_bank(unsigned int data_stream_index,
                           unsigned int nb_snd_in_file,

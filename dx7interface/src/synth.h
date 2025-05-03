@@ -114,6 +114,7 @@
 /* CONSTANTS */
 #define BANK 0
 #define SOUND 1
+#define PARAM_MIDI 2
 
 class Synth : public Thread {
     public:
@@ -171,9 +172,9 @@ class Synth : public Thread {
         virtual void write_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file, unsigned int index ) = 0;
 
          /* SET */
-        virtual void read_file_as_datastream(unsigned int data_stream_index, Glib::RefPtr<Gio::File>, std::function<void(unsigned int, Glib::RefPtr<Gio::File>,Glib::ustring, Glib::ustring, unsigned int)> funct) = 0;
+        virtual void read_file_as_datastream(unsigned int data_stream_index, Glib::RefPtr<Gio::File>, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct) = 0;
         void parse_sysex(Glib::RefPtr<Gio::File>, Glib::RefPtr<Gio::DataInputStream>&, unsigned int&);
-        void set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File>, std::function<void(unsigned int, Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> );
+        void set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File>, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> );
         virtual void set_bank_name(Glib::ustring) = 0;      // function to set the name of the loaded bank on the ui
 
         /* MIDI */

@@ -117,10 +117,10 @@ std::tuple<Glib::ustring, Glib::ustring, unsigned int> Gx_module::get_file_attri
     LOG(LOG_IN());
     try {
         unsigned int file_size = (file->query_info(G_FILE_ATTRIBUTE_STANDARD_SIZE))->get_size();
+        Glib::ustring file_name = (bank_file->query_info(G_FILE_ATTRIBUTE_STANDARD_NAME))->get_name();
         Glib::ustring path = file->get_path();
-        Glib::ustring file_path = path.substr(0,path.find_last_of("."));
-        Glib::ustring file_name = file_path.substr( file_path.find_last_of("/")+1, file_path.length() );
-        return std::make_tuple(file_name, file_path, file_size);
+        Glib::ustring file_base = path.substr(0,path.find_last_of("."));
+        return std::make_tuple(file_name, file_base, file_size);
 
     }catch(const std::exception& ex){
         std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot get attributs of: ") + file->get_path(), ex.what() );

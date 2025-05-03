@@ -193,7 +193,7 @@ void Synth::parse_sysex(Glib::RefPtr<Gio::File> file, Glib::RefPtr<Gio::DataInpu
 };
 
 /** BANK **/
-void Synth::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> bank_file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>, Glib::ustring, Glib::ustring, unsigned int)> funct ){
+void Synth::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> bank_file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct ){
     // GENERIC
     LOG( LOG_IN() );
     block_ui();
