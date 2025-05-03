@@ -830,8 +830,6 @@ void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
     LOG( LOG_OUT() );
 };
 /* set/load */
-
-
 void Dx7interface::clean_bank(){
     LOG( LOG_IN() );
     set_init_voice_in_origin();
@@ -849,7 +847,6 @@ void Dx7interface::clean_bank(){
     };
     LOG( LOG_OUT() );
 };
-
 void Dx7interface::set_init_voice_in_origin(){
     // store actual bank values
     unsigned int bank_nb_sound_origin = bank_nb_sound;
@@ -2135,7 +2132,6 @@ void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
 };
 
 void Dx7interface::receive_voice(St_dx7sysex_1* sound, std::vector<uint8_t> data){
-    // TODO: ADD RECEIVE
     /* BULK 32 */
     //LOG( LOG_IN() );
         int i;
