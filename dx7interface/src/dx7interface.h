@@ -77,7 +77,7 @@ class Dx7interface : public Gx_module, public Synth {
         /**** Generic ****/
         std::shared_ptr<int> pending_remove = std::make_shared<int>(0); // counter storing box remove pending task
 
-        using FunctionPtr = void (Dx7interface::*)();                             /* abstract for function without parameters */
+        using FunctionPtr = void (Dx7interface::*)(bool);                             /* abstract for function without parameters */
         using FunctionPtrInt = void (Dx7interface::*)(int);                       /* abstract for function with int parameter */
 
         #ifdef __linux__ 
@@ -777,13 +777,19 @@ class Dx7interface : public Gx_module, public Synth {
 
         /*** UI ***/
         FunctionPtr mute_by_level_functions[6] = {
-            &Dx7interface::on_mute_by_level_op1_event,
-            &Dx7interface::on_mute_by_level_op2_event,
-            &Dx7interface::on_mute_by_level_op3_event,
-            &Dx7interface::on_mute_by_level_op4_event,
-            &Dx7interface::on_mute_by_level_op5_event,
-            &Dx7interface::on_mute_by_level_op6_event
+            &Dx7interface::mute_op1_by_level,
+            &Dx7interface::mute_op2_by_level,
+            &Dx7interface::mute_op3_by_level,
+            &Dx7interface::mute_op4_by_level,
+            &Dx7interface::mute_op5_by_level,
+            &Dx7interface::mute_op6_by_level
         };
+        void on_mute_op1_event();
+        sigc::connection slot_on_mute_op1;
+        void on_mute_op2_event();
+        sigc::connection slot_on_mute_op2;
+
+        void on_checkbutton_mute_by_level_event();
         /** EVENTS / SIGNAL **/
         void block_ui();                       /* block all interface events */
         void unblock_ui();                     /* ... */
@@ -947,13 +953,13 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_mute_op5;
         sigc::connection slot_mute_op6;
         /* mute operator FOR HEXTER DX7 modeling DSSI plugin */
-        void on_mute_by_level_op1_event();
-        void on_mute_by_level_op2_event();
-        void on_mute_by_level_op3_event();
-        void on_mute_by_level_op4_event();
-        void on_mute_by_level_op5_event();
-        void on_mute_by_level_op6_event();
-
+        void mute_op1_by_level(bool unmute);
+        void mute_op2_by_level(bool unmute);
+        void mute_op3_by_level(bool unmute);
+        void mute_op4_by_level(bool unmute);
+        void mute_op5_by_level(bool unmute);
+        void mute_op6_by_level(bool unmute);
+        void on_mute_op_by_level_event();
         /* update show freq label value */
         void on_txt_freq_op_event();
 
@@ -990,7 +996,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_krs_op1;
         void on_kvs_op1_event();
         sigc::connection slot_kvs_op1;
-        void on_lvl_op1_event();
+        void on_lvl_op1_event(bool mute_by_level);
         sigc::connection slot_lvl_op1;
         /* op1 KLS*/
         void on_kls_lft_curve_op1_event();
@@ -1040,7 +1046,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_krs_op2;
         void on_kvs_op2_event();
         sigc::connection slot_kvs_op2;
-        void on_lvl_op2_event();
+        void on_lvl_op2_event(bool mute_by_level);
         sigc::connection slot_lvl_op2;
         /* op2 KLS*/
         void on_kls_lft_curve_op2_event();
@@ -1088,7 +1094,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_krs_op3;
         void on_kvs_op3_event();
         sigc::connection slot_kvs_op3;
-        void on_lvl_op3_event();
+        void on_lvl_op3_event(bool mute_by_level);
         sigc::connection slot_lvl_op3;
         /* op3 KLS*/
         void on_kls_lft_curve_op3_event();
@@ -1136,7 +1142,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_krs_op4;
         void on_kvs_op4_event();
         sigc::connection slot_kvs_op4;
-        void on_lvl_op4_event();
+        void on_lvl_op4_event(bool mute_by_level);
         sigc::connection slot_lvl_op4;
         /* op4 KLS*/
         void on_kls_lft_curve_op4_event();
@@ -1184,7 +1190,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_krs_op5;
         void on_kvs_op5_event();
         sigc::connection slot_kvs_op5;
-        void on_lvl_op5_event();
+        void on_lvl_op5_event(bool mute_by_level);
         sigc::connection slot_lvl_op5;
         /* op5 KLS*/
         void on_kls_lft_curve_op5_event();
@@ -1232,7 +1238,7 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_krs_op6;
         void on_kvs_op6_event();
         sigc::connection slot_kvs_op6;
-        void on_lvl_op6_event();
+        void on_lvl_op6_event(bool mute_by_level);
         sigc::connection slot_lvl_op6;
         /* op6 KLS*/
         void on_kls_lft_curve_op6_event();

@@ -1970,7 +1970,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op1">
-                                <property name="label" translatable="yes"> OP1</property>
+                                <property name="label" translatable="yes"> OP 1</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -2474,7 +2474,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op2">
-                                <property name="label" translatable="yes"> OP2 </property>
+                                <property name="label" translatable="yes"> OP 2</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -2977,7 +2977,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op3">
-                                <property name="label" translatable="yes"> OP3</property>
+                                <property name="label" translatable="yes"> OP 3</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -3489,7 +3489,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op4">
-                                <property name="label" translatable="yes"> OP4 </property>
+                                <property name="label" translatable="yes"> OP 4</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -3977,7 +3977,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op5">
-                                <property name="label" translatable="yes"> OP5 </property>
+                                <property name="label" translatable="yes"> OP 5</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -4480,7 +4480,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op6">
-                                <property name="label" translatable="yes"> OP6 </property>
+                                <property name="label" translatable="yes"> OP 6</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -4667,7 +4667,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op1">
-                                <property name="label" translatable="yes">OP1</property>
+                                <property name="label" translatable="yes"> OP 1</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -4831,7 +4831,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op2">
-                                <property name="label" translatable="yes">OP2</property>
+                                <property name="label" translatable="yes"> OP 2</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -4995,7 +4995,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op3">
-                                <property name="label" translatable="yes">OP3</property>
+                                <property name="label" translatable="yes"> OP 3</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5159,7 +5159,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op4">
-                                <property name="label" translatable="yes">OP4</property>
+                                <property name="label" translatable="yes"> OP 4</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5323,7 +5323,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op5">
-                                <property name="label" translatable="yes">OP5</property>
+                                <property name="label" translatable="yes"> OP 5</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5487,7 +5487,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op6">
-                                <property name="label" translatable="yes">OP6</property>
+                                <property name="label" translatable="yes"> OP 6</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5564,7 +5564,7 @@
                                     <!--property name="valign">fill</property-->
                                     <child>
                                       <object class="GtkDropDown" id="dropdown_affect_param">
-                                        <property name="width-request">164</property>
+                                          <property name="width-request">230</property>
                                         <property name="factory">
                                           <object class="GtkSignalListItemFactory" id="factory_param"/>
                                         </property>
@@ -5627,6 +5627,22 @@
                                   </object>
                                 </child>
                                 <child>
+                                    <object class="GtkSpinButton" id="midi_channel_receive">
+                                        <property name="adjustment">adj_midi_channel_receive</property>
+                                        <property name="focusable">1</property>
+                                        <property name="halign">start</property>
+                                        <property name="numeric">1</property>
+                                        <property name="text" translatable="yes">0</property>
+                                        <property name="width-chars">2</property>
+                                        <property name="wrap">1</property>
+                                        <property name="margin-top">2</property>
+                                        <layout>
+                                            <property name="column">1</property>
+                                            <property name="row">0</property>
+                                        </layout>
+                                    </object>
+                                </child>
+                                <child>
                                   <object class="GtkLabel" id="label_midi_send">
                                     <property name="justify">center</property>
                                     <property name="label">Midi Send</property>
@@ -5652,44 +5668,48 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="midi_channel_receive">
-                                    <property name="adjustment">adj_midi_channel_receive</property>
-                                    <property name="focusable">1</property>
-                                    <property name="halign">start</property>
-                                    <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
-                                    <property name="width-chars">2</property>
-                                    <property name="wrap">1</property>
-                                    <property name="margin-top">2</property>
-                                    <layout>
-                                      <property name="column">1</property>
-                                      <property name="row">0</property>
-                                    </layout>
-                                  </object>
+                                    <object class="GtkSeparator" id="GtkSeparator_various_fonctions1">
+                                        <property name="margin-bottom">4</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="valign">center</property>
+                                        <layout>
+                                            <property name="column">0</property>
+                                            <property name="column-span">2</property>
+                                            <property name="row">2</property>
+                                        </layout>
+                                    </object>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_randomize">
-                                    <property name="focusable">1</property>
-                                    <property name="label" translatable="yes">randomize</property>
-                                    <property name="margin-bottom">4</property>
-                                    <property name="margin-top">4</property>
-                                    <property name="receives-default">1</property>
-                                    <layout>
-                                      <property name="column">0</property>
-                                      <property name="column-span">2</property>
-                                      <property name="row">4</property>
-                                    </layout>
-                                  </object>
+                                    <object class="GtkLabel" id="label_mute_by_level">
+                                        <property name="label">Mute by op level</property>
+                                        <property name="margin-start">4px</property>
+                                        <layout>
+                                            <property name="column">0</property>
+                                            <property name="row">3</property>
+                                        </layout>
+                                    </object>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry" id="entry1">
-                                    <property name="focusable">1</property>
-                                    <layout>
-                                      <property name="column">0</property>
-                                      <property name="column-span">2</property>
-                                      <property name="row">6</property>
-                                    </layout>
-                                  </object>
+                                    <object class="GtkCheckButton" id="checkbutton_mute_by_level">
+                                        <property name="active">false</property>
+                                        <property name="halign">end</property>
+                                        <layout>
+                                            <property name="column">1</property>
+                                            <property name="row">3</property>
+                                        </layout>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkSeparator" id="GtkSeparator_various_fonctions2">
+                                        <property name="margin-bottom">4</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="valign">center</property>
+                                        <layout>
+                                            <property name="column">0</property>
+                                            <property name="column-span">2</property>
+                                            <property name="row">4</property>
+                                        </layout>
+                                    </object>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_panic">
@@ -5701,31 +5721,43 @@
                                     <layout>
                                       <property name="column">0</property>
                                       <property name="column-span">2</property>
-                                      <property name="row">3</property>
-                                    </layout>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkSeparator" id="GtkSeparator_various_fonctions">
-                                    <property name="margin-bottom">4</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="valign">center</property>
-                                    <layout>
-                                      <property name="column">0</property>
-                                      <property name="column-span">2</property>
-                                      <property name="row">2</property>
-                                    </layout>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label_send_message_sysex">
-                                    <property name="label">Send Message Sysex :</property>
-                                    <layout>
-                                      <property name="column">0</property>
-                                      <property name="column-span">2</property>
                                       <property name="row">5</property>
                                     </layout>
                                   </object>
+                                </child>
+                                <child>
+                                    <object class="GtkButton" id="btn_randomize">
+                                        <property name="focusable">1</property>
+                                        <property name="label" translatable="yes">randomize</property>
+                                        <property name="margin-bottom">4</property>
+                                        <property name="margin-top">4</property>
+                                        <property name="receives-default">1</property>
+                                        <layout>
+                                            <property name="column">0</property>
+                                            <property name="column-span">2</property>
+                                            <property name="row">6</property>
+                                        </layout>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkLabel" id="label_send_message_sysex">
+                                        <property name="label">Send Message Sysex :</property>
+                                        <layout>
+                                            <property name="column">0</property>
+                                            <property name="column-span">2</property>
+                                            <property name="row">7</property>
+                                        </layout>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkEntry" id="entry_send_message_sysex">
+                                        <property name="focusable">1</property>
+                                        <layout>
+                                            <property name="column">0</property>
+                                            <property name="column-span">2</property>
+                                            <property name="row">8</property>
+                                        </layout>
+                                    </object>
                                 </child>
                               </object>
                             </property>
@@ -6437,160 +6469,165 @@
       <property name="step-increment">1</property>
       <property name="upper">127</property>
   </object>
-   <object class="GtkWindow" id="dialog_param">
+  <object class="GtkWindow" id="dialog_param">
     <child>
-      <object class="GtkBox" id="box_save">
+    <object class="GtkBox" id="box">
+        <property name="visible">true</property>
         <property name="halign">center</property>
         <property name="orientation">vertical</property>
         <property name="valign">center</property>
         <child>
-          <object class="GtkLabel" id="label_name"/>
-        </child>
-        <child>
-          <object class="GtkBox" id="box_save_bank">
-            <property name="orientation">horizontal</property>
-            <property name="visible">false</property>
+        <object class="GtkBox" id="box_save">
+            <property name="visible">true</property>
+            <property name="halign">center</property>
+            <property name="orientation">vertical</property>
+            <property name="valign">center</property>
             <child>
-              <object class="GtkCheckButton" id="checkbutton_128">
-                <property name="active">true</property>
-                <property name="label" translatable="yes">128 voices</property>
-              </object>
+            <object class="GtkLabel" id="label_name"/>
             </child>
             <child>
-              <object class="GtkFrame">
+            <object class="GtkBox" id="box_save_bank">
+                <property name="orientation">horizontal</property>
+                <property name="visible">true</property>
+                <child>
+                <object class="GtkCheckButton" id="checkbutton_128">
+                    <property name="active">true</property>
+                    <property name="label" translatable="yes">128 voices</property>
+                </object>
+                </child>
+                <child>
+                <object class="GtkFrame">
+                    <property name="child">
+                    <object class="GtkBox">
+                        <property name="orientation">horizontal</property>
+                        <child>
+                        <object class="GtkCheckButton" id="checkbutton_32">
+                            <property name="label" translatable="yes">32 voices</property>
+                        </object>
+                        </child>
+                        <child>
+                        <object class="GtkLabel">
+                            <property name="label" translatable="yes"> from: </property>
+                        </object>
+                        </child>
+                        <child>
+                        <object class="GtkSpinButton" id="spinbutton_save_start">
+                            <property name="adjustment">adj_sound_start</property>
+                            <property name="focusable">1</property>
+                            <property name="max-width-chars">2</property>
+                            <property name="numeric">1</property>
+                            <property name="text">0</property>
+                            <property name="value">0</property>
+                            <property name="width-chars">2</property>
+                            <property name="xalign">0.5</property>
+                        </object>
+                        </child>
+                    </object>
+                    </property>
+                </object>
+                </child>
+            </object>
+            </child>
+            <child>
+            <object class="GtkCheckButton" id="checkbutton_as_raw">
+                <property name="active">true</property>
+                <property name="label" translatable="yes">as RAW (128 Bytes per sound like in bulk32, without sysex header)</property>
+            </object>
+            </child>
+            <child>
+                <object class="GtkLabel" id="label_bulk">
+                    <property name="label" translatable="yes">With 128 voices bank, if RAW is not selected, the bank will be split it into 4x 32 voices bank to be compatible with Dx7 hardware</property>
+                    <property name="wrap">true</property>
+                    <property name="wrap-mode">word</property>
+                </object>
+            </child>
+            <child>
+            <object class="GtkFrame">
                 <property name="child">
-                  <object class="GtkBox">
+                <object class="GtkBox">
                     <property name="orientation">horizontal</property>
                     <child>
-                      <object class="GtkCheckButton" id="checkbutton_32">
-                        <property name="label" translatable="yes">32 voices</property>
-                      </object>
+                    <object class="GtkCheckButton" id="checkbutton_add_extra_parameters">
+                        <property name="label" translatable="yes">add extra parameters</property>
+                    </object>
                     </child>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="label" translatable="yes"> from: </property>
-                      </object>
+                    <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_bank">
+                        <property name="active">true</property>
+                        <property name="label" translatable="yes">by bank</property>
+                        <property name="sensitive">false</property>
+                    </object>
                     </child>
                     <child>
-                      <object class="GtkSpinButton" id="spinbutton_save_start">
-                        <property name="adjustment">adj_sound_start</property>
-                        <property name="focusable">1</property>
-                        <property name="max-width-chars">2</property>
-                        <property name="numeric">1</property>
-                        <property name="text">0</property>
-                        <property name="value">0</property>
-                        <property name="width-chars">2</property>
-                        <property name="xalign">0.5</property>
-                      </object>
+                    <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_sound">
+                        <property name="label" translatable="yes">by sound</property>
+                        <property name="sensitive">false</property>
+                    </object>
                     </child>
-                  </object>
+                </object>
                 </property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkCheckButton" id="checkbutton_as_raw">
-            <property name="active">true</property>
-            <property name="label" translatable="yes">as RAW (128 Bytes per sound like in bulk32, without sysex header)</property>
-          </object>
-        </child>
-        <child>
-            <object class="GtkLabel" id="label_bulk">
-                <property name="label" translatable="yes">With 128 voices bank, if RAW is not selected, the bank will be split it into 4x 32 voices bank to be compatible with Dx7 hardware</property>
-                <property name="wrap">true</property>
-                <property name="wrap-mode">word</property>
             </object>
+            </child>
+            <child>
+            <object class="GtkFrame">
+                <property name="child">
+                <object class="GtkCheckButton" id="checkbutton_add_midi_learn_parameters">
+                    <property name="label" translatable="yes">Save midi learn configuration</property>
+                </object>
+                </property>
+            </object>
+            </child>
+        </object>
         </child>
         <child>
-          <object class="GtkFrame">
-            <property name="child">
-              <object class="GtkBox">
-                <property name="orientation">horizontal</property>
-                <child>
-                  <object class="GtkCheckButton" id="checkbutton_add_extra_parameters">
-                    <property name="label" translatable="yes">add extra parameters</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_bank">
-                    <property name="active">true</property>
-                    <property name="label" translatable="yes">by bank</property>
-                    <property name="sensitive">false</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_sound">
-                    <property name="label" translatable="yes">by sound</property>
-                    <property name="sensitive">false</property>
-                  </object>
-                </child>
-              </object>
-            </property>
-          </object>
+        <object class="GtkBox" id="box_insert">
+            <property name="visible">true</property>
+            <property name="halign">center</property>
+            <property name="orientation">vertical</property>
+            <property name="valign">center</property>
+            <child>
+                <object class="GtkLabel" id="label_insert"/>
+            </child>
+            <child>
+                <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="visible">true</property>
+                    <child>
+                        <object class="GtkFrame">
+                            <property name="child">
+                                <object class="GtkBox">
+                                    <property name="orientation">horizontal</property>
+                                    <child>
+                                        <object class="GtkLabel">
+                                            <property name="label" translatable="yes">Insert at position: </property>
+                                        </object>
+                                    </child>
+                                    <child>
+                                        <object class="GtkSpinButton" id="spinbutton_insert_start">
+                                            <property name="adjustment">adj_insert_start</property>
+                                            <property name="xalign">0.5</property>
+                                            <property name="focusable">1</property>
+                                            <property name="numeric">1</property>
+                                            <property name="text">0</property>
+                                            <property name="value">0</property>
+                                            <property name="width-chars">3</property>
+                                            <property name="max-width-chars">3</property>
+                                        </object>
+                                    </child>
+                                </object>
+                            </property>
+                        </object>
+                    </child>
+                </object>
+            </child>
+        </object>
         </child>
         <child>
-          <object class="GtkFrame">
-            <property name="child">
-              <object class="GtkCheckButton" id="checkbutton_add_midi_learn_parameters">
-                <property name="label" translatable="yes">Save midi learn configuration</property>
-              </object>
-            </property>
-          </object>
+        <object class="GtkButton" id="btn_dialog_param">
+            <property name="label" translatable="yes">select file</property>
+        </object>
         </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkBox" id="box_insert">
-          <property name="halign">center</property>
-          <property name="orientation">vertical</property>
-          <property name="valign">center</property>
-          <child>
-              <object class="GtkLabel" id="label_insert"/>
-          </child>
-          <child>
-              <object class="GtkBox">
-                  <property name="orientation">horizontal</property>
-                  <property name="visible">true</property>
-                  <child>
-                      <object class="GtkFrame">
-                          <property name="child">
-                              <object class="GtkBox">
-                                  <property name="orientation">horizontal</property>
-                                  <child>
-                                      <object class="GtkLabel">
-                                          <property name="label" translatable="yes">Insert at position: </property>
-                                      </object>
-                                  </child>
-                                  <child>
-                                      <object class="GtkSpinButton" id="spinbutton_insert_start">
-                                          <property name="adjustment">adj_insert_start</property>
-                                          <property name="xalign">0.5</property>
-                                          <property name="focusable">1</property>
-                                          <property name="numeric">1</property>
-                                          <property name="text">0</property>
-                                          <property name="value">0</property>
-                                          <property name="width-chars">3</property>
-                                          <property name="max-width-chars">3</property>
-                                      </object>
-                                  </child>
-                              </object>
-                          </property>
-                      </object>
-                  </child>
-              </object>
-          </child>
-          <child>
-              <object class="GtkButton" id="btn_insert">
-                  <property name="label" translatable="yes">select file</property>
-              </object>
-          </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkButton" id="btn_dialog_param">
-        <property name="label" translatable="yes">select file</property>
-      </object>
+    </object>
     </child>
   </object>
 </interface>

@@ -80,7 +80,7 @@
     }St_100;
 
     typedef struct st_128{
-        uint8_t val;
+        uint8_t val = 0x00;
         unsigned int address;
         static const uint8_t max=127;
         static const uint8_t mask=0x7F;

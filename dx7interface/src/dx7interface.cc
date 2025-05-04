@@ -98,11 +98,10 @@ Dx7interface::~Dx7interface(){
 };
 
 void Dx7interface::set_default_values(){
+    bank_1_modif.sound->extra.mute.val=0x3F; // all unmuted
+    bank_1_origin.sound->extra.mute.val=0x3F;
     Glib::RefPtr<Gio::File> init_voice = Gio::File::create_for_path( DATA_DIR"cfg/DX7_INIT_VOICE.syx" );
     set_bank(0, init_voice);
-
-    bank_1_modif.sound->extra.mute.val=0x7F; // all unmuted
-    bank_1_origin.sound->extra.mute.val=0x7F;
     Glib::RefPtr<Gio::File> param_file = Gio::File::create_for_path( DATA_DIR"cfg/midi_learn_default_config.cfg" );
     read_midi_learned_param(1, param_file);
 };
@@ -166,6 +165,9 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
     text_fct->set_name(function_name);
     text_fct->set_text(function_name);
     text_fct->set_editable(false);
+    int width,height;
+    get_gwidget<Gtk::DropDown>("dropdown_affect_param")->get_size_request(width,height);
+    text_fct->set_size_request(width, -1);
     /* midi param number widget */
     auto text_param = Gtk::make_managed<Gtk::Text>();
     text_param->set_name(param_number);
@@ -1261,6 +1263,7 @@ void Dx7interface::on_delete_sound(){
 void Dx7interface::on_send_bank(){
     send_bank=true;
     write_bank_as_sysex(0, nullptr, 0);
+    on_mute_op_event();
 };
 void Dx7interface::on_save_bank(){
     try{
@@ -1984,7 +1987,7 @@ void Dx7interface::seek_voice(Glib::RefPtr<Gio::DataInputStream> data_stream, St
         strm << (data_stream->read_byte());
     };
     sound->name=strm.str();
-    sound->extra.mute.val=0x7F;
+    sound->extra.mute.val=0x3F;
     /* add voice name to liststore */
     update_data_model<SoundBankItem>(bank_data_model, sound->name);
     //LOG( LOG_OUT() );
@@ -2038,7 +2041,7 @@ void Dx7interface::seek_voice_by_byte(Glib::RefPtr<Gio::DataInputStream> data_st
         strm << (data_stream->read_byte());
     };
     sound->name=strm.str();
-    sound->extra.mute.val=0x7F;
+    sound->extra.mute.val=0x3F;
     /* add voice name to liststore */
     update_data_model<SoundBankItem>(bank_data_model, sound->name);
     //LOG( LOG_OUT() );
@@ -2198,7 +2201,7 @@ void Dx7interface::receive_voice(St_dx7sysex_1* sound, std::vector<uint8_t> data
             strm << (data[i++]);
         };
         sound->name=strm.str();
-        sound->extra.mute.val=0x7F;
+        sound->extra.mute.val=0x3F;
         /* add voice name to liststore */
         update_data_model<SoundBankItem>(bank_data_model, sound->name);
     //LOG( LOG_OUT() );
@@ -2254,7 +2257,7 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
         strm << (data[i++]);
     };
     sound->name=strm.str();
-    sound->extra.mute.val=0x7F;
+    sound->extra.mute.val=0x3F;
     /* add voice name to liststore */
     update_data_model<SoundBankItem>(bank_data_model, sound->name);
     //LOG( LOG_OUT() );
@@ -2320,7 +2323,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG( LOG_IN() );
             get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<unsigned int>(k+1)+"_pitch")->set_value(sound->pitch.eg_lvl[k].val);
         };
         /* OPERATEUR j+1 */
-        uint8_t mute_val=sound->extra.mute.val & 0x7F; // get mute status from extra struct;
+        uint8_t mute_val=sound->extra.mute.val & 0x3F; // get mute status from extra struct;
         for ( j=0;j<6;j++){
             /* AMS */
             (get_gwidget<Gtk::Scale>("ams_op"+tostr<unsigned int>(j+1)))->set_value(sound->op[j].ams.val);
@@ -2348,8 +2351,8 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG( LOG_IN() );
             /* MUTE */
             /* NO MUTE VALUE IN STD SYSEX CAN BE ADD IN LEFT SPACE */
             uint8_t muted = mute_val;
-            muted = ( muted >> ( 5 - j ) );
-            (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<unsigned int>(j+1)))->set_active(!(muted & 0x01));
+            muted = ( muted >> ( 5 - j ) ) &0x01;
+            (get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<unsigned int>(j+1)))->set_active(!muted);
             /* KLS */
             (get_gwidget<Gtk::DropDown>("kls_lft_curve_op"+tostr<unsigned int>(j+1)))->set_selected(sound->op[j].kls.lft_curve.val);
             (get_gwidget<Gtk::DropDown>("kls_rght_curve_op"+tostr<unsigned int>(j+1)))->set_selected(sound->op[j].kls.rght_curve.val);
@@ -2371,6 +2374,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG( LOG_IN() );
 
         if(compare){
             send_voice(&bank_1_origin.sound[0]);
+            //on_mute_op_event();
             block_midi();
         }else{
             unblock_ui();
@@ -2530,8 +2534,8 @@ void Dx7interface::send_voice(st_dx7sysex_1* sound){
     send_midi(SND_SEQ_EVENT_SYSEX, 163, msg);
     /* extra parameters */
     //send_extra_parameters(sound);
-    /* send mute for dx and hexter */
-    //on_mute_op_event();
+    /* send mute status */
+    on_mute_op_event();
     LOG( LOG_OUT() );
 };
 void Dx7interface::send_extra_parameters(st_dx7sysex_1* sound){
@@ -2923,6 +2927,9 @@ void Dx7interface::attach_signals(){
     slot_btn_panic = (get_gwidget<Gtk::Button>("btn_panic"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_panic_event));
 
+    /* */
+    (get_gwidget<Gtk::CheckButton>("checkbutton_mute_by_level"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_checkbutton_mute_by_level_event));
     /* Algo */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->set_draw_func(
         sigc::mem_fun(*this, &Dx7interface::on_draw_algo) );
@@ -3390,7 +3397,7 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op1 = (get_gwidget<Gtk::SpinButton>("lvl_op1"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_lvl_op1_event));
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_lvl_op1_event), false));
     (get_gwidget<Gtk::SpinButton>("lvl_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
@@ -3401,22 +3408,25 @@ void Dx7interface::attach_signals(){
         (get_gwidget<Gtk::SpinButton>("lvl_op1"))->set_value(value);
         return true; // Return false to remove the callback after one executio
     });
+
     slot_mute_op1 = (get_gwidget<Gtk::ToggleButton>("mute_op1"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
+
     (get_gwidget<Gtk::ToggleButton>("mute_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
-            value = bank_1_origin.sound->extra.mute.val >>5;
+        if( compare ){
+            value = 0x01;
         }else{
-            value = bank_1_modif.sound->extra.mute.val >>5;
+            value = ( (bank_1_modif.sound->extra.mute.val & 0x3F) >>5 ) & 0x01;
         };
-        (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(!(value & 0x01));
+        (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(!value);
         return true; // Return false to remove the callback after one executio
     });
 
     /* OP1 KLS */
     slot_kls_lft_curve_op1 = (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->property_selected().signal_changed().connect(
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op1_event));
+
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op1"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
@@ -3688,7 +3698,7 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op2 = (get_gwidget<Gtk::SpinButton>("lvl_op2"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_lvl_op2_event));
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_lvl_op2_event), false));
     (get_gwidget<Gtk::SpinButton>("lvl_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
@@ -3704,11 +3714,11 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::ToggleButton>("mute_op2"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
-            value = bank_1_origin.sound->extra.mute.val >>4;
+            value = 0x01;
         }else{
-            value = bank_1_modif.sound->extra.mute.val >>4;
+            value = ( (bank_1_modif.sound->extra.mute.val & 0x3F) >>4 ) & 0x01;
         };
-        (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(!(value & 0x01));
+        (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(!value);
         return true; // Return false to remove the callback after one executio
     });
 
@@ -3976,7 +3986,7 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op3 = (get_gwidget<Gtk::SpinButton>("lvl_op3"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_lvl_op3_event));
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_lvl_op3_event), false));
     (get_gwidget<Gtk::SpinButton>("lvl_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
@@ -3991,12 +4001,12 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op3"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
-            value = bank_1_origin.sound->extra.mute.val >>3;
+        if( compare ){
+            value = 0x01;
         }else{
-            value = bank_1_modif.sound->extra.mute.val >>3;
+            value = ( (bank_1_modif.sound->extra.mute.val & 0x3F) >>3 ) & 0x01;
         };
-        (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(!(value & 0x01));
+        (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(!value);
         return true; // Return false to remove the callback after one executio
     });
 
@@ -4264,7 +4274,7 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op4 = (get_gwidget<Gtk::SpinButton>("lvl_op4"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_lvl_op4_event));
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_lvl_op4_event), false));
     (get_gwidget<Gtk::SpinButton>("lvl_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
@@ -4280,11 +4290,11 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::ToggleButton>("mute_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
-            value = bank_1_origin.sound->extra.mute.val >>2;
+            value = 0x01;
         }else{
-            value = bank_1_modif.sound->extra.mute.val >>2;
+            value = ( (bank_1_modif.sound->extra.mute.val & 0x3F) >>2 ) & 0x01;
         };
-        (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(!(value & 0x01));
+        (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(!value);
         return true; // Return false to remove the callback after one executio
     });
 
@@ -4552,7 +4562,7 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op5 = (get_gwidget<Gtk::SpinButton>("lvl_op5"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_lvl_op5_event));
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_lvl_op5_event), false));
     (get_gwidget<Gtk::SpinButton>("lvl_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
@@ -4568,11 +4578,11 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::ToggleButton>("mute_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
-            value = bank_1_origin.sound->extra.mute.val >>1;
+            value = 0x01;
         }else{
-            value = bank_1_modif.sound->extra.mute.val >>1;
-        };
-        (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(!(value & 0x01));
+            value = ( (bank_1_modif.sound->extra.mute.val & 0x3F) >>1 ) & 0x01;
+        }
+        (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(!value);
         return true; // Return false to remove the callback after one executio
     });
 
@@ -4839,7 +4849,7 @@ void Dx7interface::attach_signals(){
         return true; // Return false to remove the callback after one executio
     });
     slot_lvl_op6 = (get_gwidget<Gtk::SpinButton>("lvl_op6"))->signal_value_changed().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_lvl_op6_event));
+        sigc::bind(sigc::mem_fun(*this, &Dx7interface::on_lvl_op6_event), false));
     (get_gwidget<Gtk::SpinButton>("lvl_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
@@ -4855,11 +4865,11 @@ void Dx7interface::attach_signals(){
     (get_gwidget<Gtk::ToggleButton>("mute_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
         if (compare) {
-            value = bank_1_origin.sound->extra.mute.val;
+            value = 0x01;
         }else{
-            value = bank_1_modif.sound->extra.mute.val;
+            value = (bank_1_modif.sound->extra.mute.val & 0x3F) & 0x01;
         };
-        (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(!(value & 0x01));
+        (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(!value);
         return true; // Return false to remove the callback after one executio
     });
 
@@ -6151,53 +6161,33 @@ void Dx7interface::on_pitch_lvl4_event(){
 };
 
 /* MUTE FOR EACH OPERATOR IN DX7 */
-void Dx7interface::on_mute_op_event() {
-    
-    unsigned char msg[7];
-    uint8_t i,mute_val=0x00;
-
-    for(i=1; i<=6;i++){
-        bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<unsigned int>(i)))->get_active());
-        mute_val=( mute_val | (!widget_active) ) ;
-        if (i!=6){
-            mute_val=mute_val + 1;
-        };
-        //msg = "on_mute_op mute_val : " + std::bitset<8>(mute_val) +std::endl;
-    };
-    if( !compare ){
-        bank_1_modif.sound->extra.mute.val=mute_val;
-    };
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x1B;
-    msg[5]=mute_val;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-
-    if( get_gwidget<Gtk::CheckButton>("mute_by_level")->get_active() ){
-        for(i=1; i<=6;i++){
-            (this->*mute_by_level_functions[i-1])();
-        };
+void Dx7interface::on_checkbutton_mute_by_level_event(){
+    if( get_gwidget<Gtk::CheckButton>("checkbutton_mute_by_level")->get_active() ){
+        // mute by level activated
+        //mute_op1_by_level(true);
+        //mute_op2_by_level(true);
+        //mute_op3_by_level(true);
+        //mute_op4_by_level(true);
+        //mute_op5_by_level(true);
+        //mute_op6_by_level(true);
+    }else{
+        // restore normal volume without unmute
+        //on_lvl_op1_event(true);
+        //on_lvl_op2_event(true);
+        //on_lvl_op3_event(true);
+        //on_lvl_op4_event(true);
+        //on_lvl_op5_event(true);
+        //on_lvl_op6_event(true);
     };
 };
-
 /* OP1 mute for UI & Hexter */
-void Dx7interface::on_mute_by_level_op1_event(){
+void Dx7interface::mute_op1_by_level(bool mute_by_level){
     LOG( LOG_IN() );
     uint8_t mute_val;
-    
-    if( !compare ){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    
-    mute_val = mute_val >>5;
-    
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_("/* OP1 */"));
+    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+    mute_val = (mute_val >>5) & 0x01;
+
+    if( !mute_val ) {
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6207,27 +6197,229 @@ void Dx7interface::on_mute_by_level_op1_event(){
         msg[5]=0x00;
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{        
-        (get_gwidget<Gtk::Label>("label_general_op1"))->set_label(_(" OP1 "));
-        on_lvl_op1_event();        
+    }else{
+        on_lvl_op1_event(mute_by_level);
+    };
+    LOG( LOG_OUT() );
+};
+void Dx7interface::on_lvl_op1_event(bool mute_by_level){
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    if( mute_by_level || !compare){
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x79;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op1"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    };
+    if( !compare ){
+        update_modified();
+        bank_1_modif.sound->op[0].lvl.val=msg[5];
+    };
+    if ( !mute_by_level && (get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active() ) {
+        (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(false);
+    };
+    LOG( LOG_OUT() );
+};
+
+
+void Dx7interface::on_mute_op1_event(){
+    LOG( LOG_IN() );
+    int mute_val = 0x00;
+    int val;
+    std::string op_str;
+    if( !compare ){
+        bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active());
+        LOG( "Before get: " + std::to_string(mute_val) );
+        mute_val = bank_1_modif.sound->extra.mute.val & 0x3F;
+        LOG( "Widget_active: " + std::to_string(widget_active) );
+        val= widget_active << 5;
+        LOG( "Val: " + std::to_string(val) );
+        LOG( "Before push: " + std::to_string(mute_val) );
+        mute_val = mute_val ^ val;
+        LOG( "After push: " + std::to_string(mute_val) );
+        std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
+        //LOG( mmsg );
+        bank_1_modif.sound->extra.mute.val = mute_val;
+    }else{
+
+    };
+    LOG( LOG_OUT() );
+};
+void Dx7interface::on_mute_op_event() {
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    unsigned int i;
+    int mute_val = 0x00;
+    std::string op_str;
+
+    LOG( "Before get: " + std::to_string(mute_val) );
+    for( i = 1 ; i <= 6 ; i++ ){
+        bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<unsigned int>(i)))->get_active());
+        LOG( "Widget_active: " + std::to_string(widget_active) );
+        LOG( "Before push: " + std::to_string(mute_val) );
+        if( i != 1 ){
+            mute_val=mute_val << 1;
+        };
+        LOG( "After push: " + std::to_string(mute_val) );
+        mute_val= mute_val ^ !widget_active ;
+        LOG( "After Set: " + std::to_string(mute_val) );
+        if( widget_active ){
+            op_str = _("/* OP ")+tostr<unsigned int>(i)+" */";
+            (get_gwidget<Gtk::Label>("label_general_op"+tostr<unsigned int>(i)))->set_label(op_str);
+        }else{
+            op_str = _(" OP ")+tostr<unsigned int>(i);
+            (get_gwidget<Gtk::Label>("label_general_op"+tostr<unsigned int>(i)))->set_label(op_str);
+        };
+    };
+    std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
+    if( !compare ){
+        bank_1_modif.sound->extra.mute.val = mute_val;
+    };
+    msg[0]=0xF0;
+    msg[1]=id_fabricant;
+    msg[2]=sub_status + channel_send;
+    msg[3]=0x01;
+    msg[4]=0x1B;
+    msg[5]=mute_val;
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    //on_mute_op_by_level_event();
+    LOG( LOG_OUT() );
+};
+void Dx7interface::on_mute_op_by_level_event() {
+    LOG( LOG_IN() );
+    if( get_gwidget<Gtk::CheckButton>("checkbutton_mute_by_level")->get_active() ){
+        for(int i=0; i<6; i++){
+            (this->*mute_by_level_functions[5-i])(true);
+        };
+    };
+    LOG( LOG_OUT() );
+};
+
+
+
+void Dx7interface::on_lvl_op2_event(bool mute_by_level){
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    if( mute_by_level || !compare ){
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x64;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op2"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    };
+    if( !compare ){
+        update_modified();
+        bank_1_modif.sound->op[1].lvl.val=msg[5];
+    };
+    if ( !mute_by_level && (get_gwidget<Gtk::ToggleButton>("mute_op2"))->get_active() ){
+        (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(false);
+    };
+    LOG( LOG_OUT() );
+};
+void Dx7interface::on_lvl_op3_event(bool mute_by_level){
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    if( mute_by_level || !compare ){
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x4F;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op3"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    };
+    if( !compare ){
+        update_modified();
+        bank_1_modif.sound->op[2].lvl.val=msg[5];
+    };
+    if ( !mute_by_level && (get_gwidget<Gtk::ToggleButton>("mute_op3"))->get_active() ){
+        (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(false);
+    };
+    LOG( LOG_OUT() );
+};
+void Dx7interface::on_lvl_op4_event(bool mute_by_level){
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    if( mute_by_level || !compare ){
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3A;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op4"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    };
+    if( !compare ){
+        update_modified();
+        bank_1_modif.sound->op[3].lvl.val=msg[5];
+    };
+    if ( !mute_by_level && (get_gwidget<Gtk::ToggleButton>("mute_op4"))->get_active() ) {
+        (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(false);
+    };
+    LOG( LOG_OUT() );
+};
+void Dx7interface::on_lvl_op5_event(bool mute_by_level){
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    if( mute_by_level || !compare ){
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x25;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op5"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    };
+    if( !compare ){
+        update_modified();
+        bank_1_modif.sound->op[4].lvl.val=msg[5];
+    };
+    if ( !mute_by_level && (get_gwidget<Gtk::ToggleButton>("mute_op5"))->get_active() ) {
+        (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(false);
+    };
+    LOG( LOG_OUT() );
+};
+void Dx7interface::on_lvl_op6_event(bool mute_by_level){
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    if( mute_by_level || !compare ){
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x10;
+        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op6"))->get_value();
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
+    };
+    if( !compare ){
+        update_modified();
+        bank_1_modif.sound->op[5].lvl.val=msg[5];
+    };
+    if ( !mute_by_level && (get_gwidget<Gtk::ToggleButton>("mute_op6"))->get_active() ) {
+        (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(false);
     };
     LOG( LOG_OUT() );
 };
 /* OP2 mute for UI & Hexter */
-void Dx7interface::on_mute_by_level_op2_event(){
+void Dx7interface::mute_op2_by_level(bool mute_by_level){
     LOG( LOG_IN() );
     uint8_t mute_val;
+    mute_val = bank_1_modif.sound->extra.mute.val & 0x3F;
+    mute_val = (mute_val >>4) & 0x01;
     
-    if( !compare ){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    
-    mute_val = mute_val >>4;
-    
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_("/* OP2 */"));
+    if( !(mute_val) ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6238,26 +6430,18 @@ void Dx7interface::on_mute_by_level_op2_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     }else{
-        (get_gwidget<Gtk::Label>("label_general_op2"))->set_label(_(" OP2 "));
-        on_lvl_op2_event();
+        on_lvl_op2_event(mute_by_level);
     };
     LOG( LOG_OUT() );
 };
 /* OP3 mute for UI & Hexter */
-void Dx7interface::on_mute_by_level_op3_event(){
+void Dx7interface::mute_op3_by_level(bool mute_by_level){
     LOG( LOG_IN() );
     uint8_t mute_val;
+    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+    mute_val = (mute_val >>3) & 0x01;
     
-    if( !compare ){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    
-    mute_val = mute_val >>3;
-    
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_("/* OP3 */"));
+    if( !mute_val ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6268,26 +6452,18 @@ void Dx7interface::on_mute_by_level_op3_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     }else{
-        (get_gwidget<Gtk::Label>("label_general_op3"))->set_label(_(" OP3 "));
-        on_lvl_op3_event();
+        on_lvl_op3_event(mute_by_level);
     };
     LOG( LOG_OUT() );
 };
 /* OP4 mute for UI & Hexter */
-void Dx7interface::on_mute_by_level_op4_event(){
+void Dx7interface::mute_op4_by_level(bool mute_by_level){
     LOG( LOG_IN() );
     uint8_t mute_val;
+    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+    mute_val = (mute_val >>2) & 0x01;
     
-    if( !compare ){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    
-    mute_val = mute_val >>2;
-    
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_("/* OP4 */"));
+    if( !mute_val ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6298,26 +6474,18 @@ void Dx7interface::on_mute_by_level_op4_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     }else{
-        (get_gwidget<Gtk::Label>("label_general_op4"))->set_label(_(" OP4 "));
-        on_lvl_op4_event();
+        on_lvl_op4_event(mute_by_level);
     };
     LOG( LOG_OUT() );
 };
 /* OP5 mute for UI & Hexter */
-void Dx7interface::on_mute_by_level_op5_event(){
+void Dx7interface::mute_op5_by_level(bool mute_by_level){
     LOG( LOG_IN() );
     uint8_t mute_val;
+    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+    mute_val = (mute_val >>1) & 0x01;
     
-    if( !compare ){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    
-    mute_val = mute_val >>1;
-    
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_("/* OP5 */"));
+    if( !mute_val ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6328,24 +6496,17 @@ void Dx7interface::on_mute_by_level_op5_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     }else{
-        (get_gwidget<Gtk::Label>("label_general_op5"))->set_label(_(" OP5 "));
-        on_lvl_op5_event();
+        on_lvl_op5_event(mute_by_level);
     };
     LOG( LOG_OUT() );
 };
 /* OP6 mute for UI & Hexter */
-void Dx7interface::on_mute_by_level_op6_event(){
+void Dx7interface::mute_op6_by_level(bool mute_by_level){
     LOG( LOG_IN() );
     uint8_t mute_val;
+    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F) & 0x01;
     
-    if( !compare ){
-        mute_val = bank_1_modif.sound->extra.mute.val;
-    }else{
-        mute_val = bank_1_origin.sound->extra.mute.val;
-    };
-    
-    if ( !(mute_val & 0x01) ) {
-        (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_("/* OP6 */"));
+    if( !mute_val ){
         unsigned char msg[7];
         msg[0]=0xF0;
         msg[1]=id_fabricant;
@@ -6356,8 +6517,7 @@ void Dx7interface::on_mute_by_level_op6_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
     }else{
-        (get_gwidget<Gtk::Label>("label_general_op6"))->set_label(_(" OP6 "));
-        on_lvl_op6_event();
+        on_lvl_op6_event(mute_by_level);
     };
     LOG( LOG_OUT() );
 };
@@ -6675,27 +6835,6 @@ void Dx7interface::on_kvs_op1_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[0].kvs.val=msg[5];
-    };
-    LOG( LOG_OUT() );
-};
-
-void Dx7interface::on_lvl_op1_event(){
-    LOG( LOG_IN() );
-    if( !compare ){
-        update_modified();
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x79;
-        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op1"))->get_value();
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-        bank_1_modif.sound->op[0].lvl.val=msg[5];
-        if ( (get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active() ) {
-            (get_gwidget<Gtk::ToggleButton>("mute_op1"))->set_active(false);
-        };
     };
     LOG( LOG_OUT() );
 };
@@ -7085,27 +7224,6 @@ void Dx7interface::on_kvs_op2_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[1].kvs.val=msg[5];
-    };
-    LOG( LOG_OUT() );
-};
-
-void Dx7interface::on_lvl_op2_event(){
-    LOG( LOG_IN() );
-    if( !compare ){
-        update_modified();
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x64;
-        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op2"))->get_value();
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-        bank_1_modif.sound->op[1].lvl.val=msg[5];
-        if ( (get_gwidget<Gtk::ToggleButton>("mute_op2"))->get_active() ) {
-            (get_gwidget<Gtk::ToggleButton>("mute_op2"))->set_active(false);
-        };
     };
     LOG( LOG_OUT() );
 };
@@ -7500,28 +7618,6 @@ void Dx7interface::on_kvs_op3_event(){
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op3_event(){
-    LOG( LOG_IN() );
-    if( !compare ){
-        update_modified();
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x4F;
-        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op3"))->get_value();
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-        bank_1_modif.sound->op[2].lvl.val=msg[5];
-        if ( (get_gwidget<Gtk::ToggleButton>("mute_op3"))->get_active() ) {
-            (get_gwidget<Gtk::ToggleButton>("mute_op3"))->set_active(false);
-        };
-    };
-    LOG( LOG_OUT() );
-};
-
-
 /* OP3 KLS */
 void Dx7interface::on_kls_lft_curve_op3_event(){
     LOG( LOG_IN() );
@@ -7913,27 +8009,6 @@ void Dx7interface::on_kvs_op4_event(){
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_lvl_op4_event(){
-    LOG( LOG_IN() );
-    if( !compare ){
-        update_modified();
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x3A;
-        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op4"))->get_value();
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-        bank_1_modif.sound->op[3].lvl.val=msg[5];
-        if ( (get_gwidget<Gtk::ToggleButton>("mute_op4"))->get_active() ) {
-            (get_gwidget<Gtk::ToggleButton>("mute_op4"))->set_active(false);
-        };
-    };
-    LOG( LOG_OUT() );
-};
-
 /* OP4 KLS*/
 void Dx7interface::on_kls_lft_curve_op4_event(){
     LOG( LOG_IN() );
@@ -8317,27 +8392,6 @@ void Dx7interface::on_kvs_op5_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[4].kvs.val=msg[5];
-    };
-    LOG( LOG_OUT() );
-};
-
-void Dx7interface::on_lvl_op5_event(){
-    LOG( LOG_IN() );
-    if( !compare ){
-        update_modified();
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x25;
-        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op5"))->get_value();
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-        bank_1_modif.sound->op[4].lvl.val=msg[5];
-        if ( (get_gwidget<Gtk::ToggleButton>("mute_op5"))->get_active() ) {
-            (get_gwidget<Gtk::ToggleButton>("mute_op5"))->set_active(false);
-        };
     };
     LOG( LOG_OUT() );
 };
@@ -8726,27 +8780,6 @@ void Dx7interface::on_kvs_op6_event(){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
         bank_1_modif.sound->op[5].kvs.val=msg[5];
-    };
-    LOG( LOG_OUT() );
-};
-
-void Dx7interface::on_lvl_op6_event(){
-    LOG( LOG_IN() );
-    if( !compare ){
-        update_modified();
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x10;
-        msg[5]=(get_gwidget<Gtk::SpinButton>("lvl_op6"))->get_value();
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-        bank_1_modif.sound->op[5].lvl.val=msg[5]; 
-        if ( (get_gwidget<Gtk::ToggleButton>("mute_op6"))->get_active() ) {
-            (get_gwidget<Gtk::ToggleButton>("mute_op6"))->set_active(false);
-        };
     };
     LOG( LOG_OUT() );
 };
@@ -10216,7 +10249,7 @@ void Dx7interface::set_mono_poly_event(int value){
 };
 
 void Dx7interface::set_mute_op1_event(int value){
-    int val_ori = bank_1_modif.sound->extra.mute.val;
+    int val_ori = (bank_1_modif.sound->extra.mute.val & 0x3F);
     val_ori = (val_ori >> 5) & 0x01;
     if( ( value >= 63 && val_ori ) || ( value < 63  && !val_ori ) ){
         value=0x20;
@@ -10226,7 +10259,7 @@ void Dx7interface::set_mute_op1_event(int value){
     bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
 void Dx7interface::set_mute_op2_event(int value){
-    int val_ori = bank_1_modif.sound->extra.mute.val;
+    int val_ori = (bank_1_modif.sound->extra.mute.val & 0x3F);
     val_ori = (val_ori >> 4) & 0x01;
     if( ( value >= 63 && val_ori ) || ( value < 63  && !val_ori ) ){
         value=0x10;
@@ -10236,7 +10269,7 @@ void Dx7interface::set_mute_op2_event(int value){
     bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
 void Dx7interface::set_mute_op3_event(int value){
-    int val_ori = bank_1_modif.sound->extra.mute.val;
+    int val_ori = (bank_1_modif.sound->extra.mute.val & 0x3F);
     val_ori = (val_ori >> 3) & 0x01;
     if( ( value >= 63 && val_ori ) || ( value < 63  && !val_ori ) ){
         value=0x08;
@@ -10246,7 +10279,7 @@ void Dx7interface::set_mute_op3_event(int value){
     bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
 void Dx7interface::set_mute_op4_event(int value){
-    int val_ori = bank_1_modif.sound->extra.mute.val;
+    int val_ori = (bank_1_modif.sound->extra.mute.val & 0x3F);
     val_ori = (val_ori >> 2) & 0x01;
     if( ( value >= 63 && val_ori ) || ( value < 63  && !val_ori ) ){
         value=0x04;
@@ -10256,7 +10289,7 @@ void Dx7interface::set_mute_op4_event(int value){
     bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
 void Dx7interface::set_mute_op5_event(int value){
-    int val_ori = bank_1_modif.sound->extra.mute.val;
+    int val_ori = (bank_1_modif.sound->extra.mute.val & 0x3F);
     val_ori = (val_ori >> 1) & 0x01;
     if( ( value >= 63 && val_ori ) || ( value < 63  && !val_ori ) ){
         value=0x02;
@@ -10266,7 +10299,7 @@ void Dx7interface::set_mute_op5_event(int value){
     bank_1_modif.sound->extra.mute.val=bank_1_modif.sound->extra.mute.val ^ value;
 };
 void Dx7interface::set_mute_op6_event(int value){
-    int val_ori = bank_1_modif.sound->extra.mute.val;
+    int val_ori = (bank_1_modif.sound->extra.mute.val & 0x3F);
     val_ori = val_ori & 0x01;
     if( ( value >= 63 && val_ori ) || ( value < 63  && !val_ori ) ){
         value=0x01;
