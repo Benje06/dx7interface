@@ -6179,6 +6179,80 @@ void Dx7interface::on_checkbutton_mute_by_level_event(){
         on_lvl_op6_event(true);
     };
 };
+void Dx7interface::on_mute_op_event() {
+    LOG( LOG_IN() );
+    unsigned char msg[7];
+    unsigned int i;
+    int mute_val = 0x00;
+    std::string op_str;
+
+    //LOG( "Before get: " + std::to_string(mute_val) );
+    for( i = 1 ; i <= 6 ; i++ ){
+        bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<unsigned int>(i)))->get_active());
+        //LOG( "Widget_active: " + std::to_string(widget_active) );
+        //LOG( "Before push: " + std::to_string(mute_val) );
+        if( i != 1 ){
+            mute_val=mute_val << 1;
+        };
+        //LOG( "After push: " + std::to_string(mute_val) );
+        mute_val= mute_val ^ !widget_active ;
+        //LOG( "After Set: " + std::to_string(mute_val) );
+        if( widget_active ){
+            op_str = _("/* OP ")+tostr<unsigned int>(i)+" */";
+            (get_gwidget<Gtk::Label>("label_general_op"+tostr<unsigned int>(i)))->set_label(op_str);
+        }else{
+            op_str = _(" OP ")+tostr<unsigned int>(i);
+            (get_gwidget<Gtk::Label>("label_general_op"+tostr<unsigned int>(i)))->set_label(op_str);
+        };
+    };
+    //std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
+    if( !compare ){
+        bank_1_modif.sound->extra.mute.val = mute_val;
+    };
+    msg[0]=0xF0;
+    msg[1]=id_fabricant;
+    msg[2]=sub_status + channel_send;
+    msg[3]=0x01;
+    msg[4]=0x1B;
+    msg[5]=mute_val;
+    msg[6]=0xF7;
+    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    on_mute_op_by_level_event();
+    LOG( LOG_OUT() );
+};
+/* void Dx7interface::on_mute_op1_event(){
+//     LOG( LOG_IN() );
+//     int mute_val = 0x00;
+//     int val;
+//     std::string op_str;
+//     if( !compare ){
+//         bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active());
+//         LOG( "Before get: " + std::to_string(mute_val) );
+//         mute_val = bank_1_modif.sound->extra.mute.val & 0x3F;
+//         LOG( "Widget_active: " + std::to_string(widget_active) );
+//         val= widget_active << 5;
+//         LOG( "Val: " + std::to_string(val) );
+//         LOG( "Before push: " + std::to_string(mute_val) );
+//         mute_val = mute_val ^ val;
+//         LOG( "After push: " + std::to_string(mute_val) );
+//         std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
+//         //LOG( mmsg );
+//         bank_1_modif.sound->extra.mute.val = mute_val;
+//     }else{
+//
+//     };
+//     LOG( LOG_OUT() );
+};*/
+void Dx7interface::on_mute_op_by_level_event() {
+    LOG( LOG_IN() );
+    if( get_gwidget<Gtk::CheckButton>("checkbutton_mute_by_level")->get_active() ){
+        for(int i=0; i<6; i++){
+            (this->*mute_by_level_functions[5-i])(true);
+        };
+    };
+    LOG( LOG_OUT() );
+};
+
 /* OP1 mute for UI & Hexter */
 void Dx7interface::mute_op1_by_level(bool mute_by_level){
     LOG( LOG_IN() );
@@ -6205,6 +6279,136 @@ void Dx7interface::mute_op1_by_level(bool mute_by_level){
     };
     LOG( LOG_OUT() );
 };
+/* OP2 mute for UI & Hexter */
+void Dx7interface::mute_op2_by_level(bool mute_by_level){
+    LOG( LOG_IN() );
+    uint8_t mute_val;
+    if( !compare ){
+        mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+        mute_val = (mute_val >>4) & 0x01;
+    }else{
+        mute_val = 0x01;
+    };
+
+    if( !(mute_val) ){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x64;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        on_lvl_op2_event(mute_by_level);
+    };
+    LOG( LOG_OUT() );
+};
+/* OP3 mute for UI & Hexter */
+void Dx7interface::mute_op3_by_level(bool mute_by_level){
+    LOG( LOG_IN() );
+    uint8_t mute_val;
+    if( !compare ){
+        mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+        mute_val = (mute_val >>3) & 0x01;
+    }else{
+        mute_val = 0x01;
+    };
+
+    if( !mute_val ){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x4F;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        on_lvl_op3_event(mute_by_level);
+    };
+    LOG( LOG_OUT() );
+};
+/* OP4 mute for UI & Hexter */
+void Dx7interface::mute_op4_by_level(bool mute_by_level){
+    LOG( LOG_IN() );
+    uint8_t mute_val;
+    if( !compare ){
+        mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+        mute_val = (mute_val >>2) & 0x01;
+    }else{
+        mute_val = 0x01;
+    };
+
+    if( !mute_val ){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x3A;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        on_lvl_op4_event(mute_by_level);
+    };
+    LOG( LOG_OUT() );
+};
+/* OP5 mute for UI & Hexter */
+void Dx7interface::mute_op5_by_level(bool mute_by_level){
+    LOG( LOG_IN() );
+    uint8_t mute_val;
+    if( !compare ){
+        mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+        mute_val = (mute_val >>1) & 0x01;
+    }else{
+        mute_val = 0x01;
+    };
+
+    if( !mute_val ){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x25;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        on_lvl_op5_event(mute_by_level);
+    };
+    LOG( LOG_OUT() );
+};
+/* OP6 mute for UI & Hexter */
+void Dx7interface::mute_op6_by_level(bool mute_by_level){
+    LOG( LOG_IN() );
+    uint8_t mute_val;
+    if( !compare ){
+        mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F) & 0x01;
+    }else{
+        mute_val = 0x01;
+    };
+
+    if( !mute_val ){
+        unsigned char msg[7];
+        msg[0]=0xF0;
+        msg[1]=id_fabricant;
+        msg[2]=sub_status + channel_send;
+        msg[3]=0x00;
+        msg[4]=0x10;
+        msg[5]=0x00;
+        msg[6]=0xF7;
+        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
+    }else{
+        on_lvl_op6_event(mute_by_level);
+    };
+    LOG( LOG_OUT() );
+};
+
 void Dx7interface::on_lvl_op1_event(bool mute_by_level){
     LOG( LOG_IN() );
     unsigned char msg[7];
@@ -6227,84 +6431,6 @@ void Dx7interface::on_lvl_op1_event(bool mute_by_level){
     };
     LOG( LOG_OUT() );
 };
-
-
-// void Dx7interface::on_mute_op1_event(){
-//     LOG( LOG_IN() );
-//     int mute_val = 0x00;
-//     int val;
-//     std::string op_str;
-//     if( !compare ){
-//         bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active());
-//         LOG( "Before get: " + std::to_string(mute_val) );
-//         mute_val = bank_1_modif.sound->extra.mute.val & 0x3F;
-//         LOG( "Widget_active: " + std::to_string(widget_active) );
-//         val= widget_active << 5;
-//         LOG( "Val: " + std::to_string(val) );
-//         LOG( "Before push: " + std::to_string(mute_val) );
-//         mute_val = mute_val ^ val;
-//         LOG( "After push: " + std::to_string(mute_val) );
-//         std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
-//         //LOG( mmsg );
-//         bank_1_modif.sound->extra.mute.val = mute_val;
-//     }else{
-//
-//     };
-//     LOG( LOG_OUT() );
-// };
-void Dx7interface::on_mute_op_event() {
-    LOG( LOG_IN() );
-    unsigned char msg[7];
-    unsigned int i;
-    int mute_val = 0x00;
-    std::string op_str;
-
-    LOG( "Before get: " + std::to_string(mute_val) );
-    for( i = 1 ; i <= 6 ; i++ ){
-        bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op"+tostr<unsigned int>(i)))->get_active());
-        LOG( "Widget_active: " + std::to_string(widget_active) );
-        LOG( "Before push: " + std::to_string(mute_val) );
-        if( i != 1 ){
-            mute_val=mute_val << 1;
-        };
-        LOG( "After push: " + std::to_string(mute_val) );
-        mute_val= mute_val ^ !widget_active ;
-        LOG( "After Set: " + std::to_string(mute_val) );
-        if( widget_active ){
-            op_str = _("/* OP ")+tostr<unsigned int>(i)+" */";
-            (get_gwidget<Gtk::Label>("label_general_op"+tostr<unsigned int>(i)))->set_label(op_str);
-        }else{
-            op_str = _(" OP ")+tostr<unsigned int>(i);
-            (get_gwidget<Gtk::Label>("label_general_op"+tostr<unsigned int>(i)))->set_label(op_str);
-        };
-    };
-    std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
-    if( !compare ){
-        bank_1_modif.sound->extra.mute.val = mute_val;
-    };
-    msg[0]=0xF0;
-    msg[1]=id_fabricant;
-    msg[2]=sub_status + channel_send;
-    msg[3]=0x01;
-    msg[4]=0x1B;
-    msg[5]=mute_val;
-    msg[6]=0xF7;
-    send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    on_mute_op_by_level_event();
-    LOG( LOG_OUT() );
-};
-void Dx7interface::on_mute_op_by_level_event() {
-    LOG( LOG_IN() );
-    if( get_gwidget<Gtk::CheckButton>("checkbutton_mute_by_level")->get_active() ){
-        for(int i=0; i<6; i++){
-            (this->*mute_by_level_functions[5-i])(true);
-        };
-    };
-    LOG( LOG_OUT() );
-};
-
-
-
 void Dx7interface::on_lvl_op2_event(bool mute_by_level){
     LOG( LOG_IN() );
     unsigned char msg[7];
@@ -6318,7 +6444,7 @@ void Dx7interface::on_lvl_op2_event(bool mute_by_level){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     };
-    if( !compare ){
+    if( !compare && !mute_by_level ){
         update_modified();
         bank_1_modif.sound->op[1].lvl.val=msg[5];
     };
@@ -6340,7 +6466,7 @@ void Dx7interface::on_lvl_op3_event(bool mute_by_level){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     };
-    if( !compare ){
+    if( !compare && !mute_by_level ){
         update_modified();
         bank_1_modif.sound->op[2].lvl.val=msg[5];
     };
@@ -6362,7 +6488,7 @@ void Dx7interface::on_lvl_op4_event(bool mute_by_level){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     };
-    if( !compare ){
+    if( !compare && !mute_by_level ){
         update_modified();
         bank_1_modif.sound->op[3].lvl.val=msg[5];
     };
@@ -6384,7 +6510,7 @@ void Dx7interface::on_lvl_op5_event(bool mute_by_level){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     };
-    if( !compare ){
+    if( !compare && !mute_by_level ){
         update_modified();
         bank_1_modif.sound->op[4].lvl.val=msg[5];
     };
@@ -6406,7 +6532,7 @@ void Dx7interface::on_lvl_op6_event(bool mute_by_level){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     };
-    if( !compare ){
+    if( !compare && !mute_by_level ){
         update_modified();
         bank_1_modif.sound->op[5].lvl.val=msg[5];
     };
@@ -6415,115 +6541,8 @@ void Dx7interface::on_lvl_op6_event(bool mute_by_level){
     };
     LOG( LOG_OUT() );
 };
-/* OP2 mute for UI & Hexter */
-void Dx7interface::mute_op2_by_level(bool mute_by_level){
-    LOG( LOG_IN() );
-    uint8_t mute_val;
-    mute_val = bank_1_modif.sound->extra.mute.val & 0x3F;
-    mute_val = (mute_val >>4) & 0x01;
-    
-    if( !(mute_val) ){
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x64;
-        msg[5]=0x00;
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        on_lvl_op2_event(mute_by_level);
-    };
-    LOG( LOG_OUT() );
-};
-/* OP3 mute for UI & Hexter */
-void Dx7interface::mute_op3_by_level(bool mute_by_level){
-    LOG( LOG_IN() );
-    uint8_t mute_val;
-    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
-    mute_val = (mute_val >>3) & 0x01;
-    
-    if( !mute_val ){
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x4F;
-        msg[5]=0x00;
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        on_lvl_op3_event(mute_by_level);
-    };
-    LOG( LOG_OUT() );
-};
-/* OP4 mute for UI & Hexter */
-void Dx7interface::mute_op4_by_level(bool mute_by_level){
-    LOG( LOG_IN() );
-    uint8_t mute_val;
-    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
-    mute_val = (mute_val >>2) & 0x01;
-    
-    if( !mute_val ){
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x3A;
-        msg[5]=0x00;
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        on_lvl_op4_event(mute_by_level);
-    };
-    LOG( LOG_OUT() );
-};
-/* OP5 mute for UI & Hexter */
-void Dx7interface::mute_op5_by_level(bool mute_by_level){
-    LOG( LOG_IN() );
-    uint8_t mute_val;
-    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
-    mute_val = (mute_val >>1) & 0x01;
-    
-    if( !mute_val ){
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x25;
-        msg[5]=0x00;
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        on_lvl_op5_event(mute_by_level);
-    };
-    LOG( LOG_OUT() );
-};
-/* OP6 mute for UI & Hexter */
-void Dx7interface::mute_op6_by_level(bool mute_by_level){
-    LOG( LOG_IN() );
-    uint8_t mute_val;
-    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F) & 0x01;
-    
-    if( !mute_val ){
-        unsigned char msg[7];
-        msg[0]=0xF0;
-        msg[1]=id_fabricant;
-        msg[2]=sub_status + channel_send;
-        msg[3]=0x00;
-        msg[4]=0x10;
-        msg[5]=0x00;
-        msg[6]=0xF7;
-        send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    }else{
-        on_lvl_op6_event(mute_by_level);
-    };
-    LOG( LOG_OUT() );
-};
+
+
 
 /* view frequence for each operator  */
 void Dx7interface::on_txt_freq_op_event()   {
