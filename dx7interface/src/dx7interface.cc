@@ -2374,7 +2374,6 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG( LOG_IN() );
 
         if(compare){
             send_voice(&bank_1_origin.sound[0]);
-            //on_mute_op_event();
             block_midi();
         }else{
             unblock_ui();
@@ -6164,28 +6163,32 @@ void Dx7interface::on_pitch_lvl4_event(){
 void Dx7interface::on_checkbutton_mute_by_level_event(){
     if( get_gwidget<Gtk::CheckButton>("checkbutton_mute_by_level")->get_active() ){
         // mute by level activated
-        //mute_op1_by_level(true);
-        //mute_op2_by_level(true);
-        //mute_op3_by_level(true);
-        //mute_op4_by_level(true);
-        //mute_op5_by_level(true);
-        //mute_op6_by_level(true);
+        mute_op1_by_level(true);
+        mute_op2_by_level(true);
+        mute_op3_by_level(true);
+        mute_op4_by_level(true);
+        mute_op5_by_level(true);
+        mute_op6_by_level(true);
     }else{
         // restore normal volume without unmute
-        //on_lvl_op1_event(true);
-        //on_lvl_op2_event(true);
-        //on_lvl_op3_event(true);
-        //on_lvl_op4_event(true);
-        //on_lvl_op5_event(true);
-        //on_lvl_op6_event(true);
+        on_lvl_op1_event(true);
+        on_lvl_op2_event(true);
+        on_lvl_op3_event(true);
+        on_lvl_op4_event(true);
+        on_lvl_op5_event(true);
+        on_lvl_op6_event(true);
     };
 };
 /* OP1 mute for UI & Hexter */
 void Dx7interface::mute_op1_by_level(bool mute_by_level){
     LOG( LOG_IN() );
     uint8_t mute_val;
-    mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
-    mute_val = (mute_val >>5) & 0x01;
+    if( !compare ){
+        mute_val = (bank_1_modif.sound->extra.mute.val & 0x3F);
+        mute_val = (mute_val >>5) & 0x01;
+    }else{
+        mute_val = 0x01;
+    };
 
     if( !mute_val ) {
         unsigned char msg[7];
@@ -6215,7 +6218,7 @@ void Dx7interface::on_lvl_op1_event(bool mute_by_level){
         msg[6]=0xF7;
         send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
     };
-    if( !compare ){
+    if( !compare && !mute_by_level ){
         update_modified();
         bank_1_modif.sound->op[0].lvl.val=msg[5];
     };
@@ -6226,29 +6229,29 @@ void Dx7interface::on_lvl_op1_event(bool mute_by_level){
 };
 
 
-void Dx7interface::on_mute_op1_event(){
-    LOG( LOG_IN() );
-    int mute_val = 0x00;
-    int val;
-    std::string op_str;
-    if( !compare ){
-        bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active());
-        LOG( "Before get: " + std::to_string(mute_val) );
-        mute_val = bank_1_modif.sound->extra.mute.val & 0x3F;
-        LOG( "Widget_active: " + std::to_string(widget_active) );
-        val= widget_active << 5;
-        LOG( "Val: " + std::to_string(val) );
-        LOG( "Before push: " + std::to_string(mute_val) );
-        mute_val = mute_val ^ val;
-        LOG( "After push: " + std::to_string(mute_val) );
-        std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
-        //LOG( mmsg );
-        bank_1_modif.sound->extra.mute.val = mute_val;
-    }else{
-
-    };
-    LOG( LOG_OUT() );
-};
+// void Dx7interface::on_mute_op1_event(){
+//     LOG( LOG_IN() );
+//     int mute_val = 0x00;
+//     int val;
+//     std::string op_str;
+//     if( !compare ){
+//         bool widget_active = (bool)((get_gwidget<Gtk::ToggleButton>("mute_op1"))->get_active());
+//         LOG( "Before get: " + std::to_string(mute_val) );
+//         mute_val = bank_1_modif.sound->extra.mute.val & 0x3F;
+//         LOG( "Widget_active: " + std::to_string(widget_active) );
+//         val= widget_active << 5;
+//         LOG( "Val: " + std::to_string(val) );
+//         LOG( "Before push: " + std::to_string(mute_val) );
+//         mute_val = mute_val ^ val;
+//         LOG( "After push: " + std::to_string(mute_val) );
+//         std::cout << "on_mute_op mute_val : " << std::bitset<8>(mute_val) << std::endl;
+//         //LOG( mmsg );
+//         bank_1_modif.sound->extra.mute.val = mute_val;
+//     }else{
+//
+//     };
+//     LOG( LOG_OUT() );
+// };
 void Dx7interface::on_mute_op_event() {
     LOG( LOG_IN() );
     unsigned char msg[7];
@@ -6287,7 +6290,7 @@ void Dx7interface::on_mute_op_event() {
     msg[5]=mute_val;
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX ,7,msg);
-    //on_mute_op_by_level_event();
+    on_mute_op_by_level_event();
     LOG( LOG_OUT() );
 };
 void Dx7interface::on_mute_op_by_level_event() {
