@@ -2,17 +2,19 @@
 # Contributor: Jmeshmesh <>
 
 pkgname=gxinterface
-pkgver='2.0.0'
+pkgver='1.0.0'
 pkgrel='1'
 pkgdesc="Gtk Extended Interface: Module Loader for .la or .ui, provides headers for module construction"
 arch=('i686' 'x86_64')
 url="https://github.com/Benje06/dx7interface.git"
-license=('GPL')
-depends=('glibmm-2.68' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib')
-makedepends=('breezy' 'intltool' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4' 'libsigc++-3.0' 'glibmm-2.68' 'pangomm-2.48')
-provides=(${pkgname})
-conflicts=(${pkgname})
-
+license=('GPL-2.0-or-later')
+depends=('libsigc++-3.0' 'glibmm=>2.68' 'gtkmm=>4.0' 'cairomm=>1.16' 'pangomm>=2.48')
+makedepends=('git' 'intltool' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4')
+provides=(libgxlogmanager=$pkgver libgxthread=$pkgver)
+conflicts=
+group=gxmodules
+requireby=dx7interface
+replace=(${pkgname})
 source=("git+https://github.com/Benje06/dx7interface.git")
 md5sums=('SKIP')
 

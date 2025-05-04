@@ -6,6 +6,9 @@ page html
 normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
 
+## BUGS
+
+
 ## Dossier DX7
 clean dossier ( sous repertoire: utilitaires(bouclemidi), instruments(.ins), banque de sons(.syx/.fct), controller(midilearn), ) 
 
@@ -17,11 +20,6 @@ evenements MIDI (temporisation, ?mode omni?)
 Boite a outils:
     send message sysex( interface)
     fenetre dump
-* indicateur son modifié:
-    reinitialise a restaure sound ou restore bank
-    indicateur a coté du numero du son 1* A.Piano
-
-sépration des mutes (hexter vs natif)
 
 multiplateforme (midi/interface) :
     libremidi (prefered but not compiled for ucrt64 and does not do virtual midi),
@@ -49,7 +47,6 @@ randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, e
 * test css valeur pour themes clair/fonce.
 
 ### CODE
-* dx7 as shared cf makefile lib gxinterface
 * factorisation/bankvariant: receive bank,... (cf.clean_bank/restore_origin) / gemod/gx_module
 * genericité / moove to other class (synth,gxmodule) ?midi learn,compare,...?
 synth generique (voir avec marc)

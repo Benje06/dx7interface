@@ -4,16 +4,20 @@
 pkgname=dx7interface
 pkgver='1.0.0'
 pkgrel='1'
-pkgdesc="Gtk Extended Interface: Module Loader for .la or .ui, provides headers for module construction"
+pkgdesc="Dx7 interface is a graphical interfaces to edit sounds banks and drive the Dx7 / Tx216 / Tx816 physical synth as well as their emulator. It use sysex messages, it's based on alsa sequencer(for linux) and rtmidi + midiloop(for windows). The interface is entirely driveable by Control Change (CC) and Program Change (PC) with a midi learn function, ADSR and pitch curves are modifibale by mouse control. It support 1, 32 and up to 128 sounds by bank, it has functions to edit sounds banks (Insert/Replace/Delete), it can load or save sounds bank from raw file(no sysex headers) or sysex file, in Bulk 1 or Bulk 32 formats."
 arch=('i686' 'x86_64')
 url="https://github.com/Benje06/${pkgname}.git"
 license=('GPL')
-depends=('glibmm-2.68' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'gxinterface')
-makedepends=('git' 'intltool' 'gtkmm-4.0' 'cairomm-1.16' 'alsa-lib' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4' 'libsigc++-3.0' 'glibmm-2.68' 'pangomm-2.48' 'gxinterface')
+depends=('libsigc++-3.0' 'glibmm>=2.68' 'gtkmm>=4.0' 'cairomm>=1.16' 'pangomm>=2.48' 'alsa-lib' 'gxinterface')
+optdepends=('rtmidi')
+makedepends=('git' 'intltool' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4')
 provides=(${pkgname})
 conflicts=(${pkgname})
-options=(libtool)
-
+provides=(libgxsynth=$pkgver libgxgtkclass=$pkgver)
+conflicts=
+group=gxmodules
+requireby=
+replace=(${pkgname})
 source=("git+https://github.com/Benje06/${pkgname}.git")
 md5sums=('SKIP')
 
