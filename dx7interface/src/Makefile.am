@@ -24,8 +24,9 @@ dx7interface_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
 dx7interface_0_0_1_la_CPPFLAGS = \
 	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS)\
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
-	-DGXLOG_IMPORTS \
-	-I$(top_srcdir)/../gxinterface/lib
+	-DGXLOG_IMPORTS
+
+## -I$(top_srcdir)/../gxinterface/lib
 
 if PLATFORM_LINUX
 dx7interface_0_0_1_la_CPPFLAGS += \
@@ -37,9 +38,10 @@ dx7interface_0_0_1_la_CPPFLAGS += \
 endif
 
 dx7interface_0_0_1_la_LIBADD = \
-	$(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS) \
-	-L$(top_builddir)/../gxinterface/lib/ $(top_builddir)/../gxinterface/lib/libgxthread-0.0.1.la \
-	-L$(top_builddir)/../gxinterface/lib/ $(top_builddir)/../gxinterface/lib/libgxinterface-0.0.1.la
+	$(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
+
+## -L$(top_builddir)/../gxinterface/lib/ $(top_builddir)/../gxinterface/lib/libgxthread-0.0.1.la
+## -L$(top_builddir)/../gxinterface/lib/ $(top_builddir)/../gxinterface/lib/libgxinterface-0.0.1.la
 
 dx7interface_0_0_1_la_LDFLAGS = \
 	-version-info $(SO_VERSION) \
