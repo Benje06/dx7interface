@@ -14,7 +14,6 @@ makedepends=('git' 'intltool' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext
 provides=(${pkgname})
 conflicts=(${pkgname})
 provides=(libgxsynth=$pkgver libgxgtkclass=$pkgver)
-conflicts=
 group=gxmodules
 requireby=
 replace=(${pkgname})

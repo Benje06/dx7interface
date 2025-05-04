@@ -11,7 +11,6 @@ license=('GPL-2.0-or-later')
 depends=('libsigc++-3.0' 'glibmm=>2.68' 'gtkmm=>4.0' 'cairomm=>1.16' 'pangomm>=2.48')
 makedepends=('git' 'intltool' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4')
 provides=(libgxlogmanager=$pkgver libgxthread=$pkgver)
-conflicts=
 group=gxmodules
 requireby=dx7interface
 replace=(${pkgname})
