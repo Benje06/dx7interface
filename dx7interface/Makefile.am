@@ -2,13 +2,15 @@
               
 ## TODO: 
 SUBDIRS = \
-        po\
-        data\
-        src
+	po \
+	data \
+	lib \
+	src
 
-INTLTOOL_FILES = intltool-extract.in \
-                 intltool-merge.in \
-                 intltool-update.in
+INTLTOOL_FILES = \
+	intltool-extract.in \
+	intltool-merge.in \
+	intltool-update.in
 
 ## If make built it, and it is commonly something that one would want to rebuild
 ## (for instance, a .o file), then mostlyclean should delete it.
@@ -16,8 +18,8 @@ INTLTOOL_FILES = intltool-extract.in \
 
 ## Otherwise, if make built it, then clean should delete it. 
 CLEANFILES = \
-        src/dx7interface.pc
-##        data/launcher/dx7interface.desktop
+	src/dx7interface.pc \
+	lib/libgxsynth.pc
 
 ##        po/*.gmo\
 ##        po/.intltool-merge-cache
@@ -31,6 +33,8 @@ CLEANFILES = \
 DISTCLEANFILES = \
 	Makefile\
 	Makefile.in\
+	lib/Makefile\
+	lib/Makefile.in\
 	src/Makefile\
 	src/Makefile.in\
 	data/Makefile\
@@ -93,7 +97,7 @@ DISTCLEANFILES = \
 #distclean-local:
 #<tab>-rm -rf src/.deps autom4te.cache        
 distclean-local:
-	-rm -rf src/.deps autom4te.cache config m4 po/*/
+	-rm -rf src/.deps lib/.deps autom4te.cache config m4 po/*/
 
 ## If the maintainer built it (for instance, a .info file),
 ## then maintainer-clean should delete it.

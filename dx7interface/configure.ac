@@ -293,6 +293,7 @@ AC_SUBST([AM_CPPFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
 AC_CONFIG_FILES([Makefile
+                 lib/Makefile
                  src/Makefile
                  po/Makefile.in
                  data/Makefile
@@ -302,6 +303,7 @@ AC_CONFIG_FILES([Makefile
                  data/launcher/Makefile
                  data/launcher/dx7interface.desktop
                  data/ui/Makefile
+                 lib/libgxsynth.pc
                  src/dx7interface.pc
                  src/tx81zinterface.pc
 ])
