@@ -1,6 +1,8 @@
 # List of source files containing translatable strings.
 
 # Main application
+src/synth.cc
+src/synth.h
 src/dx7interface.cc
 src/dx7interface.h
 
