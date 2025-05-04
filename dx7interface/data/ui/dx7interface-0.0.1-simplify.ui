@@ -6623,6 +6623,17 @@
         </object>
         </child>
         <child>
+            <object class="GtkBox" id="box_warning">
+                <property name="visible">true</property>
+                <property name="halign">center</property>
+                <property name="orientation">vertical</property>
+                <property name="valign">center</property>
+                <child>
+                    <object class="GtkLabel" id="label_warning"/>
+                </child>
+            </object>
+        </child>
+        <child>
         <object class="GtkButton" id="btn_dialog_param">
             <property name="label" translatable="yes">select file</property>
         </object>

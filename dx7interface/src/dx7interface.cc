@@ -681,9 +681,13 @@ void Dx7interface::set_param(){
 void Dx7interface::set_dialog(Glib::ustring title){
     LOG( LOG_IN() );
     try{
+        // all box must be listed here
+        get_gwidget<Gtk::Box>("box_save")->set_visible(false);
+        get_gwidget<Gtk::Box>("box_insert")->set_visible(false);
+        get_gwidget<Gtk::Box>("box_warning")->set_visible(false);
+
         if( action_type == ACT_SAVE ){
             get_gwidget<Gtk::Box>("box_save")->set_visible(true);
-            get_gwidget<Gtk::Box>("box_insert")->set_visible(false);
             Glib::ustring name;
             if( save_type == BANK ){
                 name=bank_1_modif.name;
@@ -707,7 +711,6 @@ void Dx7interface::set_dialog(Glib::ustring title){
                 get_gwidget<Gtk::Label>("label_bulk")->set_visible(false);
             };
         }else if( action_type == ACT_INSERT ){
-            get_gwidget<Gtk::Box>("box_save")->set_visible(false);
             get_gwidget<Gtk::Box>("box_insert")->set_visible(true);
             auto spinbutton_insert_start = get_gwidget<Gtk::SpinButton>("spinbutton_insert_start");
             /* set the upper limit to bank_nb_sound less 32 */
@@ -718,6 +721,10 @@ void Dx7interface::set_dialog(Glib::ustring title){
 
             Glib::ustring label_insert=title+": "+snum;
             get_gwidget<Gtk::Label>("label_name")->set_label(label_insert);
+        }else if( action_type == ACT_WARNING){
+            get_gwidget<Gtk::Box>("box_warning")->set_visible(true);
+            get_gwidget<Gtk::Label>("label_warning")->set_label(title);
+            get_gwidget<Gtk::Button>("btn_dialog_param")->set_label("Close");
         };
     }catch( const std::exception & ex ){
         std::string err_msg = error( __PRETTY_FUNCTION__, "???", ex.what() );
@@ -827,8 +834,20 @@ void Dx7interface::create_popover_menu(){
 void Dx7interface::on_columnview_right_click(int n_press, double x, double y){
     // GENERIC except it an event
     LOG( LOG_IN() );
-        m_popover_menu->set_pointing_to(Gdk::Rectangle(x, y, 1, 1));
-        m_popover_menu->popup();
+        if( compare ){
+            action_type = ACT_WARNING;
+            slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
+                [this](){
+                    slot_btn_dialog_param.disconnect();
+                    dialog_param->close();
+                }
+            );
+            OpenDialogParam(_("Warning compare mode active"));
+
+        }else{
+            m_popover_menu->set_pointing_to(Gdk::Rectangle(x, y, 1, 1));
+            m_popover_menu->popup();
+        };
     LOG( LOG_OUT() );
 };
 /* set/load */

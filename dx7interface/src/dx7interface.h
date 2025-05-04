@@ -63,6 +63,8 @@
 #endif
 #define ICON ""
 
+#define ACT_WARNING 7
+
 extern "C" {
     std::tuple<std::shared_ptr<void>, Gx_module::St_mod_options> LoadPlug(uint8_t);
 };
