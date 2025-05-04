@@ -117,6 +117,7 @@
 	#define ACT_DELETE 4
 	#define ACT_REPLACE 5
 	#define ACT_MOOVE 6
+	#define ACT_WARNING 7
 
     /*** String Convert ***/
     /* convert to string any type of number */
