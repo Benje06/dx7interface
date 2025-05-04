@@ -8,5 +8,5 @@ Name: @PACKAGE_NAME@
 Description: Gnome eXtended Interface. interface, module manager and gx_module.
 Version: @PACKAGE_VERSION@
 URL: @PACKAGE_URL@
-Libs: -L${libdir} -l@PACKAGE_NAME@-@LIB_VERSION@
+Libs: -L${libdir} -l@PACKAGE_NAME@-@LIB_VERSION@ -lgxthread-@LIB_VERSION@ -lgxlogmanager-@LIB_VERSION@
 Cflags: -I${includedir}/@PACKAGE_NAME@/@LIB_VERSION@ -I${libdir}/@PACKAGE_NAME@/@LIB_VERSION@/include
