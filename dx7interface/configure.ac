@@ -240,6 +240,15 @@ AM_COND_IF([DEBUG_TOOL_AS_ERROR],[
 AC_DEFINE([DEBUG_TOOL_AS_ERROR], [], [Activate deep debug print])
 ],[])
 
+AC_ARG_ENABLE([fulldev],
+[  --enable-fdev    Replace path with dev directory],
+[case "${enableval}" in
+  yes) fdev=true ;;
+  no)  fdev=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-fdev]) ;;
+esac],[fdev=false])
+AM_CONDITIONAL([FULL_DEV], [test x$fdev = xtrue])
+
 AC_ARG_ENABLE([dev],
 [  --enable-dev    Replace path with dev directory],
 [case "${enableval}" in

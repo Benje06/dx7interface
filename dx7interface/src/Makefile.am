@@ -44,7 +44,7 @@ dx7interface_0_0_1_la_LIBADD = \
 	-L$(top_builddir)/lib $(top_builddir)/lib/libgxsynth-0.0.1.la
 
 
-if DEV
+if FULL_DEV
 dx7interface_0_0_1_la_LIBADD += \
 	-L$(top_builddir)/lib/ $(top_builddir)/lib/libgxgtkclass-0.0.1.la \
 	-L$(top_builddir)/lib/ $(top_builddir)/lib/libgxsynth-0.0.1.la \
