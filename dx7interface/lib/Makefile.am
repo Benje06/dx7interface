@@ -9,17 +9,27 @@ AUTOMAKE_OPTIONS = \
 ACLOCAL_AMFLAGS = \
 	${ACLOCAL_FLAGS}
 
-## GTKCLASS
+### LIB GtkClass ####
+
+
+#if PLATFORM_WINDOWS
+#libgxgtkclass_0_0_1_ladir = /usr/bin
+#else
+#libgxgtkclass_0_0_1_ladir = $(libdir)
+#endif
+
+##libgxgtkclass_0_0_1_la_LTLIBRARIES = \
+##	libgxgtkclass-0.0.1.la
+
 lib_LTLIBRARIES = \
 	libgxgtkclass-0.0.1.la
 
-### LIB GtkClass ####
 libgxgtkclass_0_0_1_la_SOURCES = \
 	../src/GtkClass.h ../src/GtkClass.cc
 
-
 libgxgtkclass_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
 libgxgtkclass_0_0_1_la_CPPFLAGS = \
+	-I$(top_srcdir)/src \
 	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
 	-DGXLOG_IMPORTS
@@ -55,18 +65,26 @@ endif
 
 libgxgtkclass_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 
+### LIB Synth ####
 
-## SYNTH
+## if PLATFORM_WINDOWS
+## libgxsynth_0_0_1_ladir = /usr/bin
+## else
+## libgxsynth_0_0_1_ladir = $(libdir)
+## endif
+
+## libgxsynth_0_0_1_la_LTLIBRARIES += \
+##	libgxsynth-0.0.1.la
+
 lib_LTLIBRARIES += \
 	libgxsynth-0.0.1.la
 
-### LIB Synth ####
 libgxsynth_0_0_1_la_SOURCES = \
 	../src/synth.h ../src/synth.cc
 
-
 libgxsynth_0_0_1_la_CXXFLAGS = $(AM_CXXFLAGS)
 libgxsynth_0_0_1_la_CPPFLAGS = \
+	-I$(top_srcdir)/src \
 	$(AM_CPPFLAGS) -fPIC $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
 	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
 	-DGXLOG_IMPORTS
@@ -94,6 +112,19 @@ if PLATFORM_WINDOWS
 libgxsynth_0_0_1_la_LDFLAGS += \
 	-Wl,--export-all-symbols \
 	-lgdi32
+install-data-hook:
+	cp -f $(DESTDIR)$(libdir)/libgxgtkclass-0.0.1-1.dll $(DESTDIR)/usr/bin
+	cp -f $(DESTDIR)$(libdir)/libgxsynth-0.0.1-1.dll $(DESTDIR)/usr/bin
+	ldd $(DESTDIR)/usr/bin/libgxgtkclass-0.0.1-1.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
+	ldd $(DESTDIR)/usr/bin/libgxsynth-0.0.1-1.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
+	## sed -i "s|\(libdir='\)/\(.*'\)|\1\2|" "$(DESTDIR)$(libdir)/usr/bin/libgxgtkclass-0.0.1.la"
+	## @rm -f $(DESTDIR)$(libgxgtkclass_0_0_1_ladir)/libgxgtkclass-0.0.1.la
+	## @rm -f $(DESTDIR)$(libgxgtkclass_0_0_1_ladir)/libgxgtkclass-0.0.1.a
+	## @rm -f $(DESTDIR)$(libgxgtkclass0_0_1_ladir)/libgxgtkclass-0.0.1.dll.a
+	## sed -i "s|\(libdir='\)/\(.*'\)|\1\2|" "$(DESTDIR)$(libdir)/usr/bin/libgxsynth-0.0.1.la"
+	## @rm -f $(DESTDIR)$(libgxsynth_0_0_1_ladir)/libgxsynth-0.0.1.la
+	## @rm -f $(DESTDIR)$(libgxsynth_0_0_1_ladir)/libgxsynth-0.0.1.a
+	## @rm -f $(DESTDIR)$(libgxsynth_0_0_1_ladir)/libgxsynth-0.0.1.dll.a
 else
 libgxsynth_0_0_1_la_LDFLAGS += \
 	-rdynamic
@@ -101,4 +132,10 @@ endif
 
 libgxsynth_0_0_1_libincludedir = $(libdir)/${PACKAGE_NAME}/$(LIB_VERSION)/include
 
+## library_includedir = $(includedir)/${PACKAGE_NAME}/$(LIB_VERSION)
+## library_include_HEADERS = \
+##        gtkclass.h  \
+##        gxsynth.h
 
+## pkgconfigdir = $(datadir)/pkgconfig
+## pkgconfig_DATA = gxsynth.pc

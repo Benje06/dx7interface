@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxinterface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-04 10:37+0200\n"
+"POT-Creation-Date: 2025-05-06 01:53+0200\n"
 "PO-Revision-Date: 2025-02-17 01:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -76,61 +76,104 @@ msgstr ""
 msgid "Cannot write: "
 msgstr ""
 
-#: ../src/gxmodule.cc:328
-msgid " Creating window failed !!!\n"
-msgstr ""
+#: ../src/gxmodule.cc:228
+#, fuzzy
+msgid "Writing file: "
+msgstr "Chargment du fichier: "
 
 #: ../src/gxmodule.cc:328
-msgid "Reason "
+msgid " Creating window failed "
 msgstr ""
 
-#: ../src/gxmodule.cc:501
+#: ../src/gxmodule.cc:390
+#, fuzzy
+msgid "Cannot load file: "
+msgstr "Chargment du fichier: "
+
+#: ../src/gxmodule.cc:391
+msgid "Bad file extention."
+msgstr ""
+
+#: ../src/gxmodule.cc:392
+msgid "Accepted types are:"
+msgstr ""
+
+#: ../src/gxmodule.cc:393
+msgid ".ui ou .xml for an UI"
+msgstr ""
+
+#: ../src/gxmodule.cc:394
+msgid ".la/.so/.lo/.dll for a module"
+msgstr ""
+
+#: ../src/gxmodule.cc:424
+msgid "Gtk::Box 'box_main' not found in UI file"
+msgstr ""
+
+#: ../src/gxmodule.cc:462
+msgid "no function or error on "
+msgstr ""
+
+#: ../src/gxmodule.cc:462
+msgid "Last module error: "
+msgstr ""
+
+#: ../src/gxmodule.cc:468
+msgid "No module for file "
+msgstr ""
+
+#: ../src/gxmodule.cc:474
+#, fuzzy
+msgid "Failed to create module: "
+msgstr "Module selectionné : "
+
+#: ../src/gxmodule.cc:507
 msgid "Css style file: "
 msgstr ""
 
-#: ../src/gxmodule.cc:503
+#: ../src/gxmodule.cc:509
 msgid "Warning: the css style file "
 msgstr ""
 
-#: ../src/gxmodule.cc:503 ../src/gxmodule.cc:597 ../src/gxmodule.cc:804
+#: ../src/gxmodule.cc:509 ../src/gxmodule.cc:603 ../src/gxmodule.cc:810
 #, fuzzy
 msgid " doesn't exist or is not readable"
 msgstr " n'existe pas !!!"
 
-#: ../src/gxmodule.cc:551
+#: ../src/gxmodule.cc:557
 msgid " Failed to load style: !!!\n"
 msgstr ""
 
-#: ../src/gxmodule.cc:551 ../src/gxmodule.cc:633
+#: ../src/gxmodule.cc:557 ../src/gxmodule.cc:639 ../src/common.h:171
 msgid "Reason => "
 msgstr ""
 
-#: ../src/gxmodule.cc:595
+#: ../src/gxmodule.cc:601
 msgid "Custom font file: "
 msgstr ""
 
-#: ../src/gxmodule.cc:597
+#: ../src/gxmodule.cc:603
 msgid "Warning: the custom font file "
 msgstr ""
 
-#: ../src/gxmodule.cc:617
+#: ../src/gxmodule.cc:623
 msgid "Error: "
 msgstr ""
 
-#: ../src/gxmodule.cc:633
+#: ../src/gxmodule.cc:639
 msgid " Failed load font: !!!\n"
 msgstr ""
 
-#: ../src/gxmodule.cc:645
+#: ../src/gxmodule.cc:651
 msgid "Fail to list pango font with error: "
 msgstr ""
 
-#: ../src/gxmodule.cc:802
+#: ../src/gxmodule.cc:808
 #, fuzzy
 msgid "Icon file: "
 msgstr "Chargment du fichier: "
 
-#: ../src/gxmodule.cc:804
+#: ../src/gxmodule.cc:810
 msgid "Warning: the icon file "
 msgstr ""
 
@@ -169,6 +212,24 @@ msgstr "Chargement d'un module."
 #: ../src/gxinterface.cc:114
 msgid "Loading file: "
 msgstr "Chargment du fichier: "
+
+#: ../src/common.h:169
+msgid "From: "
+msgstr ""
+
+#: ../src/logger.cc:59
+msgid "Switching to log level: "
+msgstr ""
+
+#: ../src/logger.cc:66
+msgid "Log Level: "
+msgstr ""
+
+#: ../src/logger.cc:66
+msgid ""
+" is not a valid value, shoudl be between 0(disable), 1(log file) and 2(log "
+"file + console)."
+msgstr ""
 
 #: ../data/ui/interface.ui.h:1 ../data/ui/interface_4.8.ui.h:1
 msgid "Selected module : "

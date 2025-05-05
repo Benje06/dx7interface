@@ -9,6 +9,8 @@ src/gxmodule.cc
 src/gxmodule.h
 src/gxinterface.cc
 src/gxinterface.h
+src/common.h
+src/logger.cc
 
 #ui
 data/ui/interface.ui

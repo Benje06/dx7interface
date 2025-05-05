@@ -30,50 +30,43 @@
     #include <stdlib.h>
     #include <stdio.h>
     #ifdef __cplusplus
-        #ifdef PLATFORM_WINDOWS
-        #    define TRACE(f, ...)   f "\n", ##__VA_ARGS__
-        #    define PRE_LOG(str1, str2, ...) (std::string(str1) + std::string("->") + std::string(str2))
-        #    define POST_LOG(str1, str2, ...) (std::string(str1) + std::string("<-") + std::string(str2))
-        #    ifdef DEBUG_TOOL
-        #      define LOG_IN() (std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__)
-        #      define LOG_OUT() (std::string("<-  ") + __PRETTY_FUNCTION__)
-        #    else
-        #      define LOG_IN()  std::string(" -> ") + __func__
-        #      define LOG_OUT() std::string("<-  ") + __func__
-        #    endif /* DEBUG_TOOL_AS_ERROR */
-        #else
-        #    define TRACE(f, ...)   f "\n", ##__VA_ARGS__
-        #    define PRE_LOG(str1, str2, ...) std::string(str1) + std::string("->") + std::string(str2)
-        #    define POST_LOG(str1, str2, ...) std::string(str1) + std::string("<-") + std::string(str2)
-        #    ifdef DEBUG_TOOL
-        #      define LOG_IN() (std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__)
-        #      define LOG_OUT() (std::string("<-  ") + __PRETTY_FUNCTION__)
-        #    else
-        #      define LOG_IN()  std::string(" -> ") + __func__
-        #      define LOG_OUT() std::string("<-  ") + __func__
-        #    endif /* DEBUG_TOOL_AS_ERROR */
-        #endif
+        #ifdef DEBUG_TOOL
+        #   define PRE_LOG(str1, str2, ...)     std::string(str1) + std::string("->") + std::string(str2)
+        #   define POST_LOG(str1, str2, ...)    std::string(str1) + std::string("<-") + std::string(str2)
+        #   define TRACE(f, ...)   f "\n", ##__VA_ARGS__
+        #   ifdef DEBUG_TOOL_AS_ERROR
+        #       define LOG_IN()  std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__
+        #       define LOG_OUT() std::string("<-  ") + __PRETTY_FUNCTION__
+        #   else
+        #       define LOG_IN()  std::string(" -> ") + __func__
+        #       define LOG_OUT() std::string("<-  ") + __func__
+        #   endif /* DEBUG_TOOL_AS_ERROR */
+        #else  /* NOT DEBUG_TOOL */
+        #   define PRE_LOG(str1, str2)  (void)(0)
+        #   define POST_LOG(str1, str2) (void)(0)
+        #   define LOG_IN()             (void)(0)
+        #   define LOG_OUT()            (void)(0)
+        #   define TRACE(f, ...)        (void)(0)
+        #endif /* DEBUG_TOOL */
     #else
         #ifdef DEBUG_TOOL
-        #  ifdef DEBUG_TOOL_AS_ERROR
-        #    define PRE_LOG(str1, str2, ...) fprintf(stderr, "%s->%s\n", str1, str2, ##__VA_ARGS__)
-        #    define POST_LOG(str1, str2, ...) fprintf(stderr, "%s<-%s\n", str1, str2, ##__VA_ARGS__)
-        #    define LOG_IN()        fprintf ( stderr, " -> %s ligne %i de %s \n", __PRETTY_FUNCTION__, __LINE__ , __FILE__)
-        #    define LOG_OUT()       fprintf ( stderr, "<-  %s\n", __PRETTY_FUNCTION__ )
-        #    define TRACE(f, ...)   fprintf ( stderr, f "\n", ##__VA_ARGS__ )
-        #  else /* NOT DEBUG_TOOL_AS_ERROR */
-        #    define PRE_LOG(str1, str2, ...) fprintf(stderr, "%s->%s\n", str1, str2, ##__VA_ARGS__)
-        #    define POST_LOG(str1, str2, ...) fprintf(stderr, "%s<-%s\n", str1, str2, ##__VA_ARGS__)
-        #    define LOG_IN()        printf ( " -> %s\n", __func__ )
-        #    define LOG_OUT()       printf ( "<-  %s\n", __func__ )
-        #    define TRACE(f, ...)   printf ( f "\n", ##__VA_ARGS__ )
-        #  endif /* DEBUG_TOOL_AS_ERROR */
+        #   define PRE_LOG(str1, str2, ...)  fprintf(stderr, "%s->%s\n", str1, str2, ##__VA_ARGS__)
+        #   define POST_LOG(str1, str2, ...) fprintf(stderr, "%s<-%s\n", str1, str2, ##__VA_ARGS__)
+        #   ifdef DEBUG_TOOL_AS_ERROR
+        #       define LOG_IN()        fprintf ( stderr, " -> %s ligne %i de %s \n", __PRETTY_FUNCTION__, __LINE__ , __FILE__)
+        #       define LOG_OUT()       fprintf ( stderr, "<-  %s\n", __PRETTY_FUNCTION__ )
+        #       define TRACE(f, ...)   fprintf ( stderr, f "\n", ##__VA_ARGS__ )
+        #   else /* NOT DEBUG_TOOL_AS_ERROR */
+        #       define LOG_IN()        printf ( " -> %s\n", __func__ )
+        #       define LOG_OUT()       printf ( "<-  %s\n", __func__ )
+        #       define TRACE(f, ...)   printf ( f "\n", ##__VA_ARGS__ )
+        #   endif /* DEBUG_TOOL_AS_ERROR */
         #else  /* NOT DEBUG_TOOL */
-        #  define PRE_LOG(str1, str2) (void)(0)
-        #  define POST_LOG(str1, str2) (void)(0)
-        #  define LOG_IN()        (void)(0)
-        #  define LOG_OUT()       (void)(0)
-        #  define TRACE(f, ...)   (void)(0)
+        #   define PRE_LOG(str1, str2)  (void)(0)
+        #   define POST_LOG(str1, str2) (void)(0)
+        #   define LOG_IN()             (void)(0)
+        #   define LOG_OUT()            (void)(0)
+        #   define TRACE(f, ...)        (void)(0)
         #endif /* DEBUG_TOOL */
         #define print_error(str, ...)  fprintf(stderr, (str "\n"), ##__VA_ARGS__)
     #endif

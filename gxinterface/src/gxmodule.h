@@ -75,7 +75,7 @@ class Gx_module {
 		Gx_module();
 		virtual ~Gx_module();
 	protected:
-
+		std::string msg_err="", msg_log="";
 		/* prototype fonction of module call */
 		/*
 		*  using Loadplugfunc = std::tuple<std::shared_ptr<void>, Gtk::Box*, Glib::ustring>(*)(uint8_t);

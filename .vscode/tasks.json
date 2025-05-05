@@ -15,7 +15,7 @@
                 "--build=$(./config/config.guess)",
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
                 "--disable-maintainer-mode",
-                "--enable-debug=0",
+                "--enable-log=2",
                 "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
                 "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
@@ -39,7 +39,8 @@
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
-                "--enable-debug=2"
+                "--enable-log=2",
+                "--enable-console=1"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -48,7 +49,6 @@
             "options": {
                 "cwd": "${workspaceFolder}/gxinterface",
                 "env": {
-                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}",
                     "CFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable",
                     "CXXFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable",
                     "LDFLAGS": "-ggdb3",
@@ -68,10 +68,7 @@
             },
             "detail": "Generate the .exe",
             "options": {
-                "cwd": "${workspaceFolder}/gxinterface",
-                "env": {
-                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}"
-                }
+                "cwd": "${workspaceFolder}/gxinterface"
             }
         },
         {
@@ -131,9 +128,10 @@
             "label": "Gxinterface: Full Build",
             "dependsOn": [
                 "GX Distclean",
-                "GX Autogen",
+                "GX Autogen DEBUG",
                 "GX Autogen",
                 "GX Make",
+                "GX Install UCRT64",
                 "GX Install"
             ],
             "group": "none",
@@ -147,6 +145,7 @@
                 "GX Autogen",
                 "GX Autogen DEBUG",
                 "GX Make",
+                "GX Install UCRT64",
                 "GX Install"
             ],
             "group": "none",
@@ -179,26 +178,22 @@
         {
             "label": "DX Autogen",
             "type": "shell",
-            "command": "bash",
+            "command": "./autogen.sh",
             "args": [
-                "./autogen.sh",
-                "--enable-rtmidi",
-                "--disable-maintainer-mode",
                 "--prefix=/usr",
                 "--libdir=/ucrt64/lib",
                 "--target=x86_64-w64-mingw32",
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
-                "--enable-debug=0",
+                "--disable-maintainer-mode",
+                "--enable-rtmidi",
+                "--enable-log=2",
                 "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
                 "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/dx7interface",
-                "env": {
-                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}"
-                }
+                "cwd": "${workspaceFolder}/dx7interface"
             },
             "problemMatcher": [
                 "$gcc"
@@ -218,7 +213,8 @@
                 "--host=x86_64-w64-mingw32",
                 "--build=$(./config/config.guess)",
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
-                "--enable-debug=2"
+                "--enable-log=2",
+                "--enable-console=1"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -227,7 +223,6 @@
             "options": {
                 "cwd": "${workspaceFolder}/dx7interface",
                 "env": {
-                    "PATH": "D:/crosscompile/msys2/ucrt64/bin;D:/crosscompile/msys2/bin;${env:PATH}",
                     "CFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable",
                     "CXXFLAGS": "-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable",
                     "LDFLAGS": "-ggdb3",
@@ -382,7 +377,6 @@
             "dependsOn": [
                 "UCRT clean",
                 "Gxinterface: Full Build",
-                "GX Install UCRT64",
                 "Dx7interface: Full Build",
                 "Build PACKAGE"
             ],
@@ -400,7 +394,6 @@
             "dependsOn": [
                 "UCRT clean",
                 "Gxinterface: Full Build DEBUG",
-                "GX Install UCRT64",
                 "Dx7interface: Full Build DEBUG"
             ],
             "dependsOrder": "sequence",

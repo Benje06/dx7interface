@@ -5,7 +5,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 ## Additional flags to pass to aclocal when it is invoked automatically at
 ## make time. The ${ACLOCAL_FLAGS} variable is picked up from the environment
 ## to provide a way for the user to supply additional arguments.
-ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
+ACLOCAL_AMFLAGS = \
+	${ACLOCAL_FLAGS}
 
 bin_PROGRAMS = \
 	gxinterface
@@ -55,6 +56,7 @@ gxinterfaceicon.o: seticon.rc ../../dx7interface/data/images/dx7interface.ico
 install-exec-hook:
 	cp /ucrt64/bin/gdbus.exe $(DESTDIR)/usr/bin
 	cp /c/WINDOWS/System32/ucrtbase.dll $(DESTDIR)/usr/bin
+	ldd $(DESTDIR)/usr/bin/ucrtbase.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	ldd $(DESTDIR)/usr/bin/gdbus.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	ldd $(DESTDIR)/usr/bin/gxinterface.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	mkdir -p /d/gxinterface/package/usr/share/glib-2.0/schemas/

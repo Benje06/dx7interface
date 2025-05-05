@@ -29,7 +29,7 @@
 int main (int argc, char *argv[]){
     char interface=0;
     std::string msg="", err_msg="";
-    unsigned int log_lvl=2;
+    unsigned int log_lvl=1;
     // Initialize logging system
     LogManager::instance().add_handler(
         std::make_shared<Logger>( "app.log", log_lvl )

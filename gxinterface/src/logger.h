@@ -27,7 +27,7 @@
         private:
             std::mutex log_mutex;
             std::ofstream log_file;
-            unsigned int log_level=0;
+            unsigned int log_level=2;
 
         public:
             void set_log_level(unsigned int);

@@ -186,7 +186,7 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
     box->add_tick_callback([this, box, box_funct,midi_param_value,selected_item](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
         //LOG( LOG_IN() );
         if(*pending_remove == 0){
-            //msg = " ADD box triggered" ;
+            //msg_log = " ADD box triggered" ;
             add_midi_learned(midi_param_value, selected_item);
             box->append(*box_funct);
             //LOG( LOG_OUT() );
@@ -200,7 +200,7 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
         auto slot_btn_delete_params = std::make_shared<sigc::scoped_connection>();
         *slot_btn_delete_params = btn_delete->signal_clicked().connect([this, box_funct, text_fct, text_param, btn_delete, slot_btn_delete_params, selected_item, param_number]() {
             //LOG( LOG_IN() );
-            //msg = " REM box triggered" ;
+            //msg_log = " REM box triggered" ;
             if(*pending_remove > 0){
                 (*pending_remove)--;
             };
@@ -218,7 +218,7 @@ void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib
         *slot_btn_delete_params = btn_delete->signal_clicked().connect(
             [this, box_funct, text_fct, text_param, btn_delete, selected_item, param_number, slot_btn_delete_params]() {
                 //LOG( LOG_IN() );
-                //msg = "REM box triggered" ;
+                //msg_log = "REM box triggered" ;
                 if(*pending_remove > 0){
                     (*pending_remove)--;
                 };
@@ -249,16 +249,16 @@ void Dx7interface::clean_midi_learn(){
             Glib::RefPtr<Glib::Regex> regex_function = Glib::Regex::create("^delete.*");
             while (child){
                 if( regex_box->match(child->get_name()) ){ // si match box_midi_param
-                    //msg = "child name: " + child->get_name() ;
+                    //msg_log = "child name: " + child->get_name() ;
                     Gtk::Widget* subchild = child->get_first_child();
                     while (subchild){
-                        //msg = "sub child name: " + subchild->get_name() ;
+                        //msg_log = "sub child name: " + subchild->get_name() ;
                         if( regex_function->match(subchild->get_name()) ){
-                            //msg = "sub child MATCH" + subchild->get_name() ;
+                            //msg_log = "sub child MATCH" + subchild->get_name() ;
                             (*pending_remove)++;
                             subchild->add_tick_callback([this, parent, child, subchild](const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
                                 //LOG( LOG_IN() );
-                                //msg = "SUBCHILD activate triggered" ;
+                                //msg_log = "SUBCHILD activate triggered" ;
                                 subchild->activate();
                                 //subchild->queue_draw();
                                 //LOG( LOG_OUT() );
@@ -273,8 +273,8 @@ void Dx7interface::clean_midi_learn(){
             };
         };
     }catch( const std::exception & ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, "???", ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        LOG_ERR( msg_err );
     };
     //LOG( LOG_OUT() );
 };
@@ -359,21 +359,20 @@ void Dx7interface::on_midi_learn_param_select(){
         int length_mask;
         //if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && ((int)(ev->data.control.channel) +1) == (int)Synth::channel_receive ) ) {
         if( uncomplete || (int)ev->dest.client == Synth::get_client_id() ){
-            std::string msg;
             switch( ev->type ){
                 case SND_SEQ_EVENT_NOTEON:
                     //Synth::print_event_info(ev);
-                    msg = _("Channel: ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
+                    msg_log = _("Channel: ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
                     + _("value: ") + std::to_string( int(ev->data.note.note) );
-                    LOG( msg );
+                    LOG( msg_log );
                     break;
                 case SND_SEQ_EVENT_NOTEOFF:
-                    msg = _("Note OFF") ;
-                    LOG( msg );
+                    msg_log = _("Note OFF") ;
+                    LOG( msg_log );
                     //Synth::print_event_info(ev);
-                    msg = _("Channel: ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
+                    msg_log = _("Channel: ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
                     + _("value: ") +  std::to_string( int(ev->data.note.note) );
-                    LOG( msg );
+                    LOG( msg_log );
                     break;
                 case SND_SEQ_EVENT_CONTROLLER:
                     /*typedef union snd_seq_event_data {
@@ -386,10 +385,10 @@ void Dx7interface::on_midi_learn_param_select(){
                         snd_seq_result_t result;
                     } snd_seq_event_data_t;*/
                     //Synth::print_event_info(ev);
-                    msg = _("Channel: ") + std::to_string( (int(ev->data.control.channel) + 1) ) + " \t"
+                    msg_log = _("Channel: ") + std::to_string( (int(ev->data.control.channel) + 1) ) + " \t"
                         + _("param: ") + std::to_string(ev->data.control.param) + " "
                         + _("value: ") + std::to_string( int(ev->data.control.value) );
-                    LOG( msg );
+                    LOG( msg_log );
                     if(midi_learn){
                         auto param = std::make_shared<int>(ev->data.control.param);
                         (get_gwidget<Gtk::Entry>("entry_affect_param"))->add_tick_callback([this,param](const Glib::RefPtr<Gdk::FrameClock>&) {
@@ -404,17 +403,17 @@ void Dx7interface::on_midi_learn_param_select(){
                     break;
                 case SND_SEQ_EVENT_PITCHBEND:
                     //Synth::print_event_info(ev);
-                    msg = _("Channel: ") + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
+                    msg_log = _("Channel: ") + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
                         + _("value: ") + std::to_string( int(ev->data.control.value) );
-                    LOG( msg );
+                    LOG( msg_log );
                     break;
                 case SND_SEQ_EVENT_PGMCHANGE:
                     //Synth::print_event_info(ev);
                     /*event data type = snd_seq_ev_ctrl_t */
-                    msg =  _("Channel : ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
+                    msg_log =  _("Channel : ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
                         + _("param : ")  + std::to_string(ev->data.control.param) + " "
                         + _("value : ") + std::to_string( int(ev->data.control.value) );
-                    LOG( msg );
+                    LOG( msg_log );
                     if( ev->data.control.param == 0 && ( (unsigned int)ev->data.control.value < bank_nb_sound ) ){
                      	unsigned int value = (unsigned int)ev->data.control.value;
                         select_voice(value);
@@ -424,7 +423,7 @@ void Dx7interface::on_midi_learn_param_select(){
                     //Synth::print_event_info(ev);
                     //SND_SEQ_EVENT_SYSEX 	system exclusive data (variable length);
                     // event data type = snd_seq_ev_ext_t
-                    /*msg =  "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
+                    /*msg_log =  "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
                     + "length : "  + int(ev->data.ext.len) + " "
                     + "ptr : " + ev->data.ext.ptr
                     ;*/
@@ -434,16 +433,16 @@ void Dx7interface::on_midi_learn_param_select(){
                     receive = true;
                     length_mask = ev->type & SND_SEQ_EVENT_LENGTH_MASK;
                     if (length_mask == SND_SEQ_EVENT_LENGTH_FIXED) {
-                        msg = _("Event has fixed length.") ;
-                        LOG( msg );
+                        msg_log = _("Event has fixed length.") ;
+                        LOG( msg_log );
                     } else if (length_mask == SND_SEQ_EVENT_LENGTH_VARIABLE) {
-                        msg = _("Event has variable length.") ;
-                        LOG( msg );
+                        msg_log = _("Event has variable length.") ;
+                        LOG( msg_log );
                     } else {
-                        msg = _("Unknown length mask.") ;
-                        LOG( msg );
+                        msg_log = _("Unknown length mask.") ;
+                        LOG( msg_log );
                     }
-                    msg = _("Length:") + std::to_string( int(ev->data.ext.len) );
+                    msg_log = _("Length:") + std::to_string( int(ev->data.ext.len) );
                     if( (ev->data.ext.len > 8 || uncomplete) && receive ){
                         uncomplete = true;
                         uint8_t* byte_ptr = static_cast<uint8_t*>(ev->data.ext.ptr);
@@ -479,15 +478,15 @@ void Dx7interface::on_midi_learn_param_select(){
         if( uncomplete || (int)ev->dest.client == Synth::get_client_id() ) {
             switch (ev->type) {
                 case SND_SEQ_EVENT_NOTEON:
-                    msg = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
+                    msg_log = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
                     + "value: " + int(ev->data.note.note) ;;
                     break;
                 case SND_SEQ_EVENT_NOTEOFF:
-                    msg = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
+                    msg_log = "Channel: "  + (int(ev->data.control.channel) +1) + " " + '\t'
                     + "value: " +  int(ev->data.note.note) ;
                     break;
                 case SND_SEQ_EVENT_CONTROLLER:
-                    msg = "Channel: " + ( (int)(ev->data.control.channel) +1) + " " + '\t'
+                    msg_log = "Channel: " + ( (int)(ev->data.control.channel) +1) + " " + '\t'
                     + "param: "  + ev->data.control.param + " "
                     + "value: " + int(ev->data.control.value) ;
                     if(midi_learn){
@@ -503,12 +502,12 @@ void Dx7interface::on_midi_learn_param_select(){
                     };
                     break;
                 case SND_SEQ_EVENT_PITCHBEND:
-                    msg = "Channel: " + (int(ev->data.control.channel) +1)+ " " + '\t'
+                    msg_log = "Channel: " + (int(ev->data.control.channel) +1)+ " " + '\t'
                     + "value: " + int(ev->data.control.value) ;
                     break;
                 case SND_SEQ_EVENT_PGMCHANGE:
                     //
-                    msg =  "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
+                    msg_log =  "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
                     + "param : "  + ev->data.control.param + " "
                     + "value : " + int(ev->data.control.value)
                     ;
@@ -531,7 +530,7 @@ void Dx7interface::on_midi_learn_param_select(){
                 case SND_SEQ_EVENT_SYSEX:
                     //SND_SEQ_EVENT_SYSEX 	system exclusive data (variable length);
                     // event data type = snd_seq_ev_ext_t
-                    // msg =  "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
+                    // msg_log =  "Channel : "  + (int(ev->data.control.channel) +1) + '\t'
                     // + "length : "  + int(ev->data.ext.len) + " "
                     // + "ptr : " + ev->data.ext.ptr
                     // ;
@@ -541,13 +540,13 @@ void Dx7interface::on_midi_learn_param_select(){
                     receive = true;
                     length_mask = ev->type & SND_SEQ_EVENT_LENGTH_MASK;
                     if (length_mask == SND_SEQ_EVENT_LENGTH_FIXED) {
-                        msg = "Event has fixed length." ;
+                        msg_log = "Event has fixed length." ;
                     } else if (length_mask == SND_SEQ_EVENT_LENGTH_VARIABLE) {
-                        msg = "Event has variable length." ;
+                        msg_log = "Event has variable length." ;
                     } else {
-                        msg = "Unknown length mask." ;
+                        msg_log = "Unknown length mask." ;
                     }
-                    msg = "Length:" + (int(ev->data.ext.len)) ;
+                    msg_log = "Length:" + (int(ev->data.ext.len)) ;
                     if( (ev->data.ext.len > 8 || uncomplete) && receive ){
                         uncomplete = true;
                         uint8_t* byte_ptr = static_cast<uint8_t*>(ev->data.ext.ptr);
@@ -576,15 +575,14 @@ bool Dx7interface::Run2(){
     ts.tv_sec = 0;
     ts.tv_nsec = 1000000000;
     nanosleep(&ts, NULL);
-    //msg = "coucou" ;
     while(lock){};
     lock=true;
     for(unsigned long i=0; i < midi_param.size(); i++){
         if ( midi_param[i] != -1) {
             int val = midi_param[i];
             (this->*list_ui_parameters_functions[midi_learned[i][0]])(val);
-            std::string msg = _(" Param: ") + std::to_string(i) + _(" Value: ") + std::to_string(midi_param[i]);
-            LOG( msg );
+            msg_log = _(" Param: ") + std::to_string(i) + _(" Value: ") + std::to_string(midi_param[i]);
+            LOG( msg_log );
             midi_param[i] = -1;
         };
     };
@@ -658,15 +656,15 @@ void Dx7interface::set_param(){
             }else{
                     filename.append(".syx");
             };
-            std::string msg = _("base filename: ") + filename ;
-            LOG( msg );
-            msg = _("with format: ");
+            msg_log = _("base filename: ") + filename ;
+            LOG( msg_log );
+            msg_log = _("with format: ");
             if( as_raw ){
-                msg +="Raw";
+                msg_log +="Raw";
             }else{
-                msg +="Bulk";
+                msg_log +="Bulk";
             };
-            LOG( msg );
+            LOG( msg_log );
         };
         if(initial_folder_save==nullptr){
             initial_folder_save=initial_folder_open;
@@ -727,9 +725,9 @@ void Dx7interface::set_dialog(Glib::ustring title){
             get_gwidget<Gtk::Button>("btn_dialog_param")->set_label("Close");
         };
     }catch( const std::exception & ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, "???", ex.what() );
-        LOG_ERR( err_msg );
-        //throw std::runtime_error(err_msg);
+        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        LOG_ERR( msg_err );
+        //throw std::runtime_error(msg_err);
     };
     LOG( LOG_OUT() );
 };
@@ -759,11 +757,11 @@ void Dx7interface::on_file_save(unsigned int data_stream_index, Glib::RefPtr<Gio
             };
         };
     }catch( const std::exception& ex){
-        //std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
-        std::string err_msg = error( __PRETTY_FUNCTION__, _("Failed to save file: "), ex.what() );
-        LOG_ERR( err_msg );
+        //std::string msg_err = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Failed to save file: "), ex.what() );
+        LOG_ERR( msg_err );
         LOG( LOG_OUT() );
-        throw std::runtime_error(err_msg);
+        throw std::runtime_error(msg_err);
     };
 };
 
@@ -897,8 +895,8 @@ void Dx7interface::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::Fi
 void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file){
     // set read voice in Origin
     auto [file_name, file_base, file_size] = get_file_attribut(file);
-    std::string msg = _("Bank name: ") + file_name ;
-    LOG( msg );
+    msg_log = _("Bank name: ") + file_name ;
+    LOG( msg_log );
     // moove to seek_paraemters
     parse_sysex(file, data_stream.at(data_stream_index), file_size);
 
@@ -964,10 +962,10 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     old_snum=0;
     snum = 0;
     Glib::ustring bank_name = _("Received");
-    std::string msg = _("Buffer size of received bank: " + sysex_buffer.size()) ;
-    LOG( msg );
+    msg_log = _("Buffer size of received bank: " + sysex_buffer.size()) ;
+    LOG( msg_log );
     /*for (uint8_t byte : sysex_buffer) {
-     *      msg = std::hex + std::setw(2) + std::setfill('0') + static_cast<int>(byte) + " ";
+     *      msg_log = std::hex + std::setw(2) + std::setfill('0') + static_cast<int>(byte) + " ";
     }*/
     switch( sysex_buffer.size() ){
         case 136:
@@ -1014,12 +1012,12 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
 void Dx7interface::restore_origin(unsigned int type){
     LOG( LOG_IN() );
     block_ui();
-    std::string msg;
+    msg_log;
     auto [bank_origin_src, bank_modif_src] = get_banks_source();
     std::visit([&](auto& bank_origin, auto& bank_modif) {
         if(type == BANK){
-            msg = _("Restore bank: ") + bank_modif.get().name + _(" from origin bank.") ;
-            LOG( msg );
+            msg_log = _("Restore bank: ") + bank_modif.get().name + _(" from origin bank.") ;
+            LOG( msg_log );
 
             for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
                 bank_modif.get().sound[snum] = bank_origin.get().sound[snum];
@@ -1027,8 +1025,8 @@ void Dx7interface::restore_origin(unsigned int type){
             };
             snum = old_snum;
         }else{
-            msg = _("Restore sound: ") + bank_modif.get().sound[snum].name + _(" from origin bank.") ;
-            LOG( msg );
+            msg_log = _("Restore sound: ") + bank_modif.get().sound[snum].name + _(" from origin bank.") ;
+            LOG( msg_log );
             bank_modif.get().sound[snum] = bank_origin.get().sound[snum];
             update_data_model<SoundBankItem>(bank_data_model, bank_modif.get().sound[snum].name);
         }
@@ -1064,8 +1062,8 @@ void Dx7interface::replace_sound(unsigned int data_stream_index, Glib::RefPtr<Gi
     LOG( LOG_IN() );
     block_ui(); // needed
     auto[file_name, file_base, file_size] = get_file_attribut(file);
-    std::string msg = _("Replaced sound: ") + bank_1_modif.sound->name;
-    LOG( msg );
+    msg_log = _("Replaced sound: ") + bank_1_modif.sound->name;
+    LOG( msg_log );
     parse_sysex(file, data_stream.at(data_stream_index), file_size);
     if( file_size == 128 ){
         seek_voice(data_stream.at(data_stream_index), &bank_1_modif.sound[0]);
@@ -1073,8 +1071,8 @@ void Dx7interface::replace_sound(unsigned int data_stream_index, Glib::RefPtr<Gi
         seek_voice_by_byte(data_stream.at(data_stream_index), &bank_1_modif.sound[0]);
     }
     seek_parameters(file_base, &bank_1_modif.sound[0]);
-    msg = _(" With: ") + bank_1_modif.sound->name ;
-    LOG( msg );
+    msg_log = _(" With: ") + bank_1_modif.sound->name ;
+    LOG( msg_log );
     update_bank_modif();
     select_voice(snum);
     LOG( LOG_OUT() );
@@ -1255,8 +1253,8 @@ void Dx7interface::on_insert_at(){
                           std::placeholders::_1,std::placeholders::_2) ));
         OpenDialogParam(_("Insert Sound(s) at"));
     }catch( const std::exception& ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, "???", ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        LOG_ERR( msg_err );
         LOG( LOG_OUT() );
     };
 };
@@ -1298,8 +1296,8 @@ void Dx7interface::on_save_bank(){
                                         std::placeholders::_1,std::placeholders::_2) ));
         OpenDialogParam("Saving Bank");
     }catch( const std::exception & ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, "???", ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        LOG_ERR( msg_err );
     };
 };
 void Dx7interface::write_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file, unsigned int index){
@@ -1398,17 +1396,17 @@ void Dx7interface::write_bank_as_sysex(unsigned int data_stream_index, Glib::Ref
             write_file_as_datastream(data_stream_index, file, msg, msg_size);
         };
     }catch( const std::exception& ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, _(" Error writing to file: \n") + file->get_path(), ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _(" Error writing to file: \n") + file->get_path(), ex.what() );
+        LOG_ERR( msg_err );
     }
     /*
-    string msg = "varaiable l: " + (int)l  ;
-    LOG( msg );
+    string msg_log = "varaiable l: " + (int)l  ;
+    LOG( msg_log );
     for (unsigned int i = 0 ; i < size ; i++){
-        msg = std::hex + std::setw(2) + std::setfill('0') + (int)(msg[i] & 0xFF)+ " " ;
-        LOG( msg );
+        msg_log = std::hex + std::setw(2) + std::setfill('0') + (int)(msg[i] & 0xFF)+ " " ;
+        LOG( msg_log );
     };
-    msg = std::dec ;
+    msg_log = std::dec ;
     */
     LOG( LOG_OUT() );
 };
@@ -1463,19 +1461,19 @@ void Dx7interface::write_bank_as_raw(unsigned int data_stream_index, Glib::RefPt
             write_file_as_datastream(data_stream_index, file_extra, msg_extra, msg_extra_size);
         };
     }catch( const std::exception& ex ){;
-        std::string err_msg = error( __PRETTY_FUNCTION__, _(" Error writing to file: \n") + file->get_path(), ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _(" Error writing to file: \n") + file->get_path(), ex.what() );
+        LOG_ERR( msg_err );
         LOG( LOG_OUT() );
     }
     /*for (unsigned int i = 0 ; i < size ; i++){
-        msg = std::hex + std::setw(2) + std::setfill('0') + (int)(msg[i] & 0xFF)+ " " ;
+        msg_log = std::hex + std::setw(2) + std::setfill('0') + (int)(msg[i] & 0xFF)+ " " ;
     };
-    msg = std::dec ;
-    msg = "varaiable l: " + (int)l  ;
-    msg = "DX_: " + (int)export_config  ;
-    msg = "index: " + (int)index  ;
-    msg = "file: " + file->get_path()  ;
-    msg = "size: " + size  ;*/
+    msg_log = std::dec ;
+    msg_log += "varaiable l: " + (int)l  ;
+    msg_log += "DX_: " + (int)export_config  ;
+    msg_log += "index: " + (int)index  ;
+    msg_log += "file: " + file->get_path()  ;
+    msg_log += "size: " + size  ;*/
     LOG( LOG_OUT() );
 };
 /*** VOICE ***/
@@ -1652,12 +1650,12 @@ void Dx7interface::write_voice_bulk1(unsigned int* l, unsigned char* msg, St_dx7
         };
     }catch( const std::exception& ex ){
         /*
-         * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+         * std::string msg_err = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
          *                     + _("Cannot construct bulk1") + "\n\t"
          *                     + _("Reason: ") + ex.what();
          */
-        std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot construct bulk1"), ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot construct bulk1"), ex.what() );
+        LOG_ERR( msg_err );
     };
 };
 void Dx7interface::write_voice_bulk32(unsigned int* l, unsigned char* msg, St_dx7sysex_1* sound, uint8_t* voice_checksum){
@@ -1726,8 +1724,8 @@ void Dx7interface::write_voice_bulk32(unsigned int* l, unsigned char* msg, St_dx
         };
         *voice_checksum -= msg[(*l)-1];
     }catch( const std::exception& ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot construct bulk32"), ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot construct bulk32"), ex.what() );
+        LOG_ERR( msg_err );
     };
 };
 void Dx7interface::write_voice_as_sysex(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file){
@@ -1747,8 +1745,8 @@ void Dx7interface::write_voice_as_sysex(unsigned int data_stream_index, Glib::Re
         msg[162]=0xF7;
         write_file_as_datastream(data_stream_index, file, msg, msg_size);
     }catch( const std::exception& ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot write file as sysex"), ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot write file as sysex"), ex.what() );
+        LOG_ERR( msg_err );
     }
 };
 void Dx7interface::write_voice_as_raw(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file){
@@ -1760,8 +1758,8 @@ void Dx7interface::write_voice_as_raw(unsigned int data_stream_index, Glib::RefP
         write_voice_bulk32(&l, msg, &bank_1_modif.sound[0], &voice_checksum );
         write_file_as_datastream(data_stream_index, file, msg, msg_size);
     }catch( const std::exception& ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot write file as raw"), ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot write file as raw"), ex.what() );
+        LOG_ERR( msg_err );
     }
 };
 void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,unsigned char* msg, unsigned int* index){
@@ -1789,9 +1787,9 @@ void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,unsigned ch
             };
             for ( i=0, j=64; i< nb_elem; i++,j++){
                 /*
-                 *              msg = "char j: " + std::hex + (int)j + std::dec ;
-                 *              msg = "i: " + (int)i ;
-                 *              msg = "sound val: " + std::hex + (int)val[i] + std::dec ;
+                 *   msg_log = "char j: " + std::hex + (int)j + std::dec ;
+                 *   msg_log = "i: " + (int)i ;
+                 *   msg_log = "sound val: " + std::hex + (int)val[i] + std::dec ;
                  */
                 msg[(*index)++]=0xF0;
                 msg[(*index)++]=id_fabricant;
@@ -1802,8 +1800,8 @@ void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,unsigned ch
                 msg[(*index)++]=0xF7;
             };
         }catch( const std::exception& ex ){
-            std::string err_msg = error( __PRETTY_FUNCTION__, _("Cannot write extra parameters"), ex.what() );
-            LOG_ERR( err_msg );
+            std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot write extra parameters"), ex.what() );
+            LOG_ERR( msg_err );
         };
     };
     LOG( LOG_OUT() );
@@ -1811,8 +1809,8 @@ void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,unsigned ch
 void Dx7interface::save_modif_sound(){
     // save current sound (0) in bank modif (old_snum)
     // comment => Et origin
-    std::string msg = _("Saved voice: ") + bank_1_modif.sound->name + _(" in modif bank.") ;
-    LOG( msg );
+    msg_log = _("Saved voice: ") + bank_1_modif.sound->name + _(" in modif bank.") ;
+    LOG( msg_log );
     // bank_1_origin.sound[0] = bank_1_modif.sound[0];
     switch( bank_nb_sound ){
         case 32:
@@ -1840,8 +1838,8 @@ void Dx7interface::on_save_sound(){
                                  std::placeholders::_1, std::placeholders::_2) ));
         OpenDialogParam("Saving sound");
     }catch( const std::exception & ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, _(" ??? "), ex.what() );
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _(" ??? "), ex.what() );
+        LOG_ERR( msg_err );
     };
     LOG( LOG_OUT() );
 };
@@ -1890,11 +1888,11 @@ void Dx7interface::write_voices_as_n_sysex(St_dx7sysex_1* sound){  // UNUSED
         msg[l++] = sound->name.data()[carac];
     };
     /*
-     * std::string msg = "Voice Output: ";
-     * LOG( msg );
+     * msg_log = "Voice Output: ";
+     * LOG( msg_log );
      *
      * for (int i = 0 ; i < 128 ; i++){
-     *   msg = std::hex + std::setw(2) + std::setfill('0') + (int)(msg[i] & 0x7F)+ " " ;
+     *   msg_log += std::hex + std::setw(2) + std::setfill('0') + (int)(msg[i] & 0x7F)+ " " ;
      * };
      * std::cout << std::dec ;
      */
@@ -2071,8 +2069,8 @@ void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* 
         Glib::ustring file_path = bank_file_base + sound->name + "_fct.syx";
         if( std::filesystem::exists( file_path.c_str() )){ 
             Glib::RefPtr<Gio::File> file_fct = Gio::File::create_for_path( file_path.c_str() );
-            std::string msg = _("For voice: ") + sound->name + _("\n\tParameters of function reads from file: ") + file_fct->get_path() ;
-            LOG( msg );
+            msg_log = _("For voice: ") + sound->name + _("\n\tParameters of function reads from file: ") + file_fct->get_path() ;
+            LOG( msg_log );
             data_stream_param = Gio::DataInputStream::create(file_fct->read());
             seek_voice_parameters(sound);
             data_stream_param->close();
@@ -2580,9 +2578,9 @@ void Dx7interface::send_extra_parameters(st_dx7sysex_1* sound){
         };
         for ( i=0, j=64 ; i< nb_elem; i++,j++){
             /*
-                msg = "char j: " + std::hex + (int)j + std::dec ;
-                msg = "i: " + (int)i ;
-                msg = "sound val: " + std::hex + (int)val[i] + std::dec ;
+                msg_log = "char j: " + std::hex + (int)j + std::dec ;
+                msg_log += "i: " + (int)i ;
+                msg_log += "sound val: " + std::hex + (int)val[i] + std::dec ;
             */
             msg[0]=0xF0;
             msg[1]=id_fabricant;
@@ -2686,8 +2684,8 @@ void Dx7interface::on_add_midi_learn_event(){
             };
         };
     }catch( const std::exception & ex ){
-        std::string err_msg = error( __PRETTY_FUNCTION__, "???", ex.what());
-        LOG_ERR( err_msg );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what());
+        LOG_ERR( msg_err );
     };
     LOG( LOG_OUT() );
 };
@@ -5296,7 +5294,7 @@ void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double
         };
         cr->restore();
     }else{
-        std::string msg_err = _("File not found: ") + std::string(PROGRAMNAME_IMG_DIR"/ keyboard or touch .png");
+        msg_err = _("File not found: ") + std::string(PROGRAMNAME_IMG_DIR"/ keyboard or touch .png");
         LOG( msg_err );
     };
     //LOG( LOG_OUT() );
@@ -5453,7 +5451,7 @@ void Dx7interface::on_draw_algo(const Cairo::RefPtr<Cairo::Context>& cr, double 
         cr->paint();
         cr->restore();
     }else{
-        std::string msg_err = _("File not found: ") + img;
+        msg_err = _("File not found: ") + img;
         LOG_ERR( msg_err );
     };
     // LOG( LOG_OUT() );
@@ -5476,7 +5474,7 @@ void Dx7interface::on_draw_lfo(const Cairo::RefPtr<Cairo::Context>& cr, double w
         cr->paint();
         cr->restore();
     }else{
-        std::string msg_err = _("File not found: ") + img;
+        msg_err = _("File not found: ") + img;
         LOG_ERR( msg_err );
     };
     // LOG( LOG_OUT() );

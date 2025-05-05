@@ -129,7 +129,20 @@ AM_COND_IF([PLATFORM_WINDOWS],[
         AC_MSG_ERROR([Could not find an implementation of windres in your PATH.])
     fi
 ])
-
+dnl console activate the console for windows
+AC_ARG_ENABLE([console],
+[  --enable-console    Turn on console for windows ],
+[case "${enableval}" in
+  0|no)  console=false ;;
+  1|yes) console=true ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-console]) ;;
+esac],[console=false])
+AM_CONDITIONAL([WINDOWS_CONSOLE], [test x$console = xtrue])
+AM_COND_IF([WINDOWS_CONSOLE],[
+],[
+    CXXFLAGS="$CXXFLAGS -mwindows"
+    AC_SUBST(CXXFLAGS)
+])
 dnl ================================================================
 dnl Gettext stuff.
 dnl ================================================================
@@ -140,32 +153,28 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE",[$GETTEXT_PACKAGE])
 AM_XGETTEXT_OPTION([--from-code=utf-8])
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.18.2])
+AM_GNU_GETTEXT_VERSION([0.19.8])
 
 dnl ================================================================
 dnl Develloper stuff
 dnl ================================================================
-AC_ARG_ENABLE([debug],
- [AS_HELP_STRING([--enable-debug@<:@=LEVEL@:>@],
-    [Enable debug mode (0=no, 1=basic, 2=verbose) @<:@default=no@:>@])],
+dnl debug set the message format define in debug.h
+AC_ARG_ENABLE([log],
+ [AS_HELP_STRING([--enable-log@<:@=LEVEL@:>@],
+    [Set debug log format (0=none, 1=funct name, 2=class::funct + file + line number) @<:@default=no@:>@])],
 [case "${enableval}" in
   0|no)  debug=false; debug_deep=false ;;
   1|yes) debug=true; debug_deep=false;;
   2|deep) debug=true; debug_deep=true;;
-  *) AC_MSG_ERROR([Invalid debug level: use 0/1/2 or no/yes/deep]) ;;
+  *) AC_MSG_ERROR([Invalid debug log format: use 0/1/2 or no/yes/deep]) ;;
 esac],[debug=false; debug_deep=false])
 
 AM_CONDITIONAL([DEBUG_TOOL], [test x$debug = xtrue])
 AM_CONDITIONAL([DEBUG_TOOL_AS_ERROR], [test x$debug_deep = xtrue])
 
 AM_COND_IF([DEBUG_TOOL],[
-AC_DEFINE([DEBUG_TOOL], [], [activate debug tool])
-],[
-if test "x$debug" = "x0"; then
-    CXXFLAGS="$CXXFLAGS -mwindows"
-    AC_SUBST(CXXFLAGS)
-fi
-])
+AC_DEFINE([DEBUG_TOOL], [], [Activate debug print])
+],[])
 AM_COND_IF([DEBUG_TOOL_AS_ERROR],[
 AC_DEFINE([DEBUG_TOOL_AS_ERROR], [], [Activate deep debug print])
 ],[])
@@ -181,37 +190,37 @@ AM_CONDITIONAL([DEV], [test x$dev = xtrue])
 
 AM_COND_IF([DEV],[
 PROGRAMNAME_LOCALEDIR=[~/dev/git/gtk4/$PACKAGE_NAME/po]
+PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/]
+PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/images]
 PROGRAMNAME_UI_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/ui/]
 PROGRAMNAME_MOD_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/src/]
-PROGRAMNAME_DATA_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/data/]
-PROGRAMNAME_IMG_DIR=[~/dev/git/gtk4/$PACKAGE_NAME/$PACKAGE_VERSION/images]
 ],[
 PROGRAMNAME_LOCALEDIR=[${datadir}/locale]
 PROGRAMNAME_DATA_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/data/]
-PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/data/ui/]
 PROGRAMNAME_IMG_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/data/images/]
+PROGRAMNAME_UI_DIR=[${datadir}/$PACKAGE_NAME/$VERSION/data/ui/]
 PROGRAMNAME_MOD_DIR=[${datadir}/$PACKAGE_NAME/modules/]
 ])
 
 AM_COND_IF([PLATFORM_WINDOWS],[
 PROGRAMNAME_LOCALEDIR=[usr/share/locale/]
 PROGRAMNAME_DATA_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/]
-PROGRAMNAME_UI_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/ui/]
 PROGRAMNAME_IMG_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/images/]
+PROGRAMNAME_UI_DIR=[usr/share/$PACKAGE_NAME/$VERSION/data/ui/]
 PROGRAMNAME_MOD_DIR=[usr/share/$PACKAGE_NAME/$VERSION/modules/]
 
 AC_DEFINE_UNQUOTED([PROGRAMNAME_LOCALEDIR], ["$PROGRAMNAME_LOCALEDIR"], [Translation directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_DATA_DIR], ["$PROGRAMNAME_DATA_DIR"], [Data directory])
+AC_DEFINE_UNQUOTED([PROGRAMNAME_IMG_DIR], ["$PROGRAMNAME_IMG_DIR"], [Images directory])
 AC_DEFINE_UNQUOTED([PROGRAMNAME_UI_DIR], ["$PROGRAMNAME_UI_DIR"], [UI directory])
 AC_DEFINE_UNQUOTED([PROGRAMNAME_MOD_DIR], ["$PROGRAMNAME_MOD_DIR"], [Module directory])
-AC_DEFINE_UNQUOTED([PROGRAMNAME_IMG_DIR], ["$PROGRAMNAME_IMG_DIR"], [Images directory])
-AC_DEFINE_UNQUOTED([PROGRAMNAME_DATA_DIR], ["$PROGRAMNAME_DATA_DIR"], [Data directory])
 ])
 
 AC_SUBST(PROGRAMNAME_LOCALEDIR)
+AC_SUBST(PROGRAMNAME_DATA_DIR)
+AC_SUBST(PROGRAMNAME_IMG_DIR)
 AC_SUBST(PROGRAMNAME_UI_DIR)
 AC_SUBST(PROGRAMNAME_MOD_DIR)
-AC_SUBST(PROGRAMNAME_IMG_DIR)
-AC_SUBST(PROGRAMNAME_DATA_DIR)
 
 dnl ================================================================
 dnl Flags
@@ -223,14 +232,14 @@ AC_SUBST([AM_CPPFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
 AC_CONFIG_FILES([Makefile
-                src/Makefile
                 po/Makefile.in
+                lib/Makefile
+                src/Makefile
                 data/Makefile
-                data/ui/Makefile
                 data/images/Makefile
+                data/ui/Makefile
                 data/launcher/Makefile
                 data/launcher/gxinterface.desktop
-                lib/Makefile
                 lib/gxinterface.pc
 ])
 AC_OUTPUT
@@ -244,8 +253,10 @@ Configuration:
   Compiler:		 C : ${CC}		C++ : ${CXX}
 
   env:      ${host_os}
-  Windows:  ${platform_win32}
+  Windows:  ${platform_win32}   console:    ${console}
   Linux:    ${platform_linux}
+  Log format:   minimal: ${debug}
+                extended:  ${debug_deep}
 
   CPPFLAGS: ${CPPFLAGS}
   CFLAGS:  ${CFLAGS}
