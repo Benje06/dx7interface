@@ -113,8 +113,8 @@ libgxsynth_0_0_1_la_LDFLAGS += \
 	-Wl,--export-all-symbols \
 	-lgdi32
 install-data-hook:
-	cp -f $(DESTDIR)$(libdir)/libgxgtkclass-0.0.1-1.dll $(DESTDIR)/usr/bin
-	cp -f $(DESTDIR)$(libdir)/libgxsynth-0.0.1-1.dll $(DESTDIR)/usr/bin
+	cp -f $(DESTDIR)/ucrt64/bin/libgxgtkclass-0.0.1-1.dll $(DESTDIR)/usr/bin
+	cp -f $(DESTDIR)/ucrt64/bin/libgxsynth-0.0.1-1.dll $(DESTDIR)/usr/bin
 	ldd $(DESTDIR)/usr/bin/libgxgtkclass-0.0.1-1.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	ldd $(DESTDIR)/usr/bin/libgxsynth-0.0.1-1.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	## sed -i "s|\(libdir='\)/\(.*'\)|\1\2|" "$(DESTDIR)$(libdir)/usr/bin/libgxgtkclass-0.0.1.la"

@@ -17,15 +17,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. force only supported mode
-#. force only supported mode
-#. force only supported mode
-#. force only supported mode
 #: ../src/main.cc:53 ../src/main.cc:64
 msgid "Interface graphic mode : "
 msgstr "Mode graphique de l'interface : "
 
 #: ../src/main.cc:77
-#, fuzzy
 msgid "The option: "
 msgstr "L'option : "
 
@@ -35,179 +31,172 @@ msgstr " n'est pas valide pour un type d'interface"
 
 #: ../src/main.cc:85
 msgid "Error: in application start -> "
-msgstr "Erreur: au demarrage de l'application -> "
+msgstr "Erreur au demarrage de l'application -> "
 
 #: ../src/gemod.cc:124 ../src/gemod.cc:141
 msgid "Fail to get rootbox"
-msgstr ""
+msgstr "Echec dans la récuperation de la box racine (rootbox)"
 
 #: ../src/gemod.cc:124 ../src/gemod.cc:141
 msgid "Reason"
-msgstr ""
+msgstr "Raison"
 
 #: ../src/gemod.cc:180
 msgid "Select Module .la, .so or .ui"
-msgstr ""
+msgstr "Choisir un module .la, .so ou .ui"
 
 #: ../src/gemod.cc:190
-#, fuzzy
-msgid "Couldn't select module: "
-msgstr "Module selectionné : "
+msgid "Can't select module: "
+msgstr "Le module ne peut pas etre sélectionné: "
 
 #: ../src/gemod.cc:197
 msgid "Please choose a file"
-msgstr ""
+msgstr "Choisissez un fichier"
 
 #: ../src/gxmodule.cc:53 ../src/gxmodule.cc:72
 msgid ""
 "!!! Cannot be created !!!\n"
 " => Cannot load :"
 msgstr ""
+"!!! Ne peut pas etre crée !!!\n"
+" => Ne peut pas lire load: "
 
 #: ../src/gxmodule.cc:110
 msgid "Cannot Read: "
-msgstr ""
+msgstr "Ne peux pas lire: "
 
 #: ../src/gxmodule.cc:126
 msgid "Cannot get attributs of: "
-msgstr ""
+msgstr "Ne peut récuperer les attributs de: "
 
 #: ../src/gxmodule.cc:146
 msgid "Cannot write: "
-msgstr ""
+msgstr "Ne peut pas écrire: "
 
 #: ../src/gxmodule.cc:228
-#, fuzzy
 msgid "Writing file: "
-msgstr "Chargment du fichier: "
+msgstr "Ecriture du fichier: "
 
 #: ../src/gxmodule.cc:328
 msgid " Creating window failed "
-msgstr ""
+msgstr "La creation de la fenetre à echoué"
 
 #: ../src/gxmodule.cc:390
-#, fuzzy
 msgid "Cannot load file: "
-msgstr "Chargment du fichier: "
+msgstr "Ne peut pas charger le fichier: "
 
 #: ../src/gxmodule.cc:391
 msgid "Bad file extention."
-msgstr ""
+msgstr "Mauvais extention de fichier"
 
 #: ../src/gxmodule.cc:392
 msgid "Accepted types are:"
-msgstr ""
+msgstr "Les types acceptés sont: "
 
 #: ../src/gxmodule.cc:393
 msgid ".ui ou .xml for an UI"
-msgstr ""
+msgstr ".ui ou .xml pour une UI"
 
 #: ../src/gxmodule.cc:394
 msgid ".la/.so/.lo/.dll for a module"
-msgstr ""
+msgstr ".la/.so/.lo/.dll pour un module"
 
 #: ../src/gxmodule.cc:424
 msgid "Gtk::Box 'box_main' not found in UI file"
-msgstr ""
+msgstr "Gtk::Box 'box_main' ne peut etre trouvé dans le fichier d'UI"
 
 #: ../src/gxmodule.cc:462
 msgid "no function or error on "
-msgstr ""
+msgstr "Aucune fonction ou erreur sur "
 
 #: ../src/gxmodule.cc:462
 msgid "Last module error: "
-msgstr ""
+msgstr "Derniére erreur du module: "
 
 #: ../src/gxmodule.cc:468
 msgid "No module for file "
-msgstr ""
+msgstr "Aucun module pour le fichier "
 
 #: ../src/gxmodule.cc:474
-#, fuzzy
 msgid "Failed to create module: "
-msgstr "Module selectionné : "
+msgstr "Echéc à la creation du module: "
 
 #: ../src/gxmodule.cc:507
 msgid "Css style file: "
-msgstr ""
+msgstr "Fichier des style CSS: "
 
 #: ../src/gxmodule.cc:509
 msgid "Warning: the css style file "
-msgstr ""
+msgstr "Attention: le fichier CSS de style "
 
 #: ../src/gxmodule.cc:509 ../src/gxmodule.cc:603 ../src/gxmodule.cc:810
-#, fuzzy
 msgid " doesn't exist or is not readable"
-msgstr " n'existe pas !!!"
+msgstr " n'existe pas ou n'est pas lisible"
 
 #: ../src/gxmodule.cc:557
 msgid " Failed to load style: !!!\n"
-msgstr ""
+msgstr " Echec au chargement du style:\n"
 
 #: ../src/gxmodule.cc:557 ../src/gxmodule.cc:639 ../src/common.h:171
 msgid "Reason => "
-msgstr ""
+msgstr "Raison => "
 
 #: ../src/gxmodule.cc:601
 msgid "Custom font file: "
-msgstr ""
+msgstr "Fichier de police personalisé: "
 
 #: ../src/gxmodule.cc:603
 msgid "Warning: the custom font file "
-msgstr ""
+msgstr "Attention: Le fichier de police personalisé "
 
 #: ../src/gxmodule.cc:623
 msgid "Error: "
-msgstr ""
+msgstr "Erreur: "
 
 #: ../src/gxmodule.cc:639
 msgid " Failed load font: !!!\n"
-msgstr ""
+msgstr "Echec de chargeent de la police: \n"
 
 #: ../src/gxmodule.cc:651
 msgid "Fail to list pango font with error: "
-msgstr ""
+msgstr "Echec au listage des polices pango avec l'erreur: "
 
 #: ../src/gxmodule.cc:808
-#, fuzzy
 msgid "Icon file: "
-msgstr "Chargment du fichier: "
+msgstr "Fichier d'icone: "
 
 #: ../src/gxmodule.cc:810
 msgid "Warning: the icon file "
-msgstr ""
+msgstr "Attention: le fichier d'icone "
 
 #: ../src/gxinterface.cc:37
 msgid "Failed to construct gxinterface"
-msgstr ""
+msgstr "Echec à la creation de gxinterface"
 
 #: ../src/gxinterface.cc:72
 msgid "Error: in application activate -> "
-msgstr "Erreur: à l'activation de l'application ->"
+msgstr "Erreur: à l'activation de l'application -> "
 
 #: ../src/gxinterface.cc:95
-#, fuzzy
 msgid "Module "
-msgstr "Modules"
+msgstr "Module "
 
 #: ../src/gxinterface.cc:95 ../src/gxinterface.cc:98
-#, fuzzy
 msgid " doesn't exist or could not be read !!!"
-msgstr " n'existe pas !!!"
+msgstr " n'existe pas ou ne peux etre lu !!!"
 
 #: ../src/gxinterface.cc:98
-#, fuzzy
 msgid "Interface file "
-msgstr "!!! Le fichier d'interface "
+msgstr "Fichier d'interface "
 
 #: ../src/gxinterface.cc:101
 #, fuzzy
 msgid "Loading default interface file."
-msgstr "Chargement du fichier d'interface par defaut. "
+msgstr "Chargement du fichier d'interface par defaut."
 
 #: ../src/gxinterface.cc:106
 msgid "Loading module."
-msgstr "Chargement d'un module."
+msgstr "Chargement du module."
 
 #: ../src/gxinterface.cc:114
 msgid "Loading file: "
@@ -215,25 +204,27 @@ msgstr "Chargment du fichier: "
 
 #: ../src/common.h:169
 msgid "From: "
-msgstr ""
+msgstr "Depuis: "
 
 #: ../src/logger.cc:59
 msgid "Switching to log level: "
-msgstr ""
+msgstr "Basculement sur le niveau de journalisation: "
 
 #: ../src/logger.cc:66
 msgid "Log Level: "
-msgstr ""
+msgstr "Niveau de journalisation: "
 
 #: ../src/logger.cc:66
 msgid ""
 " is not a valid value, shoudl be between 0(disable), 1(log file) and 2(log "
 "file + console)."
 msgstr ""
+" n'est pas une valeur valide, Devrait etre entre 0(désactivé), 1(journalisation fichier) et 2(journalisation "
+"fichier + console)."
 
 #: ../data/ui/interface.ui.h:1 ../data/ui/interface_4.8.ui.h:1
 msgid "Selected module : "
-msgstr "Module selectionné : "
+msgstr "Module selectionné: "
 
 #: ../data/ui/interface.ui.h:2 ../data/ui/interface_4.8.ui.h:2
 msgid "Standalone mode"

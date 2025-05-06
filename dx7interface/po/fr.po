@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-04 20:43+0200\n"
+"POT-Creation-Date: 2025-05-06 02:04+0200\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -19,43 +19,40 @@ msgstr ""
 
 #: ../src/synth.cc:68
 msgid "No MIDI Input Ports available."
-msgstr ""
+msgstr "Aucun port d'entrée MIDI disponible."
 
 #: ../src/synth.cc:70
 msgid "Available Midi Input Ports: "
-msgstr ""
+msgstr "Ports d'entrée MIDI disponibles: "
 
 #: ../src/synth.cc:80
 msgid "Opened MIDI Input Port: "
-msgstr ""
+msgstr "Port d'entrée MIDI ouvert: "
 
 #: ../src/synth.cc:85
 msgid "No MIDI Output Ports available."
-msgstr ""
+msgstr "Aucun port de sortie MIDI disponible."
 
 #: ../src/synth.cc:87
 msgid "Available Midi Ouput Ports: "
-msgstr ""
+msgstr "Ports de sortie MIDI disponibles: "
 
 #: ../src/synth.cc:97
 msgid "Opened MIDI Output Port: "
-msgstr ""
+msgstr "Port de sortie MIDI ouvert: "
 
 #: ../src/synth.cc:103
 msgid "Error initializing MIDI: "
-msgstr ""
+msgstr "Erreur a l'initialisation du MIDI: "
 
 #: ../src/synth.cc:104
 msgid "Reason: "
-msgstr ""
+msgstr "Reason: "
 
-#. Close the virtual input port
-#. Close the virtual input port
-#. Close the virtual input port
 #. Close the virtual input port
 #: ../src/synth.cc:120
 msgid "Disconnected MIDI input port: "
-msgstr ""
+msgstr "Déconnecté du port d'entrée MIDI: "
 
 #. Close the virtual output port
 #. Close the virtual output port
@@ -63,337 +60,250 @@ msgstr ""
 #. Close the virtual output port
 #: ../src/synth.cc:125
 msgid "Disconnected MIDI output port: "
-msgstr ""
+msgstr "Déconnecté du port de sortie MIDI: "
 
 #: ../src/synth.cc:304
 msgid "Unknown Event Type"
-msgstr ""
+msgstr "Type d'evenement MIDI inconnu"
 
 #: ../src/synth.cc:338
 msgid "event: "
-msgstr ""
+msgstr "Evenement MIDI: "
 
-#. High nibble indicates the event type
-#. Low nibble indicates the channel (1-based)
-#. Print event type and channel
-#. High nibble indicates the event type
-#. Low nibble indicates the channel (1-based)
-#. Print event type and channel
-#. High nibble indicates the event type
-#. Low nibble indicates the channel (1-based)
-#. Print event type and channel
 #. High nibble indicates the event type
 #. Low nibble indicates the channel (1-based)
 #. Print event type and channel
 #: ../src/synth.cc:456
 msgid "Event: "
-msgstr ""
+msgstr "Evenement MIDI: "
 
 #: ../src/synth.cc:457
 msgid "Type: "
-msgstr ""
+msgstr "Type: "
 
 #. Synth::print_event_info(ev);
-#. typedef union snd_seq_event_data {
-#. snd_seq_ev_raw8_t raw8;
-#. snd_seq_ev_raw32_t raw32;
-#. snd_seq_ev_queue_control_t queue;
-#. snd_seq_timestamp_t time;
-#. snd_seq_addr_t addr;
-#. snd_seq_connect_t connect;
-#. snd_seq_result_t result;
-#. } snd_seq_event_data_t;
-#. Synth::print_event_info(ev);
-#. Synth::print_event_info(ev);
-#. typedef union snd_seq_event_data {
-#. snd_seq_ev_raw8_t raw8;
-#. snd_seq_ev_raw32_t raw32;
-#. snd_seq_ev_queue_control_t queue;
-#. snd_seq_timestamp_t time;
-#. snd_seq_addr_t addr;
-#. snd_seq_connect_t connect;
-#. snd_seq_result_t result;
-#. } snd_seq_event_data_t;
-#. Synth::print_event_info(ev);
-#. Synth::print_event_info(ev);
-#. typedef union snd_seq_event_data {
-#. snd_seq_ev_raw8_t raw8;
-#. snd_seq_ev_raw32_t raw32;
-#. snd_seq_ev_queue_control_t queue;
-#. snd_seq_timestamp_t time;
-#. snd_seq_addr_t addr;
-#. snd_seq_connect_t connect;
-#. snd_seq_result_t result;
-#. } snd_seq_event_data_t;
-#. Synth::print_event_info(ev);
-#. Synth::print_event_info(ev);
-#. typedef union snd_seq_event_data {
-#. snd_seq_ev_raw8_t raw8;
-#. snd_seq_ev_raw32_t raw32;
-#. snd_seq_ev_queue_control_t queue;
-#. snd_seq_timestamp_t time;
-#. snd_seq_addr_t addr;
-#. snd_seq_connect_t connect;
-#. snd_seq_result_t result;
-#. } snd_seq_event_data_t;
-#. Synth::print_event_info(ev);
-#: ../src/synth.cc:459 ../src/dx7interface.cc:366 ../src/dx7interface.cc:374
-#: ../src/dx7interface.cc:389 ../src/dx7interface.cc:407
+#: ../src/synth.cc:459 ../src/dx7interface.cc:365 ../src/dx7interface.cc:373
+#: ../src/dx7interface.cc:388 ../src/dx7interface.cc:406
 msgid "Channel: "
-msgstr ""
+msgstr "Canal MIDI: "
 
 #: ../src/synth.cc:465 ../src/synth.cc:473
 msgid "Note: "
-msgstr ""
+msgstr "Note: "
 
 #: ../src/synth.cc:466 ../src/synth.cc:474
 msgid ", Velocity: "
-msgstr ""
+msgstr "Vélocité: "
 
 #: ../src/synth.cc:481
 msgid "Controller: "
-msgstr ""
+msgstr "Controlleur: "
 
 #: ../src/synth.cc:482
 msgid ", Value: "
-msgstr ""
+msgstr ", Valeur: "
 
 #. Pitch Bend
-#. Combine MSB and LSB
-#. Pitch Bend
-#. Combine MSB and LSB
-#. Pitch Bend
-#. Combine MSB and LSB
-#. Pitch Bend
-#. Combine MSB and LSB
 #: ../src/synth.cc:488
 msgid "Value: "
-msgstr ""
+msgstr "Valeur: "
 
 #: ../src/synth.cc:494
 msgid "Program: "
-msgstr ""
+msgstr "Programme: "
 
 #: ../src/synth.cc:499
 msgid "Unknown or unsupported MIDI event."
-msgstr ""
+msgstr "Evenement MIDI inconnu ou non supporté."
 
 #: ../src/dx7interface.cc:313
 msgid "# Function, midi controller number"
-msgstr ""
+msgstr "# Fonction, numero du controlleur midi"
 
-#: ../src/dx7interface.cc:367 ../src/dx7interface.cc:375
-#: ../src/dx7interface.cc:391 ../src/dx7interface.cc:408
+#: ../src/dx7interface.cc:366 ../src/dx7interface.cc:374
+#: ../src/dx7interface.cc:390 ../src/dx7interface.cc:407
 msgid "value: "
-msgstr ""
+msgstr "valeur: "
 
-#: ../src/dx7interface.cc:371
+#: ../src/dx7interface.cc:370
 msgid "Note OFF"
 msgstr ""
 
-#: ../src/dx7interface.cc:390
+#: ../src/dx7interface.cc:389
 msgid "param: "
-msgstr ""
+msgstr "parametre: "
 
 #. Synth::print_event_info(ev);
-#. event data type = snd_seq_ev_ctrl_t
-#. Synth::print_event_info(ev);
-#. event data type = snd_seq_ev_ctrl_t
-#. Synth::print_event_info(ev);
-#. event data type = snd_seq_ev_ctrl_t
-#. Synth::print_event_info(ev);
-#. event data type = snd_seq_ev_ctrl_t
-#: ../src/dx7interface.cc:414
+#: ../src/dx7interface.cc:413
 msgid "Channel : "
-msgstr ""
+msgstr "Canal: "
+
+#: ../src/dx7interface.cc:414
+msgid "param : "
+msgstr "parametre: "
 
 #: ../src/dx7interface.cc:415
-msgid "param : "
-msgstr ""
-
-#: ../src/dx7interface.cc:416
 msgid "value : "
-msgstr ""
+msgstr "valeur: "
 
-#: ../src/dx7interface.cc:437
+#: ../src/dx7interface.cc:436
 msgid "Event has fixed length."
-msgstr ""
+msgstr "L'evenement a une taille fixe."
 
-#: ../src/dx7interface.cc:440
+#: ../src/dx7interface.cc:439
 msgid "Event has variable length."
-msgstr ""
+msgstr "L'evenement à une taille variable."
 
-#: ../src/dx7interface.cc:443
+#: ../src/dx7interface.cc:442
 msgid "Unknown length mask."
-msgstr ""
+msgstr "Longeur de masque inconnue."
 
-#: ../src/dx7interface.cc:446
+#: ../src/dx7interface.cc:445
 msgid "Length:"
-msgstr ""
+msgstr "Longeur:"
 
-#: ../src/dx7interface.cc:586
+#: ../src/dx7interface.cc:584
 msgid " Param: "
-msgstr ""
+msgstr " Parametre: "
 
-#: ../src/dx7interface.cc:586
+#: ../src/dx7interface.cc:584
 msgid " Value: "
-msgstr ""
+msgstr " Valeur: "
 
-#: ../src/dx7interface.cc:661
+#: ../src/dx7interface.cc:659
 msgid "base filename: "
 msgstr ""
 
-#: ../src/dx7interface.cc:663
+#: ../src/dx7interface.cc:661
 msgid "with format: "
-msgstr ""
+msgstr "avec le format: "
 
-#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
-#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
-#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
-#. std::string err_msg = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
-#: ../src/dx7interface.cc:756
+#. std::string msg_err = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+#: ../src/dx7interface.cc:761
 msgid "Failed to save file: "
-msgstr ""
+msgstr " Echec à la sauvegarde du fichier: "
 
-#: ../src/dx7interface.cc:881
+#: ../src/dx7interface.cc:843
+msgid "Warning compare mode active"
+msgstr "Attention Mode compare actif"
+
+#: ../src/dx7interface.cc:898
 msgid "Bank name: "
-msgstr ""
+msgstr "Nom de la banque son: "
 
-#: ../src/dx7interface.cc:947
+#: ../src/dx7interface.cc:964
 msgid "Received"
-msgstr ""
+msgstr "Reçue"
 
-#: ../src/dx7interface.cc:948
+#: ../src/dx7interface.cc:965
 msgid "Buffer size of received bank: "
-msgstr ""
+msgstr "Taille du tampon memoire de la banque reçue: "
 
-#: ../src/dx7interface.cc:1002
+#: ../src/dx7interface.cc:1019
 msgid "Restore bank: "
-msgstr ""
+msgstr "Restauration de la banque son: "
 
-#: ../src/dx7interface.cc:1002 ../src/dx7interface.cc:1011
+#: ../src/dx7interface.cc:1019 ../src/dx7interface.cc:1028
 msgid " from origin bank."
-msgstr ""
+msgstr " depuis la banque d'origine."
 
-#: ../src/dx7interface.cc:1011
+#: ../src/dx7interface.cc:1028
 msgid "Restore sound: "
-msgstr ""
+msgstr "Réstauration du son: "
 
-#: ../src/dx7interface.cc:1048
+#: ../src/dx7interface.cc:1065
 msgid "Replaced sound: "
-msgstr ""
+msgstr "Remplacement du son: "
 
-#: ../src/dx7interface.cc:1057
+#: ../src/dx7interface.cc:1074
 msgid " With: "
-msgstr ""
+msgstr " Avec: "
 
-#: ../src/dx7interface.cc:1237
+#: ../src/dx7interface.cc:1254
 msgid "Insert Sound(s) at"
-msgstr ""
+msgstr "Insertion du/des son(s) a la position"
 
-#: ../src/dx7interface.cc:1382 ../src/dx7interface.cc:1447
+#: ../src/dx7interface.cc:1399 ../src/dx7interface.cc:1464
 msgid " Error writing to file: \n"
-msgstr ""
+msgstr " Erreur à l'ecriture du fichier: \n"
 
 #.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. * std::string msg_err = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
 #. *                     + _("Cannot construct bulk1") + "\n\t"
 #. *                     + _("Reason: ") + ex.what();
-#.
-#.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
-#. *                     + _("Cannot construct bulk1") + "\n\t"
-#. *                     + _("Reason: ") + ex.what();
-#.
-#.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
-#. *                     + _("Cannot construct bulk1") + "\n\t"
-#. *                     + _("Reason: ") + ex.what();
-#.
-#.
-#. * std::string err_msg = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
-#. *                     + _("Cannot construct bulk1") + "\n\t"
-#. *                     + _("Reason: ") + ex.what();
-#.
-#: ../src/dx7interface.cc:1640
+#: ../src/dx7interface.cc:1657
 msgid "Cannot construct bulk1"
-msgstr ""
+msgstr "Ne peut construire au format bulk 1"
 
-#: ../src/dx7interface.cc:1710
+#: ../src/dx7interface.cc:1727
 msgid "Cannot construct bulk32"
-msgstr ""
+msgstr ""Ne peut construire au format bulk 32"
 
-#: ../src/dx7interface.cc:1731
+#: ../src/dx7interface.cc:1748
 msgid "Cannot write file as sysex"
-msgstr ""
+msgstr "Ne peut écrire le fichier comme un SysEx"
 
-#: ../src/dx7interface.cc:1744
+#: ../src/dx7interface.cc:1761
 msgid "Cannot write file as raw"
-msgstr ""
+msgstr "Ne peut écrire le fichier comme un RAW"
 
-#: ../src/dx7interface.cc:1786
+#: ../src/dx7interface.cc:1803
 msgid "Cannot write extra parameters"
-msgstr ""
+msgstr "Ne peut écrire le fichier des parametres supplementaire"
 
 #. save current sound (0) in bank modif (old_snum)
-#. comment => Et origin
-#. save current sound (0) in bank modif (old_snum)
-#. comment => Et origin
-#. save current sound (0) in bank modif (old_snum)
-#. comment => Et origin
-#. save current sound (0) in bank modif (old_snum)
-#. comment => Et origin
-#: ../src/dx7interface.cc:1795
+#: ../src/dx7interface.cc:1812
 msgid "Saved voice: "
-msgstr ""
+msgstr "Sauvegarde du son: "
 
-#: ../src/dx7interface.cc:1795
+#: ../src/dx7interface.cc:1812
 msgid " in modif bank."
-msgstr ""
+msgstr " dans la banque modifiée."
 
-#: ../src/dx7interface.cc:1824
+#: ../src/dx7interface.cc:1841
 msgid " ??? "
 msgstr ""
 
-#: ../src/dx7interface.cc:2055
+#: ../src/dx7interface.cc:2072
 msgid "For voice: "
-msgstr ""
+msgstr "Pour le son: "
 
-#: ../src/dx7interface.cc:2055
+#: ../src/dx7interface.cc:2072
 msgid ""
 "\n"
 "\tParameters of function reads from file: "
 msgstr ""
+"\n"
+"\tParametres des assignations MIDI lus depuis le fichier: "
 
-#: ../src/dx7interface.cc:5280 ../src/dx7interface.cc:5437
-#: ../src/dx7interface.cc:5460
+#: ../src/dx7interface.cc:5297 ../src/dx7interface.cc:5454
+#: ../src/dx7interface.cc:5477
 msgid "File not found: "
-msgstr ""
+msgstr "Fichier non trouvé: "
 
-#: ../src/dx7interface.cc:5576
+#: ../src/dx7interface.cc:5593
 msgid "Monophonic"
 msgstr "Monophonique"
 
-#: ../src/dx7interface.cc:5578
+#: ../src/dx7interface.cc:5595
 msgid "Polyphonic"
 msgstr "Polyphonique"
 
-#: ../src/dx7interface.cc:5628
+#: ../src/dx7interface.cc:5645
 msgid "Follow"
-msgstr ""
+msgstr "Suivre"
 
-#: ../src/dx7interface.cc:5630
+#: ../src/dx7interface.cc:5647
 msgid "Retain"
-msgstr ""
+msgstr "Retenir"
 
-#: ../src/dx7interface.cc:6274
-#, fuzzy
+#: ../src/dx7interface.cc:6218
 msgid "/* OP "
-msgstr "/* Operateur 1 */"
+msgstr "/* Operateur"
 
-#: ../src/dx7interface.cc:6277
+#: ../src/dx7interface.cc:6221
 msgid " OP "
-msgstr ""
+msgstr " Operateur "
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:1
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:1
@@ -403,7 +313,7 @@ msgstr "Choisir une banque"
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:2
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:2
 msgid "Banque de sons :"
-msgstr ""
+msgstr "Banque de sons: "
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:3
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:3
@@ -563,12 +473,12 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:34
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:34
 msgid "SPEED"
-msgstr ""
+msgstr "VITESSE"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:35
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:35
 msgid "DELAY"
-msgstr ""
+msgstr "DELAI"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:36
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:36
@@ -633,7 +543,7 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:48
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:48
 msgid "Send extra param"
-msgstr ""
+msgstr "Envoi des paramtres de controlleur"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:49
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:49
@@ -643,7 +553,7 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:50
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:50
 msgid "CONTROLLER"
-msgstr ""
+msgstr "CONTROLLEUR"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:51
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:51
@@ -653,7 +563,7 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:52
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:52
 msgid "DETUNE"
-msgstr ""
+msgstr "DESACCORD"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:53
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:53
@@ -668,7 +578,7 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:55
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:55
 msgid "FIXED"
-msgstr ""
+msgstr "FIXE"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:56
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:56
@@ -698,7 +608,7 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:61
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:61
 msgid "OUTPUT"
-msgstr ""
+msgstr "SORTIE"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:62
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:62
@@ -733,22 +643,22 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:68
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:68
 msgid " Operateurs "
-msgstr ""
+msgstr " Operateurs "
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:69
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:69
 msgid "left"
-msgstr ""
+msgstr "gauche"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:70
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:70
 msgid "break point"
-msgstr ""
+msgstr "point de rupture"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:71
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:71
 msgid "right"
-msgstr ""
+msgstr "droite"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:72
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:72
@@ -783,17 +693,17 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:78
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:78
 msgid "panique"
-msgstr ""
+msgstr "panique"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:79
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:79
 msgid "randomize"
-msgstr ""
+msgstr "Aléatoire"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:80
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:80
 msgid "Fonction"
-msgstr ""
+msgstr "Fonction"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:81
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:81
@@ -803,22 +713,22 @@ msgstr ""
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:82
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:82
 msgid "128 voices"
-msgstr ""
+msgstr "128 voix"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:83
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:83
 msgid "32 voices"
-msgstr ""
+msgstr "32 voix"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:84
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:84
 msgid " from: "
-msgstr ""
+msgstr " depuis: "
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:85
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:85
 msgid "as RAW (128 Bytes per sound like in bulk32, without sysex header)"
-msgstr ""
+msgstr "comme RAW (128 Octets par son comme pour un bulk32, sans l'en-tete SysEx)"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:86
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:86
@@ -826,52 +736,35 @@ msgid ""
 "With 128 voices bank, if RAW is not selected, the bank will be split it into "
 "4x 32 voices bank to be compatible with Dx7 hardware"
 msgstr ""
+"Avec une banque 128 voix, si RAW n'est pas selectionné, la banque sera séparé en "
+"4 banques de 32 voix afin d'etre compatible avec le synthé physique Dx7"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:87
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:87
 msgid "add extra parameters"
-msgstr ""
+msgstr "Ajouté les parametres des controlleurs"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:88
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:88
 msgid "by bank"
-msgstr ""
+msgstr "par banque"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:89
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:89
 msgid "by sound"
-msgstr ""
+msgstr "par son"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:90
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:90
 msgid "Save midi learn configuration"
-msgstr ""
+msgstr "Sauvegarder la configuration d'apprentissage MIDI"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:91
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:91
 msgid "Insert at position: "
-msgstr ""
+msgstr "Inserer à la position: "
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:92
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:92
 msgid "select file"
-msgstr ""
-
-#~ msgid " OP1 "
-#~ msgstr " Operateur 1 "
-
-#, fuzzy
-#~ msgid " OP1"
-#~ msgstr " Operateur 1 "
-
-#, fuzzy
-#~ msgid "OP1"
-#~ msgstr " Operateur 1 "
-
-#, fuzzy
-#~ msgid "Select file"
-#~ msgstr "Choisir une banque"
-
-#, fuzzy
-#~ msgid "Select config"
-#~ msgstr "Choisir une banque"
+msgstr "Selectionner un fichier"
