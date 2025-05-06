@@ -3,6 +3,7 @@
 - [HOWTO](#howto)
 	- [Linux](#linux)
 	- [Windows](#windows)
+	- [Sources](#sources)
 - [Licences](#license)
 - [Contact](#contact)
 
@@ -49,12 +50,68 @@ GxInterface/Gxmodule provides it's base functions such as:
 
 # HOWTO
 ## Linux
+Supported Distribution:
+- Archlinux / Manjaro:
+[PKGBUILD Gxinterface](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD?raw=true)
+[PKGBUILD Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4dx7interface/PKGBUILD?raw=true)
+- Debian 12 / Ubuntu 24.04:
+	using checkinstall
+
 ## Windows
-Version Debug console:
+Windows 10 version:
 - Direct Download link:
- 	[Installeur Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface_debug_console.exe?raw=true)
-  
-	![dx7interface avec console de debug](https://github.com/user-attachments/assets/78956483-d185-4516-9482-534118454dd0)
+[Installeur Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface.exe?raw=true)
+
+- Version Debug console:
+	- Direct Download link:
+[Installeur Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface_debug_console.exe?raw=true)
+
+![dx7interface avec console de debug](https://github.com/user-attachments/assets/78956483-d185-4516-9482-534118454dd0)
+
+## Sources
+
+You need: 
+- common DEV:
+	- base-devel (Arch:  , UCRT64: >=2024.11-1) or build-essential >= 12.9 ( gcc make ... )
+	- GNU autotool: autogen >= 5.18 / autoconf >= 2.71 / automake >= 1.16
+	- intltool >= 0.51 and gettext >= 0.21 
+	- glib-gettextize => 2.74:
+		- archlinux: glib2-dev
+		- debian: libglib2.0-dev
+		- ucrt64: ucrt64/mingw-w64-ucrt-x86_64-glib2
+	- libtool >= 2.4.7
+	- aclocal >= 1.16
+		- Archlinux: 
+		- Debian: included in automake
+		- Windows: msys/automake-wrapper 20240607-1
+	- m4 >= 1.4.19
+	- gtkmm-4.0 >= 4.8.0 / glibmm-2.68 >= 2.68 (lib...-dev for Debian like)
+	- cairomm-1.16 >= 1.16 / pangomm-2.48 >= 2.48  (lib...-dev for Debian like)
+	- libsigc++-3.0 >= 3.4.0  (-dev for Debian like)
+	- pthread:
+		- Windows ucrt64: ucrt64/mingw-w64-ucrt-x86_64-winpthreads-git >=  12.0.0.r679
+		- Debian: included in libc ( optionnel libpthread-stubs0-dev >= 0.4.1 )
+		- Archlinux:
+	- packager:
+		- Archlinux: makepkg devtools git
+		- Manjaro:   manjaro-tools-base manjaro-tools-pkg
+		- Debian/Ubuntu:  checkinstall >= 1.6.2
+		- Windows: NSIS mingw-w64-ucrt-x86_64-nsis >= 3.11.1
+- dx7interface:
+	- Archlinux: alsa-lib 
+	- Debian/Ubuntu: libasound2-dev >= 1.2.8
+	- Windows: mingw-w64-ucrt-x86_64-rtmidi >= 6.0.0-3
+
+## Devellopement environment:
+- Kdevelop for Linux:
+
+- VS code for windows build with ucrt64:
+Change path (D:\\crosscompile\\msys2) in files of .vscode directory with your msys2 directory.
+
+[VSCODE config](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode)
+
+## By hand
+
 
 # Licences
 GPL-v3
