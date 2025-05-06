@@ -77,7 +77,7 @@ using [Checkinstall](#debian--ubuntu)
 
 **Run**:\
 Once installed you can run it by menu or start it from terminal as:\
-<code>$ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>\
+<code>$ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
 
 <u>Gxinterface / Dx7interface start options are</u>:\
 **Colorise section title**\
@@ -159,7 +159,7 @@ After cloning the repo, in files of [.vscode directory](https://github.com/Benje
 
 ### <u>BY HAND:</u>
 **It is recommanded to go through makepkg or checkinstall**\
-There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD-gx) and [**PKGBUILD-dx**](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/PKGBUILD-dx) that use your local git directory to build\
+There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD-gx) and [**PKGBUILD-dx**](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/PKGBUILD-dx) that use your local git directory to build
 
 
 #### BUILDING IT
@@ -180,22 +180,22 @@ There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/g
 you can run both gxinterface and dx7interface without need of installation, but dx7interface need libs and headers from gxinterface to build.\
 	<code>$ make install </code>
 ##### <u>By packager</u>:
-- **Archlinux** / **Manjaro**:
-	- <u>for gxinterface</u>:\
+###### - **Archlinux** / **Manjaro**:
+- <u>for gxinterface</u>:\
 	<code>$ cd to_build_directory</code>\
 	<code>$ cp from_git_directory/gxinterface/PKGBUILD PKGBUILD-GX</code>\
 	<code>makepkg -sfip PKGBUILD-GX</code>
-	- <u>for dx7interface:</u>\
+- <u>for dx7interface:</u>\
 	<code>$ cd to_build_directory</code>\
 	<code>$ cp from_git_directory/dx7interface/PKGBUILD PKGBUILD-DX</code>\
-	<code>makepkg -sfip PKGBUILD-DX</code>
-- <u>**Debian** / **Ubuntu**:</u>
-	- <u>for gxinterface</u>:\
+	<code>$ makepkg -sfip PKGBUILD-DX</code>
+###### - <u>**Debian** / **Ubuntu**:</u>
+- <u>for gxinterface</u>:\
 	<code>$ cd to_git_clone_directory/gxinterface</code>\
-	<code>$sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
-	- <u>for Dx7interface</u>:\
+	<code>$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
+- <u>for Dx7interface</u>:\
 	<code>$ cd cd to_git_clone_directory/dx7interface</code>\
-	<code>$sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
+	<code>$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
 
 
 #### RUN from source

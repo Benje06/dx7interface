@@ -5,6 +5,7 @@
 page html
 normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
+README.md add iconv 
 
 ## BUGS
 Ouverture fichier .ins
