@@ -33,8 +33,12 @@ rm -f config.cache acconfig.h
 
 rep=`pwd`
 pname=${rep##/*/}
-#ACLOCAL_FLAGS="-I /usr/share/aclocal -I /usr/share/gettext/m4 $ACLOCAL_FLAGS"
-ACLOCAL_FLAGS="-I ${prefix_path}/share/aclocal -I /usr/share/gettext/m4 $ACLOCAL_FLAGS"
+
+if [[ ${MSYSTEM} == "UCRT64" ]]; then
+    ACLOCAL_FLAGS="-I ${prefix_path}/share/aclocal $ACLOCAL_FLAGS"
+else
+    ACLOCAL_FLAGS="-I ${prefix_path}/share/aclocal -I /usr/share/gettext/m4 $ACLOCAL_FLAGS"
+fi
 (test -f $srcdir/configure.ac) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
     echo " top-level package directory"
