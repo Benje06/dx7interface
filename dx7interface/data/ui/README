@@ -1,21 +1,21 @@
-dx7interface-0.0.1.ui	Dx7interface interface ui file :
+Dx7interface interface ui file :
 						
 			COPYRIGHT AND LICENSE INFORMATION FOR .UI FILES
 
-			* The following .ui file are part of Dx7interface.  All are licensed under the
+			* The following .ui files are part of Dx7interface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
 
-			File: libdx7interface-0.0.1.ui
-			  Author: BENHAÏM Jérôme
-			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+			File: dx7interface-0.0.1-simplify.ui, dx7interface-0.0.1-simplify_4.8.ui
+			  Author: Thiémonge Jean-Michel, BENHAÏM Jérome
+			  Copyright (C) 2010-2025 Thiémonge Jean-Michel, BENHAÏM Jérome.
 			  
-themes.css		Dx7interface interface theme file :
+Dx7interface interface theme file :
 						
-			COPYRIGHT AND LICENSE INFORMATION FOR .UI FILES
+			COPYRIGHT AND LICENSE INFORMATION FOR .CSS FILES
 
-			* The following .ui file are part of Dx7interface.  All are licensed under the
+			* The following .css file are part of Dx7interface.  All are licensed under the
 			  GNU General Public License version 3 (see COPYING) or later.
 
-			File: libgxsynth-0.0.1.ui
-			  Author: BENHAÏM Jérôme
-			  Copyright (C) 2010-2024 BENHAÏM Jérôme.
+			File: theme.css
+			  Author: Thiémonge Jean-Michel, BENHAÏM Jérome
+			  Copyright (C) 2010-2025 Thiémonge Jean-Michel, BENHAÏM Jérome.
