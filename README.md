@@ -12,8 +12,7 @@
 
 # Introduction
 **Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer \
-and it's derivated such as **Tx816 Tx216** as well as their **emulators** \
-as long as they accept **SysEx messaging**\
+and it's derivated such as **Tx816 Tx216** as well as their **emulators** as long as they accept **SysEx messaging**\
 and manage **sounds banks**.
 
 # Description
@@ -24,7 +23,7 @@ It has a **MIDI Learn** function for this, with the **load** and **save** of the
 ADSR and Pitch **curves** are editable by **mouse controls**.\
 You can **start** it with a **specified color** to quickly **identify** it.
 
-It support:
+It supports:
 - **controller parameters**:
 	- by sound in **TF1 mode** (Tx816/216)
 	- by bank in **native mode** of the Dx7.
@@ -47,16 +46,30 @@ It can be **customised** as long as you **preserving** the **object type** and t
 - and **Custom font** load support
 
 As **Dx7interface** is a **plugin/module** (Glib::Gmodule) it rely on **GxInterface** as it's **module loader**.\
-It is a **derivated** from **GxModule** which come from Gxinterface.\
-**GxInterface/Gxmodule** provides it's **base functions** such as: 
+It is a **derivated** from:
+- **GxModule**, which come from Gxinterface
+- **Synth** which hold all the Midi functions
+
+**GxInterface/Gxmodule** provides it's **base functions** such as:
 - **Create/Load** Modules
 - **Present** Dialogs/Windows for Load/Save/Messages
-- DataStream for **Read/Write**
+- **Read/Write** by Bytes using DataStream
 - **Gettings** Ui widget
 - **Setting Style** (Font/Theme)
 - **Command line** options
 - **Log** Manager
 - **Threads**
+
+**Dx7interface** provides:
+- the definition of the sysex format for the Dx7 and Tx816/Tx216
+- the definition of the messages
+- the definition of read parsing and write structures
+- the parsing itself
+- the link between the ui and functions using callback and events
+- the sounds bank management
+- the draw function (have to be moove somewhere else to be reusable)
+- the midi learn function (have to be mooved somewhere else to be reusable)
+
 
 # HOWTO
 ## Windows
