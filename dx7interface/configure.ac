@@ -60,7 +60,7 @@ AM_CONDITIONAL([PLATFORM_LINUX], [test x$platform_win32 = xno])
 
 ifdef('lt_option',
     [LT_INIT([lt_option])],
-    [LT_INIT([shared])])
+    [LT_INIT])
 
 AC_C_INLINE
 AC_PROG_CC
