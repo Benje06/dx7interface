@@ -278,7 +278,7 @@
                 "$gcc"
             ],
             "dependsOn": [
-                "DX CLEAN"
+                "DX CLean"
             ],
             "group": "none",
             "detail": "Full clean of sources",

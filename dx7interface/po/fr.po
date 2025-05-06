@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-06 04:30+0200\n"
+"POT-Creation-Date: 2025-05-06 14:08+0200\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -271,31 +271,31 @@ msgstr "Reçue"
 msgid "Buffer size of received bank: "
 msgstr "Taille du tampon memoire de la banque reçue: "
 
-#: ../src/dx7interface.cc:1019
+#: ../src/dx7interface.cc:1018
 msgid "Restore bank: "
 msgstr "Restauration de la banque son: "
 
-#: ../src/dx7interface.cc:1019 ../src/dx7interface.cc:1028
+#: ../src/dx7interface.cc:1018 ../src/dx7interface.cc:1027
 msgid " from origin bank."
 msgstr " depuis la banque d'origine."
 
-#: ../src/dx7interface.cc:1028
+#: ../src/dx7interface.cc:1027
 msgid "Restore sound: "
 msgstr "Réstauration du son: "
 
-#: ../src/dx7interface.cc:1065
+#: ../src/dx7interface.cc:1064
 msgid "Replaced sound: "
 msgstr "Remplacement du son: "
 
-#: ../src/dx7interface.cc:1074
+#: ../src/dx7interface.cc:1073
 msgid " With: "
 msgstr " Avec: "
 
-#: ../src/dx7interface.cc:1254
+#: ../src/dx7interface.cc:1253
 msgid "Insert Sound(s) at"
 msgstr "Insertion du/des son(s) a la position"
 
-#: ../src/dx7interface.cc:1399 ../src/dx7interface.cc:1464
+#: ../src/dx7interface.cc:1398 ../src/dx7interface.cc:1463
 msgid " Error writing to file: \n"
 msgstr " Erreur à l'ecriture du fichier: \n"
 
@@ -319,23 +319,23 @@ msgstr " Erreur à l'ecriture du fichier: \n"
 #. *                     + _("Cannot construct bulk1") + "\n\t"
 #. *                     + _("Reason: ") + ex.what();
 #.
-#: ../src/dx7interface.cc:1657
+#: ../src/dx7interface.cc:1656
 msgid "Cannot construct bulk1"
 msgstr "Ne peut construire au format bulk 1"
 
-#: ../src/dx7interface.cc:1727
+#: ../src/dx7interface.cc:1726
 msgid "Cannot construct bulk32"
 msgstr "Ne peut construire au format bulk 32"
 
-#: ../src/dx7interface.cc:1748
+#: ../src/dx7interface.cc:1747
 msgid "Cannot write file as sysex"
 msgstr "Ne peut écrire le fichier comme un SysEx"
 
-#: ../src/dx7interface.cc:1761
+#: ../src/dx7interface.cc:1760
 msgid "Cannot write file as raw"
 msgstr "Ne peut écrire le fichier comme un RAW"
 
-#: ../src/dx7interface.cc:1803
+#: ../src/dx7interface.cc:1802
 msgid "Cannot write extra parameters"
 msgstr "Ne peut écrire le fichier des parametres supplementaire"
 
@@ -347,23 +347,23 @@ msgstr "Ne peut écrire le fichier des parametres supplementaire"
 #. comment => Et origin
 #. save current sound (0) in bank modif (old_snum)
 #. comment => Et origin
-#: ../src/dx7interface.cc:1812
+#: ../src/dx7interface.cc:1811
 msgid "Saved voice: "
 msgstr "Sauvegarde du son: "
 
-#: ../src/dx7interface.cc:1812
+#: ../src/dx7interface.cc:1811
 msgid " in modif bank."
 msgstr " dans la banque modifiée."
 
-#: ../src/dx7interface.cc:1841
+#: ../src/dx7interface.cc:1840
 msgid " ??? "
 msgstr ""
 
-#: ../src/dx7interface.cc:2072
+#: ../src/dx7interface.cc:2071
 msgid "For voice: "
 msgstr "Pour le son: "
 
-#: ../src/dx7interface.cc:2072
+#: ../src/dx7interface.cc:2071
 msgid ""
 "\n"
 "\tParameters of function reads from file: "
@@ -371,32 +371,32 @@ msgstr ""
 "\n"
 "\tParametres des assignations MIDI lus depuis le fichier: "
 
-#: ../src/dx7interface.cc:5297 ../src/dx7interface.cc:5454
-#: ../src/dx7interface.cc:5477
+#: ../src/dx7interface.cc:5296 ../src/dx7interface.cc:5453
+#: ../src/dx7interface.cc:5476
 msgid "File not found: "
 msgstr "Fichier non trouvé: "
 
-#: ../src/dx7interface.cc:5593
+#: ../src/dx7interface.cc:5592
 msgid "Monophonic"
 msgstr "Monophonique"
 
-#: ../src/dx7interface.cc:5595
+#: ../src/dx7interface.cc:5594
 msgid "Polyphonic"
 msgstr "Polyphonique"
 
-#: ../src/dx7interface.cc:5645
+#: ../src/dx7interface.cc:5644
 msgid "Follow"
 msgstr "Suivre"
 
-#: ../src/dx7interface.cc:5647
+#: ../src/dx7interface.cc:5646
 msgid "Retain"
 msgstr "Retenir"
 
-#: ../src/dx7interface.cc:6218
+#: ../src/dx7interface.cc:6217
 msgid "/* OP "
 msgstr "/* Operateur"
 
-#: ../src/dx7interface.cc:6221
+#: ../src/dx7interface.cc:6220
 msgid " OP "
 msgstr " Operateur "
 

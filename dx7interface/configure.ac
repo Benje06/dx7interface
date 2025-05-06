@@ -187,7 +187,7 @@ AM_COND_IF([WINDOWS_CONSOLE],[
 if test x$platform_win32 == xyes; then
 CXXFLAGS="$CXXFLAGS -mwindows"
 AC_SUBST(CXXFLAGS)
-endif
+fi
 ])
 dnl ================================================================
 dnl Check for GDK Quartz and MacOSX integration package 
