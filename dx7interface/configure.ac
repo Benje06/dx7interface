@@ -53,8 +53,6 @@ AS_CASE([$host_os],
     ]
 )
 
-dnl CXXFLAGS="$CXXFLAGS -mwindows"
-dnl AC_SUBST(CXXFLAGS)
 
 AM_CONDITIONAL([PLATFORM_WINDOWS], [test x$platform_win32 = xyes])
 AM_CONDITIONAL([PLATFORM_LINUX], [test x$platform_win32 = xno])
