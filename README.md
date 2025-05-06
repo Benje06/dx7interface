@@ -72,46 +72,82 @@ Windows 10 version:
 
 You need: 
 - common DEV:
-	- base-devel (Arch:  , UCRT64: >=2024.11-1) or build-essential >= 12.9 ( gcc make ... )
+	- base-devel (Arch: 1-2 , UCRT64: >=2024.11-1) or build-essential >= 12.9 ( gcc make ... )
 	- GNU autotool: autogen >= 5.18 / autoconf >= 2.71 / automake >= 1.16
 	- intltool >= 0.51 and gettext >= 0.21 
 	- glib-gettextize => 2.74:
-		- archlinux: glib2-dev
-		- debian: libglib2.0-dev
-		- ucrt64: ucrt64/mingw-w64-ucrt-x86_64-glib2
+		- Archlinux: glib2 >= 2.82.4
+		- Debian: libglib2.0-dev
+		- Windows: ucrt64/mingw-w64-ucrt-x86_64-glib2
 	- libtool >= 2.4.7
 	- aclocal >= 1.16
-		- Archlinux: 
+		- Archlinux: included in automake
 		- Debian: included in automake
 		- Windows: msys/automake-wrapper 20240607-1
 	- m4 >= 1.4.19
-	- gtkmm-4.0 >= 4.8.0 / glibmm-2.68 >= 2.68 (lib...-dev for Debian like)
+	- gtkmm-4.0 >= 4.8.0 / glibmm-2.68 >= 2.68     (lib...-dev for Debian like)
 	- cairomm-1.16 >= 1.16 / pangomm-2.48 >= 2.48  (lib...-dev for Debian like)
-	- libsigc++-3.0 >= 3.4.0  (-dev for Debian like)
+	- libsigc++-3.0 >= 3.4.0  					   (lib...-dev for Debian like)
 	- pthread:
 		- Windows ucrt64: ucrt64/mingw-w64-ucrt-x86_64-winpthreads-git >=  12.0.0.r679
-		- Debian: included in libc ( optionnel libpthread-stubs0-dev >= 0.4.1 )
-		- Archlinux:
+		- Debian: included in glibc (optionnal: libpthread-stubs0-dev >= 0.4.1)
+		- Archlinux: glibc >= 2.41
 	- packager:
-		- Archlinux: makepkg devtools git
+		- Archlinux: makepkg git (optional: devtools)
 		- Manjaro:   manjaro-tools-base manjaro-tools-pkg
 		- Debian/Ubuntu:  checkinstall >= 1.6.2
 		- Windows: NSIS mingw-w64-ucrt-x86_64-nsis >= 3.11.1
 - dx7interface:
-	- Archlinux: alsa-lib 
+	- gxinterface >= 1.0.0
+	- Archlinux: alsa-lib >= 1.2.14
 	- Debian/Ubuntu: libasound2-dev >= 1.2.8
 	- Windows: mingw-w64-ucrt-x86_64-rtmidi >= 6.0.0-3
 
 ## Devellopement environment:
 - Kdevelop for Linux:
+Files provides env variables (kdev4 global) and launcher (kdev4 specific) for common actions those strating with D or DEBUG are flagged for debug with gdb inside kdevelop
+for both project gxinterface and dx7interface.
+[kdev4 global]()
+You have to change path in all .kdev4 files:
+	- "file:///home/jerome/dev/git/gtk4" to your git clone directory
+	- "/home/jerome/dev/build/" to your archlinux makepkg build directory
+	- gxinterface:
+[kdev4 specific](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/.kdev4/gxinterface.kdev4)
+	- dx7interface:
+[kdev4 specific](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/.kdev4/dx7interface.kdev4)
 
 - VS code for windows build with ucrt64:
 Change path (D:\\crosscompile\\msys2) in files of .vscode directory with your msys2 directory.
-
 [VSCODE config](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode)
 
 ## By hand
+it is recommanded to go through makepkg or checkinstall
+there is a PKGBUILD-GX that use your local git directory to build
+$ cd to/git_directory/[gxinterface|dx7interface]/
+### Reset sources
+$ make clean || true
+$ make discleanclean || true
+### AUTOGEN
+- for gxinterface:
+$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-maintainer-mode 
+- for dx7interface:
+$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-maintainer-mode --enable-alsa
+### MAKE
+$ make -j3
 
+### MAKE install (Optionnal)
+you can run both gxinterface and dx7interface without need of installation, but dx7interface need libs and headers from gxinterface to build
+$ make install 
+
+### RUN
+- gxinterface:
+$ cd to/git_directory/gxinterface/src
+$ ./gxinterface
+- dx7interface:
+cd to/git_directory/dx7interface/src
+$ ../../gxinterface/src/gxinterface -l 2 -m src/dx7interface-0.0.1.la
+or 
+$ gxinterface -l 2 -m src/dx7interface-0.0.1.la 
 
 # Licences
 GPL-v3

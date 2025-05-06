@@ -7,7 +7,7 @@ normalisation fichier ui (noms d'objets, l'element parent d'un module->box_main)
 normalisation gemod (notebook_main)(menu_add_module, menu_del_module); ->attach_signal 
 
 ## BUGS
-
+Ouverture fichier .ins
 
 ## Dossier DX7
 clean dossier ( sous repertoire: utilitaires(bouclemidi), instruments(.ins), banque de sons(.syx/.fct), controller(midilearn), ) 

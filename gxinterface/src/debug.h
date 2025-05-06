@@ -31,15 +31,15 @@
     #include <stdio.h>
     #ifdef __cplusplus
         #ifdef DEBUG_TOOL
-        #   define PRE_LOG(str1, str2, ...)     std::string(str1) + std::string("->") + std::string(str2)
-        #   define POST_LOG(str1, str2, ...)    std::string(str1) + std::string("<-") + std::string(str2)
+        #   define PRE_LOG(str1, str2, ...)    (std::string(str1) + std::string("->") + std::string(str2))
+        #   define POST_LOG(str1, str2, ...)   (std::string(str1) + std::string("<-") + std::string(str2))
         #   define TRACE(f, ...)   f "\n", ##__VA_ARGS__
         #   ifdef DEBUG_TOOL_AS_ERROR
-        #       define LOG_IN()  std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__
-        #       define LOG_OUT() std::string("<-  ") + __PRETTY_FUNCTION__
+        #       define LOG_IN()  (std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__)
+        #       define LOG_OUT() (std::string("<-  ") + __PRETTY_FUNCTION__)
         #   else
-        #       define LOG_IN()  std::string(" -> ") + __func__
-        #       define LOG_OUT() std::string("<-  ") + __func__
+        #       define LOG_IN()  (std::string(" -> ") + __func__)
+        #       define LOG_OUT() (std::string("<-  ") + __func__)
         #   endif /* DEBUG_TOOL_AS_ERROR */
         #else  /* NOT DEBUG_TOOL */
         #   define PRE_LOG(str1, str2)  (void)(0)

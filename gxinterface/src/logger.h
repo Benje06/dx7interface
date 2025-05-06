@@ -1,7 +1,7 @@
 #pragma once
 #ifndef LOGGER_H
     #define LOGGER_H
-    #if defined(_WIN32)
+    #if defined(__WIN32) || defined(__MINGW32__)
         #ifdef GXLOG_EXPORTS
             #define GXLOG __declspec(dllexport)
         #elif defined(GXLOG_IMPORTS)

@@ -15,7 +15,7 @@ Section "Installer"
   SetOutPath $INSTDIR
 
   WriteUninstaller "$INSTDIR\uninstall.exe"
-  File /r File /r /x ucrt64 "d:\gxinterface\package\*.*"
+  File /r /x ucrt64 "d:\gxinterface\package\*.*"
 
   CreateDirectory "$SMPROGRAMS\Dx7interface\debug"
   CreateShortcut "$SMPROGRAMS\Dx7interface\debug\Uninstall.lnk" "$INSTDIR\uninstall.exe"
