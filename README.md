@@ -8,7 +8,10 @@
 - [Contact](#contact)
 
 # Introduction
-**Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer and it's derivated such as **Tx816 Tx216** as well as **emulators** and manage **sounds banks**.
+**Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer \
+and it's derivated such as **Tx816 Tx216** as well as their **emulators** \
+as long as they accept **SysEx messaging**\
+and manage **sounds banks**.
 
 # Description
 Dx7interface is a **graphical interfaces** to edit sounds banks and drive the **Dx7** / **Tx216** / **Tx816** physical synth as well as their **emulators**.\
@@ -169,9 +172,12 @@ There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/g
 <code>$ make discleanclean || true</code>
 ##### AUTOGEN
 - for gxinterface:\
-<code>$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-maintainer-mode</code>
+<code>$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --disable-maintainer-mode</code>
 - for dx7interface:\
-<code>$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-maintainer-mode --enable-alsa</code>
+<code>$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --disable-maintainer-mode --enable-alsa</code>
+
+"--enable-console=1" enable for windows the start of the application in a coonsole.\
+"--enable-log=2" set the log precision : 0=no print, 1= print function name 2=function name + line + file.\
 ##### MAKE
 <code>$ make -j3</code>
 
