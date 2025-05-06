@@ -139,9 +139,12 @@ AC_ARG_ENABLE([console],
 esac],[console=false])
 AM_CONDITIONAL([WINDOWS_CONSOLE], [test x$console = xtrue])
 AM_COND_IF([WINDOWS_CONSOLE],[
- CXXFLAGS="$CXXFLAGS -mwindows"
-    AC_SUBST(CXXFLAGS)
-],[])
+],[
+if test x$plateform_win32 == xyes; then
+CXXFLAGS="$CXXFLAGS -mwindows"
+AC_SUBST(CXXFLAGS)
+fi
+])
 dnl ================================================================
 dnl Gettext stuff.
 dnl ================================================================
