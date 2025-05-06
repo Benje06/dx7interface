@@ -11,7 +11,7 @@ license=('GPL-2.0-or-later')
 depends=('libsigc++-3.0' 'glibmm-2.68' 'gtkmm-4.0' 'cairomm-1.16' 'pangomm-2.48')
 makedepends=('git' 'intltool' 'autoconf' 'autogen' 'automake' 'libtool' 'gettext' 'base-devel' 'm4')
 provides=(libgxlogmanager=$pkgver libgxthread=$pkgver)
-groups=gxmodules
+groups=(gxmodules)
 requireby=dx7interface
 replace=(${pkgname})
 source=("git+https://github.com/Benje06/dx7interface.git")
@@ -27,8 +27,8 @@ build() {
     echo ""
     echo "*** AUTOGEN / CONFIGURE ***"
     echo ""
-    echo "./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-console=0 --enable-log=3 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'"
-    ./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-console=0 --enable-log=3 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'
+    echo "./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-console=0 --enable-log=2 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'"
+    ./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-console=0 --enable-log=2 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'
     echo ""
     echo "*** MAKE ***"
     echo ""
