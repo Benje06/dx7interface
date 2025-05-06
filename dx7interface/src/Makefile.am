@@ -10,10 +10,14 @@ ACLOCAL_AMFLAGS = \
 	${ACLOCAL_FLAGS}
 
 ## DX7INTERFACE
+if PLATFORM_WINDOWS
 dx7interface_0_0_1_ladir=${datadir}/${PACKAGE_NAME}/${PACKAGE_VERSION}/
-
 dx7interface_0_0_1_la_LTLIBRARIES = \
 	dx7interface-0.0.1.la
+else
+lib_LTLIBRARIES = \
+	dx7interface-0.0.1.la
+endif
 
 ### LIB DX7 ####
 dx7interface_0_0_1_la_SOURCES = \
