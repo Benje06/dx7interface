@@ -237,7 +237,7 @@ msgstr "Ne peut construire au format bulk 1"
 
 #: ../src/dx7interface.cc:1727
 msgid "Cannot construct bulk32"
-msgstr ""Ne peut construire au format bulk 32"
+msgstr "Ne peut construire au format bulk 32"
 
 #: ../src/dx7interface.cc:1748
 msgid "Cannot write file as sysex"
