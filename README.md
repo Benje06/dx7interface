@@ -154,7 +154,7 @@ Files provides env variables (kdev4 global) and launcher (kdev4 specific)\
 To build it under windows you need [MSYS2/UCRT64](https://www.msys2.org/])\
 You can get [the installer](https://www.msys2.org/docs/installer/) and [documentation](https://www.msys2.org/docs/what-is-msys2/]) for MSYS2/UCRT64\
 I do a list of the package installed on UCRT64 to build the windows package.\
-This list [UCRT64 package list]() include more than necessary to build the package take it as an information.\
+This list [UCRT64 package list](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64_pkg_list.txt) include more than necessary to build the package take it as an information.\
 After cloning the repo, in files of [.vscode directory](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode), change path (D:\\crosscompile\\msys2) to your msys2 install directory and load the root git clone directory in vscode.
 
 ### <u>BY HAND:</u>
