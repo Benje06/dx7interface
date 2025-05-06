@@ -15,6 +15,7 @@ dx7interface_0_0_1_ladir=${datadir}/${PACKAGE_NAME}/${PACKAGE_VERSION}/
 dx7interface_0_0_1_la_LTLIBRARIES = \
 	dx7interface-0.0.1.la
 else
+libdir=${datadir}/${PACKAGE_NAME}/${PACKAGE_VERSION}/
 lib_LTLIBRARIES = \
 	dx7interface-0.0.1.la
 endif

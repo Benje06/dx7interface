@@ -15,8 +15,7 @@ AC_SUBST([LIB_VERSION], [0.0.1])
 
 AC_SUBST([MASTER_LOADER], [gxinterface])
 AC_SUBST([MASTER_LOADER_VERSION], [1.0.0])
-dnl PROGRAMNAME_LIBDIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
-dnl AC_SUBST([libdir],[$PROGRAMNAME_LIBDIR])
+
 
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -40,6 +39,8 @@ AS_CASE([$host_os],
         AC_DEFINE([PLATFORM_LINUX], [1], [Define if the platform is Linux])
         platform_linux=yes
         platform_win32=no
+        PROGRAMNAME_LIBDIR=[${datadir}/$PACKAGE_NAME/$PACKAGE_VERSION/]
+        AC_SUBST([libdir],[$PROGRAMNAME_LIBDIR])
     ],
     [mingw*|windows*|pw32*|cygwin*], [
         pkg_modules="glibmm-2.68 gtkmm-4.0 gthread-2.0 cairomm-1.16 gxinterface"
