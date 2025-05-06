@@ -3,9 +3,9 @@
 - [HOWTO](#howto)
 	- [Windows](#windows)
 	- [Linux](#linux)
-	- [Sources](#sources)
-- [Licence](#license)
-- [Contact](#contact)
+	- [Sources](#build-it-from-sources)
+- [Licenses](#licenses)
+- [Authors and Contributors](#authors-and-contributors)
 
 # Introduction
 **Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer \
@@ -215,9 +215,11 @@ you can run both gxinterface and dx7interface without need of installation, but 
 	or if gxinterface is installed\
 	<code>$ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so </code>
 
-# Licences
-Gxinterface and Dx7interface: Copyright (C) 2010-2025 under [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.html) except font an images see below.\
-Images and Font:
+# Licenses
+## Gxinterface and Dx7interface
+Copyright (C) 2010-2025 under [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.html)\
+except for font and images see below.
+## Images and Font
 - All Images (.png, .ico .svg) are under [Creative Common CC-By-SA](http://creativecommons.org/licenses/by-sa/3.0/)
 	- by Jean-Michel Thiémonge and Jérome Benhaïm:
 		- "icon_dx7interface.svg","dx7interface.png", "dx7interface.ico"
@@ -227,7 +229,7 @@ Images and Font:
 - Font:
 	- "Araster-fonts-6x8.ttf" is under [Creative Common CC-By-SA](http://creativecommons.org/licenses/by-sa/3.0/)
 		- by "DOS" see [licence](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/data/fonts/license.txt)
-# Authors and Contributor:
+# Authors and Contributors
 ## Authors:
 [THIÉMONGE Jean-Michel](https://github.com/jmechmech)\
 [BENHAÏM Jérome](https://github.com/Benje06)
