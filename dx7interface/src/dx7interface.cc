@@ -1012,7 +1012,6 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
 void Dx7interface::restore_origin(unsigned int type){
     LOG( LOG_IN() );
     block_ui();
-    msg_log;
     auto [bank_origin_src, bank_modif_src] = get_banks_source();
     std::visit([&](auto& bank_origin, auto& bank_modif) {
         if(type == BANK){
