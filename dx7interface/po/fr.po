@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dx7interface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-06 02:04+0200\n"
+"POT-Creation-Date: 2025-05-06 04:30+0200\n"
 "PO-Revision-Date: 2025-02-16 20:58+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -50,6 +50,9 @@ msgid "Reason: "
 msgstr "Reason: "
 
 #. Close the virtual input port
+#. Close the virtual input port
+#. Close the virtual input port
+#. Close the virtual input port
 #: ../src/synth.cc:120
 msgid "Disconnected MIDI input port: "
 msgstr "Déconnecté du port d'entrée MIDI: "
@@ -73,6 +76,15 @@ msgstr "Evenement MIDI: "
 #. High nibble indicates the event type
 #. Low nibble indicates the channel (1-based)
 #. Print event type and channel
+#. High nibble indicates the event type
+#. Low nibble indicates the channel (1-based)
+#. Print event type and channel
+#. High nibble indicates the event type
+#. Low nibble indicates the channel (1-based)
+#. Print event type and channel
+#. High nibble indicates the event type
+#. Low nibble indicates the channel (1-based)
+#. Print event type and channel
 #: ../src/synth.cc:456
 msgid "Event: "
 msgstr "Evenement MIDI: "
@@ -81,6 +93,49 @@ msgstr "Evenement MIDI: "
 msgid "Type: "
 msgstr "Type: "
 
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
+#. Synth::print_event_info(ev);
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
+#. Synth::print_event_info(ev);
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
+#. Synth::print_event_info(ev);
+#. Synth::print_event_info(ev);
+#. typedef union snd_seq_event_data {
+#. snd_seq_ev_raw8_t raw8;
+#. snd_seq_ev_raw32_t raw32;
+#. snd_seq_ev_queue_control_t queue;
+#. snd_seq_timestamp_t time;
+#. snd_seq_addr_t addr;
+#. snd_seq_connect_t connect;
+#. snd_seq_result_t result;
+#. } snd_seq_event_data_t;
 #. Synth::print_event_info(ev);
 #: ../src/synth.cc:459 ../src/dx7interface.cc:365 ../src/dx7interface.cc:373
 #: ../src/dx7interface.cc:388 ../src/dx7interface.cc:406
@@ -104,6 +159,13 @@ msgid ", Value: "
 msgstr ", Valeur: "
 
 #. Pitch Bend
+#. Combine MSB and LSB
+#. Pitch Bend
+#. Combine MSB and LSB
+#. Pitch Bend
+#. Combine MSB and LSB
+#. Pitch Bend
+#. Combine MSB and LSB
 #: ../src/synth.cc:488
 msgid "Value: "
 msgstr "Valeur: "
@@ -134,6 +196,13 @@ msgid "param: "
 msgstr "parametre: "
 
 #. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
+#. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
+#. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
+#. Synth::print_event_info(ev);
+#. event data type = snd_seq_ev_ctrl_t
 #: ../src/dx7interface.cc:413
 msgid "Channel : "
 msgstr "Canal: "
@@ -178,6 +247,9 @@ msgstr ""
 msgid "with format: "
 msgstr "avec le format: "
 
+#. std::string msg_err = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+#. std::string msg_err = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
+#. std::string msg_err = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
 #. std::string msg_err = "!!! " + std::string(__PRETTY_FUNCTION__) + _(" Failed to save file: !!!\n") + file->get_path() + "\n" + _("Reason => ") + ex.what();
 #: ../src/dx7interface.cc:761
 msgid "Failed to save file: "
@@ -231,6 +303,22 @@ msgstr " Erreur à l'ecriture du fichier: \n"
 #. * std::string msg_err = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
 #. *                     + _("Cannot construct bulk1") + "\n\t"
 #. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string msg_err = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. *                     + _("Cannot construct bulk1") + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string msg_err = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. *                     + _("Cannot construct bulk1") + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
+#.
+#. * std::string msg_err = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
+#. *                     + _("Cannot construct bulk1") + "\n\t"
+#. *                     + _("Reason: ") + ex.what();
+#.
 #: ../src/dx7interface.cc:1657
 msgid "Cannot construct bulk1"
 msgstr "Ne peut construire au format bulk 1"
@@ -252,6 +340,13 @@ msgid "Cannot write extra parameters"
 msgstr "Ne peut écrire le fichier des parametres supplementaire"
 
 #. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
+#. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
+#. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
+#. save current sound (0) in bank modif (old_snum)
+#. comment => Et origin
 #: ../src/dx7interface.cc:1812
 msgid "Saved voice: "
 msgstr "Sauvegarde du son: "
@@ -728,7 +823,8 @@ msgstr " depuis: "
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:85
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:85
 msgid "as RAW (128 Bytes per sound like in bulk32, without sysex header)"
-msgstr "comme RAW (128 Octets par son comme pour un bulk32, sans l'en-tete SysEx)"
+msgstr ""
+"comme RAW (128 Octets par son comme pour un bulk32, sans l'en-tete SysEx)"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:86
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:86
@@ -736,8 +832,9 @@ msgid ""
 "With 128 voices bank, if RAW is not selected, the bank will be split it into "
 "4x 32 voices bank to be compatible with Dx7 hardware"
 msgstr ""
-"Avec une banque 128 voix, si RAW n'est pas selectionné, la banque sera séparé en "
-"4 banques de 32 voix afin d'etre compatible avec le synthé physique Dx7"
+"Avec une banque 128 voix, si RAW n'est pas selectionné, la banque sera "
+"séparé en 4 banques de 32 voix afin d'etre compatible avec le synthé "
+"physique Dx7"
 
 #: ../data/ui/dx7interface-0.0.1-simplify.ui.h:87
 #: ../data/ui/dx7interface-0.0.1-simplify_4.8.ui.h:87
