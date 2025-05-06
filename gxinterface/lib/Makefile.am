@@ -62,7 +62,8 @@ libgxinterface_0_0_1_la_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/lib \
 	$(AM_CPPFLAGS) $(DEPS_CFLAGS) $(DEPS_CPPFLAGS) $(GTKMM_CFLAGS) $(GLIBMM_CFLAGS) \
-	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"
+	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\"\
+	-DGXLOG_IMPORTS
 
 if PLATFORM_LINUX
 libgxinterface_0_0_1_la_CPPFLAGS += \
