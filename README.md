@@ -232,15 +232,21 @@ you can run both gxinterface and dx7interface without need of installation, but 
 	<code>$ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so </code>
 
 # History
-This project was start in 2006, to made an interface for the configuration of Linux system, starting by the network it was called [GNetAdm](https://sourceforge.net/projects/gnetadm/) was made in C using glade and gtk2. The first goal was to load modules with customisable interface for each kind of "services" to configure them. Going through C with multithreading, modules and interface, all this dynamically was painfull so i moove it to C++.\
-This core give birth of Gxinterface, the module loader. In same time a musician friend Jean-Michel, user of a Dx7 Synth, pain to find how to simply edit the sound bank his synth. So we go through the idea to made an interface for it using gnetadm. It give birth of Dx7interface. We do it under c++ with gtk2 and glade.\
-It end in 2011 with a working version and a non working version for standalone mode (start dx7interface detached from gxinterface), it was hosted on [Savannah](https://savannah.nongnu.org/bzr/?group=gxinterface) using bzr and was doing basic stuff such as drive the synth with the ui.\
+This project was start in 2006, to made an interface for the configuration of Linux system.\
+Starting by the network it was called [GNetAdm](https://sourceforge.net/projects/gnetadm/) was made in C using glade and gtk2.\
+The first goal was to load modules with customisable interface for each kind of "services" to configure them.\
+Going through C with multithreading, modules and interface, all this dynamically was painfull so i moove it to C++.\
+This core give birth of Gxinterface, the module loader.\
+In same time a musician friend Jean-Michel, user of a Dx7 Synth, pain to find how to simply edit the sound bank his synth.\
+So we go through the idea to made an interface for it using gnetadm. It give birth of Dx7interface.\
+We do it under c++ with gtk2 and glade. It end in 2011 with a working version and a non working version for standalone mode (start dx7interface detached from gxinterface), it was hosted on [Savannah](https://savannah.nongnu.org/bzr/?group=gxinterface) using bzr and was doing basic stuff such as drive the synth with the ui.\
 [Hexter](https://github.com/theabolton/hexter) is, from this time, the reference emulator for this synth but the editor inside was the retro mode version, so we decide as it accept SysEx to drive it and as it can write files it was enough for us to get something functionnal.\
 At the start of 2025, i reopen the code and try to run it, but gtk2 and all was so pretty deprecated, so i decided to upgrade it to gtk3, at first to see how paintfull it could be, with the goal of gtk4.\
-Supprissingly it was not so, which made me thing the core and concept was good enough. So after mooving it to gtk3 ([last bzr commit](https://bzr.savannah.gnu.org/lh/gxinterface/changes/105?start_revid=105)), we moove the repository to the git version and add a new [branch gtk4](https://git.savannah.nongnu.org/cgit/gxinterface.git).\
+Supprissingly it was not so, which made me thing the core and concept was good enough.\
+So after mooving it to gtk3 ([last bzr commit](https://bzr.savannah.gnu.org/lh/gxinterface/changes/105?start_revid=105)), we moove the repository to the git version and add a new [branch gtk4](https://git.savannah.nongnu.org/cgit/gxinterface.git).\
 We adding stuff step by step, like drawable, mouse editable, saving file, midi learn, compare, edit menu. In parallele we correct bugs, and update core, we moove generic function to the core, put the midi part in a separate class, trying to more specialize class, and detach UI stuff from functionnality as much as we can.\
 And finnaly moove all the code here. ^^ \
-We hope you will enjoy this soft and his functionnality, to drive this mythics Synth from the 80's.\
+We hope you will enjoy this soft and his functionnality, to drive this mythics Synth from the 80's.
 
 # Thanks
 A big thanks to:
