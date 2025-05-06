@@ -182,10 +182,9 @@ AC_ARG_ENABLE([console],
 esac],[console=false])
 AM_CONDITIONAL([WINDOWS_CONSOLE], [test x$console = xtrue])
 AM_COND_IF([WINDOWS_CONSOLE],[
-],[
     CXXFLAGS="$CXXFLAGS -mwindows"
     AC_SUBST(CXXFLAGS)
-])
+],[])
 dnl ================================================================
 dnl Check for GDK Quartz and MacOSX integration package 
 dnl ================================================================
