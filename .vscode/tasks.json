@@ -16,6 +16,7 @@
                 "PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig",
                 "--disable-maintainer-mode",
                 "--enable-log=2",
+                "--enable-console=0",
                 "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
                 "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
@@ -189,6 +190,7 @@
                 "--disable-maintainer-mode",
                 "--enable-rtmidi",
                 "--enable-log=2",
+                "--enable-console=0",
                 "'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'",
                 "'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'"
             ],
