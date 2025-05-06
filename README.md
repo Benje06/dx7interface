@@ -75,25 +75,26 @@ Windows 10 version download:
 - **Debian 12** / **Ubuntu 24.04**:
 using [Checkinstall](#debian--ubuntu)
 
+**Run**:\
 Once installed you can run it by menu or start it from terminal as:\
-<code>$ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.la</code>\
+<code>$ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>\
 
 <u>Gxinterface / Dx7interface start options are</u>:\
 **Colorise section title**\
 <code>-c "html_color"</code> it colorise title section with the specified color to identify it visually.\
 Uses when you start multiple instance of the program.
-- <code>gxinterface -c "red" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.la</code>
-- <code>gxinterface -c "#e15a46" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.la</code>
+- <code>gxinterface -c "red" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
+- <code>gxinterface -c "#e15a46" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
 
 **Log level**\
 <code>-l [0|1|2]</code> to specify le log level.\
 <code>0=no log; 1=log to file; 2=log to file and console</code>
-- <code>gxinterface -l 0 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.la</code>
-- <code>gxinterface -l 2 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.la</code>
+- <code>gxinterface -l 0 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
+- <code>gxinterface -l 2 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
 
 **Load an element**\
-<code>-m filename.[ui|la|so|dll]</code> \
-<code>-m *.la</code> it's the common way to load a module, alternatively you can load the .so directly\
+<code>-m filename.[ui|so|la|dll]</code> \
+<code>-m *.so</code> it's the common way to load a module, alternatively you can load the .la too\
 <code>-m *.dll</code> is use for windows version\
 <code>-m *.ui</code> is to load an xml file as it's main interface but no code is attached to this.\
 It's use to see modification on the an ui file. You will never use it until you made your own interface or a module.
@@ -204,9 +205,9 @@ you can run both gxinterface and dx7interface without need of installation, but 
 - **Dx7interface**:\
 	<code>cd to_git_directory/dx7interface/src</code>
 
-	<code>$ ../../gxinterface/src/gxinterface -l 2 -m src/dx7interface-0.0.1.la</code>\
+	<code>$ ../../gxinterface/src/gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so</code>\
 	or if gxinterface is installed\
-	<code>$ gxinterface -l 2 -m src/dx7interface-0.0.1.la </code>
+	<code>$ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so </code>
 
 # Licences
 GPL-v3
