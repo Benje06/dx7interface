@@ -140,7 +140,7 @@ esac],[console=false])
 AM_CONDITIONAL([WINDOWS_CONSOLE], [test x$console = xtrue])
 AM_COND_IF([WINDOWS_CONSOLE],[
 ],[
-if test x$plateform_win32 == xyes; then
+if test x$platform_win32 == xyes; then
 CXXFLAGS="$CXXFLAGS -mwindows"
 AC_SUBST(CXXFLAGS)
 fi
