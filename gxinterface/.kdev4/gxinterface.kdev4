@@ -31,7 +31,7 @@ Name=4Autogen
 Type=Script Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=--prefix=/usr --disable-maintainer-mode --enable-dev
+Arguments=--prefix=/usr --disable-maintainer-mode --enable-dev --enable-log=2 --enable-console=0
 EnvironmentGroup=GTK4
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/autogen.sh
 Execute on Remote Host=false
@@ -48,7 +48,7 @@ Name=4D_Autogen
 Type=Script Application
 
 [Launch][Launch Configuration 1][Data]
-Arguments=--prefix=/usr --disable-maintainer-mode --enable-dev
+Arguments=--prefix=/usr --disable-maintainer-mode --enable-dev  --enable-log=2 --enable-console=0
 EnvironmentGroup=GTK4_DBUG
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/autogen.sh
 Execute on Remote Host=false
