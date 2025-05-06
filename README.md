@@ -1,10 +1,10 @@
 - [Introduction](#introduction)
 - [Description](#about)
 - [HOWTO](#howto)
-	- [Linux](#linux)
 	- [Windows](#windows)
+	- [Linux](#linux)
 	- [Sources](#sources)
-- [Licences](#license)
+- [Licence](#license)
 - [Contact](#contact)
 
 # Introduction
@@ -216,5 +216,16 @@ you can run both gxinterface and dx7interface without need of installation, but 
 	<code>$ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so </code>
 
 # Licences
-GPL-v3
+Gxinterface and Dx7interface: under GPL-v3 except font an images see below.\
+Images and Font:\
+- All Images (.png, .ico .svg) are under [Creative Common CC-By-SA](http://creativecommons.org/licenses/by-sa/3.0/)
+	- by Jean-Michel Thiémonge and Jérome Benhaïm: 
+		- "icon_dx7interface.svg","dx7interface.png", "dx7interface.ico"
+		- "32_algo_dx732_algo_dx7_150*105px.svg", "algo[1-32].png"
+		- "lfo_wave_142*48px.svg", "SAW+.png", "SAW-.png", "SIN.png", "SQU.png", "S_HOLD.png", "TRI.png"
+		- "PianoKeyboard.svg", "keyboard.png", "keyboard_background.png", touche_b.png", "touche_w.png"
+
+- Font:
+	- “Araster-fonts-6x8.ttf” is under [Creative Common CC-By-SA](http://creativecommons.org/licenses/by-sa/3.0/)
+		- by "DOS" see [licence]((https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/data/fonts/license.txt)
 # Contact

@@ -1,27 +1,15 @@
-algo2.png
-		algo6.png
-		algo29.png
-		algo30.png
-		algo31.png
-		algo32.png
-		algo&wave.svg
-		SAW-.png
-		SAW+.png
-		S_HOLD.png
-		SIN.png
-		SQU.png
-		TRI.png :
-		
+	
 		COPYRIGHT AND LICENSE INFORMATION FOR IMAGE AND VECTORIEL FILES
 
-			* The following .png and .svg files are part of GxSynth.  All are licensed under the
-			  GNU General Public License version 3 (see COPYING) or later.
+			* The following .ico, .png and .svg files are part of Dx7interface.  All are licensed under the
+			  Creative Common CC-By-SA (http://creativecommons.org/licenses/by-sa/3.0/).
 
-			File: algo2.png	algo6.png algo29.png algo30.png	algo31.png
-				  algo32.png algo&wave.svg SAW-.png	SAW+.png S_HOLD.png
-				  SIN.png SQU.png TRI.png			 
-			  Author: BENHAÏM Jérôme
-			  Copyright (C) 2010 BENHAÏM Jérôme.
+			File:	"icon_dx7interface.svg","dx7interface.png", "dx7interface.ico"
+					"32_algo_dx732_algo_dx7_150*105px.svg", "algo[1-32].png"
+					"lfo_wave_142*48px.svg", "SAW+.png", "SAW-.png", "SIN.png", "SQU.png", "S_HOLD.png", "TRI.png"
+					"PianoKeyboard.svg", "keyboard.png", "keyboard_background.png", touche_b.png", "touche_w.png"		 
+			  Author: Thiémonge Jean-Michel, BENHAÏM Jérôme
+			  Copyright (C) 2010-2025 Thiémonge Jean-Michel, BENHAÏM Jérôme.
 			   
 		Makefile.am : 
 		
@@ -32,4 +20,4 @@ algo2.png
 
 			File: Makefile.am
 			  Author: BENHAÏM Jérôme
-			  Copyright (C) 2010 BENHAÏM Jérôme.
+			  Copyright (C) 2010-2025 BENHAÏM Jérôme.
