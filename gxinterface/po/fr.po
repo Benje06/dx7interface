@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxinterface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-06 01:53+0200\n"
+"POT-Creation-Date: 2025-05-06 03:01+0200\n"
 "PO-Revision-Date: 2025-02-17 01:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -16,6 +16,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#. force only supported mode
+#. force only supported mode
+#. force only supported mode
 #. force only supported mode
 #: ../src/main.cc:53 ../src/main.cc:64
 msgid "Interface graphic mode : "
@@ -46,7 +49,8 @@ msgid "Select Module .la, .so or .ui"
 msgstr "Choisir un module .la, .so ou .ui"
 
 #: ../src/gemod.cc:190
-msgid "Can't select module: "
+#, fuzzy
+msgid "Couldn't select module: "
 msgstr "Le module ne peut pas etre sélectionné: "
 
 #: ../src/gemod.cc:197
@@ -219,8 +223,8 @@ msgid ""
 " is not a valid value, shoudl be between 0(disable), 1(log file) and 2(log "
 "file + console)."
 msgstr ""
-" n'est pas une valeur valide, Devrait etre entre 0(désactivé), 1(journalisation fichier) et 2(journalisation "
-"fichier + console)."
+" n'est pas une valeur valide, Devrait etre entre 0(désactivé), "
+"1(journalisation fichier) et 2(journalisation fichier + console)."
 
 #: ../data/ui/interface.ui.h:1 ../data/ui/interface_4.8.ui.h:1
 msgid "Selected module : "
