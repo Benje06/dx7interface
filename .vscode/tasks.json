@@ -371,6 +371,16 @@
             }
         },
         {
+            "label": "Build PACKAGE DEBUG",
+            "type": "shell",
+            "command": "makensis script_debug.nsi",
+            "group": "none",
+            "detail": "Build PACKAGE DEBUG",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
             "label": "Build ALL",
             "type": "shell",
             "command": "makensis script.nsi",
@@ -394,7 +404,8 @@
             "dependsOn": [
                 "UCRT clean",
                 "Gxinterface: Full Build DEBUG",
-                "Dx7interface: Full Build DEBUG"
+                "Dx7interface: Full Build DEBUG",
+                "Build PACKAG DEBUG"
             ],
             "dependsOrder": "sequence",
             "group": "none",
