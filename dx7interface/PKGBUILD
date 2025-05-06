@@ -30,8 +30,8 @@ build() {
     echo ""
     echo "*** AUTOGEN / CONFIGURE ***"
     echo ""
-    echo "./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-alsa --enable-debug=0 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'"
-    ./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-alsa --enable-debug=0 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'
+    echo "./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-alsa --enable-console=0 --enable-log=3 'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'"
+    ./autogen.sh --prefix=/usr --disable-maintainer-mode --enable-alsa --enable-console=0 --enable-log=3'CFLAGS=-O3 -march=native -mtune=native -fassociative-math -freciprocal-math -Wno-unused-but-set-variable' 'CXXFLAGS=-O3 -march=native -mtune=native -Wno-unused-but-set-variable'
     echo ""
     echo "*** MAKE ***"
     echo ""
