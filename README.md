@@ -78,7 +78,7 @@ It is a **derivated** from:
 - **GxModule**, which come from Gxinterface
 - **Synth** which hold all the Midi functions
 
-**GxInterface/Gxmodule** provides it's **base functions** such as:
+**GxInterface/Gxmodule** provides the **base functions** such as:
 - **Create/Load** Modules
 - **Present** Dialogs/Windows for Load/Save/Messages
 - **Read/Write** by Bytes using DataStream

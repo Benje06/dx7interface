@@ -78,7 +78,7 @@ Il s'agit d'une **dérivée** de :
 - **GxModule**, venant de Gxinterface
 - **Synth**, qui contient toutes les fonctions Midi
 
-**GxInterface/Gxmodule** fournit ses **fonctions de base** telles que :
+**GxInterface/Gxmodule** fournit les **fonctions de base** telles que :
 - **Créer/Charger** des modules
 - **Présenter** des boîtes de dialogue/fenêtres pour le chargement/l'enregistrement/les messages
 - **Lecture/Écriture** par octets via DataStream
