@@ -35,16 +35,14 @@ And to manage **sounds banks**.
   </tr>
 </table>
 
-
-
-<ins>Just for the pleasure Jean-Michel on real Dx7 ^^</ins>:\
+<b>Just for the pleasure Jean-Michel on a real Dx7 ^^</b>:\
 <a href="https://youtu.be/IQYbie4J-yw" target="_blank">
   <img src="https://img.youtube.com/vi/IQYbie4J-yw/maxresdefault.jpg" width="400">
 </a>
 
 # Description
 Dx7interface is a **graphical interfaces** to edit sounds banks and drive the **Dx7** / **Tx216** / **Tx816** physical synth as well as their **emulators**.\
-It use **SysEx messages** and it's based on **alsa** sequencer (for **Linux**) and **rtmidi** + loopMIDI (for **Windows**).\
+It use **SysEx messages** and it's based on **Alsa** sequencer (for **Linux**) and **RtMidi** + loopMIDI (for **Windows**).\
 The interface is entirely driveable by **Control Change** (CC) and **Program Change** (PC).\
 It has a **MIDI Learn** function for this, with the **load** and **save** of the configuration from/to file.\
 ADSR and Pitch **curves** are editable by **mouse controls**.\
@@ -114,43 +112,56 @@ Windows 10 version download:
 ![dx7interface avec console de debug](https://github.com/user-attachments/assets/78956483-d185-4516-9482-534118454dd0)
 
 ## Linux
-**Supported Distribution**:
-- **Archlinux** / **Manjaro**: PKGBUILD for
+**Supported Distribution**:\
+It should run on any distribution until the specified version is respected.\
+The tested distributions are:
+- Arch Like: **Archlinux** / **Manjaro** with PKGBUILD for
 [Gxinterface](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD?raw=true) and
 [Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4dx7interface/PKGBUILD?raw=true)
-- **Debian 12** / **Ubuntu 24.04**:
-using [Checkinstall](#debian--ubuntu)
+- Debian like: **Debian 12** / **Ubuntu 24.04** using [Checkinstall](#debian--ubuntu)
 
 **Run**:\
-Once installed you can run it by menu or start it from terminal as:\
-<code>$ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
+Once installed you can run it by menu or start it from terminal as:
+```sh
+$ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
+```
 
-<ins>Gxinterface / Dx7interface start options are</ins>:\
-**Colorise section title**\
-<code>-c "html_color"</code> it colorise title section with the specified color to identify it visually.\
-Uses when you start multiple instance of the program.
-- <code>gxinterface -c "red" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
-- <code>gxinterface -c "#e15a46" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
+<ins>Gxinterface / Dx7interface start options are</ins>:
+- **Colorise section title**
+Uses when you start multiple instance of the program.\
+it colorise title section with the specified color to identify it visually.\
+<code>-c "color"</code> where color is html color code.
+```sh
+$ gxinterface -c "red" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
+$ gxinterface -c "#e15a46" -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
+```
 
-**Log level**\
-<code>-l [0|1|2]</code> to specify le log level.\
-<code>0=no log; 1=log to file; 2=log to file and console</code>
-- <code>gxinterface -l 0 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
-- <code>gxinterface -l 2 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
+- **Log level**
+to specify le log level.\
+<code>-l [0|1|2]</code>\
+<code>0=no log, 1=log to file, 2=log to file and console (default)</code>
+```sh
+gxinterface -l 0 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
+gxinterface -l 1 -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
+```
 
-**Load an element**\
-<code>-m filename.[ui|so|la|dll]</code> \
-<code>-m *.so</code> it's the common way to load a module, alternatively you can load the .la too\
-<code>-m *.dll</code> is use for windows version\
-<code>-m *.ui</code> is to load an xml file as it's main interface but no code is attached to this.\
-It's use to see modification on the an ui file. You will never use it until you made your own interface or a module.
-
+- **Load an element**\
+<code>-m filename.[so|la|dll]</code> \
+<code>-m *.so</code> the common way to load a module, alternatively you can load the .la too\
+<code>-m *.dll</code> same as .so for the Windows version\
+- **Load alternative main ui**\
+<code>-i *.ui</code> to load an xml file as **main interface** the code attached is those of gxinterface.\
+So the ui need at minimal :
+	- a Gtk::Window named "main_window"
+	- a Gtk::Button named "module_select"
+	- a Gtk::CheckButton named "checkbutton_standalone"
+	- a Gtk::Notebook named "notebook_main"
 
 ## Build it from Sources
 
-You need: 
+You'll need: 
 - **Common** DEV:
-	- **base-devel** (Arch: 1-2 , UCRT64: >=2024.11-1) or build-essential >= 12.9 ( gcc make ... )
+	- **base-devel** (Arch: 1-2 , UCRT64: >=2024.11-1) or **build-essential** >= 12.9 ( gcc make ... )
 	- GNU autotool: **autogen** >= 5.18 / **autoconf** >= 2.71 / **automake** >= 1.16
 	- **intltool** >= 0.51 and **gettext** >= 0.21 
 	- **glib-gettextize** => 2.74:
@@ -172,7 +183,7 @@ You need:
 		- Archlinux: glibc >= 2.41
 	- **Packager**:
 		- Archlinux: **makepkg** git (optional: devtools)
-		- Manjaro:   manjaro-tools-base manjaro-tools-pkg
+		- Manjaro:   **manjaro-tools-base** **manjaro-tools-pkg**
 		- Debian/Ubuntu:  **checkinstall** >= 1.6.2
 		- Windows: **NSIS** mingw-w64-ucrt-x86_64-nsis >= 3.11.1
 - **Dx7interface** specifc:
@@ -209,55 +220,81 @@ There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/g
 
 
 #### BUILDING IT
-<code>$ cd to_git_directory/[gxinterface|dx7interface]/</code>
+```sh
+$ cd to_git_clone_directory/[gxinterface|dx7interface]/
+```
 ##### RESET SOURCES
-<code>$ make clean || true</code>\
-<code>$ make disclean || true</code>
+```sh
+$ make clean || true
+$ make disclean || true
+```
 ##### AUTOGEN
-- for gxinterface:\
-<code>$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --disable-maintainer-mode</code>
-- for dx7interface:\
-<code>$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --disable-maintainer-mode --enable-alsa</code>
+- for gxinterface:
+```sh
+$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintainer-mode
+```
+- for dx7interface:
+```sh
+$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintainer-mode --enable-alsa
+```
+"--enable-console=1" enable for windows the start the application with a console. not used for linux.\
+"--enable-log=2" set the error log detail: 0=no detail, 1= print function name 2=function name + line + file. "--enable-log" differt from the start command line -l as it's just the details of  log level not the common message to log and where.\
+"--enable-alsa or --enable-rtmidi" use alsa for linux, rtmidi for windows. you dont need to specify --disable-alsa don't pass the flags just disable it.\
+"--[enable|disable]-maintainer-mode" it an [Automake maintainer mode](https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html) macro enable the rebuild of some files like configure script. 
 
-"--enable-console=1" enable for windows the start of the application in a coonsole.\
-"--enable-log=2" set the log precision : 0=no print, 1= print function name 2=function name + line + file.\
 ##### MAKE
-<code>$ make -j3</code>
-
+```sh
+$ make -j3
+```
+or alterntively replace 3 with the number of cpu less 1 or under linux <code>$(($(cat /proc/cpuinfo | grep -c ^processor) - 1))</code>
 #### INSTALL
-##### <ins>By Make install</ins>:
-you can run both gxinterface and dx7interface without need of installation, but dx7interface need libs and headers from gxinterface to build.\
-	<code>$ make install </code>
 ##### <ins>By packager</ins>:
 ###### - **Archlinux** / **Manjaro**:
-- <ins>for gxinterface</ins>:\
-	<code>$ cd to_build_directory</code>\
-	<code>$ cp from_git_directory/gxinterface/PKGBUILD PKGBUILD-GX</code>\
-	<code>makepkg -sfip PKGBUILD-GX</code>
-- <ins>for dx7interface:</ins>\
-	<code>$ cd to_build_directory</code>\
-	<code>$ cp from_git_directory/dx7interface/PKGBUILD PKGBUILD-DX</code>\
-	<code>$ makepkg -sfip PKGBUILD-DX</code>
+- <ins>for gxinterface</ins>:
+```sh
+$ cd to_build_directory/
+$ cp from_git_directory/gxinterface/PKGBUILD PKGBUILD-GX
+$ makepkg -sfip PKGBUILD-GX
+```
+- <ins>for dx7interface:</ins>
+```sh
+$ cd to_build_directory/
+$ cp from_git_directory/dx7interface/PKGBUILD PKGBUILD-DX
+$ makepkg -sfip PKGBUILD-DX
+```
 ###### - <ins>**Debian** / **Ubuntu**:</ins>
-- <ins>for gxinterface</ins>:\
-	<code>$ cd to_git_clone_directory/gxinterface</code>\
-	<code>$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
-- <ins>for Dx7interface</ins>:\
-	<code>$ cd cd to_git_clone_directory/dx7interface</code>\
-	<code>$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
+- <ins>for gxinterface</ins>:
+```sh
+$ cd to_git_clone_directory/gxinterface/
+$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y
+```
+- <ins>for Dx7interface</ins>:
+```sh
+$ cd cd to_git_clone_directory/dx7interface/
+$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y
+```
 
+##### <ins>By Make install</ins>:
+you can run both gxinterface and dx7interface without the need of installation, but dx7interface need libs and headers from gxinterface to build.
+```sh
+$ make install
+```
 
 #### RUN from source
-- **Gxinterface** alone:\
-	<code>$ cd to_git_directory/gxinterface/src</code>\
-	<code>$ ./gxinterface</code>
-- **Dx7interface**:\
-	<code>cd to_git_directory/dx7interface/src</code>
-
-	<code>$ ../../gxinterface/src/gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so</code>\
-	or if gxinterface is installed\
-	<code>$ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so </code>
-
+- **Gxinterface** alone:
+```sh
+$ cd to_git_directory/gxinterface/src/
+$ ./gxinterface
+```
+- **Dx7interface**:
+```sh
+$ cd to_git_directory/dx7interface/src/
+$ ../../gxinterface/src/gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so
+```
+or if gxinterface is installed
+```sh
+$ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so
+```
 # History
 This project was start in 2006, to made an interface for the configuration of Linux system.\
 Starting by the network it was called [GNetAdm](https://sourceforge.net/projects/gnetadm/) was made in C using glade and gtk2.\
