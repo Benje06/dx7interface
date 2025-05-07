@@ -62,7 +62,7 @@ aux formats **Bulk 1** et **Bulk 32**.
 - La **comparaison**, la **réstoration** d'un son ou d'une banque et **l'envoi** d'une banque.\
 L'envoi du son se fait lorsque vous sélectionnez un son.
 - Des **Canaux indépendants** pour l'**Entrée** et la **Sortie** MIDI.
-- Un **indicateur** dans la liste des pour les **sons modifiés**.
+- Un **indicateur** dans la liste pour les **sons modifiés**.
 - Une fonction **panique Midi**.
 - La **journalisation** dans un **fichier** et dans la **console**.
 
