@@ -35,7 +35,7 @@ And to manage **sounds banks**.
   </tr>
 </table>
 
-<b>Just for the pleasure Jean-Michel on a real Dx7 ^^</b>:\
+<b>Just for the pleasure Jean-Michel on a Dx7 ^^</b>\
 <a href="https://youtu.be/IQYbie4J-yw" target="_blank">
   <img src="https://img.youtube.com/vi/IQYbie4J-yw/maxresdefault.jpg" width="400">
 </a>
