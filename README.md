@@ -15,7 +15,7 @@
 and it's derivated such as **Tx816 Tx216** as well as their **emulators** as long as they accept **SysEx messaging**.\
 And manage **sounds banks**.
 
-Dx7interface with a Tx216\
+Video of Dx7interface with a Tx216\
 <a href="https://youtu.be/x17MPC53TIk" target="_blank">
   <img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
 </a>
