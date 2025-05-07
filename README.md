@@ -11,17 +11,35 @@
 - [Authors and Contributors](#authors-and-contributors)
 
 # Introduction
-**Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer \
-and it's derivated such as **Tx816 Tx216** as well as their **emulators** as long as they accept **SysEx messaging**.\
-And manage **sounds banks**.
+**Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer and it's derivated such as **Tx816 Tx216**\
+as well as their **emulators** like [Hexter](https://github.com/theabolton/hexter) or [Dexed](https://asb2m10.github.io/dexed/), as long as they accept **SysEx messaging**.\
+And to manage **sounds banks**.
 
-<ins>Video of Dx7interface with a Tx216</ins>:\
-<a href="https://youtu.be/x17MPC53TIk" target="_blank">
-  <img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
-</a>
-<a href="https://youtu.be/rE62dQA1REk" target="_blank">
-  <img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
-</a>
+<ins>Dx7interface with a Tx216 under Manjaro By Jean-Michel</ins>:
+<div align="center" style="display: flex; justify-content: left; margin:0 0;">
+  <div align="left" style="display: inline-block; margin: 0 20px;">
+    <div><b>Maiden Voyage (With a TX216 Yamaha)</b></div>
+    <a href="https://youtu.be/x17MPC53TIk" target="_blank">
+		<img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
+	</a>
+  </div>
+  <div align="left" style="display: inline-block; margin: 0 20px;">
+    <div><b>Demo of Dx7interface on a TX216</b></div>
+    <a href="https://youtu.be/rE62dQA1REk" target="_blank">
+  		<img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
+	</a>
+  </div>
+</div>
+<br>
+  
+<ins>Just for the pleasure Jean-Michel on real Dx7 ^^</ins>:
+<div align="left" style="justify-content: center; display: inline-block; margin: 0 20px;">
+	<div><b>Time After Time (Yamaha DX7 et behringer RD-8)</b></div>
+		<a href="https://youtu.be/IQYbie4J-yw" target="_blank">
+			<img src="https://img.youtube.com/vi/IQYbie4J-yw/maxresdefault.jpg" width="400">
+		</a>
+	</div>
+</div>
 
 # Description
 Dx7interface is a **graphical interfaces** to edit sounds banks and drive the **Dx7** / **Tx216** / **Tx816** physical synth as well as their **emulators**.\
