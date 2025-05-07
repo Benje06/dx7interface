@@ -12,8 +12,16 @@
 
 # Introduction
 **Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer \
-and it's derivated such as **Tx816 Tx216** as well as their **emulators** as long as they accept **SysEx messaging**\
-and manage **sounds banks**.
+and it's derivated such as **Tx816 Tx216** as well as their **emulators** as long as they accept **SysEx messaging**.\
+And manage **sounds banks**.
+
+Dx7interface with a Tx216\
+<a href="https://youtu.be/x17MPC53TIk" target="_blank">
+  <img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
+</a>
+<a href="https://youtu.be/rE62dQA1REk" target="_blank">
+  <img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
+</a>
 
 # Description
 Dx7interface is a **graphical interfaces** to edit sounds banks and drive the **Dx7** / **Tx216** / **Tx816** physical synth as well as their **emulators**.\
@@ -185,7 +193,7 @@ There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/g
 <code>$ cd to_git_directory/[gxinterface|dx7interface]/</code>
 ##### RESET SOURCES
 <code>$ make clean || true</code>\
-<code>$ make discleanclean || true</code>
+<code>$ make disclean || true</code>
 ##### AUTOGEN
 - for gxinterface:\
 <code>$ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --disable-maintainer-mode</code>
