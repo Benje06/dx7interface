@@ -2,15 +2,15 @@
 [English](README.md)
 
 - [Introduction](#introduction)
-- [Description](#about)
+- [Déscription](#déscription)
 - [HOWTO](#howto)
     - [Windows](#windows)
     - [Linux](#linux)
-    - [Sources](#build-it-from-sources)
+    - [Sources](#construction-à-partir-des-sources)
 - [Historique](#historique)
 - [Remerciements](#remerciements)
-- [Réferences](#references)
-- [Licences](#licences)
+- [Réferences](#références)
+- [Licenses](#licenses)
 - [Auteurs et Contributeurs](#auteurs-et-contributeurs)
 
 # Introduction
@@ -43,7 +43,7 @@ Elle permet aussi de gerer les **banques de sons**.
   <img src="https://img.youtube.com/vi/IQYbie4J-yw/maxresdefault.jpg" width="400">
 </a>
 
-# Description
+# Déscription
 Dx7interface est une **interface graphique** permettant d'éditer des banques de sons et de piloter les synthétiseurs physiques **Dx7** / **Tx216** / **Tx816** ainsi que leurs **émulateurs**.\
 Elle utilise des **messages SysEx** et est basée sur le séquenceur **Alsa** (pour **Linux**) et **RtMidi** + loopMIDI (pour **Windows**).\
 L'interface est entièrement pilotable par **Control Change** (CC) et **Program Change** (PC).\
@@ -106,7 +106,7 @@ Au démarrage, Dx7interface se connectera automatiquement à ces ports.\
 Vous devrez définir la taille maximale du sysex à au moins 4 096 kilo-octets dans la page avancée, ainsi les banques de 32 sons pouront être envoyées.\
 Une fois démarré, tout logiciel prenant en charge Direct Music le verra.
 
-Téelecargement de la version Windows:
+Télèchargement de la version Windows:
 - Installateur [Dx7interface sans console](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface.exe?raw=true)
 
 - Installateur [Dx7interface avec console](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface_debug_console.exe?raw=true)
@@ -120,7 +120,7 @@ Les distributions testées sont :
 - Arch Like: **Archlinux** / **Manjaro** avec les PKGBUILD pour
 [Gxinterface](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD?raw=true) et
 [Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4dx7interface/PKGBUILD?raw=true)
-- Debian like: **Debian 12** / **Ubuntu 24.04** en utilisant [Checkinstall](#debian--ubuntu)
+- Debian like: **Debian 12** / **Ubuntu 24.04** en utilisant [Checkinstall](#--debian--ubuntu)
 
 **Run**:\
 Une fois installé, vous pouvez l'exécuter via le menu ou la démarrer depuis le terminal ainsi:
@@ -298,7 +298,7 @@ or if gxinterface is installed
 $ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so
 ```
 
-# History
+# Historique
 Ce projet a débuté en 2006 pour créer une interface de configuration pour Linux.\
 En commencant par le réseau, il s'appelait [GNetAdm](https://sourceforge.net/projects/gnetadm/) et a été développé en C avec Glade et GTK2.\
 L'objectif premier était de charger des modules avec une interface personnalisable pour chaque type de « service » afin de les configurer.\
@@ -321,13 +321,13 @@ Et enfin, nous avons déplacé tout le code ici. ^^
 
 Nous espérons que vous apprécierez ce logiciel et ses fonctionnalités, pour piloter ce synthétiseur mythique des années 80.
 
-# Remerciement
+# Remerciements
 Un grand merci à:
 - [Thea Bolton](https://github.com/theabolton) pour avoir fait l'incroyable [Hexter](https://github.com/theabolton/hexter).
 - [Dave Benson](https://homepages.abdn.ac.uk/d.j.benson/pages/index.html) pour ses [pages de référence du synthétiseur physique](https://homepages.abdn.ac.uk/d.j.benson/pages/html/dx7.html)
 - [Tim Conrardy](http://tim-conrardy.last-memories.com/) pour sa page Atari Dx7 [tim's atari world](https://web.archive.org/web/20160308015913/http://tamw.atari-users.net/dx7.htm)
 
-# References
+# Références
 - Présentation\
 [Yamaha design Dx7](https://www.yamaha.com/en/tech-design/design/synapses/id_009)
 
@@ -355,8 +355,8 @@ A l'exception de la police et des images, voir ci-dessous.
 - Police:
     - "Araster-fonts-6x8.ttf" est sous [Creative Common CC-By-SA](http://creativecommons.org/licenses/by-sa/3.0/)
         - Par "DOS" voir la [license](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/data/fonts/license.txt)
-# Autheurs and Contributeurs
-## Autheurs:
+# Auteurs et Contributeurs
+## Auteurs:
 [THIÉMONGE Jean-Michel](https://github.com/jmechmech)\
 [BENHAÏM Jérome](https://github.com/Benje06)
 

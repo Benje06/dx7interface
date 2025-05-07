@@ -2,7 +2,7 @@
 [Français](README.fr.md)
 
 - [Introduction](#introduction)
-- [Description](#about)
+- [Description](#description)
 - [HOWTO](#howto)
 	- [Windows](#windows)
 	- [Linux](#linux)
@@ -121,7 +121,7 @@ The tested distributions are:
 - Arch Like: **Archlinux** / **Manjaro** with PKGBUILD for
 [Gxinterface](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD?raw=true) and
 [Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4dx7interface/PKGBUILD?raw=true)
-- Debian like: **Debian 12** / **Ubuntu 24.04** using [Checkinstall](#debian--ubuntu)
+- Debian like: **Debian 12** / **Ubuntu 24.04** using [Checkinstall](#--debian--ubuntu)
 
 **Run**:\
 Once installed you can run it by menu or start it from terminal as:
