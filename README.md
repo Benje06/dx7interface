@@ -17,10 +17,10 @@ And manage **sounds banks**.
 
 <ins>Video of Dx7interface with a Tx216</ins>:\
 <a href="https://youtu.be/x17MPC53TIk" target="_blank">
-  <img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="500">
+  <img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
 </a>
 <a href="https://youtu.be/rE62dQA1REk" target="_blank">
-  <img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="500">
+  <img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
 </a>
 
 # Description
