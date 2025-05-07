@@ -115,7 +115,7 @@ Télèchargement de la version Windows:
 
 ## Linux
 **Distribution supportées**:\
-Il devrait fonctionner sur n'importe quelle distribution du moment que les versions spécifiées sont respectées.\
+Il devrait fonctionner sur n'importe quelle distribution du moment que les [versions spécifiées](#construction-à-partir-des-sources) sont respectées.\
 Les distributions testées sont :
 - Arch Like: **Archlinux** / **Manjaro** avec les PKGBUILD pour
 [Gxinterface](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD?raw=true) et
