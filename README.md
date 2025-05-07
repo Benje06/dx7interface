@@ -15,8 +15,7 @@
 and it's derivated such as **Tx816 Tx216** as well as their **emulators** as long as they accept **SysEx messaging**.\
 And manage **sounds banks**.
 
-<u>Video of Dx7interface with a Tx216</u>:
-
+<ins>Video of Dx7interface with a Tx216</ins>:\
 <a href="https://youtu.be/x17MPC53TIk" target="_blank">
   <img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="500">
 </a>
@@ -107,7 +106,7 @@ using [Checkinstall](#debian--ubuntu)
 Once installed you can run it by menu or start it from terminal as:\
 <code>$ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so</code>
 
-<u>Gxinterface / Dx7interface start options are</u>:\
+<ins>Gxinterface / Dx7interface start options are</ins>:\
 **Colorise section title**\
 <code>-c "html_color"</code> it colorise title section with the specified color to identify it visually.\
 Uses when you start multiple instance of the program.
@@ -164,13 +163,13 @@ You need:
 		- Debian/Ubuntu: **libasound2-dev** >= 1.2.8
 		- Windows: **RtMidi** mingw-w64-ucrt-x86_64-rtmidi >= 6.0.0-3
 
-### Devellopement environment</u>:
-- <u>Kdevelop for Linux</u>:\
+### Devellopement environment</ins>:
+- <ins>Kdevelop for Linux</ins>:\
 Files provides env variables (kdev4 global) and launcher (kdev4 specific)\
  for common actions those strating with D or DEBUG are flagged for debug with gdb inside kdevelop
  for both project gxinterface and dx7interface.\
 [kdev4 global]()\
-<u>You have to change path in all .kdev4 files</u>:
+<ins>You have to change path in all .kdev4 files</ins>:
 	- "file:///home/jerome/dev/git/gtk4" to your git clone directory
 	- "/home/jerome/dev/build/" to your archlinux makepkg build directory
 	- gxinterface: 
@@ -178,14 +177,14 @@ Files provides env variables (kdev4 global) and launcher (kdev4 specific)\
 	- dx7interface:
 [kdev4 specific](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/.kdev4/dx7interface.kdev4)
 
-- <u>VS Code for windows build with ucrt64</u>:\
+- <ins>VS Code for windows build with ucrt64</ins>:\
 To build it under windows you need [MSYS2/UCRT64](https://www.msys2.org/])\
 You can get [the installer](https://www.msys2.org/docs/installer/) and [documentation](https://www.msys2.org/docs/what-is-msys2/]) for MSYS2/UCRT64\
 I do a list of the package installed on UCRT64 to build the windows package.\
 This list [UCRT64 package list](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64_pkg_list.txt) include more than necessary to build the package take it as an information.\
 After cloning the repo, in files of [.vscode directory](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode), change path (D:\\crosscompile\\msys2) to your msys2 install directory and load the root git clone directory in vscode.
 
-### <u>BY HAND:</u>
+### <ins>BY HAND:</ins>
 **It is recommanded to go through makepkg or checkinstall**\
 There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD-gx) and [**PKGBUILD-dx**](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/PKGBUILD-dx) that use your local git directory to build
 
@@ -207,24 +206,24 @@ There is a [**PKGBUILD-gx**](https://github.com/Benje06/dx7interface/blob/gtk4/g
 <code>$ make -j3</code>
 
 #### INSTALL
-##### <u>By Make install</u>:
+##### <ins>By Make install</ins>:
 you can run both gxinterface and dx7interface without need of installation, but dx7interface need libs and headers from gxinterface to build.\
 	<code>$ make install </code>
-##### <u>By packager</u>:
+##### <ins>By packager</ins>:
 ###### - **Archlinux** / **Manjaro**:
-- <u>for gxinterface</u>:\
+- <ins>for gxinterface</ins>:\
 	<code>$ cd to_build_directory</code>\
 	<code>$ cp from_git_directory/gxinterface/PKGBUILD PKGBUILD-GX</code>\
 	<code>makepkg -sfip PKGBUILD-GX</code>
-- <u>for dx7interface:</u>\
+- <ins>for dx7interface:</ins>\
 	<code>$ cd to_build_directory</code>\
 	<code>$ cp from_git_directory/dx7interface/PKGBUILD PKGBUILD-DX</code>\
 	<code>$ makepkg -sfip PKGBUILD-DX</code>
-###### - <u>**Debian** / **Ubuntu**:</u>
-- <u>for gxinterface</u>:\
+###### - <ins>**Debian** / **Ubuntu**:</ins>
+- <ins>for gxinterface</ins>:\
 	<code>$ cd to_git_clone_directory/gxinterface</code>\
 	<code>$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
-- <u>for Dx7interface</u>:\
+- <ins>for Dx7interface</ins>:\
 	<code>$ cd cd to_git_clone_directory/dx7interface</code>\
 	<code>$ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y</code>
 
