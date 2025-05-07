@@ -23,12 +23,12 @@ And to manage **sounds banks**.
   </tr>
   <tr>
     <td align="center">
-	<a href="https://youtu.be/x17MPC53TIk" target="_blank" rel="noopener noreferrer">
+	<a href="https://youtu.be/x17MPC53TIk">
 		<img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
 	</a>
     </td>
     <td align="center">
-      <a href="https://youtu.be/rE62dQA1REk" target="_blank" rel="noopener noreferrer">
+      <a href="https://youtu.be/rE62dQA1REk">
   		<img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
 	  </a>
     </td>
