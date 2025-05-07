@@ -26,14 +26,14 @@ It also allows you to manage **sound banks**.
   </tr>
   <tr>
     <td align="center">
-	<a href="https://youtu.be/x17MPC53TIk">
-		<img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
-	</a>
-    </td>
-    <td align="center">
       <a href="https://youtu.be/rE62dQA1REk">
   		<img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
 	  </a>
+    </td>
+    <td align="center">
+		<a href="https://youtu.be/x17MPC53TIk">
+		<img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
+	</a>
     </td>
   </tr>
 </table>
