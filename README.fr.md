@@ -59,7 +59,7 @@ Elle prend en charge :
 - L'**edition les banques de sons** via les fonctions de menu (Insérer/Remplacer/Supprimer).
 - La **lecture** et la **sauvegarde** de son ou des banques depuis et vers les fichiers **Raw** (sans en-têtes SysEx) ou **SysEx**,\
 aux formats **Bulk 1** et **Bulk 32**.
-- La **comparaison**, la **réstoration** d'un son ou d'une banque et **l'envoi** d'une banque.\
+- La **comparaison**, la **restoration** d'un son ou d'une banque et **l'envoi** d'une banque.\
 L'envoi du son se fait lorsque vous sélectionnez un son.
 - Des **Canaux indépendants** pour l'**Entrée** et la **Sortie** MIDI.
 - Un **indicateur** dans la liste pour les **sons modifiés**.
