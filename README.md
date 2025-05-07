@@ -20,13 +20,13 @@ And to manage **sounds banks**.
   <div align="left" style="display: inline-block; margin: 0 20px;">
     <div><b>Maiden Voyage (With a TX216 Yamaha)</b></div>
     <a href="https://youtu.be/x17MPC53TIk" target="_blank">
-		<img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="400">
+		<img src="https://img.youtube.com/vi/x17MPC53TIk/maxresdefault.jpg" width="350">
 	</a>
   </div>
   <div align="left" style="display: inline-block; margin: 0 20px;">
     <div><b>Demo of Dx7interface on a TX216</b></div>
     <a href="https://youtu.be/rE62dQA1REk" target="_blank">
-  		<img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
+  		<img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="350">
 	</a>
   </div>
 </div>
