@@ -49,7 +49,7 @@ Elle utilise des **messages SysEx** et est basée sur le séquenceur **Alsa** (p
 L'interface est entièrement pilotable par **Control Change** (CC) et **Program Change** (PC).\
 Elle dispose d'une fonction **MIDI Learn** permettant le **chargement** et la **sauvegarde** de la configuration depuis et vers un fichier.\
 Les **courbes** ADSR et Pitch sont modifiables à la **souris**.\
-Vous pouvez le **demarrer** avec une **couleur** spécifique pour l'**identifier** rapidement.
+Vous pouvez la **demarrer** avec une **couleur** spécifique pour l'**identifier** rapidement.
 
 Elle prend en charge :
 - **Les paramètres des contrôleurs** :
