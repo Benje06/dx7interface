@@ -172,15 +172,15 @@ You'll need:
 	- GNU autotool: **autogen** >= 5.18 / **autoconf** >= 2.71 / **automake** >= 1.16
       - Windows: + msys/autoconf-wrapper >= 20240607-1
       - Windows: + msys/automake-wrapper >= 20240607-1
-    - **intltool** >= 0.51 et **gettext** >= 0.21 
+    - **intltool** >= 0.51 and **gettext** >= 0.21 
     - **glib-gettextize** => 2.74:
         - Archlinux: glib2 >= 2.82.4
         - Debian: libglib2.0-dev
         - Windows: ucrt64/mingw-w64-ucrt-x86_64-glib2
     - **libtool** >= 2.4.7
     - **aclocal** >= 1.16
-        - Archlinux: inclus dans automake
-        - Debian: inclus dans automake
+        - Archlinux: include in automake
+        - Debian: include in automake
     - **m4** >= 1.4.19
 	- **gtkmm-4.0** >= 4.8.0 / **glibmm-2.68** >= 2.68     (lib...-dev for Debian like)
 	- **cairomm-1.16** >= 1.16 / **pangomm-2.48** >= 2.48  (lib...-dev for Debian like)

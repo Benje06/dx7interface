@@ -86,6 +86,19 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([libintl.h])
 AC_CHECK_HEADERS([fcntl.h])
 AC_CHECK_HEADERS([unistd.h])
+AM_COND_IF([PLATFORM_WINDOWS],[
+    AC_CHECK_FUNCS([getcwd])
+    AC_CHECK_FUNCS([putenv])
+    AC_CHECK_FUNCS([realpath])
+    AC_CHECK_FUNCS([setenv])
+    AC_CHECK_FUNCS([strchr])
+    AC_CHECK_FUNCS([strerror])
+    AC_CHECK_FUNCS([strpbrk])
+    AC_CHECK_HEADERS([malloc.h])
+    AC_CHECK_HEADERS([stdint.h])
+    AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
+    AC_FUNC_MALLOC
+],[])
 
 dnl ================================================================
 dnl checks for types
@@ -124,7 +137,7 @@ dnl ================================================================
 dnl Check for windows
 dnl ================================================================
 AM_COND_IF([PLATFORM_WINDOWS],[
-    AC_CHECK_TOOL([WINDRES], [windres], no)
+AC_CHECK_TOOL([WINDRES], [windres], no)
     if test "x$WINDRES" = "xno"; then
         AC_MSG_ERROR([Could not find an implementation of windres in your PATH.])
     fi
