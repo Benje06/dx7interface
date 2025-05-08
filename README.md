@@ -168,18 +168,20 @@ So the ui need at least:
 You'll need: 
 - DEV's **Common**:
 	- **base-devel** (Arch: 1-2 , UCRT64: >=2024.11-1) or **build-essential** >= 12.9 ( gcc make ... )
+		- Windows: + mingw-w64-ucrt-x86_64-toolchain
 	- GNU autotool: **autogen** >= 5.18 / **autoconf** >= 2.71 / **automake** >= 1.16
-	- **intltool** >= 0.51 and **gettext** >= 0.21 
-	- **glib-gettextize** => 2.74:
-		- Archlinux: glib2 >= 2.82.4
-		- Debian: libglib2.0-dev
-		- Windows: ucrt64/mingw-w64-ucrt-x86_64-glib2
-	- **libtool** >= 2.4.7
-	- **aclocal** >= 1.16
-		- Archlinux: included in automake
-		- Debian: included in automake
-		- Windows: msys/automake-wrapper 20240607-1
-	- **m4** >= 1.4.19
+      - Windows: + msys/autoconf-wrapper >= 20240607-1
+      - Windows: + msys/automake-wrapper >= 20240607-1
+    - **intltool** >= 0.51 et **gettext** >= 0.21 
+    - **glib-gettextize** => 2.74:
+        - Archlinux: glib2 >= 2.82.4
+        - Debian: libglib2.0-dev
+        - Windows: ucrt64/mingw-w64-ucrt-x86_64-glib2
+    - **libtool** >= 2.4.7
+    - **aclocal** >= 1.16
+        - Archlinux: inclus dans automake
+        - Debian: inclus dans automake
+    - **m4** >= 1.4.19
 	- **gtkmm-4.0** >= 4.8.0 / **glibmm-2.68** >= 2.68     (lib...-dev for Debian like)
 	- **cairomm-1.16** >= 1.16 / **pangomm-2.48** >= 2.48  (lib...-dev for Debian like)
 	- **libsigc++-3.0** >= 3.4.0  					   (lib...-dev for Debian like)
@@ -200,25 +202,32 @@ You'll need:
 		- Windows: **RtMidi** mingw-w64-ucrt-x86_64-rtmidi >= 6.0.0-3
 
 ### Developement environments</ins>:
-- <ins>Kdevelop for Linux</ins>:\
+#### <ins>Kdevelop for Linux</ins>:
 Files provides env variables (kdev4 global) and launchers (kdev4 specific)\
  for common actions those strating with D or DEBUG are flagged for debug with gdb inside kdevelop
  for both project gxinterface and dx7interface.\
 [kdev4 global]()\
 <ins>You have to change path inside all .kdev4 files</ins>:
-	- "file:///home/jerome/dev/git/gtk4" to your git clone directory
-	- "/home/jerome/dev/build/" to your archlinux makepkg build directory
-	- gxinterface: 
+- "file:///home/jerome/dev/git/gtk4" to your git clone directory
+- "/home/jerome/dev/build/" to your archlinux makepkg build directory
+- gxinterface: 
 [kdev4 specific](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/.kdev4/gxinterface.kdev4)
-	- dx7interface:
+- dx7interface:
 [kdev4 specific](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/.kdev4/dx7interface.kdev4)
 
-- <ins>VS Code for windows build under ucrt64</ins>:\
+#### <ins>VS Code for windows build under ucrt64</ins>:
 To build it under windows you need [MSYS2/UCRT64](https://www.msys2.org/])\
 You can get [the installer](https://www.msys2.org/docs/installer/) and [documentation](https://www.msys2.org/docs/what-is-msys2/]) for MSYS2/UCRT64\
 I do a list of the package installed on UCRT64 to build the windows package.\
-This [UCRT64 package list](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64_pkg_list.txt) include more than necessary to build the package take it as an information.\
-After cloning the repo, in files of [.vscode directory](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode), change path (D:\\crosscompile\\msys2) to your msys2 install directory and load the root git clone directory in vscode.
+This [UCRT64 package list](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64_pkg_list.txt) include more than necessary to build the package take it as an information.
+
+After cloning the repo change path:
+- in files of [.vscode directory](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode):
+	- "D:\\crosscompile\\msys2" to your msys2 install directory
+	- "/d/gxinterface/package" to your packaging directory (where you want that make install put files for packaging)
+- in the [NSIS script](https://github.com/Benje06/dx7interface/blob/gtk4/script.nsis):
+	- "d:\gxinterface\package" to your packaging directory
+and load the root git clone directory in vscode.
 
 ### <ins>BY HAND:</ins>
 **It is recommanded to go through makepkg or checkinstall**\

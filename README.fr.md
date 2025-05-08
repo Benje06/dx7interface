@@ -167,7 +167,10 @@ Ainsi l'interface utilisateur nécessite au minimum :
 Vous aurez besoin: 
 - **Commun** de DEV:
     - **base-devel** (Arch: 1-2 , UCRT64: >=2024.11-1) ou **build-essential** >= 12.9 ( gcc make ... )
+      - Windows: + mingw-w64-ucrt-x86_64-toolchain
     - GNU autotool: **autogen** >= 5.18 / **autoconf** >= 2.71 / **automake** >= 1.16
+      - Windows: + msys/autoconf-wrapper >= 20240607-1
+      - Windows: + msys/automake-wrapper >= 20240607-1
     - **intltool** >= 0.51 et **gettext** >= 0.21 
     - **glib-gettextize** => 2.74:
         - Archlinux: glib2 >= 2.82.4
@@ -177,7 +180,6 @@ Vous aurez besoin:
     - **aclocal** >= 1.16
         - Archlinux: inclus dans automake
         - Debian: inclus dans automake
-        - Windows: msys/automake-wrapper 20240607-1
     - **m4** >= 1.4.19
     - **gtkmm-4.0** >= 4.8.0 / **glibmm-2.68** >= 2.68     (lib...-dev for Debian like)
     - **cairomm-1.16** >= 1.16 / **pangomm-2.48** >= 2.48  (lib...-dev for Debian like)
@@ -200,22 +202,28 @@ Vous aurez besoin:
 
 
 ### Environments de dévellopement</ins>:
-- <ins>Kdevelop pour Linux</ins> :\
+#### <ins>Kdevelop pour Linux</ins>:
 Les fichiers fournissent des variables d'environnement (globales pour Kdev4) et des lanceurs (spécifique à Kdev4)\
 pour les actions courantes, celles commençant par D ou DEBUG sont marquées pour le débogage avec gdb dans Kdevelop, pour les projets gxinterface et dx7interface.\
 [kdev4 global]()\
 <ins>Vous devez modifier le chemin dans tous les fichiers .kdev4</ins> :
-    - "file:///home/jerome/dev/git/gtk4" vers votre répertoire de clonage Git
-    - "/home/jerome/dev/build/" vers votre répertoire de compilation makepkg ArchLinux
-    - gxinterface : [kdev4 spécifique](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/.kdev4/gxinterface.kdev4)
-    - dx7interface: [kdev4 spécifique](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/.kdev4/dx7interface.kdev4)
+  - "file:///home/jerome/dev/git/gtk4" vers votre répertoire de clonage Git
+  - "/home/jerome/dev/build/" vers votre répertoire de compilation makepkg ArchLinux
+  - gxinterface : [kdev4 spécifique](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/.kdev4/gxinterface.kdev4)
+  - dx7interface: [kdev4 spécifique](https://github.com/Benje06/dx7interface/blob/gtk4/dx7interface/.kdev4/dx7interface.kdev4)
 
-- <ins>VS Code pour Windows compilé sous ucrt64</ins> :\
+#### <ins>VS Code pour Windows compilé sous ucrt64</ins>:
 Pour compiler sous Windows, vous avez besoin de [MSYS2/UCRT64](https://www.msys2.org/]).\
 Vous pouvez obtenir [l'installateur](https://www.msys2.org/docs/installer/) et la [documentation](https://www.msys2.org/docs/what-is-msys2/]) pour MSYS2/UCRT64.\
 J'ai dressé la liste des paquets installés sur UCRT64 pour compiler le paquet Windows.\
-Cette [liste des paquets UCRT64](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64_pkg_list.txt) contient plus de données que nécessaire pour compiler le paquet. Veuillez la prendre à titre informatif.\
-Après avoir cloné le dépôt, dans les fichiers du [répertoir .vscode](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode), changez le chemin (D:\\crosscompile\\msys2) vers votre répertoire d'installation msys2 et chargez le répertoire racine git clone dans vscode.
+Cette [liste des paquets UCRT64](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64/minimal_ucrt64.txt) peux contenir plus d'information que nécessaire pour compiler le paquet. Veuillez la prendre à titre informatif.\
+Après avoir cloné le dépôt changez les chemins:
+- dans les fichiers du [répertoire .vscode](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode):
+  - "D:\\crosscompile\\msys2" vers votre répertoire d'installation msys2
+  - "/d/gxinterface/package" vers votre repertoire de packaging (où vous voulez que le make install pose les fichiers pour le packaging)
+- dans le [script NSIS](https://github.com/Benje06/dx7interface/blob/gtk4/script.nsis):
+  - "d:\gxinterface\package" vers votre repertoire de packaging
+et chargez le répertoire racine git clone dans vscode.
 
 ### <ins>A la main</ins>
 **Il est recommandé d'utiliser makepkg ou checkinstall**\
