@@ -350,7 +350,7 @@ Un grand merci à:
 [Yamaha Tx816 Tx216 manuels (en)](https://usa.yamaha.com/products/contents/music_production/downloads/manuals/index.html?l=en&c=music_production&k=tx816)
 - books\
 The complete Dx7 by Howard Massey.
-- historic\
+- historique\
 [Yamaha Chapitre 2 la synthese fm (fr)](https://fr.yamaha.com/fr/products/contents/music_production/synth_40th/history/chapter02/index.html)
 
 # Licenses
