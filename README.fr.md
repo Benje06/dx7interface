@@ -124,7 +124,7 @@ Les distributions testées sont :
 - Debian like: **Debian 12** / **Ubuntu 24.04** en utilisant [Checkinstall](#--debian--ubuntu)
 
 ### Run
-Une fois installée, vous pouvez la démarrer via le menu oU depuis le terminal ainsi:
+Une fois installée, vous pouvez la démarrer via le menu ou depuis le terminal ainsi:
 ```sh
 $ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
 ```
