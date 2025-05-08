@@ -56,7 +56,6 @@ gxinterfaceicon.o: seticon.rc ../../dx7interface/data/images/dx7interface.ico
 install-exec-hook:
 	## Add dbus and ucrt64 
 	cp /ucrt64/bin/gdbus.exe $(DESTDIR)/usr/bin
-	cp /c/WINDOWS/System32/ucrtbase.dll $(DESTDIR)/usr/bin
 	## copy gxinterface libs
 	cp $(DESTDIR)/ucrt64/bin/* $(DESTDIR)/usr/bin
 	## add dll needed by exe and other dll
