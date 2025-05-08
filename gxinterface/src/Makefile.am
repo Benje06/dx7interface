@@ -58,7 +58,7 @@ install-exec-hook:
 	cp /ucrt64/bin/gdbus.exe $(DESTDIR)/usr/bin
 	cp /c/WINDOWS/System32/ucrtbase.dll $(DESTDIR)/usr/bin
 	## copy gxinterface libs
-	cp  $(DESTDIR)/ucrt64/bin $(DESTDIR)/usr/bin
+	cp $(DESTDIR)/ucrt64/bin/* $(DESTDIR)/usr/bin
 	## add dll needed by exe and other dll
 	ldd $(DESTDIR)/usr/bin/*.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	ldd $(DESTDIR)/usr/bin/*.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
