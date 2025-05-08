@@ -1,3 +1,12 @@
+base-devel
+autogen
+automake1.17
+automake-wrapper
+autoconf2.72
+autoconf-wrapper
+intltool
+m4
+mingw-w64-ucrt-x86_64-gettext-tools
 mingw-w64-ucrt-x86_64-toolchain
 mingw-w64-ucrt-x86_64-rtmidi
 mingw-w64-ucrt-x86_64-nsis
@@ -9,10 +18,3 @@ mingw-w64-ucrt-x86_64-libtool
 mingw-w64-ucrt-x86_64-glib2
 mingw-w64-ucrt-x86_64-libsigc++-3.0
 mingw-w64-ucrt-x86_64-winpthreads-git
-base-devel 
-autogen
-automake1.17
-automake-wrapper
-autoconf2.72
-intltool
-m4
