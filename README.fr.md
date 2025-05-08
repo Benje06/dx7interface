@@ -250,7 +250,8 @@ $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintain
 $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintainer-mode --enable-alsa
 ```
 <code>--enable-console=1</code> active pour windows, le démarrage de l'application avec une console. Non utilisé sous Linux.\
-<code>--enable-log=2</code> définit les détails du journal des erreurs : 0 = aucun détail, 1 = afficher le nom de la fonction, 2 = nom de la fonction + ligne + fichier. "--enable-log" diffère de la commande de démarrage -l car il ne contient que les détails du niveau de journalisation, et non les messages communs à consigner leurs emplacement.\
+<code>--enable-log=2</code> définit les détails du journal des erreurs : 0 = aucun détail, 1 = afficher le nom de la fonction, 2 = nom de la fonction + ligne + fichier.\
+"--enable-log" diffère de la commande de démarrage -l car il ne contient que les détails du niveau de journalisation, et non les messages communs à consigner leurs emplacement.\
 <code>--enable-alsa</code> ou <code>--enable-rtmidi</code> utilisez alsa sous Linux et rtmidi sous Windows. Inutile de spécifier --disable-alsa, ne passez pas l'indicateur, omettez-le simplement.\
 <code>--[enable|disable]-maintainer-mode</code> est une macro [mode mainteneur Automake](https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html) qui permet la reconstruction de certains fichiers, comme le script configure.
 
