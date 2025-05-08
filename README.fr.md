@@ -123,7 +123,7 @@ Les distributions testées sont :
 - Debian like: **Debian 12** / **Ubuntu 24.04** en utilisant [Checkinstall](#--debian--ubuntu)
 
 **Run**:\
-Une fois installé, vous pouvez l'exécuter via le menu ou la démarrer depuis le terminal ainsi:
+Une fois installée, vous pouvez la démarrer via le menu oo depuis le terminal ainsi:
 ```sh
 $ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
 ```
@@ -199,7 +199,8 @@ Vous aurez besoin:
         - Archlinux: **alsa-lib** >= 1.2.14
         - Debian/Ubuntu: **libasound2-dev** >= 1.2.8
         - Windows: **RtMidi** mingw-w64-ucrt-x86_64-rtmidi >= 6.0.0-3
-
+- Pour complier sous Windows/UCRT64:
+    -  [liste des paquets UCRT64](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64/minimal_ucrt64.txt) peux contenir plus d'information que nécessaire pour compiler le paquet.
 
 ### Environments de dévellopement</ins>:
 #### <ins>Kdevelop pour Linux</ins>:
