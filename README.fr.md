@@ -123,7 +123,7 @@ Les distributions testées sont :
 [Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4dx7interface/PKGBUILD?raw=true)
 - Debian like: **Debian 12** / **Ubuntu 24.04** en utilisant [Checkinstall](#--debian--ubuntu)
 
-**Run**:\
+### Run
 Une fois installée, vous pouvez la démarrer via le menu oo depuis le terminal ainsi:
 ```sh
 $ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
