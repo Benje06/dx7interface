@@ -71,7 +71,7 @@ Avec **Cairo** pour le dessin (cairomm 1.16) et **Pango** pour la prise en charg
 Elle est **personnalisable** à condition de **préserver** le **type d'objet** et son **nom**, car elle est basée sur :
 - un **XML** pour l'**interface utilisateur**
 - un **CSS** pour le **thème**
-- et la prise en charge du chargement de **polices personnalisées**
+- la prise en charge du chargement de **polices personnalisées**
 
 Étant donné que **Dx7interface** est un **plugin/module** (Glib::Gmodule), elle s'appuie sur **GxInterface** comme **chargeur de modules**.\
 Il s'agit d'une **dérivée** de :
