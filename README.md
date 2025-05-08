@@ -244,6 +244,14 @@ $ make clean || true
 $ make disclean || true
 ```
 ##### AUTOGEN
+Optimized build FLAGS\
+Add, to the autogen command line, with the simple quote and on the same line:\
+<code>'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'</code>\
+<code>'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'</code>
+
+For Debug see [dedicated section](#debug)
+
+**Command**
 - for gxinterface:
 ```sh
 $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintainer-mode
@@ -252,10 +260,12 @@ $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintain
 ```sh
 $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintainer-mode --enable-alsa
 ```
-"--enable-console=1" enable for windows, the start of the application with a console. not used for linux.\
-"--enable-log=2" set the error log detail: 0=no detail, 1= print function name 2=function name + line + file. "--enable-log" differt from the start command line -l as it's just the details of log level not commons message to be logged and their location.\
-"--enable-alsa or --enable-rtmidi" use alsa for linux, rtmidi for windows. you dont need to specify --disable-alsa don't pass the flag, just omit it.\
-"--[enable|disable]-maintainer-mode" it an [Automake maintainer mode](https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html) macro enable the rebuild of some files like configure script. 
+<code>--enable-console=1</code> enable for windows, the start of the application with a console, not used for linux.\
+<code>--enable-log=2</code> set the error log detail:\
+<code>0=no detail, 1= print function name 2=function name + line + file</code>.\
+"--enable-log" differt from the start command line -l, as it's just the details of log level not commons message to be logged and their location.\
+<code>--enable-[alsa|rtmidi]</code> use alsa for linux, rtmidi for windows. you dont need to specify --disable-alsa don't pass the flag, just omit it.\
+<code>--[enable|disable]-maintainer-mode</code> it an [Automake maintainer mode](https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html) macro enable the rebuild of some files like configure script. 
 
 ##### MAKE
 ```sh
@@ -310,6 +320,29 @@ or if gxinterface is installed
 ```sh
 $ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so
 ```
+
+## DEBUG
+
+- Add these FLAGS to the autogen script command line, keeping the simple quote and on same line, they'll be pass to configure script:\
+<code>'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable'</code>\
+<code>'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable'</code>\
+<code>'LDFLAGS=-ggdb3'</code>
+
+- Add this to the environment variables or upstream of the command line of autogen and program (not sure if make needs it, it should be configure that passes them to it):\
+<code>G_DEBUG=all GTK_DEBUG=all GDK_DEBUG=all G_ENABLE_DEBUG=1 G_ENABLE_DIAGNOSTIC=1</code>\
+you can replace 'all' by a list of specifics elements to debug (ex: GTK_DEBUG=interactive,builder).\
+Checks documentations links for more details.\
+
+Docs:\
+[GTK/GDK DEBUG](https://gitlab.gnome.org/GNOME/gtk/-/blob/main/docs/reference/gtk/running.md)\
+[GLIB DEBUG](https://gitlab.gnome.org/GNOME/glib/-/blob/main/docs/reference/glib/running.md)\
+[GLIB MACRO](https://gitlab.gnome.org/GNOME/glib/-/blob/main/docs/macros.md)
+
+- Start gdb with signal:
+```sh
+gdb with_signal --args gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-0.0.1.so
+```
+
 # History
 This project was start in 2006, to made an interface for the configuration of Linux system.\
 Starting with the network, it was called [GNetAdm](https://sourceforge.net/projects/gnetadm/) and was made in C using glade and gtk2.\

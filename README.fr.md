@@ -7,6 +7,7 @@
     - [Windows](#windows)
     - [Linux](#linux)
     - [Sources](#construction-à-partir-des-sources)
+    - [Debug](#debug)
 - [Historique](#historique)
 - [Remerciements](#remerciements)
 - [Réferences](#références)
@@ -241,6 +242,14 @@ $ make clean || true
 $ make disclean || true
 ```
 ##### AUTOGEN
+FLAGS d'optimisation de la construction:\
+Ajouter, à la ligne de commande d'autogen, en gardant les simples quotes et sur une seule ligne:\
+<code>'CFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'</code>\
+<code>'CXXFLAGS=-O3 -std=c++17 -march=native -mtune=native -freciprocal-math -fstack-protector-strong -D_FORTIFY_SOURCE=2'</code>
+
+Pour le deboguage regarder la [section dédiée](#debug)
+
+**Command**
 - for gxinterface:
 ```sh
 $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintainer-mode
@@ -250,9 +259,9 @@ $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintain
 $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintainer-mode --enable-alsa
 ```
 <code>--enable-console=1</code> active pour windows, le démarrage de l'application avec une console. Non utilisé sous Linux.\
-<code>--enable-log=2</code> définit les détails du journal des erreurs.\
+<code>--enable-log=2</code> définit les détails du journal des erreurs:\
 0 = aucun détail, 1 = afficher le nom de la fonction, 2 = nom de la fonction + ligne + fichier.\
-"--enable-log" diffère de la commande de démarrage -l car il ne contient que les détails du niveau de journalisation, et non les messages communs à consigner ou leurs destinations.\
+"--enable-log" diffère de la commande de démarrage -l, car il ne contient que les détails du niveau de journalisation, et non les messages communs à consigner ou leurs destinations.\
 <code>--enable-[alsa|rtmidi]</code> utilisez alsa sous Linux et rtmidi sous Windows. Inutile de spécifier --disable-alsa, ne passez pas l'indicateur, omettez-le simplement.\
 <code>--[enable|disable]-maintainer-mode</code> est une macro [mode mainteneur Automake](https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html) qui permet la reconstruction de certains fichiers, comme le script configure.
 
@@ -309,6 +318,22 @@ or if gxinterface is installed
 ```sh
 $ gxinterface -l 2 -m src/.libs/dx7interface-0.0.1.so
 ```
+
+# DEBUG
+- Ajouter ces FLAGS à la ligne de commande d'autogen, en gardant les simples quotes et sur une ligne, ils seront passé au script configure:\
+<code>'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable'</code>\
+<code>'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable'</code>\
+<code>'LDFLAGS=-ggdb3'</code>
+
+- Ajouter cela aux variables d'environements ou en amont de la ligne de commande autogen et du programme (pas certain que make en ai besoin cela devrait etre configure qui les lui passent):\
+<code>G_DEBUG=all GTK_DEBUG=all GDK_DEBUG=all G_ENABLE_DEBUG=1 G_ENABLE_DIAGNOSTIC=1</code>\
+Vous pouvez remplacer 'all' par une liste d'elements specifique à deboguer (ex: GTK_DEBUG=interactive,builder).\
+Regardez les liens vers la documentation pour plus de details.\
+
+Docs:\
+[GTK/GDK DEBUG](https://gitlab.gnome.org/GNOME/gtk/-/blob/main/docs/reference/gtk/running.md)\
+[GLIB DEBUG](https://gitlab.gnome.org/GNOME/glib/-/blob/main/docs/reference/glib/running.md)\
+[GLIB MACRO](https://gitlab.gnome.org/GNOME/glib/-/blob/main/docs/macros.md)
 
 # Historique
 Ce projet a débuté en 2006 pour créer une interface de configuration pour Linux.\
