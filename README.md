@@ -110,7 +110,7 @@ Once started any software that support Direct Music will see it.
 Windows 10 version download:
 - Installer [Dx7interface without console](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface.exe?raw=true)
 
-- Installer [Dx7interface with console](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface_debug_console.exe?raw=true)
+- Installer [Dx7interface with console](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface_console_debug.exe?raw=true)
 
 ![dx7interface with debug console](https://github.com/user-attachments/assets/78956483-d185-4516-9482-534118454dd0)
 
