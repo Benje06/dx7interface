@@ -104,7 +104,7 @@ It is a **derivated** from:
 The windows version doesn't implement Midi driver, for this it rely on [loopMidi](https://www.tobias-erichsen.de/software/loopmidi.html) by Tobias Erichsen.\
 After loopMidi is installed, start it and create **2 ports** named **Dx7interface_in** and **Dx7interface_out**.\
 At start Dx7interface will automatically connect to these ports.\
-You'll have to set in advanced page, the maximum sysex size to 4096 kiloBytes at least, so banks of 32 soudns can be sent.\
+You'll have to set in advanced page, the maximum sysex size to 4104 kiloBytes at least, so banks of 32 soudns can be sent.\
 Once started any software that support Direct Music will see it.
 
 Windows 10 version download:
