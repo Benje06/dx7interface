@@ -66,6 +66,7 @@ dx7interface_0_0_1_la_LDFLAGS += \
 install-data-hook:
 	sed -i "s|\(libdir='\)/\(.*'\)|\1\2|" "$(DESTDIR)$(dx7interface_0_0_1_ladir)/dx7interface-0.0.1.la"
 	ldd $(DESTDIR)$(dx7interface_0_0_1_ladir)/dx7interface-0.0.1-1.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
+	ldd $(DESTDIR)/usr/bin/*.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	@rm -f $(DESTDIR)$(dx7interface_0_0_1_ladir)/dx7interface-0.0.1.a
 	@rm -f $(DESTDIR)$(dx7interface_0_0_1_ladir)/dx7interface-0.0.1.dll.a
 endif
