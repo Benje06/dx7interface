@@ -200,6 +200,8 @@ You'll need:
 		- Archlinux: **alsa-lib** >= 1.2.14
 		- Debian/Ubuntu: **libasound2-dev** >= 1.2.8
 		- Windows: **RtMidi** mingw-w64-ucrt-x86_64-rtmidi >= 6.0.0-3
+- Windows/UCRT64 specific:
+    - check the UCRT64 [packages list](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64/minimal_ucrt64.txt).
 
 ### Developement environments</ins>:
 #### <ins>Kdevelop for Linux</ins>:
@@ -218,8 +220,7 @@ Files provides env variables (kdev4 global) and launchers (kdev4 specific)\
 #### <ins>VS Code for windows build under ucrt64</ins>:
 To build it under windows you need [MSYS2/UCRT64](https://www.msys2.org/])\
 You can get [the installer](https://www.msys2.org/docs/installer/) and [documentation](https://www.msys2.org/docs/what-is-msys2/]) for MSYS2/UCRT64\
-I do a list of the package installed on UCRT64 to build the windows package.\
-This [UCRT64 package list](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64_pkg_list.txt) include more than necessary to build the package take it as an information.
+And the [UCRT64 package list](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64_pkg_list.txt) to be installed in MSYS2/UCRT64.
 
 After cloning the repo change path:
 - in files of [.vscode directory](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode):

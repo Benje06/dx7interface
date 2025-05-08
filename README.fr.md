@@ -195,14 +195,14 @@ Vous aurez besoin:
         - Manjaro:   **manjaro-tools-base** **manjaro-tools-pkg**
         - Debian/Ubuntu:  **checkinstall** >= 1.6.2
         - Windows: **NSIS** mingw-w64-ucrt-x86_64-nsis >= 3.11.1
-- **Spécifique** Dx7interface:
+- Spécifique **Dx7interface**:
     - **gxinterface** >= 1.0.0
     - **MIDI**:
         - Archlinux: **alsa-lib** >= 1.2.14
         - Debian/Ubuntu: **libasound2-dev** >= 1.2.8
         - Windows: **RtMidi** mingw-w64-ucrt-x86_64-rtmidi >= 6.0.0-3
-- Pour complier sous Windows/UCRT64:
-    -  [liste des paquets UCRT64](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64/minimal_ucrt64.txt) peux contenir plus d'information que nécessaire pour compiler le paquet.
+- Spécifique à **Windows/UCRT64**:
+    -  [liste des paquets UCRT64](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64/minimal_ucrt64.txt)
 
 ### Environments de dévellopement</ins>:
 #### <ins>Kdevelop pour Linux</ins>:
@@ -218,8 +218,7 @@ pour les actions courantes, celles commençant par D ou DEBUG sont marquées pou
 #### <ins>VS Code pour Windows compilé sous ucrt64</ins>:
 Pour compiler sous Windows, vous avez besoin de [MSYS2/UCRT64](https://www.msys2.org/]).\
 Vous pouvez obtenir [l'installateur](https://www.msys2.org/docs/installer/) et la [documentation](https://www.msys2.org/docs/what-is-msys2/]) pour MSYS2/UCRT64.\
-J'ai dressé la liste des paquets installés sur UCRT64 pour compiler le paquet Windows.\
-Cette [liste des paquets UCRT64](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64/minimal_ucrt64.txt) peux contenir plus d'information que nécessaire pour compiler le paquet. Veuillez la prendre à titre informatif.\
+Ainsi que la [liste des paquets UCRT64](https://github.com/Benje06/dx7interface/blob/gtk4/ucrt64/minimal_ucrt64.txt) a installer dans l'environement MSYS2/UCRT64.\
 Après avoir cloné le dépôt changez les chemins:
 - dans les fichiers du [répertoire .vscode](https://github.com/Benje06/dx7interface/blob/gtk4/.vscode):
   - "D:\\crosscompile\\msys2" vers votre répertoire d'installation msys2
