@@ -130,9 +130,9 @@ $ gxinterface -m /usr/share/dx7interface/1.0.0/dx7interface-1.0.0.so
 ```
 
 <ins>Gxinterface / Dx7interface start options are</ins>:
-- **Colorise section title**
+- **Colorise section title**\
 Uses when you start multiple instance of the program.\
-it colorise title section with the specified color to identify it visually.\
+It colorise title section with the specified color to identify it visually.\
 <code>-c "color"</code> where color is html color code.
 
 ```sh
