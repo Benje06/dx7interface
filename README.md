@@ -269,7 +269,7 @@ $ ./autogen.sh --prefix=/usr --enable-log=2 --enable-console=0 --enable-maintain
 ```
 <code>--enable-console=1</code> enable for windows, the start of the application with a console, not used for linux.\
 <code>--enable-log=2</code> set the error log detail:\
-<code>0=no detail, 1= print function name 2=function name + line + file</code>.\
+<code>0=no detail, 1=print function name, 2=function name + line + file</code>.\
 "--enable-log" differt from the start command line -l, as it's just the details of log level not commons message to be logged and their location.\
 <code>--enable-[alsa|rtmidi]</code> use alsa for linux, rtmidi for windows. you dont need to specify --disable-alsa don't pass the flag, just omit it.\
 <code>--[enable|disable]-maintainer-mode</code> it an [Automake maintainer mode](https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html) macro enable the rebuild of some files like configure script. 
