@@ -116,12 +116,13 @@ Windows 10 version download:
 
 ## Linux
 **Supported Distribution**:\
-It should work on any distribution as long as the specified versions are met..\
+It should work on any distribution as long as the [specified versions](#build-it-from-sources) are met.\
+It run on 64 bits PC and ARM\
 The tested distributions are:
 - Arch Like: **Archlinux** / **Manjaro** with PKGBUILD for
 [Gxinterface](https://github.com/Benje06/dx7interface/blob/gtk4/gxinterface/PKGBUILD?raw=true) and
 [Dx7interface](https://github.com/Benje06/dx7interface/blob/gtk4dx7interface/PKGBUILD?raw=true)
-- Debian like: **Debian 12** / **Ubuntu 24.04** using [Checkinstall](#--debian--ubuntu)
+- Debian like: **Debian 12** / **Ubuntu 24.04** / **Raspberry pi OS** using [Checkinstall](#--debian--ubuntu)
 
 **Run**:\
 Once installed you can run it by menu or start it from terminal as:
