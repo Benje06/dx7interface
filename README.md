@@ -1,5 +1,6 @@
 ## 🌐 Other Languages
-[Français](README.fr.md)
+[English](README.md) [Français](README.fr.md)
+<hr>
 
 - [Introduction](#introduction)
 - [Description](#description)
@@ -12,11 +13,15 @@
 - [References](#references)
 - [Licenses](#licenses)
 - [Authors and Contributors](#authors-and-contributors)
+<hr>
 
 # Introduction
-**Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer \
-and it's derivated such as **Tx816 Tx216** as well as their **emulators** as [Hexter](https://github.com/theabolton/hexter) or [Dexed](https://asb2m10.github.io/dexed/) as long as they accept **SysEx messaging**.\
-It also allows you to manage **sound banks**.
+**Dx7interface** is a Complete **GUI to drive** the Yamaha **Dx7** synthetizer and it's derivated such as **Tx816 Tx216**\
+as well as their **emulators** as [Hexter](https://github.com/theabolton/hexter) or [Dexed](https://asb2m10.github.io/dexed/) as long as they accept **SysEx messaging**.\
+It also allows you to manage **sound banks**.\
+It run on:
+- 32/64 bits PC under Windows, Linux
+- ARM under Linux
 
 <ins>Dx7interface with a Tx216 under Manjaro By Jean-Michel</ins>:
 <table>
