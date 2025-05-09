@@ -26,7 +26,6 @@ multiplateforme (midi/interface) :
     libremidi (prefered but not compiled for ucrt64 and does not do virtual midi),
     rtmidi(win done with ucrt64)  
     ??? Juce (license prorietaire), drumkit (sequenceur midi)
-    nettoyer le dossier ucrt64 lors du packging
 	
 # MIDI
 * reception/envoi en midi ( format TF1(envoi firchier tf1) )
@@ -53,6 +52,7 @@ randomize ( par group(lfo,pitch,...), Valeurs min max par type ( volume min20, e
 synth generique (voir avec marc)
 gestion d'exceptions/normalisation: error(,,)+LOG_ERR()
 *filtre des variables utilisateurs ??? getops ?
+add specifier le fichier de log sur la ligne de commande
 
 fenetre secondaires:
     - (option/parametres, module) gxinterface
