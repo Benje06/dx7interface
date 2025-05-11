@@ -233,8 +233,9 @@ After cloning the repo change path:
 	- "D:\\crosscompile\\msys2" to your msys2 install directory
 	- "/d/gxinterface/package" to your packaging directory (where you want that make install put files for packaging)
 - in the [NSIS script](https://github.com/Benje06/dx7interface/blob/gtk4/script.nsis):
-	- "d:\gxinterface\package" to your packaging directory\
-and load the root git clone directory in vscode.
+	- "d:\gxinterface\package" to your packaging directory
+
+Load the root git clone directory in vscode.
 
 ### <ins>BY HAND:</ins>
 **It is recommanded to go through makepkg or checkinstall**\
