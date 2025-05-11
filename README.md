@@ -308,7 +308,7 @@ $ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y
 ```
 
 ##### <ins>By Make install</ins>:
-you can run both gxinterface and dx7interface needing to install them, but dx7interface need libs and headers from gxinterface to build.
+you can run both gxinterface and dx7interface without needing to install them, but dx7interface need libs and headers from gxinterface to build.
 ```sh
 $ make install
 ```
