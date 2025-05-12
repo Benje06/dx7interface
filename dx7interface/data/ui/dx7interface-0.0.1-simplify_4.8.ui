@@ -68,7 +68,7 @@
             <property name="width-request">150</property>
             <child type="label">
               <object class="GtkLabel" id="label_load_sound">
-                <property name="label" translatable="yes">Banque de sons :</property>
+                <property name="label" translatable="yes">Sounds bank:</property>
                 <property name="single-line-mode">1</property>
               </object>
             </child>
@@ -135,7 +135,7 @@
                                 <property name="halign">center</property>
                                 <property name="hexpand">1</property>
                                 <property name="justify">right</property>
-                                <property name="label" translatable="yes">N°</property>
+                                <property name="label" translatable="no">N°</property>
                                 <property name="valign">center</property>
                                 <property name="width-chars">2</property>
                               </object>
@@ -147,7 +147,7 @@
                                 <property name="halign">start</property>
                                 <property name="max-width-chars">2</property>
                                 <property name="numeric">1</property>
-                                <property name="text" translatable="yes">1</property>
+                                <property name="text" translatable="no">1</property>
                                 <property name="valign">start</property>
                                 <property name="value">1</property>
                                 <property name="width-chars">2</property>
@@ -162,7 +162,7 @@
                               <object class="GtkLabel" id="label_feedback">
                                 <property name="halign">center</property>
                                 <property name="hexpand">1</property>
-                                <property name="label" translatable="yes">FB</property>
+                                <property name="label" translatable="no">FB</property>
                               </object>
                             </child>
                             <child>
@@ -171,7 +171,7 @@
                                 <property name="focusable">1</property>
                                 <property name="halign">end</property>
                                 <property name="max-width-chars">1</property>
-                                <property name="text" translatable="yes">0</property>
+                                <property name="text" translatable="no">0</property>
                                 <property name="valign">start</property>
                                 <property name="width-chars">1</property>
                                 <property name="wrap">1</property>
@@ -193,7 +193,7 @@
                                 <property name="focusable">1</property>
                                 <property name="halign">center</property>
                                 <property name="hexpand">1</property>
-                                <property name="label" translatable="yes">Sync</property>
+                                <property name="label" translatable="no">Sync</property>
                                 <property name="valign">center</property>
                               </object>
                             </child>
@@ -208,18 +208,18 @@
                                 <property name="model">
                                   <object class="GtkStringList">
                                     <items>
-                                      <item translatable="yes">C</item>
-                                      <item translatable="yes">C#</item>
-                                      <item translatable="yes">D</item>
-                                      <item translatable="yes">D#</item>
-                                      <item translatable="yes">E</item>
-                                      <item translatable="yes">F</item>
-                                      <item translatable="yes">F#</item>
-                                      <item translatable="yes">G</item>
-                                      <item translatable="yes">G#</item>
-                                      <item translatable="yes">A</item>
-                                      <item translatable="yes">A#</item>
-                                      <item translatable="yes">B</item>
+                                      <item translatable="no">C</item>
+                                      <item translatable="no">C#</item>
+                                      <item translatable="no">D</item>
+                                      <item translatable="no">D#</item>
+                                      <item translatable="no">E</item>
+                                      <item translatable="no">F</item>
+                                      <item translatable="no">F#</item>
+                                      <item translatable="no">G</item>
+                                      <item translatable="no">G#</item>
+                                      <item translatable="no">A</item>
+                                      <item translatable="no">A#</item>
+                                      <item translatable="no">B</item>
                                     </items>
                                   </object>
                                 </property>
@@ -234,7 +234,7 @@
                                 <property name="halign">center</property>
                                 <property name="max-width-chars">2</property>
                                 <property name="numeric">1</property>
-                                <property name="text" translatable="yes">1</property>
+                                <property name="text" translatable="no">1</property>
                                 <property name="valign">center</property>
                                 <property name="value">1</property>
                                 <property name="width-chars">2</property>
@@ -281,7 +281,7 @@
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkLabel" id="label_ams_op1">
-                                        <property name="label" translatable="yes">op1</property>
+                                        <property name="label" translatable="no">op1</property>
                                         <property name="valign">end</property>
                                       </object>
                                     </child>
@@ -308,7 +308,7 @@
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkLabel" id="label_ams_op2">
-                                        <property name="label" translatable="yes">op2</property>
+                                        <property name="label" translatable="no">op2</property>
                                         <property name="valign">end</property>
                                       </object>
                                     </child>
@@ -335,7 +335,7 @@
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkLabel" id="label_ams_op3">
-                                        <property name="label" translatable="yes">op3</property>
+                                        <property name="label" translatable="no">op3</property>
                                         <property name="valign">end</property>
                                       </object>
                                     </child>
@@ -362,7 +362,7 @@
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkLabel" id="label_ams_op4">
-                                        <property name="label" translatable="yes">op4</property>
+                                        <property name="label" translatable="no">op4</property>
                                         <property name="valign">end</property>
                                       </object>
                                     </child>
@@ -389,7 +389,7 @@
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkLabel" id="label_ams_op5">
-                                        <property name="label" translatable="yes">op5</property>
+                                        <property name="label" translatable="no">op5</property>
                                         <property name="valign">end</property>
                                       </object>
                                     </child>
@@ -416,7 +416,7 @@
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkLabel" id="label_ams_op6">
-                                        <property name="label" translatable="yes">op6</property>
+                                        <property name="label" translatable="no">op6</property>
                                         <property name="valign">end</property>
                                       </object>
                                     </child>
@@ -448,7 +448,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_pms">
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">PMS</property>
+                                    <property name="label" translatable="no">PMS</property>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -524,7 +524,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="hexpand">0</property>
-                                        <property name="label" translatable="yes">Sync</property>
+                                        <property name="label" translatable="no">Sync</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -546,7 +546,7 @@
                                         <property name="adjustment">adj_lfo_speed</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -571,7 +571,7 @@
                                         <property name="adjustment">adj_lfo_delay</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -584,7 +584,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_lfo_amd">
                                         <property name="hexpand">1</property>
-                                        <property name="label" translatable="yes">AMD</property>
+                                        <property name="label" translatable="no">AMD</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">3</property>
@@ -596,7 +596,7 @@
                                         <property name="adjustment">adj_lfo_amd</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -609,7 +609,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_lfo_pmd">
                                         <property name="hexpand">1</property>
-                                        <property name="label" translatable="yes">PMD</property>
+                                        <property name="label" translatable="no">PMD</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">4</property>
@@ -621,7 +621,7 @@
                                         <property name="adjustment">adj_lfo_pmd</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="xalign">0.5</property>
@@ -679,7 +679,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_rt1">
-                                    <property name="label" translatable="yes">R1</property>
+                                    <property name="label" translatable="no">R1</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -688,7 +688,7 @@
                                     <property name="adjustment">adj_pitch_rt1</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -700,7 +700,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_lvl1">
-                                    <property name="label" translatable="yes">L1</property>
+                                    <property name="label" translatable="no">L1</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -709,7 +709,7 @@
                                     <property name="adjustment">adj_pitch_lvl1</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -721,7 +721,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_rt2">
-                                    <property name="label" translatable="yes">R2</property>
+                                    <property name="label" translatable="no">R2</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -730,7 +730,7 @@
                                     <property name="adjustment">adj_pitch_rt2</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -742,7 +742,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_lvl2">
-                                    <property name="label" translatable="yes">L2</property>
+                                    <property name="label" translatable="no">L2</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -751,7 +751,7 @@
                                     <property name="adjustment">adj_pitch_lvl2</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -763,7 +763,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_rt3">
-                                    <property name="label" translatable="yes">R3</property>
+                                    <property name="label" translatable="no">R3</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -772,7 +772,7 @@
                                     <property name="adjustment">adj_pitch_rt3</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -784,7 +784,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_lvl3">
-                                    <property name="label" translatable="yes">L3</property>
+                                    <property name="label" translatable="no">L3</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -793,7 +793,7 @@
                                     <property name="adjustment">adj_pitch_lvl3</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -805,7 +805,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_r4">
-                                    <property name="label" translatable="yes">R4</property>
+                                    <property name="label" translatable="no">R4</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -814,7 +814,7 @@
                                     <property name="adjustment">adj_pitch_rt4</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -826,7 +826,7 @@
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkLabel" id="label_pitch_lvl4">
-                                    <property name="label" translatable="yes">L4</property>
+                                    <property name="label" translatable="no">L4</property>
                                     <property name="xalign">0</property>
                                   </object>
                                 </child>
@@ -835,7 +835,7 @@
                                     <property name="adjustment">adj_pitch_lvl4</property>
                                     <property name="focusable">1</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                   </object>
@@ -1429,7 +1429,7 @@
                     <property name="label-widget">
                       <object class="GtkLabel" id="label_controllers">
                         <property name="justify">center</property>
-                        <property name="label" translatable="yes">CONTROLLER</property>
+                        <property name="label" translatable="yes">CONTROLLERS</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -1490,7 +1490,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -1574,7 +1574,7 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">RATIO</item>
+                                              <item translatable="no">RATIO</item>
                                               <item translatable="yes">FIXED</item>
                                             </items>
                                           </object>
@@ -1613,7 +1613,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -1642,7 +1642,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1658,7 +1658,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1674,7 +1674,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1690,7 +1690,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1706,7 +1706,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1722,7 +1722,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1738,7 +1738,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1754,7 +1754,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -1767,9 +1767,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r1_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R1</property>
+                                        <property name="label" translatable="no">R1</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -1779,9 +1779,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l1_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L1</property>
+                                        <property name="label" translatable="no">L1</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -1791,9 +1791,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r2_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R2</property>
+                                        <property name="label" translatable="no">R2</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -1803,9 +1803,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l2_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L2</property>
+                                        <property name="label" translatable="no">L2</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
                                           <property name="row">0</property>
@@ -1815,9 +1815,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r3_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R3</property>
+                                        <property name="label" translatable="no">R3</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">4</property>
                                           <property name="row">0</property>
@@ -1827,9 +1827,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l3_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L3</property>
+                                        <property name="label" translatable="no">L3</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">5</property>
                                           <property name="row">0</property>
@@ -1839,9 +1839,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r4_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R4</property>
+                                        <property name="label" translatable="no">R4</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">6</property>
                                           <property name="row">0</property>
@@ -1851,9 +1851,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l4_op1">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L4</property>
+                                        <property name="label" translatable="no">L4</property>
                                         <property name="valign">start</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">7</property>
                                           <property name="row">0</property>
@@ -1918,7 +1918,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -1970,7 +1970,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op1">
-                                <property name="label" translatable="yes"> OP 1</property>
+                                <property name="label" translatable="no"> OP 1</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -2002,7 +2002,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -2046,7 +2046,7 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">RATIO</item>
+                                              <item translatable="no">RATIO</item>
                                               <item translatable="yes">FIXED</item>
                                             </items>
                                           </object>
@@ -2106,7 +2106,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -2153,7 +2153,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2169,7 +2169,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2185,7 +2185,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2201,7 +2201,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2217,7 +2217,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2233,7 +2233,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2249,7 +2249,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2265,7 +2265,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2277,7 +2277,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r1_op2">
-                                        <property name="label" translatable="yes">R1</property>
+                                        <property name="label" translatable="no">R1</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2288,7 +2288,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l1_op2">
-                                        <property name="label" translatable="yes">L1</property>
+                                        <property name="label" translatable="no">L1</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2299,7 +2299,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r2_op2">
-                                        <property name="label" translatable="yes">R2</property>
+                                        <property name="label" translatable="no">R2</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2310,7 +2310,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l2_op2">
-                                        <property name="label" translatable="yes">L2</property>
+                                        <property name="label" translatable="no">L2</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2321,7 +2321,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r3_op2">
-                                        <property name="label" translatable="yes">R3</property>
+                                        <property name="label" translatable="no">R3</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2332,7 +2332,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l3_op2">
-                                        <property name="label" translatable="yes">L3</property>
+                                        <property name="label" translatable="no">L3</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2343,7 +2343,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r4_op2">
-                                        <property name="label" translatable="yes">R4</property>
+                                        <property name="label" translatable="no">R4</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2354,7 +2354,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l4_op2">
-                                        <property name="label" translatable="yes">L4</property>
+                                        <property name="label" translatable="no">L4</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2422,7 +2422,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -2474,7 +2474,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op2">
-                                <property name="label" translatable="yes"> OP 2</property>
+                                <property name="label" translatable="no"> OP 2</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -2506,7 +2506,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -2550,7 +2550,7 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">RATIO</item>
+                                              <item translatable="no">RATIO</item>
                                               <item translatable="yes">FIXED</item>
                                             </items>
                                           </object>
@@ -2610,7 +2610,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -2657,7 +2657,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2673,7 +2673,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2689,7 +2689,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2705,7 +2705,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2721,7 +2721,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2737,7 +2737,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2753,7 +2753,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2769,7 +2769,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -2781,7 +2781,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r1_op3">
-                                        <property name="label" translatable="yes">R1</property>
+                                        <property name="label" translatable="no">R1</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2792,7 +2792,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l1_op3">
-                                        <property name="label" translatable="yes">L1</property>
+                                        <property name="label" translatable="no">L1</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2803,7 +2803,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r2_op3">
-                                        <property name="label" translatable="yes">R2</property>
+                                        <property name="label" translatable="no">R2</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2814,7 +2814,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l2_op3">
-                                        <property name="label" translatable="yes">L2</property>
+                                        <property name="label" translatable="no">L2</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2825,7 +2825,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r3_op3">
-                                        <property name="label" translatable="yes">R3</property>
+                                        <property name="label" translatable="no">R3</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2836,7 +2836,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l3_op3">
-                                        <property name="label" translatable="yes">L3</property>
+                                        <property name="label" translatable="no">L3</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2847,7 +2847,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r4_op3">
-                                        <property name="label" translatable="yes">R4</property>
+                                        <property name="label" translatable="no">R4</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2858,7 +2858,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l4_op3">
-                                        <property name="label" translatable="yes">L4</property>
+                                        <property name="label" translatable="no">L4</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -2925,7 +2925,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -2977,7 +2977,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op3">
-                                <property name="label" translatable="yes"> OP 3</property>
+                                <property name="label" translatable="no"> OP 3</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -3009,7 +3009,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -3053,7 +3053,7 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">RATIO</item>
+                                              <item translatable="no">RATIO</item>
                                               <item translatable="yes">FIXED</item>
                                             </items>
                                           </object>
@@ -3113,7 +3113,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -3161,7 +3161,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3177,7 +3177,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3193,7 +3193,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3209,7 +3209,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3225,7 +3225,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3241,7 +3241,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3257,7 +3257,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3273,7 +3273,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -3286,9 +3286,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r1_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R1</property>
+                                        <property name="label" translatable="no">R1</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">0</property>
                                           <property name="row">0</property>
@@ -3298,9 +3298,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l1_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L1</property>
+                                        <property name="label" translatable="no">L1</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">1</property>
                                           <property name="row">0</property>
@@ -3310,9 +3310,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r2_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R2</property>
+                                        <property name="label" translatable="no">R2</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">2</property>
                                           <property name="row">0</property>
@@ -3322,9 +3322,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l2_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L2</property>
+                                        <property name="label" translatable="no">L2</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">3</property>
                                           <property name="row">0</property>
@@ -3334,9 +3334,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r3_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R3</property>
+                                        <property name="label" translatable="no">R3</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">4</property>
                                           <property name="row">0</property>
@@ -3346,9 +3346,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l3_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L3</property>
+                                        <property name="label" translatable="no">L3</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">5</property>
                                           <property name="row">0</property>
@@ -3358,9 +3358,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r4_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">R4</property>
+                                        <property name="label" translatable="no">R4</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">6</property>
                                           <property name="row">0</property>
@@ -3370,9 +3370,9 @@
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l4_op4">
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">L4</property>
+                                        <property name="label" translatable="no">L4</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0.40000000596046448</property>
+                                        <property name="xalign">0.5</property>
                                         <layout>
                                           <property name="column">7</property>
                                           <property name="row">0</property>
@@ -3437,7 +3437,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -3489,7 +3489,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op4">
-                                <property name="label" translatable="yes"> OP 4</property>
+                                <property name="label" translatable="no"> OP 4</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -3521,7 +3521,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -3565,7 +3565,7 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">RATIO</item>
+                                              <item translatable="no">RATIO</item>
                                               <item translatable="yes">FIXED</item>
                                             </items>
                                           </object>
@@ -3626,7 +3626,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -3673,7 +3673,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3688,7 +3688,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3703,7 +3703,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3718,7 +3718,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3733,7 +3733,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3748,7 +3748,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3763,7 +3763,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3778,7 +3778,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
                                         <layout>
@@ -3789,7 +3789,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r1_op5">
-                                        <property name="label" translatable="yes">R1</property>
+                                        <property name="label" translatable="no">R1</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">0</property>
@@ -3799,7 +3799,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l1_op5">
-                                        <property name="label" translatable="yes">L1</property>
+                                        <property name="label" translatable="no">L1</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -3809,7 +3809,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r2_op5">
-                                        <property name="label" translatable="yes">R2</property>
+                                        <property name="label" translatable="no">R2</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">2</property>
@@ -3819,7 +3819,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l2_op5">
-                                        <property name="label" translatable="yes">L2</property>
+                                        <property name="label" translatable="no">L2</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">3</property>
@@ -3829,7 +3829,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r3_op5">
-                                        <property name="label" translatable="yes">R3</property>
+                                        <property name="label" translatable="no">R3</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">4</property>
@@ -3839,7 +3839,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l3_op5">
-                                        <property name="label" translatable="yes">L3</property>
+                                        <property name="label" translatable="no">L3</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">5</property>
@@ -3849,7 +3849,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r4_op5">
-                                        <property name="label" translatable="yes">R4</property>
+                                        <property name="label" translatable="no">R4</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">6</property>
@@ -3859,7 +3859,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l4_op5">
-                                        <property name="label" translatable="yes">L4</property>
+                                        <property name="label" translatable="no">L4</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
                                           <property name="column">7</property>
@@ -3925,7 +3925,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -3977,7 +3977,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op5">
-                                <property name="label" translatable="yes"> OP 5</property>
+                                <property name="label" translatable="no"> OP 5</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -4009,7 +4009,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -4053,7 +4053,7 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">RATIO</item>
+                                              <item translatable="no">RATIO</item>
                                               <item translatable="yes">FIXED</item>
                                             </items>
                                           </object>
@@ -4113,7 +4113,7 @@
                                         <property name="halign">center</property>
                                         <property name="margin-top">8</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -4160,7 +4160,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4176,7 +4176,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4192,7 +4192,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4208,7 +4208,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4224,7 +4224,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4240,7 +4240,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4256,7 +4256,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4272,7 +4272,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">start</property>
                                         <property name="width-chars">2</property>
                                         <property name="xalign">0.5</property>
@@ -4284,7 +4284,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r1_op6">
-                                        <property name="label" translatable="yes">R1</property>
+                                        <property name="label" translatable="no">R1</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4295,7 +4295,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l1_op6">
-                                        <property name="label" translatable="yes">L1</property>
+                                        <property name="label" translatable="no">L1</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4306,7 +4306,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r2_op6">
-                                        <property name="label" translatable="yes">R2</property>
+                                        <property name="label" translatable="no">R2</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4317,7 +4317,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l2_op6">
-                                        <property name="label" translatable="yes">L2</property>
+                                        <property name="label" translatable="no">L2</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4328,7 +4328,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r3_op6">
-                                        <property name="label" translatable="yes">R3</property>
+                                        <property name="label" translatable="no">R3</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4339,7 +4339,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l3_op6">
-                                        <property name="label" translatable="yes">L3</property>
+                                        <property name="label" translatable="no">L3</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4350,7 +4350,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_r4_op6">
-                                        <property name="label" translatable="yes">R4</property>
+                                        <property name="label" translatable="no">R4</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4361,7 +4361,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label_eg_l4_op6">
-                                        <property name="label" translatable="yes">L4</property>
+                                        <property name="label" translatable="no">L4</property>
                                         <property name="valign">start</property>
                                         <property name="xalign">0.0</property>
                                         <layout>
@@ -4428,7 +4428,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">center</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
@@ -4480,7 +4480,7 @@
                             <property name="vexpand">1</property>
                             <child type="label">
                               <object class="GtkLabel" id="label_general_op6">
-                                <property name="label" translatable="yes"> OP 6</property>
+                                <property name="label" translatable="no"> OP 6</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -4498,7 +4498,7 @@
                     <property name="reorderable">1</property>
                     <property name="tab">
                       <object class="GtkLabel" id="label_onglet_op">
-                        <property name="label" translatable="yes"> Operateurs </property>
+                        <property name="label" translatable="yes"> Operators </property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -4532,7 +4532,7 @@
                                         <property name="adjustment">adj_kls_lft_dpth_op1</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -4545,7 +4545,7 @@
                                         <property name="adjustment">adj_octv_brk_pt_op1</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">4</property>
@@ -4558,7 +4558,7 @@
                                         <property name="adjustment">adj_kls_rght_dpth_op1</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">7</property>
@@ -4604,10 +4604,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4622,18 +4622,18 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">A</item>
-                                              <item translatable="yes">A#</item>
-                                              <item translatable="yes">B</item>
-                                              <item translatable="yes">C</item>
-                                              <item translatable="yes">C#</item>
-                                              <item translatable="yes">D</item>
-                                              <item translatable="yes">D#</item>
-                                              <item translatable="yes">E</item>
-                                              <item translatable="yes">F</item>
-                                              <item translatable="yes">F#</item>
-                                              <item translatable="yes">G</item>
-                                              <item translatable="yes">G#</item>
+                                              <item translatable="no">A</item>
+                                              <item translatable="no">A#</item>
+                                              <item translatable="no">B</item>
+                                              <item translatable="no">C</item>
+                                              <item translatable="no">C#</item>
+                                              <item translatable="no">D</item>
+                                              <item translatable="no">D#</item>
+                                              <item translatable="no">E</item>
+                                              <item translatable="no">F</item>
+                                              <item translatable="no">F#</item>
+                                              <item translatable="no">G</item>
+                                              <item translatable="no">G#</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4648,10 +4648,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4667,7 +4667,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op1">
-                                <property name="label" translatable="yes"> OP 1</property>
+                                <property name="label" translatable="no"> OP 1</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -4695,8 +4695,8 @@
                                         <property name="adjustment">adj_kls_lft_dpth_op2</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">97</property>
-                                        <property name="value">97</property>
+                                        <property name="text" translatable="no">0</property>
+                                        <property name="value">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -4709,7 +4709,7 @@
                                         <property name="adjustment">adj_octv_brk_pt_op2</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">4</property>
@@ -4722,7 +4722,7 @@
                                         <property name="adjustment">adj_kls_rght_dpth_op2</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">7</property>
@@ -4768,10 +4768,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4786,18 +4786,18 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">A</item>
-                                              <item translatable="yes">A#</item>
-                                              <item translatable="yes">B</item>
-                                              <item translatable="yes">C</item>
-                                              <item translatable="yes">C#</item>
-                                              <item translatable="yes">D</item>
-                                              <item translatable="yes">D#</item>
-                                              <item translatable="yes">E</item>
-                                              <item translatable="yes">F</item>
-                                              <item translatable="yes">F#</item>
-                                              <item translatable="yes">G</item>
-                                              <item translatable="yes">G#</item>
+                                              <item translatable="no">A</item>
+                                              <item translatable="no">A#</item>
+                                              <item translatable="no">B</item>
+                                              <item translatable="no">C</item>
+                                              <item translatable="no">C#</item>
+                                              <item translatable="no">D</item>
+                                              <item translatable="no">D#</item>
+                                              <item translatable="no">E</item>
+                                              <item translatable="no">F</item>
+                                              <item translatable="no">F#</item>
+                                              <item translatable="no">G</item>
+                                              <item translatable="no">G#</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4812,10 +4812,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4831,7 +4831,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op2">
-                                <property name="label" translatable="yes"> OP 2</property>
+                                <property name="label" translatable="no"> OP 2</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -4859,8 +4859,8 @@
                                         <property name="adjustment">adj_kls_lft_dpth_op3</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">97</property>
-                                        <property name="value">97</property>
+                                        <property name="text" translatable="no">0</property>
+                                        <property name="value">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -4873,7 +4873,7 @@
                                         <property name="adjustment">adj_octv_brk_pt_op3</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">4</property>
@@ -4886,7 +4886,7 @@
                                         <property name="adjustment">adj_kls_rght_dpth_op3</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">7</property>
@@ -4932,10 +4932,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4950,18 +4950,18 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">A</item>
-                                              <item translatable="yes">A#</item>
-                                              <item translatable="yes">B</item>
-                                              <item translatable="yes">C</item>
-                                              <item translatable="yes">C#</item>
-                                              <item translatable="yes">D</item>
-                                              <item translatable="yes">D#</item>
-                                              <item translatable="yes">E</item>
-                                              <item translatable="yes">F</item>
-                                              <item translatable="yes">F#</item>
-                                              <item translatable="yes">G</item>
-                                              <item translatable="yes">G#</item>
+                                              <item translatable="no">A</item>
+                                              <item translatable="no">A#</item>
+                                              <item translatable="no">B</item>
+                                              <item translatable="no">C</item>
+                                              <item translatable="no">C#</item>
+                                              <item translatable="no">D</item>
+                                              <item translatable="no">D#</item>
+                                              <item translatable="no">E</item>
+                                              <item translatable="no">F</item>
+                                              <item translatable="no">F#</item>
+                                              <item translatable="no">G</item>
+                                              <item translatable="no">G#</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4976,10 +4976,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -4995,7 +4995,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op3">
-                                <property name="label" translatable="yes"> OP 3</property>
+                                <property name="label" translatable="no"> OP 3</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5023,8 +5023,8 @@
                                         <property name="adjustment">adj_kls_lft_dpth_op4</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">97</property>
-                                        <property name="value">97</property>
+                                        <property name="text" translatable="no">0</property>
+                                        <property name="value">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -5037,7 +5037,7 @@
                                         <property name="adjustment">adj_octv_brk_pt_op4</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">4</property>
@@ -5050,7 +5050,7 @@
                                         <property name="adjustment">adj_kls_rght_dpth_op4</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">7</property>
@@ -5096,10 +5096,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5114,18 +5114,18 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">A</item>
-                                              <item translatable="yes">A#</item>
-                                              <item translatable="yes">B</item>
-                                              <item translatable="yes">C</item>
-                                              <item translatable="yes">C#</item>
-                                              <item translatable="yes">D</item>
-                                              <item translatable="yes">D#</item>
-                                              <item translatable="yes">E</item>
-                                              <item translatable="yes">F</item>
-                                              <item translatable="yes">F#</item>
-                                              <item translatable="yes">G</item>
-                                              <item translatable="yes">G#</item>
+                                              <item translatable="no">A</item>
+                                              <item translatable="no">A#</item>
+                                              <item translatable="no">B</item>
+                                              <item translatable="no">C</item>
+                                              <item translatable="no">C#</item>
+                                              <item translatable="no">D</item>
+                                              <item translatable="no">D#</item>
+                                              <item translatable="no">E</item>
+                                              <item translatable="no">F</item>
+                                              <item translatable="no">F#</item>
+                                              <item translatable="no">G</item>
+                                              <item translatable="no">G#</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5140,10 +5140,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5159,7 +5159,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op4">
-                                <property name="label" translatable="yes"> OP 4</property>
+                                <property name="label" translatable="no"> OP 4</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5187,8 +5187,8 @@
                                         <property name="adjustment">adj_kls_lft_dpth_op5</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">97</property>
-                                        <property name="value">97</property>
+                                        <property name="text" translatable="no">0</property>
+                                        <property name="value">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -5201,7 +5201,7 @@
                                         <property name="adjustment">adj_octv_brk_pt_op5</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">4</property>
@@ -5214,7 +5214,7 @@
                                         <property name="adjustment">adj_kls_rght_dpth_op5</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">7</property>
@@ -5260,10 +5260,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5278,18 +5278,18 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">A</item>
-                                              <item translatable="yes">A#</item>
-                                              <item translatable="yes">B</item>
-                                              <item translatable="yes">C</item>
-                                              <item translatable="yes">C#</item>
-                                              <item translatable="yes">D</item>
-                                              <item translatable="yes">D#</item>
-                                              <item translatable="yes">E</item>
-                                              <item translatable="yes">F</item>
-                                              <item translatable="yes">F#</item>
-                                              <item translatable="yes">G</item>
-                                              <item translatable="yes">G#</item>
+                                              <item translatable="no">A</item>
+                                              <item translatable="no">A#</item>
+                                              <item translatable="no">B</item>
+                                              <item translatable="no">C</item>
+                                              <item translatable="no">C#</item>
+                                              <item translatable="no">D</item>
+                                              <item translatable="no">D#</item>
+                                              <item translatable="no">E</item>
+                                              <item translatable="no">F</item>
+                                              <item translatable="no">F#</item>
+                                              <item translatable="no">G</item>
+                                              <item translatable="no">G#</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5304,10 +5304,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5323,7 +5323,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op5">
-                                <property name="label" translatable="yes"> OP 5</property>
+                                <property name="label" translatable="no"> OP 5</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5351,8 +5351,8 @@
                                         <property name="adjustment">adj_kls_lft_dpth_op6</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">97</property>
-                                        <property name="value">97</property>
+                                        <property name="text" translatable="no">0</property>
+                                        <property name="value">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">1</property>
@@ -5365,7 +5365,7 @@
                                         <property name="adjustment">adj_octv_brk_pt_op6</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">4</property>
@@ -5378,7 +5378,7 @@
                                         <property name="adjustment">adj_kls_rght_dpth_op6</property>
                                         <property name="focusable">1</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="wrap">1</property>
                                         <layout>
                                           <property name="column">7</property>
@@ -5424,10 +5424,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5442,18 +5442,18 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">A</item>
-                                              <item translatable="yes">A#</item>
-                                              <item translatable="yes">B</item>
-                                              <item translatable="yes">C</item>
-                                              <item translatable="yes">C#</item>
-                                              <item translatable="yes">D</item>
-                                              <item translatable="yes">D#</item>
-                                              <item translatable="yes">E</item>
-                                              <item translatable="yes">F</item>
-                                              <item translatable="yes">F#</item>
-                                              <item translatable="yes">G</item>
-                                              <item translatable="yes">G#</item>
+                                              <item translatable="no">A</item>
+                                              <item translatable="no">A#</item>
+                                              <item translatable="no">B</item>
+                                              <item translatable="no">C</item>
+                                              <item translatable="no">C#</item>
+                                              <item translatable="no">D</item>
+                                              <item translatable="no">D#</item>
+                                              <item translatable="no">E</item>
+                                              <item translatable="no">F</item>
+                                              <item translatable="no">F#</item>
+                                              <item translatable="no">G</item>
+                                              <item translatable="no">G#</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5468,10 +5468,10 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="yes">LIN-</item>
-                                              <item translatable="yes">EXP-</item>
-                                              <item translatable="yes">EXP+</item>
-                                              <item translatable="yes">LIN+</item>
+                                              <item translatable="no">LIN-</item>
+                                              <item translatable="no">EXP-</item>
+                                              <item translatable="no">EXP+</item>
+                                              <item translatable="no">LIN+</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5487,7 +5487,7 @@
                             </property>
                             <child type="label">
                               <object class="GtkLabel" id="label_kls_op6">
-                                <property name="label" translatable="yes"> OP 6</property>
+                                <property name="label" translatable="no"> OP 6</property>
                                 <property name="use-markup">1</property>
                               </object>
                             </child>
@@ -5632,7 +5632,7 @@
                                         <property name="focusable">1</property>
                                         <property name="halign">start</property>
                                         <property name="numeric">1</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text" translatable="no">0</property>
                                         <property name="width-chars">2</property>
                                         <property name="wrap">1</property>
                                         <property name="margin-top">2</property>
@@ -5658,7 +5658,7 @@
                                     <property name="focusable">1</property>
                                     <property name="halign">start</property>
                                     <property name="numeric">1</property>
-                                    <property name="text" translatable="yes">0</property>
+                                    <property name="text" translatable="no">0</property>
                                     <property name="width-chars">2</property>
                                     <property name="wrap">1</property>
                                     <layout>
@@ -5714,7 +5714,7 @@
                                 <child>
                                   <object class="GtkButton" id="btn_panic">
                                     <property name="focusable">1</property>
-                                    <property name="label" translatable="yes">panique</property>
+                                    <property name="label" translatable="yes">panic</property>
                                     <property name="margin-bottom">4</property>
                                     <property name="margin-top">4</property>
                                     <property name="receives-default">1</property>
@@ -5774,7 +5774,7 @@
                     <property name="reorderable">1</property>
                     <property name="tab">
                       <object class="GtkLabel" id="label_fonction">
-                        <property name="label" translatable="yes">Fonction</property>
+                        <property name="label" translatable="yes">Functions</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -6548,7 +6548,7 @@
                     <property name="orientation">horizontal</property>
                     <child>
                     <object class="GtkCheckButton" id="checkbutton_add_ctrl_parameters">
-                        <property name="label" translatable="yes">add extra parameters</property>
+                        <property name="label" translatable="yes">add controllers parameters</property>
                     </object>
                     </child>
                     <child>
