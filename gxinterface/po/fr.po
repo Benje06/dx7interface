@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxinterface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-06 13:57+0200\n"
+"POT-Creation-Date: 2025-05-12 09:40+0200\n"
 "PO-Revision-Date: 2025-02-17 01:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -63,7 +63,7 @@ msgid ""
 " => Cannot load :"
 msgstr ""
 "!!! Ne peut pas etre crée !!!\n"
-" => Ne peut pas lire load: "
+" => Ne peut pas charger: "
 
 #: ../src/gxmodule.cc:110
 msgid "Cannot Read: "
@@ -83,7 +83,7 @@ msgstr "Ecriture du fichier: "
 
 #: ../src/gxmodule.cc:328
 msgid " Creating window failed "
-msgstr "La creation de la fenetre à echoué"
+msgstr "La création de la fenetre à echoué"
 
 #: ../src/gxmodule.cc:390
 msgid "Cannot load file: "
@@ -123,7 +123,7 @@ msgstr "Aucun module pour le fichier "
 
 #: ../src/gxmodule.cc:474
 msgid "Failed to create module: "
-msgstr "Echéc à la creation du module: "
+msgstr "Echéc à la création du module: "
 
 #: ../src/gxmodule.cc:507
 msgid "Css style file: "
@@ -159,7 +159,7 @@ msgstr "Erreur: "
 
 #: ../src/gxmodule.cc:639
 msgid " Failed load font: !!!\n"
-msgstr "Echec de chargeent de la police: \n"
+msgstr "Echec de chargement de la police: \n"
 
 #: ../src/gxmodule.cc:651
 msgid "Fail to list pango font with error: "
@@ -175,7 +175,7 @@ msgstr "Attention: le fichier d'icone "
 
 #: ../src/gxinterface.cc:37
 msgid "Failed to construct gxinterface"
-msgstr "Echec à la creation de gxinterface"
+msgstr "Echec à la création de gxinterface"
 
 #: ../src/gxinterface.cc:72
 msgid "Error: in application activate -> "
@@ -200,7 +200,7 @@ msgstr "Chargement du fichier d'interface par defaut."
 
 #: ../src/gxinterface.cc:106
 msgid "Loading module."
-msgstr "Chargement du module."
+msgstr "Chargement d'un module."
 
 #: ../src/gxinterface.cc:114
 msgid "Loading file: "
