@@ -110,7 +110,9 @@ The windows version doesn't implement Midi driver, for this it rely on [loopMidi
 After loopMidi is installed, start it and create **2 ports** named **Dx7interface_in** and **Dx7interface_out**.\
 At start Dx7interface will automatically connect to these ports.\
 You'll have to set in advanced page, the maximum sysex size to 4104 kiloBytes at least, so banks of 32 sounds can be sent.\
-Once started any software that support Direct Music will see it.
+Once started any software that support Direct Music will see it.\
+For the start options, they are the same as [under linux](#run).\
+Log file is created under %LOCALAPPDATA%\gxinterface as gxinterface.log ( C:\Users\user_name\AppData\Local\gxinterface\gxinterface.log )
 
 Windows 10 version download:
 - Installer [Dx7interface without console](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface.exe?raw=true)

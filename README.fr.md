@@ -105,8 +105,9 @@ La version Windows n'implémente pas de pilote Midi, elle s'appuie pour cela sur
 Une fois loopMidi installé, démarrez-le et créez **deux ports** nommés **Dx7interface_in** et **Dx7interface_out**.\
 Au démarrage, Dx7interface se connectera automatiquement à ces ports.\
 Vous devrez définir la taille maximale du sysex à au moins 4104 kilo-octets dans la page avancée, ainsi les banques de 32 sons pouront être envoyées.\
-Une fois démarrée, tout logiciel prenant en charge Direct Music la verra.
-Pour les options du lanceur, ce sont les meme que [sous linux](#run).
+Une fois démarrée, tout logiciel prenant en charge Direct Music la verra.\
+Pour les options du lanceur, ce sont les meme que [sous linux](#run).\
+Le fichier de log est crée sous %LOCALAPPDATA%\gxinterface en tant que gxinterface.log ( C:\Users\user_name\AppData\Local\gxinterface\gxinterface.log )
 
 Télèchargement de la version Windows:
 - Installateur [Dx7interface sans console](https://github.com/Benje06/dx7interface/blob/gtk4/Dx7interface.exe?raw=true)
