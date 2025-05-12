@@ -18,6 +18,7 @@ Section "Installer"
   File /r /x ucrt64 "d:\gxinterface\package\*.*"
 
   CreateDirectory "$SMPROGRAMS\Dx7interface\debug"
+  CreateDirectory "$LOCALAPPDATA\gxinterface\"
   CreateShortcut "$SMPROGRAMS\Dx7interface\debug\Uninstall.lnk" "$INSTDIR\uninstall.exe"
   File "${APP_ICON}"
   CreateShortCut "$SMPROGRAMS\Dx7interface\debug\Dx7interface_debug.lnk" "$INSTDIR\usr\bin\gxinterface.exe" "-l 2 -m usr\share\dx7interface\1.0.0\dx7interface-0.0.1.la" "$INSTDIR\dx7interface.ico" 0
