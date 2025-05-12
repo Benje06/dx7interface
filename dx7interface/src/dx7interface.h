@@ -89,8 +89,8 @@ class Dx7interface : public Gx_module, public Synth {
             std::vector<uint8_t> sysex_buffer;              // Buffer to store SysEx fragments
         #endif
         /* Boolean */
-        bool send_extra_params = false;         // set if send_extra paraameter is activate
-        bool write_extra_params = false;        // set if send_extra paraameter is activate
+        bool send_ctrl_params = false;         // set if send_ctrl parameter is activate
+        bool write_ctrl_params = false;        // set if write_ctrl parameter is activate
         bool unmooved_sound = true;
         bool send_bank = false;
 
@@ -340,7 +340,7 @@ class Dx7interface : public Gx_module, public Synth {
             &Dx7interface::set_portamento_tm_event,
             &Dx7interface::set_ptch_bnd_rng_event,
             &Dx7interface::set_ptch_bnd_stp_event,
-            &Dx7interface::set_send_extra_parameters_event,
+            &Dx7interface::set_send_ctrl_parameters_event,
             &Dx7interface::set_transpose_event
         };
         /* Translation for the User presentation */
@@ -638,14 +638,14 @@ class Dx7interface : public Gx_module, public Synth {
         /* SEND */
         void on_send_bank();                                // send bank over midi
         void send_voice(st_dx7sysex_1* sound);                    // send voice over midi
-        void send_extra_parameters(st_dx7sysex_1* sound);         // send voice parameter over midi
+        void send_ctrl_parameters(st_dx7sysex_1* sound);         // send voice parameter over midi
         /* SAVE */
         void on_save_bank();
         void save_bank_as(Glib::RefPtr<Gio::File> file);
         void save_modif_sound();                            // save internally on origin bank
         void on_save_sound();                               // save internally and write file
         void on_as_raw_event();                             // event to manage save dialog parameter  ( save as raw or bulk )
-        void on_extra_param_event();                        // event to manage save dialog parameter ( save extra parameters )
+        void on_ctrl_param_event();                        // event to manage save dialog parameter ( save controllers parameters )
         /* WRITE */
         void write_bank(unsigned int data_stream_index,
                         Glib::RefPtr<Gio::File> file,
@@ -669,7 +669,7 @@ class Dx7interface : public Gx_module, public Synth {
         void write_voice_as_raw(unsigned int data_stream_index,
                                 Glib::RefPtr<Gio::File> file);
         void write_voices_as_n_sysex(St_dx7sysex_1* sound);
-        void write_voice_extra_parameters(st_dx7sysex_1* sound,
+        void write_voice_ctrl_parameters(st_dx7sysex_1* sound,
                                           unsigned char*,
                                           unsigned int*);
         /*** SET / SEEK VOICE ***/
@@ -679,7 +679,7 @@ class Dx7interface : public Gx_module, public Synth {
         void seek_voice_by_byte(Glib::RefPtr<Gio::DataInputStream> data_stream,
                                 st_dx7sysex_1* sound);     // get voice param from file to fill sound struct
         void seek_parameters(Glib::ustring file_base,
-                             St_dx7sysex_1* sound); // get sound parameter from file to fill sound extra param struct
+                             St_dx7sysex_1* sound); // get sound parameter from file to fill sound controllers param struct
         void seek_voice_parameters(St_dx7sysex_1* sound);
         /* set voice value from sound in bank to the interface */
         void set_voice(st_dx7sysex_1* sound);               // set voice in GUI
@@ -890,8 +890,8 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_btn_compare;
         void on_compare_event();
         /* send parameters */
-        sigc::connection slot_btn_send_extra_parameters;
-        void on_send_extra_parameters_event();
+        sigc::connection slot_btn_send_ctrl_parameters;
+        void on_send_ctrl_parameters_event();
         sigc::connection slot_btn_mode_tf1;
         void on_mode_tf1_event();
 
@@ -1420,6 +1420,6 @@ class Dx7interface : public Gx_module, public Synth {
         void set_portamento_tm_event(int);
         void set_ptch_bnd_rng_event(int);
         void set_ptch_bnd_stp_event(int);
-        void set_send_extra_parameters_event(int);
+        void set_send_ctrl_parameters_event(int);
         void set_transpose_event(int);
 };

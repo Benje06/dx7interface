@@ -130,7 +130,7 @@
         St_49 transpose;
     }St_algo;
 
-    typedef struct st_funct {
+    typedef struct st_ctrl {
         St_2  poly_mono;
         St_14 ptch_bnd_rng;
         St_14 ptch_bnd_stp;
@@ -145,11 +145,11 @@
         St_8 brth_assgn;
         St_100 aftrtch_rng;
         St_8 aftrtch_assgn;
-    }St_funct;
+    }St_ctrl;
 
     typedef struct st_extra {
         St_128 mute;
-        St_funct functions;
+        St_ctrl controller;
     }St_extra;
 
     typedef struct st_dx7sysex_1 {

@@ -615,7 +615,7 @@ void Dx7interface::create_dialogs() {
     dialog_param->set_hide_on_close(true);
     dialog_param->set_modal(true);
     get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_32")));
-    get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")));
+    get_gwidget<Gtk::CheckButton>("checkbutton_ctrl_parameters_by_bank")->set_group(*(get_gwidget<Gtk::CheckButton>("checkbutton_ctrl_parameters_by_sound")));
 };
 
 void Dx7interface::set_param(){
@@ -634,7 +634,7 @@ void Dx7interface::set_param(){
             }else{
                 is_32=true;
             };
-            write_extra_params = get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active();
+            write_ctrl_params = get_gwidget<Gtk::CheckButton>("checkbutton_add_ctrl_parameters")->get_active();
             if(save_type == SOUND){
                 export_config = DX7_1;
                 filename = bank_1_modif.sound->name;
@@ -1414,18 +1414,18 @@ void Dx7interface::write_bank_as_raw(unsigned int data_stream_index, Glib::RefPt
     LOG( LOG_IN() );
     try{
         uint8_t voice_checksum = 0;
-        unsigned int l=0, msg_size, msg_extra_size, msg_extra_index=0;
+        unsigned int l=0, msg_size, msg_ctrl_size, msg_ctrl_index=0;
         Bank_ptr bank_ptr;
         switch( bank_nb_sound ){
             case 1:{
                 msg_size = 155;
-                msg_extra_size = 98;
+                msg_ctrl_size = 98;
                 bank_ptr=reinterpret_cast<Bank_ptr>(&bank_1_modif);
                 break;
             }
             case 32:{
                 msg_size = 4096;
-                msg_extra_size = 3136;
+                msg_ctrl_size = 3136;
                 bank_ptr=reinterpret_cast<Bank_ptr>(&bank_32_modif);
                 break;
             }
@@ -1433,31 +1433,31 @@ void Dx7interface::write_bank_as_raw(unsigned int data_stream_index, Glib::RefPt
                 bank_ptr=reinterpret_cast<Bank_ptr>(&bank_128_modif);
                 if (get_gwidget<Gtk::CheckButton>("checkbutton_32")->get_active()){
                     msg_size = 4096;
-                    msg_extra_size = 3136;
+                    msg_ctrl_size = 3136;
                 }else{
                     msg_size = 16384;
-                    msg_extra_size = 12544;
+                    msg_ctrl_size = 12544;
                 };
                 break;
             }
         };
         unsigned char msg[msg_size];
-        unsigned char msg_extra[msg_extra_size];
+        unsigned char msg_ctrl[msg_ctrl_size];
         if(bank_nb_sound == 1){
             write_voice_bulk1(&l, msg, &bank_ptr->sound[0], &voice_checksum );
-            write_voice_extra_parameters(&bank_ptr->sound[0],msg_extra,&msg_extra_index);
+            write_voice_ctrl_parameters(&bank_ptr->sound[0],msg_ctrl,&msg_ctrl_index);
         }else{
-            for (unsigned int i=index, msg_extra_index=0; i<((msg_size/128)+index); i++){
+            for (unsigned int i=index, msg_ctrl_index=0; i<((msg_size/128)+index); i++){
                 write_voice_bulk32(&l, msg, &bank_ptr->sound[i], &voice_checksum );
-                write_voice_extra_parameters(&bank_ptr->sound[i],msg_extra,&msg_extra_index);
+                write_voice_ctrl_parameters(&bank_ptr->sound[i],msg_ctrl,&msg_ctrl_index);
             };
         };
         write_file_as_datastream(data_stream_index, file, msg, msg_size);
-        if(write_extra_params){
+        if(write_ctrl_params){
             Glib::ustring file_full = file->get_path();
             Glib::ustring file_base = file_full.substr(0,file_full.find_last_of("."));
-            Glib::RefPtr<Gio::File> file_extra=Gio::File::create_for_path( (file_base+"_fct.syx").c_str() );
-            write_file_as_datastream(data_stream_index, file_extra, msg_extra, msg_extra_size);
+            Glib::RefPtr<Gio::File> file_ctrl=Gio::File::create_for_path( (file_base+"_fct.syx").c_str() );
+            write_file_as_datastream(data_stream_index, file_ctrl, msg_ctrl, msg_ctrl_size);
         };
     }catch( const std::exception& ex ){;
         std::string msg_err = error( __PRETTY_FUNCTION__, _(" Error writing to file: \n") + file->get_path(), ex.what() );
@@ -1761,28 +1761,28 @@ void Dx7interface::write_voice_as_raw(unsigned int data_stream_index, Glib::RefP
         LOG_ERR( msg_err );
     }
 };
-void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,unsigned char* msg, unsigned int* index){
+void Dx7interface::write_voice_ctrl_parameters(st_dx7sysex_1* sound,unsigned char* msg, unsigned int* index){
     LOG( LOG_IN() );
-    if(write_extra_params){
+    if(write_ctrl_params){
         try{
             // size = 98
             unsigned int i, j;
             unsigned int nb_elem = 14;
             uint8_t val[] = {
-                sound->extra.functions.poly_mono.val,
-                sound->extra.functions.ptch_bnd_rng.val,
-                sound->extra.functions.ptch_bnd_stp.val,
-                sound->extra.functions.portamento_md.val,
-                sound->extra.functions.portamento_glss.val,
-                sound->extra.functions.portamento_tm.val,
-                sound->extra.functions.md_whl_rng.val,
-                sound->extra.functions.md_whl_assgn.val,
-                sound->extra.functions.foot_rng.val,
-                sound->extra.functions.foot_assgn.val,
-                sound->extra.functions.brth_rng.val,
-                sound->extra.functions.brth_assgn.val,
-                sound->extra.functions.aftrtch_rng.val,
-                sound->extra.functions.aftrtch_assgn.val,
+                sound->extra.controller.poly_mono.val,
+                sound->extra.controller.ptch_bnd_rng.val,
+                sound->extra.controller.ptch_bnd_stp.val,
+                sound->extra.controller.portamento_md.val,
+                sound->extra.controller.portamento_glss.val,
+                sound->extra.controller.portamento_tm.val,
+                sound->extra.controller.md_whl_rng.val,
+                sound->extra.controller.md_whl_assgn.val,
+                sound->extra.controller.foot_rng.val,
+                sound->extra.controller.foot_assgn.val,
+                sound->extra.controller.brth_rng.val,
+                sound->extra.controller.brth_assgn.val,
+                sound->extra.controller.aftrtch_rng.val,
+                sound->extra.controller.aftrtch_assgn.val,
             };
             for ( i=0, j=64; i< nb_elem; i++,j++){
                 /*
@@ -1799,7 +1799,7 @@ void Dx7interface::write_voice_extra_parameters(st_dx7sysex_1* sound,unsigned ch
                 msg[(*index)++]=0xF7;
             };
         }catch( const std::exception& ex ){
-            std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot write extra parameters"), ex.what() );
+            std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot set for write ctrl parameters"), ex.what() );
             LOG_ERR( msg_err );
         };
     };
@@ -2088,65 +2088,65 @@ void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
             };
             switch(data_stream_param->read_byte()){
                 case 0x40:
-                    sound->extra.functions.poly_mono.val = data_stream_param->read_byte() & sound->extra.functions.poly_mono.mask;
+                    sound->extra.controller.poly_mono.val = data_stream_param->read_byte() & sound->extra.controller.poly_mono.mask;
                     break;
                 case 0x41:
-                    sound->extra.functions.ptch_bnd_rng.val = data_stream_param->read_byte() & sound->extra.functions.ptch_bnd_rng.mask;
+                    sound->extra.controller.ptch_bnd_rng.val = data_stream_param->read_byte() & sound->extra.controller.ptch_bnd_rng.mask;
                     break;
                 case 0x42:
-                    sound->extra.functions.ptch_bnd_stp.val = data_stream_param->read_byte() & sound->extra.functions.ptch_bnd_stp.mask;
+                    sound->extra.controller.ptch_bnd_stp.val = data_stream_param->read_byte() & sound->extra.controller.ptch_bnd_stp.mask;
                     break;
                 case 0x43:
-                    sound->extra.functions.portamento_md.val = data_stream_param->read_byte() & sound->extra.functions.portamento_md.mask;
+                    sound->extra.controller.portamento_md.val = data_stream_param->read_byte() & sound->extra.controller.portamento_md.mask;
                     break;
                 case 0x44:
-                    sound->extra.functions.portamento_glss.val = data_stream_param->read_byte() & sound->extra.functions.portamento_glss.mask;
+                    sound->extra.controller.portamento_glss.val = data_stream_param->read_byte() & sound->extra.controller.portamento_glss.mask;
                     break;
                 case 0x45:
-                    sound->extra.functions.portamento_tm.val = data_stream_param->read_byte() & sound->extra.functions.portamento_tm.mask;
+                    sound->extra.controller.portamento_tm.val = data_stream_param->read_byte() & sound->extra.controller.portamento_tm.mask;
                     break;
                 case 0x46:
-                    sound->extra.functions.md_whl_rng.val = data_stream_param->read_byte() & sound->extra.functions.md_whl_rng.mask;
+                    sound->extra.controller.md_whl_rng.val = data_stream_param->read_byte() & sound->extra.controller.md_whl_rng.mask;
                     break;
                 case 0x47:
-                    sound->extra.functions.md_whl_assgn.val = data_stream_param->read_byte() & sound->extra.functions.md_whl_assgn.mask;
+                    sound->extra.controller.md_whl_assgn.val = data_stream_param->read_byte() & sound->extra.controller.md_whl_assgn.mask;
                     break;
                 case 0x48:
-                    sound->extra.functions.foot_rng.val = data_stream_param->read_byte() & sound->extra.functions.foot_rng.mask;
+                    sound->extra.controller.foot_rng.val = data_stream_param->read_byte() & sound->extra.controller.foot_rng.mask;
                     break;
                 case 0x49:
-                    sound->extra.functions.foot_assgn.val = data_stream_param->read_byte() & sound->extra.functions.foot_assgn.mask;
+                    sound->extra.controller.foot_assgn.val = data_stream_param->read_byte() & sound->extra.controller.foot_assgn.mask;
                     break;
                 case 0x4A:
-                    sound->extra.functions.brth_rng.val = data_stream_param->read_byte() & sound->extra.functions.brth_rng.mask;
+                    sound->extra.controller.brth_rng.val = data_stream_param->read_byte() & sound->extra.controller.brth_rng.mask;
                     break;
                 case 0x4B:
-                    sound->extra.functions.brth_assgn.val = data_stream_param->read_byte() & sound->extra.functions.brth_assgn.mask;
+                    sound->extra.controller.brth_assgn.val = data_stream_param->read_byte() & sound->extra.controller.brth_assgn.mask;
                     break;
                 case 0x4C:
-                    sound->extra.functions.aftrtch_rng.val = data_stream_param->read_byte() & sound->extra.functions.aftrtch_rng.mask;
+                    sound->extra.controller.aftrtch_rng.val = data_stream_param->read_byte() & sound->extra.controller.aftrtch_rng.mask;
                     break;
                 case 0x4D:
-                    sound->extra.functions.aftrtch_assgn.val = data_stream_param->read_byte() & sound->extra.functions.aftrtch_assgn.mask;
+                    sound->extra.controller.aftrtch_assgn.val = data_stream_param->read_byte() & sound->extra.controller.aftrtch_assgn.mask;
                     break;
             };
             data_stream_param->read_byte();
         };
     }else{
-        sound->extra.functions.poly_mono.val = 0x00;
-        sound->extra.functions.ptch_bnd_rng.val = 0x00;
-        sound->extra.functions.ptch_bnd_stp.val = 0x00;
-        sound->extra.functions.portamento_md.val = 0x00;
-        sound->extra.functions.portamento_glss.val = 0x00;
-        sound->extra.functions.portamento_tm.val = 0x00;
-        sound->extra.functions.md_whl_rng.val = 0x00;
-        sound->extra.functions.md_whl_assgn.val = 0x00;
-        sound->extra.functions.foot_rng.val = 0x00;
-        sound->extra.functions.foot_assgn.val = 0x00;
-        sound->extra.functions.brth_rng.val = 0x00;
-        sound->extra.functions.brth_assgn.val = 0x00;
-        sound->extra.functions.aftrtch_rng.val = 0x00;
-        sound->extra.functions.aftrtch_assgn.val = 0x00;
+        sound->extra.controller.poly_mono.val = 0x00;
+        sound->extra.controller.ptch_bnd_rng.val = 0x00;
+        sound->extra.controller.ptch_bnd_stp.val = 0x00;
+        sound->extra.controller.portamento_md.val = 0x00;
+        sound->extra.controller.portamento_glss.val = 0x00;
+        sound->extra.controller.portamento_tm.val = 0x00;
+        sound->extra.controller.md_whl_rng.val = 0x00;
+        sound->extra.controller.md_whl_assgn.val = 0x00;
+        sound->extra.controller.foot_rng.val = 0x00;
+        sound->extra.controller.foot_assgn.val = 0x00;
+        sound->extra.controller.brth_rng.val = 0x00;
+        sound->extra.controller.brth_assgn.val = 0x00;
+        sound->extra.controller.aftrtch_rng.val = 0x00;
+        sound->extra.controller.aftrtch_assgn.val = 0x00;
     };
 };
 
@@ -2282,21 +2282,21 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
 void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> data){
         int i;
         i=6 + (64 * snum);
-        sound->extra.functions.poly_mono.val = (data[i++]>>6) & sound->extra.functions.poly_mono.mask;
-        sound->extra.functions.ptch_bnd_rng.val = (data[i]) & sound->extra.functions.ptch_bnd_rng.mask;
-        sound->extra.functions.ptch_bnd_stp.val = ( (data[i]>>4) + ((data[i+14]>>6)+3) ) & sound->extra.functions.ptch_bnd_stp.mask;
+        sound->extra.controller.poly_mono.val = (data[i++]>>6) & sound->extra.controller.poly_mono.mask;
+        sound->extra.controller.ptch_bnd_rng.val = (data[i]) & sound->extra.controller.ptch_bnd_rng.mask;
+        sound->extra.controller.ptch_bnd_stp.val = ( (data[i]>>4) + ((data[i+14]>>6)+3) ) & sound->extra.controller.ptch_bnd_stp.mask;
         i++;
-        sound->extra.functions.portamento_tm.val = (data[i++]) & sound->extra.functions.portamento_tm.mask;
-        sound->extra.functions.portamento_glss.val = (data[i]) & sound->extra.functions.portamento_glss.mask;
-        sound->extra.functions.portamento_md.val = (data[i++]>>1) & sound->extra.functions.portamento_md.mask;
-        sound->extra.functions.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.md_whl_assgn.val = (data[i++]>>4) & sound->extra.functions.md_whl_assgn.mask;
-        sound->extra.functions.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.foot_assgn.val = (data[i++]>>4) & sound->extra.functions.foot_assgn.mask;
-        sound->extra.functions.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.functions.aftrtch_assgn.mask;
-        sound->extra.functions.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.brth_assgn.val = (data[i++]>>4) & sound->extra.functions.brth_assgn.mask;
+        sound->extra.controller.portamento_tm.val = (data[i++]) & sound->extra.controller.portamento_tm.mask;
+        sound->extra.controller.portamento_glss.val = (data[i]) & sound->extra.controller.portamento_glss.mask;
+        sound->extra.controller.portamento_md.val = (data[i++]>>1) & sound->extra.controller.portamento_md.mask;
+        sound->extra.controller.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.md_whl_assgn.val = (data[i++]>>4) & sound->extra.controller.md_whl_assgn.mask;
+        sound->extra.controller.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.foot_assgn.val = (data[i++]>>4) & sound->extra.controller.foot_assgn.mask;
+        sound->extra.controller.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.controller.aftrtch_assgn.mask;
+        sound->extra.controller.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.brth_assgn.val = (data[i++]>>4) & sound->extra.controller.brth_assgn.mask;
 };
 
 /* read: set (in ui from struct) */
@@ -2404,33 +2404,33 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG( LOG_IN() );
 void Dx7interface::set_voice_parameters(St_dx7sysex_1* sound){
     // called from set_voice in the callback
     if( mode_tf1 && !compare ) {
-        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_active(sound->extra.functions.poly_mono.val);
-        (get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->set_value(sound->extra.functions.ptch_bnd_rng.val);
-        (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->set_value(sound->extra.functions.ptch_bnd_stp.val);
-        (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_active(sound->extra.functions.portamento_md.val);
-        (get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->set_active(sound->extra.functions.portamento_glss.val);
-        (get_gwidget<Gtk::SpinButton>("portamento_tm"))->set_value(sound->extra.functions.portamento_tm.val);
+        (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_active(sound->extra.controller.poly_mono.val);
+        (get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->set_value(sound->extra.controller.ptch_bnd_rng.val);
+        (get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->set_value(sound->extra.controller.ptch_bnd_stp.val);
+        (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_active(sound->extra.controller.portamento_md.val);
+        (get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->set_active(sound->extra.controller.portamento_glss.val);
+        (get_gwidget<Gtk::SpinButton>("portamento_tm"))->set_value(sound->extra.controller.portamento_tm.val);
 
-        (get_gwidget<Gtk::SpinButton>("md_whl_rng"))->set_value(sound->extra.functions.md_whl_rng.val);
-        unsigned char val = sound->extra.functions.md_whl_assgn.val;
+        (get_gwidget<Gtk::SpinButton>("md_whl_rng"))->set_value(sound->extra.controller.md_whl_rng.val);
+        unsigned char val = sound->extra.controller.md_whl_assgn.val;
         (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->set_active( (val & 0x01) );
         (get_gwidget<Gtk::CheckButton>("md_whl_mp"))->set_active( (val & 0x02)>>1 );
         (get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->set_active( (val & 0x04)>>2 );
 
-        (get_gwidget<Gtk::SpinButton>("foot_rng"))->set_value(sound->extra.functions.foot_rng.val);
-        val = sound->extra.functions.foot_assgn.val;
+        (get_gwidget<Gtk::SpinButton>("foot_rng"))->set_value(sound->extra.controller.foot_rng.val);
+        val = sound->extra.controller.foot_assgn.val;
         (get_gwidget<Gtk::CheckButton>("foot_ptch"))->set_active(val & 0x01);
         (get_gwidget<Gtk::CheckButton>("foot_mp"))->set_active((val & 0x02)>>1);
         (get_gwidget<Gtk::CheckButton>("foot_gbs"))->set_active((val & 0x04)>>2);
 
-        (get_gwidget<Gtk::SpinButton>("brth_rng"))->set_value(sound->extra.functions.brth_rng.val);
-        val = sound->extra.functions.brth_assgn.val;
+        (get_gwidget<Gtk::SpinButton>("brth_rng"))->set_value(sound->extra.controller.brth_rng.val);
+        val = sound->extra.controller.brth_assgn.val;
         (get_gwidget<Gtk::CheckButton>("brth_ptch"))->set_active(val & 0x01);
         (get_gwidget<Gtk::CheckButton>("brth_mp"))->set_active((val & 0x02)>>1);
         (get_gwidget<Gtk::CheckButton>("brth_gbs"))->set_active((val & 0x04)>>2);
 
-        (get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->set_value(sound->extra.functions.aftrtch_rng.val);
-        val = sound->extra.functions.aftrtch_assgn.val;
+        (get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->set_value(sound->extra.controller.aftrtch_rng.val);
+        val = sound->extra.controller.aftrtch_assgn.val;
         (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->set_active(val & 0x01);
         (get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->set_active((val & 0x02)>>1);
         (get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->set_active((val & 0x04)>>2);
@@ -2547,33 +2547,33 @@ void Dx7interface::send_voice(st_dx7sysex_1* sound){
     msg[161]=sound->sum;
     msg[162]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 163, msg);
-    /* extra parameters */
-    //send_extra_parameters(sound);
+    /* ctrl parameters */
+    send_ctrl_parameters(sound);
     /* send mute status */
     on_mute_op_event();
     LOG( LOG_OUT() );
 };
-void Dx7interface::send_extra_parameters(st_dx7sysex_1* sound){
+void Dx7interface::send_ctrl_parameters(st_dx7sysex_1* sound){
     LOG( LOG_IN() );
-    if(send_extra_params){
+    if(send_ctrl_params){
         uint8_t i, j;
         unsigned int nb_elem = 14;
         unsigned char msg[7];
         uint8_t val[] = {
-            sound->extra.functions.poly_mono.val,
-            sound->extra.functions.ptch_bnd_rng.val,
-            sound->extra.functions.ptch_bnd_stp.val,
-            sound->extra.functions.portamento_md.val,
-            sound->extra.functions.portamento_glss.val,
-            sound->extra.functions.portamento_tm.val,
-            sound->extra.functions.md_whl_rng.val,
-            sound->extra.functions.md_whl_assgn.val,
-            sound->extra.functions.foot_rng.val,
-            sound->extra.functions.foot_assgn.val,
-            sound->extra.functions.brth_rng.val,
-            sound->extra.functions.brth_assgn.val,
-            sound->extra.functions.aftrtch_rng.val,
-            sound->extra.functions.aftrtch_assgn.val,
+            sound->extra.controller.poly_mono.val,
+            sound->extra.controller.ptch_bnd_rng.val,
+            sound->extra.controller.ptch_bnd_stp.val,
+            sound->extra.controller.portamento_md.val,
+            sound->extra.controller.portamento_glss.val,
+            sound->extra.controller.portamento_tm.val,
+            sound->extra.controller.md_whl_rng.val,
+            sound->extra.controller.md_whl_assgn.val,
+            sound->extra.controller.foot_rng.val,
+            sound->extra.controller.foot_assgn.val,
+            sound->extra.controller.brth_rng.val,
+            sound->extra.controller.brth_assgn.val,
+            sound->extra.controller.aftrtch_rng.val,
+            sound->extra.controller.aftrtch_assgn.val,
         };
         for ( i=0, j=64 ; i< nb_elem; i++,j++){
             /*
@@ -2861,8 +2861,8 @@ void Dx7interface::attach_signals(){
     slot_sound_name_activate =(get_gwidget<Gtk::Entry>("entry_sound_name"))->signal_activate().connect( sigc::mem_fun(*this, &Dx7interface::on_sound_name_event));
     slot_sound_name_change =(get_gwidget<Gtk::Entry>("entry_sound_name"))->signal_changed().connect( sigc::mem_fun(*this, &Dx7interface::on_sound_name_event));
 
-    (get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_extra_param_event));
+    (get_gwidget<Gtk::CheckButton>("checkbutton_add_ctrl_parameters"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_ctrl_param_event));
 
     /* Midi learn */
     slot_midi_learn_load = (get_gwidget<Gtk::Button>("btn_midi_learn_load"))->signal_clicked().connect(
@@ -2932,9 +2932,9 @@ void Dx7interface::attach_signals(){
     /* compare */
     slot_btn_compare = (get_gwidget<Gtk::ToggleButton>("btn_compare"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_compare_event));
-    /* send_extra_parameters */
-    slot_btn_send_extra_parameters = (get_gwidget<Gtk::CheckButton>("btn_send_extra_parameters"))->signal_toggled().connect(
-        sigc::mem_fun(*this, &Dx7interface::on_send_extra_parameters_event));
+    /* send_ctrl_parameters */
+    slot_btn_send_ctrl_parameters = (get_gwidget<Gtk::CheckButton>("btn_send_ctrl_parameters"))->signal_toggled().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_send_ctrl_parameters_event));
     slot_btn_mode_tf1 = (get_gwidget<Gtk::CheckButton>("btn_mode_tf1"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_mode_tf1_event));
 
@@ -4304,7 +4304,7 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
+        if( compare ){
             value = 0x01;
         }else{
             value = ( (bank_1_modif.sound->extra.mute.val & 0x3F) >>2 ) & 0x01;
@@ -4318,7 +4318,7 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op4_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op4"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
+        if( compare ){
             value = bank_1_origin.sound->op[3].kls.lft_curve.val;
         }else{
             value = bank_1_modif.sound->op[3].kls.lft_curve.val;
@@ -4592,7 +4592,7 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
+        if( compare ){
             value = 0x01;
         }else{
             value = ( (bank_1_modif.sound->extra.mute.val & 0x3F) >>1 ) & 0x01;
@@ -4606,7 +4606,7 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op5_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op5"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
+        if( compare ){
             value = bank_1_origin.sound->op[4].kls.lft_curve.val;
         }else{
             value = bank_1_modif.sound->op[4].kls.lft_curve.val;
@@ -4879,7 +4879,7 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_mute_op_event));
     (get_gwidget<Gtk::ToggleButton>("mute_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
+        if( compare ){
             value = 0x01;
         }else{
             value = (bank_1_modif.sound->extra.mute.val & 0x3F) & 0x01;
@@ -4893,7 +4893,7 @@ void Dx7interface::attach_signals(){
         sigc::mem_fun(*this, &Dx7interface::on_kls_lft_curve_op6_event));
     (get_gwidget<Gtk::DropDown>("kls_lft_curve_op6"))->add_tick_callback([this](const Glib::RefPtr<Gdk::FrameClock>&) {
         int value;
-        if (compare) {
+        if( compare ){
             value = bank_1_origin.sound->op[5].kls.lft_curve.val;
         }else{
             value = bank_1_modif.sound->op[5].kls.lft_curve.val;
@@ -5529,11 +5529,11 @@ void Dx7interface::on_compare_event(){
 };
 
 /* Extra parameters */
-void Dx7interface::on_send_extra_parameters_event(){
-    if ( (get_gwidget<Gtk::CheckButton>("btn_send_extra_parameters"))->get_active() ) {
-        send_extra_params=true;
+void Dx7interface::on_send_ctrl_parameters_event(){
+    if ( (get_gwidget<Gtk::CheckButton>("btn_send_ctrl_parameters"))->get_active() ) {
+        send_ctrl_params=true;
     }else{
-        send_extra_params=false;
+        send_ctrl_params=false;
     };
 };
 
@@ -5555,13 +5555,13 @@ void Dx7interface::on_as_raw_event(){
         get_gwidget<Gtk::CheckButton>("checkbutton_128")->set_sensitive(false);
     };
 };
-void Dx7interface::on_extra_param_event(){
-    if(get_gwidget<Gtk::CheckButton>("checkbutton_add_extra_parameters")->get_active()){
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(true);
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(true);
+void Dx7interface::on_ctrl_param_event(){
+    if(get_gwidget<Gtk::CheckButton>("checkbutton_add_ctrl_parameters")->get_active()){
+        get_gwidget<Gtk::CheckButton>("checkbutton_ctrl_parameters_by_bank")->set_sensitive(true);
+        get_gwidget<Gtk::CheckButton>("checkbutton_ctrl_parameters_by_sound")->set_sensitive(true);
     }else{
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_bank")->set_sensitive(false);
-        get_gwidget<Gtk::CheckButton>("checkbutton_extra_parameters_by_sound")->set_sensitive(false);
+        get_gwidget<Gtk::CheckButton>("checkbutton_ctrl_parameters_by_bank")->set_sensitive(false);
+        get_gwidget<Gtk::CheckButton>("checkbutton_ctrl_parameters_by_sound")->set_sensitive(false);
     };
 };
 
@@ -5587,7 +5587,7 @@ void Dx7interface::on_mono_poly_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.poly_mono.val = msg[5];
+    bank_1_modif.sound->extra.controller.poly_mono.val = msg[5];
     if ( (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("btn_poly_mono"))->set_label(_("Monophonic"));
     }else{
@@ -5608,7 +5608,7 @@ void Dx7interface::on_ptch_bnd_rng_event(){
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.ptch_bnd_rng.val = msg[5];
+    bank_1_modif.sound->extra.controller.ptch_bnd_rng.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5623,7 +5623,7 @@ void Dx7interface::on_ptch_bnd_stp_event(){
     msg[5]=(get_gwidget<Gtk::Scale>("ptch_bnd_stp"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.ptch_bnd_stp.val = msg[5];
+    bank_1_modif.sound->extra.controller.ptch_bnd_stp.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5639,7 +5639,7 @@ void Dx7interface::on_portamento_md_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.portamento_md.val = msg[5];
+    bank_1_modif.sound->extra.controller.portamento_md.val = msg[5];
     if ( (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->get_active() ) {
         (get_gwidget<Gtk::ToggleButton>("btn_portamento_md"))->set_label(_("Follow"));
     }else{
@@ -5660,7 +5660,7 @@ void Dx7interface::on_portamento_glss_event(){
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.portamento_glss.val = msg[5];
+    bank_1_modif.sound->extra.controller.portamento_glss.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5675,7 +5675,7 @@ void Dx7interface::on_portamento_tm_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("portamento_tm"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.portamento_tm.val = msg[5];
+    bank_1_modif.sound->extra.controller.portamento_tm.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5690,7 +5690,7 @@ void Dx7interface::on_md_whl_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("md_whl_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.md_whl_rng.val = msg[5];
+    bank_1_modif.sound->extra.controller.md_whl_rng.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5707,7 +5707,7 @@ void Dx7interface::on_md_whl_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("md_whl_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.md_whl_assgn.val = msg[5];
+    bank_1_modif.sound->extra.controller.md_whl_assgn.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5722,7 +5722,7 @@ void Dx7interface::on_foot_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("foot_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.foot_rng.val = msg[5];
+    bank_1_modif.sound->extra.controller.foot_rng.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5739,7 +5739,7 @@ void Dx7interface::on_foot_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("foot_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.foot_assgn.val = msg[5];
+    bank_1_modif.sound->extra.controller.foot_assgn.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5754,7 +5754,7 @@ void Dx7interface::on_brth_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("brth_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.brth_rng.val = msg[5];
+    bank_1_modif.sound->extra.controller.brth_rng.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5771,7 +5771,7 @@ void Dx7interface::on_brth_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("brth_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.brth_assgn.val = msg[5];
+    bank_1_modif.sound->extra.controller.brth_assgn.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5786,7 +5786,7 @@ void Dx7interface::on_aftrtch_rng_event(){
     msg[5]=(get_gwidget<Gtk::SpinButton>("aftrtch_rng"))->get_value();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.aftrtch_rng.val = msg[5];
+    bank_1_modif.sound->extra.controller.aftrtch_rng.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -5803,7 +5803,7 @@ void Dx7interface::on_aftrtch_assgn_event(){
           +((get_gwidget<Gtk::CheckButton>("aftrtch_gbs"))->get_active()*4);
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
-    bank_1_modif.sound->extra.functions.aftrtch_assgn.val = msg[5];
+    bank_1_modif.sound->extra.controller.aftrtch_assgn.val = msg[5];
     LOG( LOG_OUT() );
 };
 
@@ -8928,13 +8928,13 @@ void Dx7interface::on_kls_brk_pt_op6_event(){
 
 /** UI EVENTs **/
 void Dx7interface::set_aftrtch_assgn_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.aftrtch_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.aftrtch_assgn.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.aftrtch_assgn.max){
-        value=bank_1_modif.sound->extra.functions.aftrtch_assgn.max;
+    }else if(value > bank_1_modif.sound->extra.controller.aftrtch_assgn.max){
+        value=bank_1_modif.sound->extra.controller.aftrtch_assgn.max;
     };
-    bank_1_modif.sound->extra.functions.aftrtch_assgn.val=(int)value;
+    bank_1_modif.sound->extra.controller.aftrtch_assgn.val=(int)value;
     /*int val = value;
     (get_gwidget<Gtk::CheckButton>("aftrtch_ptch"))->set_active(val & 0x01);
     (get_gwidget<Gtk::CheckButton>("aftrtch_mp"))->set_active((val & 0x02)>>1);
@@ -8942,13 +8942,13 @@ void Dx7interface::set_aftrtch_assgn_event(int value){
     */
 };
 void Dx7interface::set_aftrtch_rng_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.aftrtch_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.aftrtch_rng.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.aftrtch_rng.max){
-        value=bank_1_modif.sound->extra.functions.aftrtch_rng.max;
+    }else if(value > bank_1_modif.sound->extra.controller.aftrtch_rng.max){
+        value=bank_1_modif.sound->extra.controller.aftrtch_rng.max;
     };
-    bank_1_modif.sound->extra.functions.aftrtch_rng.val=(int)value;
+    bank_1_modif.sound->extra.controller.aftrtch_rng.val=(int)value;
 };
 void Dx7interface::set_algo_event(int value){
     //LOG( LOG_IN() );
@@ -9017,13 +9017,13 @@ void Dx7interface::set_ams_op6_event(int value){
     bank_1_modif.sound->op[5].ams.val=(int)value;
 };
 void Dx7interface::set_brth_assgn_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.brth_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.brth_assgn.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.brth_assgn.max){
-        value=bank_1_modif.sound->extra.functions.brth_assgn.max;
+    }else if(value > bank_1_modif.sound->extra.controller.brth_assgn.max){
+        value=bank_1_modif.sound->extra.controller.brth_assgn.max;
     };
-    bank_1_modif.sound->extra.functions.brth_assgn.val=(int)value;
+    bank_1_modif.sound->extra.controller.brth_assgn.val=(int)value;
     /*int val = value;
     (get_gwidget<Gtk::CheckButton>("brth_ptch"))->set_active(val & 0x01);
     (get_gwidget<Gtk::CheckButton>("brth_mp"))->set_active((val & 0x02)>>1);
@@ -9031,13 +9031,13 @@ void Dx7interface::set_brth_assgn_event(int value){
     */
 };
 void Dx7interface::set_brth_rng_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.brth_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.brth_rng.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.brth_rng.max){
-        value=bank_1_modif.sound->extra.functions.brth_rng.max;
+    }else if(value > bank_1_modif.sound->extra.controller.brth_rng.max){
+        value=bank_1_modif.sound->extra.controller.brth_rng.max;
     };
-    bank_1_modif.sound->extra.functions.brth_rng.val=(int)value;
+    bank_1_modif.sound->extra.controller.brth_rng.val=(int)value;
 };
 void Dx7interface::set_compare_event(int value){
     //value = (double)value/(127.0/(double)bank_1_modif.sound->;
@@ -9539,26 +9539,26 @@ void Dx7interface::set_feedback_event(int value){
     bank_1_modif.sound->algo.feedback.val=(int)value;
 };
 void Dx7interface::set_foot_assgn_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.foot_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.foot_assgn.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.foot_assgn.max){
-        value=bank_1_modif.sound->extra.functions.foot_assgn.max;
+    }else if(value > bank_1_modif.sound->extra.controller.foot_assgn.max){
+        value=bank_1_modif.sound->extra.controller.foot_assgn.max;
     };
-    bank_1_modif.sound->extra.functions.foot_assgn.val=(int)value;
+    bank_1_modif.sound->extra.controller.foot_assgn.val=(int)value;
     /*int val = value;
     (get_gwidget<Gtk::CheckButton>("foot_ptch"))->set_active(val & 0x01);
     (get_gwidget<Gtk::CheckButton>("foot_mp"))->set_active((val & 0x02)>>1);
     (get_gwidget<Gtk::CheckButton>("foot_gbs"))->set_active((val & 0x04)>>2);*/
 };
 void Dx7interface::set_foot_rng_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.foot_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.foot_rng.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.foot_rng.max){
-        value=bank_1_modif.sound->extra.functions.foot_rng.max;
+    }else if(value > bank_1_modif.sound->extra.controller.foot_rng.max){
+        value=bank_1_modif.sound->extra.controller.foot_rng.max;
     };
-    bank_1_modif.sound->extra.functions.foot_rng.val=(int)value;
+    bank_1_modif.sound->extra.controller.foot_rng.val=(int)value;
 };
 void Dx7interface::set_freq_coarse_op1_event(int value){
     value = (double)value/(127.0/(double)bank_1_modif.sound->op[0].freq_coarse.max);
@@ -10254,13 +10254,13 @@ void Dx7interface::set_lvl_op6_event(int value){
     bank_1_modif.sound->op[5].lvl.val=(int)value;
 };
 void Dx7interface::set_md_whl_assgn_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.md_whl_assgn.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.md_whl_assgn.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.md_whl_assgn.max){
-        value=bank_1_modif.sound->extra.functions.md_whl_assgn.max;
+    }else if(value > bank_1_modif.sound->extra.controller.md_whl_assgn.max){
+        value=bank_1_modif.sound->extra.controller.md_whl_assgn.max;
     };
-    bank_1_modif.sound->extra.functions.md_whl_assgn.val=(int)value;
+    bank_1_modif.sound->extra.controller.md_whl_assgn.val=(int)value;
     /*unsigned char val = value;
     (get_gwidget<Gtk::CheckButton>("md_whl_ptch"))->set_active( (val & 0x01) );
     (get_gwidget<Gtk::CheckButton>("md_whl_mp"))->set_active( (val & 0x02)>>1 );
@@ -10268,22 +10268,22 @@ void Dx7interface::set_md_whl_assgn_event(int value){
     */
 };
 void Dx7interface::set_md_whl_rng_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.md_whl_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.md_whl_rng.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.md_whl_rng.max){
-        value=bank_1_modif.sound->extra.functions.md_whl_rng.max;
+    }else if(value > bank_1_modif.sound->extra.controller.md_whl_rng.max){
+        value=bank_1_modif.sound->extra.controller.md_whl_rng.max;
     };
-    bank_1_modif.sound->extra.functions.md_whl_rng.val=(int)value;
+    bank_1_modif.sound->extra.controller.md_whl_rng.val=(int)value;
 };
 void Dx7interface::set_mono_poly_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.poly_mono.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.poly_mono.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.poly_mono.max){
-        value=bank_1_modif.sound->extra.functions.poly_mono.max;
+    }else if(value > bank_1_modif.sound->extra.controller.poly_mono.max){
+        value=bank_1_modif.sound->extra.controller.poly_mono.max;
     };
-    bank_1_modif.sound->extra.functions.poly_mono.val=(int)value;
+    bank_1_modif.sound->extra.controller.poly_mono.val=(int)value;
 };
 
 void Dx7interface::set_mute_op1_event(int value){
@@ -10447,51 +10447,51 @@ void Dx7interface::set_pms_event(int value){
     bank_1_modif.sound->lfo.pms.val=(int)value;
 };
 void Dx7interface::set_portamento_glss_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.portamento_glss.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.portamento_glss.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.portamento_glss.max){
-        value=bank_1_modif.sound->extra.functions.portamento_glss.max;
+    }else if(value > bank_1_modif.sound->extra.controller.portamento_glss.max){
+        value=bank_1_modif.sound->extra.controller.portamento_glss.max;
     };
-    bank_1_modif.sound->extra.functions.portamento_glss.val=(int)value;
+    bank_1_modif.sound->extra.controller.portamento_glss.val=(int)value;
 };
 void Dx7interface::set_portamento_md_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.portamento_md.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.portamento_md.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.portamento_md.max){
-        value=bank_1_modif.sound->extra.functions.portamento_md.max;
+    }else if(value > bank_1_modif.sound->extra.controller.portamento_md.max){
+        value=bank_1_modif.sound->extra.controller.portamento_md.max;
     };
-    bank_1_modif.sound->extra.functions.portamento_md.val=(int)value;
+    bank_1_modif.sound->extra.controller.portamento_md.val=(int)value;
 };
 void Dx7interface::set_portamento_tm_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.portamento_tm.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.portamento_tm.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.portamento_tm.max){
-        value=bank_1_modif.sound->extra.functions.portamento_tm.max;
+    }else if(value > bank_1_modif.sound->extra.controller.portamento_tm.max){
+        value=bank_1_modif.sound->extra.controller.portamento_tm.max;
     };
-    bank_1_modif.sound->extra.functions.portamento_tm.val=(int)value;
+    bank_1_modif.sound->extra.controller.portamento_tm.val=(int)value;
 };
 void Dx7interface::set_ptch_bnd_rng_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.ptch_bnd_rng.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.ptch_bnd_rng.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.ptch_bnd_rng.max){
-        value=bank_1_modif.sound->extra.functions.ptch_bnd_rng.max;
+    }else if(value > bank_1_modif.sound->extra.controller.ptch_bnd_rng.max){
+        value=bank_1_modif.sound->extra.controller.ptch_bnd_rng.max;
     };
-    bank_1_modif.sound->extra.functions.ptch_bnd_rng.val=(int)value;
+    bank_1_modif.sound->extra.controller.ptch_bnd_rng.val=(int)value;
 };
 void Dx7interface::set_ptch_bnd_stp_event(int value){
-    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.functions.ptch_bnd_stp.max);
+    value = (double)value/(127.0/(double)bank_1_modif.sound->extra.controller.ptch_bnd_stp.max);
     if(value <0){
         value=0;
-    }else if(value > bank_1_modif.sound->extra.functions.ptch_bnd_stp.max){
-        value=bank_1_modif.sound->extra.functions.ptch_bnd_stp.max;
+    }else if(value > bank_1_modif.sound->extra.controller.ptch_bnd_stp.max){
+        value=bank_1_modif.sound->extra.controller.ptch_bnd_stp.max;
     };
-    bank_1_modif.sound->extra.functions.ptch_bnd_stp.val=(int)value;
+    bank_1_modif.sound->extra.controller.ptch_bnd_stp.val=(int)value;
 };
-void Dx7interface::set_send_extra_parameters_event(int value){
+void Dx7interface::set_send_ctrl_parameters_event(int value){
 };
 
 void Dx7interface::set_transpose_event(int value){

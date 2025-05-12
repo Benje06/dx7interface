@@ -1388,9 +1388,9 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="btn_send_extra_parameters">
+                                  <object class="GtkCheckButton" id="btn_send_ctrl_parameters">
                                     <property name="focusable">1</property>
-                                    <property name="label" translatable="yes">Send extra param</property>
+                                    <property name="label" translatable="yes">Send Controllers parameters</property>
                                     <property name="receives-default">1</property>
                                     <layout>
                                       <property name="column">0</property>
@@ -6547,19 +6547,19 @@
                 <object class="GtkBox">
                     <property name="orientation">horizontal</property>
                     <child>
-                    <object class="GtkCheckButton" id="checkbutton_add_extra_parameters">
+                    <object class="GtkCheckButton" id="checkbutton_add_ctrl_parameters">
                         <property name="label" translatable="yes">add extra parameters</property>
                     </object>
                     </child>
                     <child>
-                    <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_bank">
+                    <object class="GtkCheckButton" id="checkbutton_ctrl_parameters_by_bank">
                         <property name="active">true</property>
                         <property name="label" translatable="yes">by bank</property>
                         <property name="sensitive">false</property>
                     </object>
                     </child>
                     <child>
-                    <object class="GtkCheckButton" id="checkbutton_extra_parameters_by_sound">
+                    <object class="GtkCheckButton" id="checkbutton_ctrl_parameters_by_sound">
                         <property name="label" translatable="yes">by sound</property>
                         <property name="sensitive">false</property>
                     </object>
