@@ -27,12 +27,10 @@
 #pragma once
 #ifndef _TOOLS_DEBUG_H
     #define _TOOLS_DEBUG_H
-    #include <stdlib.h>
-    #include <stdio.h>
     #ifdef __cplusplus
         #ifdef DEBUG_TOOL
-        #   define PRE_LOG(str1, str2, ...)    (std::string(str1) + std::string("->") + std::string(str2))
-        #   define POST_LOG(str1, str2, ...)   (std::string(str1) + std::string("<-") + std::string(str2))
+        #   define PRE_LOG(str1, str2, ...)    (std::string(str1) + std::string("-> ") + std::string(str2))
+        #   define POST_LOG(str1, str2, ...)   (std::string(str1) + std::string(" <-") + std::string(str2))
         #   define TRACE(f, ...)   f "\n", ##__VA_ARGS__
         #   ifdef DEBUG_TOOL_AS_ERROR
         #       define LOG_IN()  (std::string(" -> ") + __PRETTY_FUNCTION__ + std::string(" line ") + std::to_string(__LINE__) + std::string(" of ") + __FILE__)
@@ -49,11 +47,13 @@
         #   define TRACE(f, ...)        (void)(0)
         #endif /* DEBUG_TOOL */
     #else
+        #include <stdlib.h>
+        #include <stdio.h>
         #ifdef DEBUG_TOOL
         #   define PRE_LOG(str1, str2, ...)  fprintf(stderr, "%s->%s\n", str1, str2, ##__VA_ARGS__)
         #   define POST_LOG(str1, str2, ...) fprintf(stderr, "%s<-%s\n", str1, str2, ##__VA_ARGS__)
         #   ifdef DEBUG_TOOL_AS_ERROR
-        #       define LOG_IN()        fprintf ( stderr, " -> %s ligne %i de %s \n", __PRETTY_FUNCTION__, __LINE__ , __FILE__)
+        #       define LOG_IN()        fprintf ( stderr, " -> %s line %i of %s \n", __PRETTY_FUNCTION__, __LINE__ , __FILE__)
         #       define LOG_OUT()       fprintf ( stderr, "<-  %s\n", __PRETTY_FUNCTION__ )
         #       define TRACE(f, ...)   fprintf ( stderr, f "\n", ##__VA_ARGS__ )
         #   else /* NOT DEBUG_TOOL_AS_ERROR */
