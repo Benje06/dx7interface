@@ -24,13 +24,13 @@ void Logger::log_error(const std::string& err_msg){
     std::lock_guard<std::mutex> lock(log_mutex);
     if( log_file.is_open() ){
         log_file << "            " << std::endl;
-        log_file << "*************************** ERROR ***************************** " << std::endl;
+        log_file << "*************************** " << _("ERROR") << " ***************************** " << std::endl;
         log_file << err_msg << std::endl;
         log_file << "*************************************************************** " << std::endl;
         log_file << "            " << std::endl;
     };
     if( log_level >= 2){
-        std::cerr <<  "*** ERROR *** " << err_msg << std::endl;
+        std::cerr <<  "*** " << _("ERROR") << " *** " << err_msg << std::endl;
     };
 };
 void Logger::flush(){

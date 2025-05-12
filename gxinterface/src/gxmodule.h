@@ -84,19 +84,21 @@ class Gx_module {
 		std::tuple<std::shared_ptr<void>, St_mod_options> (*module_func) (uint8_t);
 		/* get a widget inside the refxml should be in the headers to be use as an external C*/
 		template <class widgetType>
-		widgetType* get_gwidget(Glib::ustring widget_name)
-		{
+		widgetType* get_gwidget(Glib::ustring widget_name){
 			try{
 				auto widget = refXml->get_object(widget_name);
 				if (widget){
 					return dynamic_cast<widgetType*>(widget.get());
 				}else{
 					std::regex pattern(R"([a-zA-Z0-9].([a-zA-Z]{3}).(.*).)");
-					std::string result = std::regex_replace(typeid(widgetType).name(), pattern, "$1::$2");
-					std::string err_msg = "Widget: "+ widget_name +" not found or not of type " + result;
-					throw std::runtime_error(err_msg);
-				}
+					std::string widget_type = std::regex_replace(typeid(widgetType).name(), pattern, "$1::$2");
+					msg_err = error ( __PRETTY_FUNCTION__ , _("Failed to retreive widget: ") + widget_name , _("No widget of this name or not of type ") + widget_type );
+					LOG_ERR( msg_err );
+					throw std::runtime_error(msg_err);
+				};
 			}catch (const std::exception & ex){
+				msg_err = error ( __PRETTY_FUNCTION__ , _("Failed in retreiving widget: ") + widget_name , ex.what() );
+				LOG_ERR( msg_err );
 				throw;
 			};
 		};

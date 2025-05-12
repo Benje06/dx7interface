@@ -47,8 +47,6 @@
         #define MOD_DATA_DIRECTORY PROGRAMNAME_DATA_DIR
         #define MOD_UI_DIRECTORY PROGRAMNAME_UI_DIR
     #endif
-    #define STRINGIFY(x) #x
-    #define TOSTRING(x) STRINGIFY(x)
     #include "debug.h"
 
     #include <iostream>
@@ -75,6 +73,7 @@
         #define EOL "\r\n"
         #include <system_error>
         #include <locale>
+        #include <cstdlib>
         /*typedef unsigned int uint;
         typedef unsigned char u_char;
         typedef unsigned long ulong;*/

@@ -29,10 +29,15 @@
 int main (int argc, char *argv[]){
     char interface=0;
     std::string msg="", err_msg="";
+    std::string log_file="gxinterface.log";
     unsigned int log_lvl=1;
     // Initialize logging system
+    #if(defined(__WIN32) || defined(__MINGW32__))
+        const char* localAppData = std::getenv("LOCALAPPDATA");
+        log_file = std::string(localAppData) + "\\gxinterface\\" + log_file;
+    #endif
     LogManager::instance().add_handler(
-        std::make_shared<Logger>( "app.log", log_lvl )
+        std::make_shared<Logger>( log_file, log_lvl )
     );
     /* 
      *   Debug LOG manager
@@ -50,7 +55,7 @@ int main (int argc, char *argv[]){
     for ( int i = 0 ; i < argc ; i++){
         if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
             interface=gchar(argv[i+1][0]);
-            msg = _("Interface graphic mode : ");
+            msg = _("Interface graphic mode: ");
             msg += interface;
             LOG( msg );
         };
@@ -61,7 +66,7 @@ int main (int argc, char *argv[]){
     };
     if ( interface == 0 ){
         interface='g'; //force only supported mode
-         msg = _("Interface graphic mode : ");
+         msg = _("Interface graphic mode: ");
          msg += interface;
         LOG( msg );
     };

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxinterface 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 09:40+0200\n"
+"POT-Creation-Date: 2025-05-12 14:04+0200\n"
 "PO-Revision-Date: 2025-02-17 01:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -20,73 +20,158 @@ msgstr ""
 #. force only supported mode
 #. force only supported mode
 #. force only supported mode
-#: ../src/main.cc:53 ../src/main.cc:64
-msgid "Interface graphic mode : "
-msgstr "Mode graphique de l'interface : "
+#: ../src/main.cc:58 ../src/main.cc:69
+msgid "Interface graphic mode: "
+msgstr "Mode graphique de l'interface: "
 
-#: ../src/main.cc:77
+#: ../src/main.cc:82
 msgid "The option: "
-msgstr "L'option : "
+msgstr "L'option: "
 
-#: ../src/main.cc:79
+#: ../src/main.cc:84
 msgid " is not valid for an interface type"
 msgstr " n'est pas valide pour un type d'interface"
 
-#: ../src/main.cc:85
+#: ../src/main.cc:90
 msgid "Error: in application start -> "
 msgstr "Erreur au demarrage de l'application -> "
 
-#: ../src/gemod.cc:124 ../src/gemod.cc:141
+#: ../src/gemod.cc:47 ../src/gemod.cc:62 ../src/gemod.cc:79
+msgid "Can't create: "
+msgstr "Ne peut pas créer: "
+
+#: ../src/gemod.cc:130 ../src/gemod.cc:147
 msgid "Fail to get rootbox"
-msgstr "Echec dans la récuperation de la box racine (rootbox)"
+msgstr "Echéc dans la récuperation de la box racine (rootbox)"
 
-#: ../src/gemod.cc:124 ../src/gemod.cc:141
-msgid "Reason"
-msgstr "Raison"
+#: ../src/gemod.cc:169
+msgid "Cannot attach signals"
+msgstr "Ne peux pas attacher les signaux"
 
-#: ../src/gemod.cc:180
+#: ../src/gemod.cc:187
 msgid "Select Module .la, .so or .ui"
 msgstr "Choisir un module .la, .so ou .ui"
 
-#: ../src/gemod.cc:190
-#, fuzzy
-msgid "Couldn't select module: "
-msgstr "Le module ne peut pas etre sélectionné: "
+#: ../src/gemod.cc:197 ../src/gemod.cc:217
+msgid "Can't select module: "
+msgstr "Ne peut sélectionner le module: "
 
-#: ../src/gemod.cc:197
+#: ../src/gemod.cc:204
 msgid "Please choose a file"
 msgstr "Choisissez un fichier"
 
+#: ../src/gemod.cc:224
+msgid "Other exception."
+msgstr "Autre exception."
+
+#: ../src/gemod.cc:243
+msgid "Module: "
+msgstr "Module: "
+
+#: ../src/gemod.cc:248
+msgid "number of module with this name (nb_mod_ident): "
+msgstr "Nombre de module avec ce nom (nb_mod_ident): "
+
+#: ../src/gemod.cc:249
+msgid "Index module (nb_mod): "
+msgstr "Index module (nb_mod): "
+
+#: ../src/gemod.cc:250
+msgid "App name (mod.name): "
+msgstr "Nom de l'application (mod.name): "
+
+#: ../src/gemod.cc:251
+msgid "Module name (extpath.name): "
+msgstr "Nom du module (extpath.name): "
+
+#: ../src/gemod.cc:252
+msgid "Module ext (extpath.ext): "
+msgstr "Extention du module (extpath.ext): "
+
+#: ../src/gemod.cc:263
+msgid "set menu"
+msgstr "Initialisation du menu"
+
+#: ../src/gemod.cc:277
+msgid "Can't set rootbox from get_rootbox."
+msgstr "Ne peux initialiser la rootbox depuis get_rootbox."
+
+#: ../src/gemod.cc:277
+msgid "rootbox is null pointer"
+msgstr "rootbox est un pointeur null"
+
+#: ../src/gemod.cc:283
+msgid "Can't set_mod: "
+msgstr "Ne peut initialiser le module: "
+
+#: ../src/gemod.cc:287
+msgid "unknow"
+msgstr "inconnu"
+
+#: ../src/gemod.cc:296
+msgid "Can't add module"
+msgstr "Ne peut ajouter le module: "
+
+#: ../src/gemod.cc:316
+msgid "Can't delete module: "
+msgstr "Ne peut supprimer le module: "
+
+#: ../src/gemod.cc:316
+msgid "The module doesn't exist"
+msgstr "Le module n'existe pas"
+
 #: ../src/gxmodule.cc:53 ../src/gxmodule.cc:72
-msgid ""
-"!!! Cannot be created !!!\n"
-" => Cannot load :"
-msgstr ""
-"!!! Ne peut pas etre crée !!!\n"
-" => Ne peut pas charger: "
+msgid "Can't create Gx_Module."
+msgstr "Ne peut pas créer le Gx_Module."
+
+#: ../src/gxmodule.cc:53 ../src/gxmodule.cc:72
+msgid "Can't load: "
+msgstr "Ne peux pas charger: "
 
 #: ../src/gxmodule.cc:110
-msgid "Cannot Read: "
+msgid "Can't Read: "
 msgstr "Ne peux pas lire: "
 
 #: ../src/gxmodule.cc:126
-msgid "Cannot get attributs of: "
+msgid "Can't get attributs of: "
 msgstr "Ne peut récuperer les attributs de: "
 
 #: ../src/gxmodule.cc:146
-msgid "Cannot write: "
+msgid "Can't write: "
 msgstr "Ne peut pas écrire: "
+
+#: ../src/gxmodule.cc:167
+msgid "Select File"
+msgstr "Choisir le fichier"
+
+#: ../src/gxmodule.cc:178 ../src/gxmodule.cc:198 ../src/gxmodule.cc:234
+#: ../src/gxmodule.cc:260
+msgid "Fail in response of"
+msgstr "Echéc dans la réponse de"
+
+#: ../src/gxmodule.cc:209 ../src/gxmodule.cc:240 ../src/gxmodule.cc:267
+#: ../src/gxmodule.cc:276
+msgid "Fail to set"
+msgstr "Echéc à l'initialisation de"
 
 #: ../src/gxmodule.cc:228
 msgid "Writing file: "
 msgstr "Ecriture du fichier: "
 
+#: ../src/gxmodule.cc:300
+msgid "Setting DialogParam"
+msgstr "Paramettrage de DialogParam"
+
 #: ../src/gxmodule.cc:328
 msgid " Creating window failed "
-msgstr "La création de la fenetre à echoué"
+msgstr " La création de la fenetre à echoué "
+
+#: ../src/gxmodule.cc:372
+msgid "Set refXml failed."
+msgstr "L'intialisation de refXml à échoué."
 
 #: ../src/gxmodule.cc:390
-msgid "Cannot load file: "
+msgid "Cannot load file "
 msgstr "Ne peut pas charger le fichier: "
 
 #: ../src/gxmodule.cc:391
@@ -105,77 +190,186 @@ msgstr ".ui ou .xml pour une UI"
 msgid ".la/.so/.lo/.dll for a module"
 msgstr ".la/.so/.lo/.dll pour un module"
 
-#: ../src/gxmodule.cc:424
+#. box_main cannot be attached reset and go
+#. TODO: unparent and attach
+#. box_main cannot be attached reset and go
+#. TODO: unparent and attach
+#. box_main cannot be attached reset and go
+#. TODO: unparent and attach
+#. box_main cannot be attached reset and go
+#. TODO: unparent and attach
+#: ../src/gxmodule.cc:411
+msgid "Can't add box_main"
+msgstr "Nepeux attacher box_main"
+
+#: ../src/gxmodule.cc:411
+msgid "box_main get a parent"
+msgstr "box_main à un parent"
+
+#: ../src/gxmodule.cc:425
+msgid "Cannot load Ui file"
+msgstr "Ne peut pas charger le fichier d'UI"
+
+#: ../src/gxmodule.cc:425
 msgid "Gtk::Box 'box_main' not found in UI file"
 msgstr "Gtk::Box 'box_main' ne peut etre trouvé dans le fichier d'UI"
 
-#: ../src/gxmodule.cc:462
-msgid "no function or error on "
+#: ../src/gxmodule.cc:450
+msgid ""
+"Name of the GLIB::Module: \n"
+"\t"
+msgstr ""
+"Nom du GLIB::Module: \n"
+"\t"
+
+#: ../src/gxmodule.cc:457
+msgid "Name of app: "
+msgstr "Nom de l'application: "
+
+#: ../src/gxmodule.cc:463
+msgid "No function or error on "
 msgstr "Aucune fonction ou erreur sur "
 
-#: ../src/gxmodule.cc:462
+#: ../src/gxmodule.cc:463
 msgid "Last module error: "
-msgstr "Derniére erreur du module: "
+msgstr "Dernière erreur du module: "
 
-#: ../src/gxmodule.cc:468
+#: ../src/gxmodule.cc:469
 msgid "No module for file "
 msgstr "Aucun module pour le fichier "
 
-#: ../src/gxmodule.cc:474
+#: ../src/gxmodule.cc:475
 msgid "Failed to create module: "
 msgstr "Echéc à la création du module: "
 
-#: ../src/gxmodule.cc:507
+#: ../src/gxmodule.cc:508
 msgid "Css style file: "
 msgstr "Fichier des style CSS: "
 
-#: ../src/gxmodule.cc:509
-msgid "Warning: the css style file "
-msgstr "Attention: le fichier CSS de style "
+#: ../src/gxmodule.cc:511
+msgid "Can't set style file: "
+msgstr "Ne peux initialisé le fichier de style: "
 
-#: ../src/gxmodule.cc:509 ../src/gxmodule.cc:603 ../src/gxmodule.cc:810
-msgid " doesn't exist or is not readable"
-msgstr " n'existe pas ou n'est pas lisible"
+#: ../src/gxmodule.cc:511 ../src/gxmodule.cc:607 ../src/gxmodule.cc:816
+msgid "File doesn't exist or is not readable."
+msgstr "Le fichier n'existe pas ou n'est pas lisible."
 
-#: ../src/gxmodule.cc:557
-msgid " Failed to load style: !!!\n"
-msgstr " Echec au chargement du style:\n"
+#: ../src/gxmodule.cc:560
+msgid "Failed to load style: \n"
+msgstr "Echéc au chargement du style: \n"
 
-#: ../src/gxmodule.cc:557 ../src/gxmodule.cc:639 ../src/common.h:171
+#: ../src/gxmodule.cc:560 ../src/common.h:170
 msgid "Reason => "
 msgstr "Raison => "
 
-#: ../src/gxmodule.cc:601
+#: ../src/gxmodule.cc:604
 msgid "Custom font file: "
 msgstr "Fichier de police personalisé: "
 
-#: ../src/gxmodule.cc:603
-msgid "Warning: the custom font file "
-msgstr "Attention: Le fichier de police personalisé "
+#: ../src/gxmodule.cc:607
+msgid "Can't set module custom_font "
+msgstr "Ne peux intialisé la police personnalisé pour le module "
 
-#: ../src/gxmodule.cc:623
-msgid "Error: "
-msgstr "Erreur: "
+#: ../src/gxmodule.cc:628
+msgid "Can't load custom font "
+msgstr "Ne peux charger la police personalisé "
 
-#: ../src/gxmodule.cc:639
-msgid " Failed load font: !!!\n"
-msgstr "Echec de chargement de la police: \n"
+#: ../src/gxmodule.cc:641
+msgid "Failed to add font: "
+msgstr "Echéc à l'ajout de la police: "
 
-#: ../src/gxmodule.cc:651
-msgid "Fail to list pango font with error: "
-msgstr "Echec au listage des polices pango avec l'erreur: "
+#: ../src/gxmodule.cc:641
+msgid "Error in Pango font_map->add_font_file."
+msgstr "Erreur dans Pango font_map->add_font_file."
 
-#: ../src/gxmodule.cc:808
+#: ../src/gxmodule.cc:645 ../src/gxmodule.cc:724 ../src/gxmodule.cc:732
+#: ../src/gxmodule.cc:739
+msgid "Failed to load font: "
+msgstr "Echéc de chargement de la police: "
+
+#: ../src/gxmodule.cc:659
+msgid "Fail to list pango font"
+msgstr "Echéc au listage des polices pango"
+
+#. 1. Convert relative path to absolute using current working directory
+#. 2. Convert to Windows-native wide string (UTF-16)
+#. 1. Convert relative path to absolute using current working directory
+#. 2. Convert to Windows-native wide string (UTF-16)
+#. 1. Convert relative path to absolute using current working directory
+#. 2. Convert to Windows-native wide string (UTF-16)
+#. 1. Convert relative path to absolute using current working directory
+#. 2. Convert to Windows-native wide string (UTF-16)
+#: ../src/gxmodule.cc:690
+msgid "Adding font to application: "
+msgstr "Ajout de la police à l'application: "
+
+#. Convert error code to human-readable message
+#. Or use FormatMessage (below)
+#. Convert error code to human-readable message
+#. Or use FormatMessage (below)
+#. Convert error code to human-readable message
+#. Or use FormatMessage (below)
+#. Convert error code to human-readable message
+#. Or use FormatMessage (below)
+#: ../src/gxmodule.cc:695
+msgid "Failed to load font."
+msgstr "Echéc de chargement de la police."
+
+#: ../src/gxmodule.cc:695
+msgid "Error code: ("
+msgstr "Code d'erreur: ("
+
+#: ../src/gxmodule.cc:714
+msgid "Filesystem Error"
+msgstr "Erreur du système de fichier"
+
+#: ../src/gxmodule.cc:724
+msgid "Font file does not exist."
+msgstr "Le fichier de police n'existe pas."
+
+#: ../src/gxmodule.cc:732
+msgid "Failed to create Fontconfig configuration."
+msgstr "Echéc à la création de la configuration fontconfig."
+
+#: ../src/gxmodule.cc:739
+msgid "Failed in FcConfigAppFontAddFile."
+msgstr "Echéc dans FcConfigAppFontAddFile."
+
+#: ../src/gxmodule.cc:744
+msgid "Successfully added in fontconfig, custom font: "
+msgstr "Succées de l'ajout dans fontconfig de la police personnalisé: "
+
+#: ../src/gxmodule.cc:813
 msgid "Icon file: "
 msgstr "Fichier d'icone: "
 
-#: ../src/gxmodule.cc:810
-msgid "Warning: the icon file "
-msgstr "Attention: le fichier d'icone "
+#: ../src/gxmodule.cc:816
+msgid "Fail to set icon file: "
+msgstr "Echéc à l'initialisation du fichier d'icon: "
+
+#: ../src/gxmodule.cc:836
+msgid "Fail to set app icon: "
+msgstr "Echéc à l'initialisation de l'icone de l'application: "
+
+#: ../src/gxmodule.cc:836
+msgid "No icon in theme have this name."
+msgstr "Aucune icon dans le theme n'a ce nom."
+
+#: ../src/gxmodule.h:95
+msgid "Failed to retreive widget: "
+msgstr "Echéc de la récuperation du widget: "
+
+#: ../src/gxmodule.h:95
+msgid "No widget of this name or not of type "
+msgstr "Aucun widget de ce nom ou pas du type "
+
+#: ../src/gxmodule.h:100
+msgid "Failed in retreiving widget: "
+msgstr "Echéc de la récuperation du widget: "
 
 #: ../src/gxinterface.cc:37
 msgid "Failed to construct gxinterface"
-msgstr "Echec à la création de gxinterface"
+msgstr "Echéc à la création de gxinterface"
 
 #: ../src/gxinterface.cc:72
 msgid "Error: in application activate -> "
@@ -194,7 +388,6 @@ msgid "Interface file "
 msgstr "Fichier d'interface "
 
 #: ../src/gxinterface.cc:101
-#, fuzzy
 msgid "Loading default interface file."
 msgstr "Chargement du fichier d'interface par defaut."
 
@@ -206,9 +399,13 @@ msgstr "Chargement d'un module."
 msgid "Loading file: "
 msgstr "Chargment du fichier: "
 
-#: ../src/common.h:169
+#: ../src/common.h:168
 msgid "From: "
 msgstr "Depuis: "
+
+#: ../src/logger.cc:27 ../src/logger.cc:33
+msgid "ERROR"
+msgstr "ERREUR"
 
 #: ../src/logger.cc:59
 msgid "Switching to log level: "
@@ -227,7 +424,7 @@ msgstr ""
 "1(journalisation fichier) et 2(journalisation fichier + console)."
 
 #: ../data/ui/interface.ui.h:1 ../data/ui/interface_4.8.ui.h:1
-msgid "Selected module : "
+msgid "Selected module: "
 msgstr "Module selectionné: "
 
 #: ../data/ui/interface.ui.h:2 ../data/ui/interface_4.8.ui.h:2
@@ -241,6 +438,3 @@ msgstr "Choisir le fichier"
 #: ../data/ui/interface.ui.h:4 ../data/ui/interface_4.8.ui.h:3
 msgid "Modules"
 msgstr "Modules"
-
-#~ msgid "!!! Module "
-#~ msgstr "!!! le module "

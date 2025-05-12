@@ -44,6 +44,8 @@ Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
 		attach_signals();
 		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
+		msg_err = error( __PRETTY_FUNCTION__, _("Can't create: ") + module_name, ex.what() );
+        LOG_ERR( msg_err );
 		LOG(LOG_OUT());
 		throw;
 	};
@@ -57,12 +59,14 @@ Gemod::Gemod(Glib::ustring module_name, uint8_t max_mod) : Gx_module(module_name
 		attach_signals();
 		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
+		msg_err = error( __PRETTY_FUNCTION__, _("Can't create: ") + module_name, ex.what() );
+        LOG_ERR( msg_err );
 		LOG(LOG_OUT());
 		throw;
 	};
 };
 /* Gemod as module call if type=module */
-Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : Gx_module(module_name,index,"Gemod",argv,argc){
+Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : Gx_module(module_name, index, "Gemod", argv, argc){
 	LOG(LOG_IN());
 	try{
 		if(get_rootbox()){
@@ -72,6 +76,8 @@ Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : 
 		};
 		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
+		msg_err = error( __PRETTY_FUNCTION__, _("Can't create: ") + module_name, ex.what() );
+        LOG_ERR( msg_err );
 		LOG(LOG_OUT());
 		throw;
 	};
@@ -121,8 +127,8 @@ Gtk::Box* Gemod::get_module_root(uint8_t index)	{
 	try {
 		return modules[index].get_rootbox();
 	}catch(const std::exception& ex){
-		std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + " " + _("Fail to get rootbox") + " !!!\n" + _("Reason") + (" => ") + ex.what();
-		std::cerr << err_msg << std::endl;
+		msg_err = error( __PRETTY_FUNCTION__, _("Fail to get rootbox"), ex.what() );
+        LOG_ERR( msg_err );
 		return nullptr;
 	}
 };
@@ -138,8 +144,8 @@ Gtk::Box* Gemod::get_module_root(Glib::ustring module_name){
 		}
 		LOG(LOG_OUT());
 	}catch( std::exception& ex){
-		std::string err_msg = "!!! " +std::string(__PRETTY_FUNCTION__) + " " + _("Fail to get rootbox") + " !!!\n" + _("Reason") + (" => ") + ex.what();
-		std::cerr << err_msg << std::endl;
+		msg_err = error( __PRETTY_FUNCTION__, _("Fail to get rootbox"), ex.what() );
+        LOG_ERR( msg_err );
 		return nullptr;
 	}
 };
@@ -160,8 +166,9 @@ void Gemod::attach_signals(){
 		slot_module_select = (get_gwidget<Gtk::Button>("module_select"))->signal_clicked().connect(
 			sigc::mem_fun(*this, &Gemod::on_module_select_event));
 	}catch ( std::exception& ex ){
-		std::string err_msg = "from " +std::string(__PRETTY_FUNCTION__) + "\nCannot attach signals !!!\n" + ex.what();
-		throw std::runtime_error(err_msg);
+		msg_err = error( __PRETTY_FUNCTION__, _("Cannot attach signals"), ex.what() );
+        LOG_ERR( msg_err );
+		throw std::runtime_error(msg_err);
 	}
 };
 void Gemod::dettach_signals(){
@@ -187,8 +194,8 @@ void Gemod::on_module_select_event(){
                             this->add_module(filename);
                         }
                     } catch (const std::exception & ex) {
-                        msg = error(__PRETTY_FUNCTION__,_("Couldn't select module: "), ex.what());
-                        LOG_ERR( msg );
+                        msg_err = error(__PRETTY_FUNCTION__,_("Can't select module: "), ex.what());
+                        LOG_ERR( msg_err );
                     }
                 }
             );
@@ -207,13 +214,15 @@ void Gemod::on_module_select_event(){
                         }
                         dialog->hide();
                     } catch (const std::exception & ex) {
-                        std::cerr << "Error: " << ex.what() << std::endl;
+						msg_err = error(__PRETTY_FUNCTION__,_("Can't select module: "), ex.what());
+                        LOG_ERR( msg_err );
                     };
                 });
             dialog->show();
 	#endif
     } catch (const std::exception & ex) {
-        std::cerr << "Error: " << ex.what() << std::endl;
+		msg_err = error(__PRETTY_FUNCTION__,_("Other exception."), ex.what());
+        LOG_ERR( msg_err );
     };
 	LOG(LOG_OUT());
 };
@@ -231,15 +240,17 @@ bool Gemod::add_module(Glib::ustring module_name){
 			/* */
 			if(modules[nb_mod].set_mod(module_name,nb_mod)){
 				uint8_t nb_mod_ident = get_module_count(module_name);
-				std::cout << "Module: " << modules[nb_mod].get_name() << std::endl;
+				msg_log = _("Module: ") + modules[nb_mod].get_name();
+				LOG( msg_log );
 				if  ( nb_mod_ident != 0 ){
 					modules[nb_mod].set_app_name(nb_mod_ident);
 				};
-				std::cout << "\tNombre de module avec ce nom(nb_mod_ident) : " << tostr<unsigned int>(nb_mod_ident) << std::endl;
-				std::cout << "\tIndex module(nb_mod): " << tostr<unsigned int>(nb_mod)  << std::endl;
-				std::cout << "\tApp name(mod.name): " << modules[nb_mod].get_app_name() << std::endl;
-				std::cout << "\tModule name(extpath.name): " << modules[nb_mod].get_name() << std::endl;
-				std::cout << "\tModule ext(extpath.ext): " << modules[nb_mod].get_ext() << std::endl;
+				msg_log = '\t' + _("number of module with this name (nb_mod_ident): ") + tostr<unsigned int>(nb_mod_ident) + EOL;
+				msg_log = '\t' + _("Index module (nb_mod): ") + tostr<unsigned int>(nb_mod) + EOL;
+				msg_log = '\t' + _("App name (mod.name): ") + modules[nb_mod].get_app_name() + EOL;
+				msg_log = '\t' + _("Module name (extpath.name): ") + modules[nb_mod].get_name() + EOL;
+				msg_log = '\t' + _("Module ext (extpath.ext): ") + modules[nb_mod].get_ext() + EOL;
+				LOG( msg_log );
 				Gtk::Box* box = modules[nb_mod].get_rootbox();
 				if (box != nullptr){
 					if ( (get_gwidget<Gtk::CheckButton>("checkbutton_standalone"))->get_active() == FALSE  ){
@@ -249,7 +260,9 @@ bool Gemod::add_module(Glib::ustring module_name){
 							false
 						);
 						nb_mod++;
-						std::cout<< "set menu"<<std::endl;
+						msg_log = _("set menu");
+						LOG( msg_log );
+						
 						// attacher les signaux
 						//add_menu("menu_modules", modules[nb_mod].get_name());
 						LOG(LOG_OUT());
@@ -261,12 +274,18 @@ bool Gemod::add_module(Glib::ustring module_name){
 						return true;
 					};
 				}else{
-					std::cerr << "rootbox from get_rootbox -> null pointer" << std::endl;
+					msg = error(__PRETTY_FUNCTION__,_("Can't set rootbox from get_rootbox."), _("rootbox is null pointer"));
+                    LOG_ERR( msg );
 					LOG(LOG_OUT());
 					return false;
 				};
 			}else{
-				std::cerr << "cannot set_mod: " << module_name << " n°: " << nb_mod << std::endl;
+				std::string msg = _("Can't set_mod: ");
+				msg += module_name;
+				msg +=" n°: ";
+				msg +=nb_mod;
+				msg_err = error(__PRETTY_FUNCTION__, msg, _("unknow"));
+                LOG_ERR( msg_err );
 				LOG(LOG_OUT());
 				return false;
 			};
@@ -274,7 +293,8 @@ bool Gemod::add_module(Glib::ustring module_name){
 		LOG(LOG_OUT()); 
 		return false;
 	}catch(const std::exception& ex){
-		std::cout << ex.what() << std::endl;
+		msg_err = error(__PRETTY_FUNCTION__, _("Can't add module") + module_name, ex.what());
+    	LOG_ERR( msg_err );
 		LOG(LOG_OUT()); 
 		return false;
 	}
@@ -293,7 +313,8 @@ bool Gemod::del_module(Glib::ustring module_name){
 			LOG(LOG_OUT());
 			return true;
 		}else{
-			std::cout << "Le module n'existe pas" << std::endl;
+			msg_err = error(__PRETTY_FUNCTION__, _("Can't delete module: ") + module_name, _("The module doesn't exist"));
+            LOG_ERR( msg_err );
 			LOG(LOG_OUT());
 			return false;
 		};
