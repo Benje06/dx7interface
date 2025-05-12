@@ -57,9 +57,12 @@ install-exec-hook:
 	## Add dbus and ucrt64 
 	cp /ucrt64/bin/gdbus.exe $(DESTDIR)/usr/bin
 	## copy gxinterface libs
-	cp $(DESTDIR)/ucrt64/bin/* $(DESTDIR)/usr/bin
+	cp $(DESTDIR)/ucrt64/bin/libgxlogmanager-0.0.1-1.dll $(DESTDIR)/usr/bin
+	cp $(DESTDIR)/ucrt64/bin/libgxthread-0.0.1-1.dll $(DESTDIR)/usr/bin
+	cp $(DESTDIR)/ucrt64/bin/libgxinterface-0.0.1-1.dll $(DESTDIR)/usr/bin
 	## add dll needed by exe and other dll
-	ldd $(DESTDIR)/usr/bin/*.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
+	ldd $(DESTDIR)/usr/bin/gxinterface.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
+	ldd $(DESTDIR)/usr/bin/gdbus.exe | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	ldd $(DESTDIR)/usr/bin/*.dll | grep /ucrt64 | awk '{print $$3}' | xargs -I {} cp {} $(DESTDIR)/usr/bin/
 	mkdir -p $(DESTDIR)/usr/share/glib-2.0/schemas/
 	glib-compile-schemas --targetdir=$(DESTDIR)/usr/share/glib-2.0/schemas/ /ucrt64/share/glib-2.0/schemas
