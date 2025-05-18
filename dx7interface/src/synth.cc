@@ -321,128 +321,133 @@ bool Synth::Run() {
 #endif
 #if defined(__ALSA__)
     void Synth::print_event_info(snd_seq_event_t* ev){
-        /*
-        * typedef struct snd_seq_event {
-        *      snd_seq_event_*type_t type;
-        *      unsigned char flags;
-        *      unsigned char tag;
-        *      unsigned char queue;
-        *      snd_seq_timestamp_t time;
-        *      snd_seq_addr_t source;
-        *      snd_seq_addr_t dest;
-        *      snd_seq_event_data_t data;
-        * } snd_seq_event_t;
-        */
-        std::string msg;
-        LOG("");
-        msg = _("event: ") + get_event_name(int(ev->type)) + " "
-        + "type: " + std::to_string((ev->type));
-        LOG( msg );
-        msg = "flags: " + std::to_string((ev->flags)) + " "
-        + "tag: " + std::to_string((ev->tag)) + '\t'
-        + "queue: " + std::to_string((ev->queue)) ;
-        LOG( msg );
-        msg = "ticks: " + std::to_string((ev->time.tick)) + " "
-        + "time: " + std::to_string((ev->time.time.tv_sec));
-        LOG( msg );
-        msg = "source: " + std::to_string((ev->source.client)) + " " + '\t'
-        + "dest: " + std::to_string((ev->dest.client));
-        LOG( msg );
-        msg = "channel: " + std::to_string((ev->data.control.channel)+1);
-        LOG( msg );
-        switch (ev->type) {
-            case SND_SEQ_EVENT_NOTEON:
-                msg = "Channel: "  + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
-                + "value: " + std::to_string((ev->data.note.note));
-                LOG( msg );
-                break;
-            case SND_SEQ_EVENT_NOTEOFF:
-                msg = "Channel: "  + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
-                + "value: " +  std::to_string(int(ev->data.note.note));
-                LOG( msg );
-                break;
-            case SND_SEQ_EVENT_CONTROLLER:
-                msg = "Channel: " + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
-                + "param: "  + std::to_string(ev->data.control.param) + " "
-                + "value: " + std::to_string((ev->data.control.value));
-                LOG( msg );
-                break;
-            case SND_SEQ_EVENT_PITCHBEND:
-                msg ="Channel: " + std::to_string(int(ev->data.control.channel) +1)+ " " + '\t'
-                + "value: " + std::to_string((ev->data.control.value)) ;
-                LOG( msg );
-                break;
-            case SND_SEQ_EVENT_PGMCHANGE:
-                /*event data type = snd_seq_ev_ctrl_t */
-                msg = "Channel : "  + std::to_string(int(ev->data.control.channel) +1) + '\t'
-                + "param : "  + std::to_string(ev->data.control.param) + " "
-                + "value : " + std::to_string((ev->data.control.value));
-                LOG( msg );
-                break;
+        try{
+            /*
+            * typedef struct snd_seq_event {
+            *      snd_seq_event_*type_t type;
+            *      unsigned char flags;
+            *      unsigned char tag;
+            *      unsigned char queue;
+            *      snd_seq_timestamp_t time;
+            *      snd_seq_addr_t source;
+            *      snd_seq_addr_t dest;
+            *      snd_seq_event_data_t data;
+            * } snd_seq_event_t;
+            */
+            std::string msg;
+            LOG("");
+            msg = _("event: ") + get_event_name(int(ev->type)) + " "
+            + "type: " + std::to_string((ev->type));
+            LOG( msg );
+            msg = "flags: " + std::to_string((ev->flags)) + " "
+            + "tag: " + std::to_string((ev->tag)) + '\t'
+            + "queue: " + std::to_string((ev->queue)) ;
+            LOG( msg );
+            msg = "ticks: " + std::to_string((ev->time.tick)) + " "
+            + "time: " + std::to_string((ev->time.time.tv_sec));
+            LOG( msg );
+            msg = "source: " + std::to_string((ev->source.client)) + " " + '\t'
+            + "dest: " + std::to_string((ev->dest.client));
+            LOG( msg );
+            msg = "channel: " + std::to_string((ev->data.control.channel)+1);
+            LOG( msg );
+            switch (ev->type) {
+                case SND_SEQ_EVENT_NOTEON:
+                    msg = "Channel: "  + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
+                    + "value: " + std::to_string((ev->data.note.note));
+                    LOG( msg );
+                    break;
+                case SND_SEQ_EVENT_NOTEOFF:
+                    msg = "Channel: "  + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
+                    + "value: " +  std::to_string(int(ev->data.note.note));
+                    LOG( msg );
+                    break;
+                case SND_SEQ_EVENT_CONTROLLER:
+                    msg = "Channel: " + std::to_string(int(ev->data.control.channel) +1) + " " + '\t'
+                    + "param: "  + std::to_string(ev->data.control.param) + " "
+                    + "value: " + std::to_string((ev->data.control.value));
+                    LOG( msg );
+                    break;
+                case SND_SEQ_EVENT_PITCHBEND:
+                    msg ="Channel: " + std::to_string(int(ev->data.control.channel) +1)+ " " + '\t'
+                    + "value: " + std::to_string((ev->data.control.value)) ;
+                    LOG( msg );
+                    break;
+                case SND_SEQ_EVENT_PGMCHANGE:
+                    /*event data type = snd_seq_ev_ctrl_t */
+                    msg = "Channel : "  + std::to_string(int(ev->data.control.channel) +1) + '\t'
+                    + "param : "  + std::to_string(ev->data.control.param) + " "
+                    + "value : " + std::to_string((ev->data.control.value));
+                    LOG( msg );
+                    break;
+            };
+
+            /* https://www.alsa-project.org/alsa-doc/alsa-lib/seq__event_8h_source.html */
+
+            /*case SND_SEQ_EVENT_SYSTEM :  system status; event data type = snd_seq_result_t
+                *  SND_SEQ_EVENT_RESULT 	returned result status; event data type = snd_seq_result_t
+                *  SND_SEQ_EVENT_NOTE 	note on and off with duration; event data type = snd_seq_ev_note_t
+                *  SND_SEQ_EVENT_NOTEON 	note on; event data type = snd_seq_ev_note_t
+                *  SND_SEQ_EVENT_NOTEOFF 	note off; event data type = snd_seq_ev_note_t
+                *  SND_SEQ_EVENT_KEYPRESS 	key pressure change (aftertouch); event data type = snd_seq_ev_note_t
+                *  SND_SEQ_EVENT_CONTROLLER 	controller; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_PGMCHANGE 	program change; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_CHANPRESS 	channel pressure; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_PITCHBEND 	pitchwheel; event data type = snd_seq_ev_ctrl_t; data is from -8192 to 8191)
+                *  SND_SEQ_EVENT_CONTROL14 	14 bit controller value; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_NONREGPARAM 	14 bit NRPN; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_REGPARAM 	14 bit RPN; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_SONGPOS 	SPP with LSB and MSB values; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_SONGSEL 	Song Select with song ID number; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_QFRAME 	midi time code quarter frame; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_TIMESIGN 	SMF Time Signature event; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_KEYSIGN 	SMF Key Signature event; event data type = snd_seq_ev_ctrl_t
+                *  SND_SEQ_EVENT_START 	MIDI Real Time Start message; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_CONTINUE 	MIDI Real Time Continue message; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_STOP 	MIDI Real Time Stop message; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_SETPOS_TICK 	Set tick queue position; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_SETPOS_TIME 	Set real-time queue position; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_TEMPO 	(SMF) Tempo event; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_CLOCK 	MIDI Real Time Clock message; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_TICK 	MIDI Real Time Tick message; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_QUEUE_SKEW 	Queue timer skew; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_SYNC_POS 	Sync position changed; event data type = snd_seq_ev_queue_control_t
+                *  SND_SEQ_EVENT_TUNE_REQUEST 	Tune request; event data type = none
+                *  SND_SEQ_EVENT_RESET 	Reset to power-on state; event data type = none
+                *  SND_SEQ_EVENT_SENSING 	Active sensing event; event data type = none
+                *  SND_SEQ_EVENT_ECHO 	Echo-back event; event data type = any type
+                *  SND_SEQ_EVENT_OSS 	OSS emulation raw event; event data type = any type
+                *  SND_SEQ_EVENT_CLIENT_START 	New client has connected; event data type = snd_seq_addr_t
+                *  SND_SEQ_EVENT_CLIENT_EXIT 	Client has left the system; event data type = snd_seq_addr_t
+                *  SND_SEQ_EVENT_CLIENT_CHANGE 	Client status/info has changed; event data type = snd_seq_addr_t
+                *  SND_SEQ_EVENT_PORT_START 	New port was created; event data type = snd_seq_addr_t
+                *  SND_SEQ_EVENT_PORT_EXIT 	Port was deleted from system; event data type = snd_seq_addr_t
+                *  SND_SEQ_EVENT_PORT_CHANGE 	Port status/info has changed; event data type = snd_seq_addr_t
+                *  SND_SEQ_EVENT_PORT_SUBSCRIBED 	Ports connected; event data type = snd_seq_connect_t
+                *  SND_SEQ_EVENT_PORT_UNSUBSCRIBED 	Ports disconnected; event data type = snd_seq_connect_t
+                *  SND_SEQ_EVENT_USR0 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR1 	user-defined emod.extpath.vent; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR2 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR3 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR4 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR5 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR6 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR7 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR8 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_USR9 	user-defined event; event data type = any (fixed size)
+                *  SND_SEQ_EVENT_SYSEX 	system exclusive data (variable length); event data type = snd_seq_ev_ext_t
+                *  SND_SEQ_EVENT_BOUNCE 	error event; event data type = snd_seq_ev_ext_t
+                *  SND_SEQ_EVENT_USR_VAR0 	reserved for user apps; event data type = snd_seq_ev_ext_t
+                *  SND_SEQ_EVENT_USR_VAR1 	reserved for user apps; event data type = snd_seq_ev_ext_t
+                *  SND_SEQ_EVENT_USR_VAR2 	reserved for user apps; event data type = snd_seq_ev_ext_t
+                *  SND_SEQ_EVENT_USR_VAR3 	reserved for user apps; event data type = snd_seq_ev_ext_t
+                *  SND_SEQ_EVENT_USR_VAR4 	reserved for user apps; event data type = snd_seq_ev_ext_t
+                *  SND_SEQ_EVENT_NONE 	NOP; ignored in any case */
+            LOG("");
+        }catch( const std::exception & ex ){
+            std::string msg_err = error( __PRETTY_FUNCTION__, "exeption in print midi event", ex.what() );
+            LOG_ERR( msg_err );
         };
-
-        /* https://www.alsa-project.org/alsa-doc/alsa-lib/seq__event_8h_source.html */
-
-        /*case SND_SEQ_EVENT_SYSTEM :  system status; event data type = snd_seq_result_t
-            *  SND_SEQ_EVENT_RESULT 	returned result status; event data type = snd_seq_result_t
-            *  SND_SEQ_EVENT_NOTE 	note on and off with duration; event data type = snd_seq_ev_note_t
-            *  SND_SEQ_EVENT_NOTEON 	note on; event data type = snd_seq_ev_note_t
-            *  SND_SEQ_EVENT_NOTEOFF 	note off; event data type = snd_seq_ev_note_t
-            *  SND_SEQ_EVENT_KEYPRESS 	key pressure change (aftertouch); event data type = snd_seq_ev_note_t
-            *  SND_SEQ_EVENT_CONTROLLER 	controller; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_PGMCHANGE 	program change; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_CHANPRESS 	channel pressure; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_PITCHBEND 	pitchwheel; event data type = snd_seq_ev_ctrl_t; data is from -8192 to 8191)
-            *  SND_SEQ_EVENT_CONTROL14 	14 bit controller value; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_NONREGPARAM 	14 bit NRPN; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_REGPARAM 	14 bit RPN; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_SONGPOS 	SPP with LSB and MSB values; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_SONGSEL 	Song Select with song ID number; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_QFRAME 	midi time code quarter frame; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_TIMESIGN 	SMF Time Signature event; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_KEYSIGN 	SMF Key Signature event; event data type = snd_seq_ev_ctrl_t
-            *  SND_SEQ_EVENT_START 	MIDI Real Time Start message; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_CONTINUE 	MIDI Real Time Continue message; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_STOP 	MIDI Real Time Stop message; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_SETPOS_TICK 	Set tick queue position; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_SETPOS_TIME 	Set real-time queue position; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_TEMPO 	(SMF) Tempo event; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_CLOCK 	MIDI Real Time Clock message; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_TICK 	MIDI Real Time Tick message; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_QUEUE_SKEW 	Queue timer skew; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_SYNC_POS 	Sync position changed; event data type = snd_seq_ev_queue_control_t
-            *  SND_SEQ_EVENT_TUNE_REQUEST 	Tune request; event data type = none
-            *  SND_SEQ_EVENT_RESET 	Reset to power-on state; event data type = none
-            *  SND_SEQ_EVENT_SENSING 	Active sensing event; event data type = none
-            *  SND_SEQ_EVENT_ECHO 	Echo-back event; event data type = any type
-            *  SND_SEQ_EVENT_OSS 	OSS emulation raw event; event data type = any type
-            *  SND_SEQ_EVENT_CLIENT_START 	New client has connected; event data type = snd_seq_addr_t
-            *  SND_SEQ_EVENT_CLIENT_EXIT 	Client has left the system; event data type = snd_seq_addr_t
-            *  SND_SEQ_EVENT_CLIENT_CHANGE 	Client status/info has changed; event data type = snd_seq_addr_t
-            *  SND_SEQ_EVENT_PORT_START 	New port was created; event data type = snd_seq_addr_t
-            *  SND_SEQ_EVENT_PORT_EXIT 	Port was deleted from system; event data type = snd_seq_addr_t
-            *  SND_SEQ_EVENT_PORT_CHANGE 	Port status/info has changed; event data type = snd_seq_addr_t
-            *  SND_SEQ_EVENT_PORT_SUBSCRIBED 	Ports connected; event data type = snd_seq_connect_t
-            *  SND_SEQ_EVENT_PORT_UNSUBSCRIBED 	Ports disconnected; event data type = snd_seq_connect_t
-            *  SND_SEQ_EVENT_USR0 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR1 	user-defined emod.extpath.vent; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR2 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR3 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR4 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR5 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR6 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR7 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR8 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_USR9 	user-defined event; event data type = any (fixed size)
-            *  SND_SEQ_EVENT_SYSEX 	system exclusive data (variable length); event data type = snd_seq_ev_ext_t
-            *  SND_SEQ_EVENT_BOUNCE 	error event; event data type = snd_seq_ev_ext_t
-            *  SND_SEQ_EVENT_USR_VAR0 	reserved for user apps; event data type = snd_seq_ev_ext_t
-            *  SND_SEQ_EVENT_USR_VAR1 	reserved for user apps; event data type = snd_seq_ev_ext_t
-            *  SND_SEQ_EVENT_USR_VAR2 	reserved for user apps; event data type = snd_seq_ev_ext_t
-            *  SND_SEQ_EVENT_USR_VAR3 	reserved for user apps; event data type = snd_seq_ev_ext_t
-            *  SND_SEQ_EVENT_USR_VAR4 	reserved for user apps; event data type = snd_seq_ev_ext_t
-            *  SND_SEQ_EVENT_NONE 	NOP; ignored in any case */
-        LOG("");
     };
 #endif
 #if defined(__RtMidi__)

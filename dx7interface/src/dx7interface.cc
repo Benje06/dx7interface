@@ -355,10 +355,11 @@ void Dx7interface::on_midi_learn_param_select(){
 #ifdef __linux__ 
     void Dx7interface::listen_midi(){
         snd_seq_event_input(seq_handle, &ev);
-        Synth::print_event_info(ev);
+
         int length_mask;
         //if( uncomplete || ((int)ev->dest.client == Synth::get_client_id() && ((int)(ev->data.control.channel) +1) == (int)Synth::channel_receive ) ) {
         if( uncomplete || (int)ev->dest.client == Synth::get_client_id() ){
+            Synth::print_event_info(ev);
             switch( ev->type ){
                 case SND_SEQ_EVENT_NOTEON:
                     //Synth::print_event_info(ev);
@@ -443,16 +444,15 @@ void Dx7interface::on_midi_learn_param_select(){
                         LOG( msg_log );
                     }
                     msg_log = _("Length:") + std::to_string( int(ev->data.ext.len) );
+                    LOG( msg_log );
                     if( (ev->data.ext.len > 8 || uncomplete) && receive ){
                         uncomplete = true;
                         uint8_t* byte_ptr = static_cast<uint8_t*>(ev->data.ext.ptr);
                         sysex_buffer.insert(sysex_buffer.end(), byte_ptr, byte_ptr + ev->data.ext.len);
                         if (!sysex_buffer.empty() && sysex_buffer.back() == 0xF7) {
                             uncomplete = false;
-                            if(sysex_buffer.size() > 163){
+                            if(sysex_buffer.size() >= 163){
                                 receive_bank(sysex_buffer);
-                            }else if(sysex_buffer.size() == 163){
-                                //receive_sound(sysex_buffer);
                             }else{
                                 //receive sysex message
                             };
@@ -860,8 +860,8 @@ void Dx7interface::clean_bank(){
     }, bank_origin_src, bank_modif_src);
     restore_origin(BANK);                                               // restore origin to write in modif
 
-    unsigned int n_items = bank_data_model->get_n_items();              // clear all listview entry
-    if (n_items != 0) {
+    guint n_items = bank_data_model->get_n_items();              // clear all listview entry
+    if (n_items > 0) {
         bank_data_model->remove_all();
     };
     LOG( LOG_OUT() );
@@ -962,11 +962,13 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     old_snum=0;
     snum = 0;
     Glib::ustring bank_name = _("Received");
-    msg_log = _("Buffer size of received bank: " + sysex_buffer.size()) ;
+    msg_log = _("Buffer size of received bank: ");
+    msg_log.append( tostr<int>(sysex_buffer.size()) );
     LOG( msg_log );
     /*for (uint8_t byte : sysex_buffer) {
      *      msg_log = std::hex + std::setw(2) + std::setfill('0') + static_cast<int>(byte) + " ";
     }*/
+    block_ui();
     switch( sysex_buffer.size() ){
         case 136:
             bank_nb_sound = 1;
@@ -1007,6 +1009,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     }
     select_voice(snum);
     get_gwidget<Gtk::Button>("bank_select")->set_label(bank_name);
+    unblock_ui();
 };
 /* restore */
 void Dx7interface::restore_origin(unsigned int type){
@@ -2280,23 +2283,27 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
 };
 
 void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> data){
-        int i;
-        i=6 + (64 * snum);
-        sound->extra.functions.poly_mono.val = (data[i++]>>6) & sound->extra.functions.poly_mono.mask;
-        sound->extra.functions.ptch_bnd_rng.val = (data[i]) & sound->extra.functions.ptch_bnd_rng.mask;
-        sound->extra.functions.ptch_bnd_stp.val = ( (data[i]>>4) + ((data[i+14]>>6)+3) ) & sound->extra.functions.ptch_bnd_stp.mask;
-        i++;
-        sound->extra.functions.portamento_tm.val = (data[i++]) & sound->extra.functions.portamento_tm.mask;
-        sound->extra.functions.portamento_glss.val = (data[i]) & sound->extra.functions.portamento_glss.mask;
-        sound->extra.functions.portamento_md.val = (data[i++]>>1) & sound->extra.functions.portamento_md.mask;
-        sound->extra.functions.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.md_whl_assgn.val = (data[i++]>>4) & sound->extra.functions.md_whl_assgn.mask;
-        sound->extra.functions.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.foot_assgn.val = (data[i++]>>4) & sound->extra.functions.foot_assgn.mask;
-        sound->extra.functions.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.functions.aftrtch_assgn.mask;
-        sound->extra.functions.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.brth_assgn.val = (data[i++]>>4) & sound->extra.functions.brth_assgn.mask;
+    //std::cout<<"step1: "<<std::hex << std::setw(2) << std::setfill('0') << (int)step1<<std::dec<<std::endl;
+    int i;
+    i=6 + (64 * snum);
+    sound->extra.functions.poly_mono.val = (data[i++]>>6) & sound->extra.functions.poly_mono.mask;
+    sound->extra.functions.ptch_bnd_rng.val = (data[i]) & sound->extra.functions.ptch_bnd_rng.mask;
+    LOG("convert pitch step");
+    uint8_t step1 = (data[i]>>4) & 0x07;
+    uint8_t step15 = ( ( (data[i+14]>>6) & 0x01 ) <<3 ) & 0x0F ;
+    sound->extra.functions.ptch_bnd_stp.val = ( step1 + step15 ) & sound->extra.functions.ptch_bnd_stp.mask;
+    i++;
+    sound->extra.functions.portamento_tm.val = (data[i++]) & sound->extra.functions.portamento_tm.mask;
+    sound->extra.functions.portamento_glss.val = (data[i]) & sound->extra.functions.portamento_glss.mask;
+    sound->extra.functions.portamento_md.val = (data[i++]>>1) & sound->extra.functions.portamento_md.mask;
+    sound->extra.functions.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+    sound->extra.functions.md_whl_assgn.val = (data[i++]>>4) & sound->extra.functions.md_whl_assgn.mask;
+    sound->extra.functions.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+    sound->extra.functions.foot_assgn.val = (data[i++]>>4) & sound->extra.functions.foot_assgn.mask;
+    sound->extra.functions.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+    sound->extra.functions.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.functions.aftrtch_assgn.mask;
+    sound->extra.functions.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+    sound->extra.functions.brth_assgn.val = (data[i++]>>4) & sound->extra.functions.brth_assgn.mask;
 };
 
 /* read: set (in ui from struct) */
