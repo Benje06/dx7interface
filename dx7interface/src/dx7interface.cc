@@ -273,7 +273,7 @@ void Dx7interface::clean_midi_learn(){
             };
         };
     }catch( const std::exception & ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "Unknow", ex.what() );
         LOG_ERR( msg_err );
     };
     //LOG( LOG_OUT() );
@@ -410,7 +410,7 @@ void Dx7interface::on_midi_learn_param_select(){
                 case SND_SEQ_EVENT_PGMCHANGE:
                     //Synth::print_event_info(ev);
                     /*event data type = snd_seq_ev_ctrl_t */
-                    msg_log =  _("Channel : ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
+                    msg_log =  _("Channel: ")  + std::to_string( (int(ev->data.control.channel) +1) ) + " \t"
                         + _("param : ")  + std::to_string(ev->data.control.param) + " "
                         + _("value : ") + std::to_string( int(ev->data.control.value) );
                     LOG( msg_log );
@@ -725,7 +725,7 @@ void Dx7interface::set_dialog(Glib::ustring title){
             get_gwidget<Gtk::Button>("btn_dialog_param")->set_label("Close");
         };
     }catch( const std::exception & ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "Unknow", ex.what() );
         LOG_ERR( msg_err );
         //throw std::runtime_error(msg_err);
     };
@@ -1252,7 +1252,7 @@ void Dx7interface::on_insert_at(){
                           std::placeholders::_1,std::placeholders::_2) ));
         OpenDialogParam(_("Insert Sound(s) at"));
     }catch( const std::exception& ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "Unknow", ex.what() );
         LOG_ERR( msg_err );
         LOG( LOG_OUT() );
     };
@@ -1295,7 +1295,7 @@ void Dx7interface::on_save_bank(){
                                         std::placeholders::_1,std::placeholders::_2) ));
         OpenDialogParam("Saving Bank");
     }catch( const std::exception & ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, "Unknow", ex.what() );
         LOG_ERR( msg_err );
     };
 };
@@ -1650,10 +1650,10 @@ void Dx7interface::write_voice_bulk1(unsigned int* l, unsigned char* msg, St_dx7
     }catch( const std::exception& ex ){
         /*
          * std::string msg_err = _("From: ") + std::string(__PRETTY_FUNCTION__) + "\n\t"
-         *                     + _("Cannot construct bulk1") + "\n\t"
+         *                     + _("Can't construct bulk1") + "\n\t"
          *                     + _("Reason: ") + ex.what();
          */
-        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot construct bulk1"), ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Can't construct bulk1"), ex.what() );
         LOG_ERR( msg_err );
     };
 };
@@ -1723,7 +1723,7 @@ void Dx7interface::write_voice_bulk32(unsigned int* l, unsigned char* msg, St_dx
         };
         *voice_checksum -= msg[(*l)-1];
     }catch( const std::exception& ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot construct bulk32"), ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Can't construct bulk32"), ex.what() );
         LOG_ERR( msg_err );
     };
 };
@@ -1744,7 +1744,7 @@ void Dx7interface::write_voice_as_sysex(unsigned int data_stream_index, Glib::Re
         msg[162]=0xF7;
         write_file_as_datastream(data_stream_index, file, msg, msg_size);
     }catch( const std::exception& ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot write file as sysex"), ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Can't write file as sysex"), ex.what() );
         LOG_ERR( msg_err );
     }
 };
@@ -1757,7 +1757,7 @@ void Dx7interface::write_voice_as_raw(unsigned int data_stream_index, Glib::RefP
         write_voice_bulk32(&l, msg, &bank_1_modif.sound[0], &voice_checksum );
         write_file_as_datastream(data_stream_index, file, msg, msg_size);
     }catch( const std::exception& ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot write file as raw"), ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _("Can't write file as raw"), ex.what() );
         LOG_ERR( msg_err );
     }
 };
@@ -1799,7 +1799,7 @@ void Dx7interface::write_voice_ctrl_parameters(st_dx7sysex_1* sound,unsigned cha
                 msg[(*index)++]=0xF7;
             };
         }catch( const std::exception& ex ){
-            std::string msg_err = error( __PRETTY_FUNCTION__, _("Cannot set for write ctrl parameters"), ex.what() );
+            std::string msg_err = error( __PRETTY_FUNCTION__, _("Can't set write ctrl parameters"), ex.what() );
             LOG_ERR( msg_err );
         };
     };
@@ -1837,7 +1837,7 @@ void Dx7interface::on_save_sound(){
                                  std::placeholders::_1, std::placeholders::_2) ));
         OpenDialogParam("Saving sound");
     }catch( const std::exception & ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, _(" ??? "), ex.what() );
+        std::string msg_err = error( __PRETTY_FUNCTION__, _(" Unknow "), ex.what() );
         LOG_ERR( msg_err );
     };
     LOG( LOG_OUT() );
@@ -2305,7 +2305,7 @@ void Dx7interface::set_voice(St_dx7sysex_1* sound){ LOG( LOG_IN() );
     /* general */
     block_ui(); // have to be here,
                 // if inside the callback some ui event are trigerred
-                // must be place the soonest ???
+                // must be place the soonest Unknow
 
     (get_window())->add_tick_callback([this,sound] (const Glib::RefPtr<Gdk::FrameClock>&) -> bool {
         block_midi();
@@ -2683,7 +2683,7 @@ void Dx7interface::on_add_midi_learn_event(){
             };
         };
     }catch( const std::exception & ex ){
-        std::string msg_err = error( __PRETTY_FUNCTION__, "???", ex.what());
+        std::string msg_err = error( __PRETTY_FUNCTION__, "Unknow", ex.what());
         LOG_ERR( msg_err );
     };
     LOG( LOG_OUT() );
@@ -5656,7 +5656,7 @@ void Dx7interface::on_portamento_glss_event(){
     msg[2]=sub_status + channel_send;   // 10
     msg[3]=0x08;                        // 08
     msg[4]=0x44;                        // 44
-                                        // 0-3 bit 0= 1=gliss ???
+                                        // 0-3 bit 0= 1=gliss Unknow
     msg[5]=(get_gwidget<Gtk::ToggleButton>("btn_portamento_glss"))->get_active();
     msg[6]=0xF7;
     send_midi(SND_SEQ_EVENT_SYSEX, 7, msg);
