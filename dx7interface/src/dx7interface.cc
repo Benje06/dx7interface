@@ -855,9 +855,9 @@ void Dx7interface::clean_bank(){
     std::visit([&](auto& bank_origin, auto& bank_modif) {
         for( unsigned int i = 0 ; i < bank_nb_sound ; i++ ){
             bank_origin.get().sound[i] = bank_1_origin.sound[0];        // write init_voice to all sounds
+            bank_modif.get().sound[i] = bank_1_origin.sound[0];
         };
     }, bank_origin_src, bank_modif_src);
-    restore_origin(BANK);                                               // restore origin to write in modif
 
     unsigned int n_items = bank_data_model->get_n_items();              // clear all listview entry
     if (n_items > 0) {
@@ -1017,9 +1017,8 @@ void Dx7interface::restore_origin(unsigned int type){
     auto [bank_origin_src, bank_modif_src] = get_banks_source();
     std::visit([&](auto& bank_origin, auto& bank_modif) {
         if(type == BANK){
-            msg_log = _("Restore bank: ") + bank_modif.get().name + _(" from origin bank.") ;
+            msg_log = _("Restore bank: ") + bank_origin.get().name + _(" from origin bank.") ;
             LOG( msg_log );
-
             for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
                 bank_modif.get().sound[snum] = bank_origin.get().sound[snum];
                 update_data_model<SoundBankItem>(bank_data_model, bank_modif.get().sound[snum].name);
