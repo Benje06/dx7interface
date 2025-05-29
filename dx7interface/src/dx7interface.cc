@@ -448,12 +448,13 @@ void Dx7interface::on_midi_learn_param_select(){
                         uncomplete = true;
                         uint8_t* byte_ptr = static_cast<uint8_t*>(ev->data.ext.ptr);
                         sysex_buffer.insert(sysex_buffer.end(), byte_ptr, byte_ptr + ev->data.ext.len);
-                        if (!sysex_buffer.empty() && sysex_buffer.back() == 0xF7) {
+                        if(!sysex_buffer.empty() && sysex_buffer.back() == 0xF7){
                             uncomplete = false;
                             if(sysex_buffer.size() >= 163){
                                 receive_bank(sysex_buffer);
                             }else{
-                                //receive sysex message
+                                msg_log = _("Receive sysex message lower than 163") ;
+                                LOG( msg_log );
                             };
                             sysex_buffer.clear();
                         };
@@ -879,7 +880,9 @@ void Dx7interface::set_init_voice_in_origin(){
     bank_1_origin.name = bank_name;
     bank_nb_sound = bank_nb_sound_origin;
 };
-
+void Dx7interface::set_bank_name(Glib::ustring name){
+    get_gwidget<Gtk::Button>("bank_select")->set_label(name);
+};
 void Dx7interface::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> bank_file){
     LOG( LOG_IN() );
     Synth::set_bank(data_stream_index,
@@ -953,62 +956,109 @@ void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<
     };*/
 };
 
-void Dx7interface::set_bank_name(Glib::ustring name){
-    get_gwidget<Gtk::Button>("bank_select")->set_label(name);
-};
 /* receive */
 void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
-    old_snum=0;
-    snum = 0;
+    LOG( LOG_IN() );
+    /*for (uint8_t byte : sysex_buffer) {
+     *      msg_log = std::hex + std::setw(2) + std::setfill('0') + static_cast<int>(byte) + " ";
+    }*/
     Glib::ustring bank_name = _("Received");
     msg_log = _("Buffer size of received bank: ");
     msg_log.append( tostr<int>(sysex_buffer.size()) );
     LOG( msg_log );
-    /*for (uint8_t byte : sysex_buffer) {
-     *      msg_log = std::hex + std::setw(2) + std::setfill('0') + static_cast<int>(byte) + " ";
-    }*/
+
     block_ui();
+    clean_bank();
+
+    Bank_ptr bank_ptr;
     switch( sysex_buffer.size() ){
-        case 136:
+        case 163: /* one voice Dx7 bulk 1 */
             bank_nb_sound = 1;
-            clean_bank();
-            receive_voice(&bank_1_origin.sound[snum], sysex_buffer);
             bank_1_origin.name = bank_name;
-            bank_1_modif=bank_1_origin;
+            bank_ptr = reinterpret_cast<Bank_ptr>(&bank_1_origin);
             break;
-        case 163:
-            bank_nb_sound = 1;
-            clean_bank();
-            receive_voice_by_byte(&bank_1_origin.sound[snum], sysex_buffer);
-            bank_1_origin.name = bank_name;
-            bank_1_modif=bank_1_origin;
-            break;
-        case 4104:
+        case 4104: /* 32 voices Dx7 bulk 32 */
             bank_nb_sound = 32;
-            if( sysex_buffer[3] == 0x09 ){
-                clean_bank();
-                for (; snum < 32; snum++){
-                    receive_voice(&bank_32_origin.sound[snum], sysex_buffer);
-                };
-            }
-            if ( sysex_buffer[3] == 0x02 ){
-                snum = 0;
-                // TODO : check 0x02 position
-                for (; snum < 32; snum++){
-                    receive_paramters(&bank_32_origin.sound[snum], sysex_buffer);
-                };
-            };
-            snum = 0; // set selected to 0
             bank_32_origin.name = bank_name;
-            bank_32_modif=bank_32_origin;
-            bank_1_origin.sound[0]=bank_32_origin.sound[0];
-            bank_1_origin.name = bank_name;
-            bank_1_modif=bank_1_origin;
+            bank_ptr = reinterpret_cast<Bank_ptr>(&bank_32_origin);
+            //new(&reinterpret_cast<Bank>(bank_1_origin)->name) Glib::ustring("");
             break;
-    }
-    select_voice(snum);
-    get_gwidget<Gtk::Button>("bank_select")->set_label(bank_name);
-    unblock_ui();
+    };
+
+    if( sysex_buffer.size() == 163 && sysex_buffer[3] == 0x00){
+        receive_voice_by_byte(&bank_ptr->sound[0], sysex_buffer);
+    }else if( sysex_buffer[3] == 0x09 ){
+        for (snum=0; snum < bank_nb_sound; snum++){
+            receive_voice(&bank_ptr->sound[snum], sysex_buffer);
+        };
+    }else if( sysex_buffer[3] == 0x02 ){
+        msg_log = "Receive parameters";
+        LOG( msg_log );
+        //  snum = 0;
+        //  // TODO : check 0x02 position
+        //  for (snum=0; snum < bank_nb_sound; snum++){
+        //     receive_paramters(&bank_ptr->sound[snum], sysex_buffer);
+        // };
+    };
+    bank_1_origin.name = bank_name;
+    old_snum=0;
+    snum=0;
+
+    set_bank_name(bank_name);
+
+    restore_origin(BANK);
+    /*auto [bank_origin_src, bank_modif_src] = get_banks_source();
+    update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_src);
+    */
+    slot_selected_sound_change.unblock();
+
+//     switch( sysex_buffer.size() ){
+//         case 136:
+//             bank_nb_sound = 1;
+//             clean_bank();
+//             receive_voice(&bank_1_origin.sound[snum], sysex_buffer);
+//             bank_1_origin.name = bank_name;
+//             bank_1_modif=bank_1_origin;
+//             break;
+//         case 163:
+//             bank_nb_sound = 1;
+//             clean_bank();
+//             receive_voice_by_byte(&bank_1_origin.sound[snum], sysex_buffer);
+//             bank_1_origin.name = bank_name;
+//             bank_1_modif=bank_1_origin;
+//             break;
+//         case 4104:
+//             bank_nb_sound = 32;
+//             if( sysex_buffer[3] == 0x09 ){
+//                 clean_bank();
+//                 for (; snum < 32; snum++){
+//                     receive_voice(&bank_32_origin.sound[snum], sysex_buffer);
+//                 };
+//                 snum = 0; // set selected to 0
+//                 bank_32_origin.name = bank_name;
+//
+//                 bank_32_modif=bank_32_origin;
+//                 bank_1_origin.sound[0]=bank_32_origin.sound[0];
+//                 bank_1_origin.name = bank_name;
+//                 bank_1_modif=bank_1_origin;
+//             }
+//             /*if ( sysex_buffer[3] == 0x02 ){
+//                 snum = 0;
+//                 // TODO : check 0x02 position
+//                 for (; snum < 32; snum++){
+//                     receive_paramters(&bank_32_origin.sound[snum], sysex_buffer);
+//                 };
+//             };*/
+//             break;
+//     }
+    /*(get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, position](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to(position, nullptr, Gtk::ListScrollFlags::SELECT);
+        return false; // Return false to remove the callback after one executio
+    });*/
+    //get_gwidget<Gtk::Button>("bank_select")->set_label(bank_name);
+    //slot_selected_sound_change.unblock();
+    //select_voice(snum);
+    LOG( LOG_OUT() );
 };
 /* restore */
 void Dx7interface::restore_origin(unsigned int type){
@@ -2153,7 +2203,7 @@ void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
 
 void Dx7interface::receive_voice(St_dx7sysex_1* sound, std::vector<uint8_t> data){
     /* BULK 32 */
-    //LOG( LOG_IN() );
+    LOG( LOG_IN() );
         int i;
         i=6 + (128 * snum);
         uint8_t val,j,k;
@@ -2219,13 +2269,11 @@ void Dx7interface::receive_voice(St_dx7sysex_1* sound, std::vector<uint8_t> data
         };
         sound->name=strm.str();
         sound->extra.mute.val=0x3F;
-        /* add voice name to liststore */
-        update_data_model<SoundBankItem>(bank_data_model, sound->name);
-    //LOG( LOG_OUT() );
+    LOG( LOG_OUT() );
 };
 void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8_t> data){
     /* BULK 1 */
-    //LOG( LOG_IN() );
+    LOG( LOG_IN() );
     uint8_t j,k;
     int i = 6 ;
     /* operator j */
@@ -2277,7 +2325,7 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
     sound->extra.mute.val=0x3F;
     /* add voice name to liststore */
     update_data_model<SoundBankItem>(bank_data_model, sound->name);
-    //LOG( LOG_OUT() );
+    LOG( LOG_OUT() );
 };
 
 void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> data){
