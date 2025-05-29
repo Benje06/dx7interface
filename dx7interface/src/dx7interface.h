@@ -93,6 +93,7 @@ class Dx7interface : public Gx_module, public Synth {
         bool write_ctrl_params = false;        // set if write_ctrl parameter is activate
         bool unmooved_sound = true;
         bool send_bank = false;
+        bool remove_pending = false;
 
         /*** Dx7 specific ***/
         bool mode_tf1 = false;                  // mode tf1 = fonction parameter by sound
@@ -578,6 +579,7 @@ class Dx7interface : public Gx_module, public Synth {
         void set_bank_sounds(unsigned int datat_stream_index,
                              Glib::RefPtr<Gio::File> file);
         void receive_bank(std::vector<uint8_t> sysex_buffer);
+        void on_receive_bank();
         void receive_voice(St_dx7sysex_1* sound,
                            std::vector<uint8_t> sysex_buffer);          // get voice param from midi message to fill sound struct
         void receive_voice_by_byte(St_dx7sysex_1* sound,

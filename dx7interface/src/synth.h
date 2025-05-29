@@ -115,6 +115,7 @@
 #define BANK 0
 #define SOUND 1
 #define PARAM_MIDI 2
+#define ACT_RECEIVE 8 // start at 8 to not collapse with gxinterface constants for ACTion type
 
 class Synth : public Thread {
     public:
@@ -200,8 +201,8 @@ class Synth : public Thread {
                 std::vector<unsigned char> message;
                 void print_event_info();
                 std::string get_event_name(unsigned char);
-                struct timespec ts = {0, 1000000L};
-        #endif       
+        #endif
+        struct timespec ts = {0, 666666666L};
         size_t* get_seq_buffer_size();
         void connect_midi(Glib::ustring);
         void deconnect_midi();

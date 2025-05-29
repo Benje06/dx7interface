@@ -430,7 +430,6 @@ void Dx7interface::on_midi_learn_param_select(){
                     // 09 32 SoundBankItem
                     // 02 32 son + function
                     //TODO: to review
-                    receive = true;
                     length_mask = ev->type & SND_SEQ_EVENT_LENGTH_MASK;
                     if (length_mask == SND_SEQ_EVENT_LENGTH_FIXED) {
                         msg_log = _("Event has fixed length.") ;
@@ -444,7 +443,7 @@ void Dx7interface::on_midi_learn_param_select(){
                     }
                     msg_log = _("Length:") + std::to_string( int(ev->data.ext.len) );
                     LOG( msg_log );
-                    if( (ev->data.ext.len > 8 || uncomplete) && receive ){
+                    if( (ev->data.ext.len >= 8 || uncomplete) ){
                         uncomplete = true;
                         uint8_t* byte_ptr = static_cast<uint8_t*>(ev->data.ext.ptr);
                         sysex_buffer.insert(sysex_buffer.end(), byte_ptr, byte_ptr + ev->data.ext.len);
@@ -683,6 +682,7 @@ void Dx7interface::set_dialog(Glib::ustring title){
         get_gwidget<Gtk::Box>("box_save")->set_visible(false);
         get_gwidget<Gtk::Box>("box_insert")->set_visible(false);
         get_gwidget<Gtk::Box>("box_warning")->set_visible(false);
+        get_gwidget<Gtk::Box>("box_receive")->set_visible(false);
 
         if( action_type == ACT_SAVE ){
             get_gwidget<Gtk::Box>("box_save")->set_visible(true);
@@ -722,6 +722,10 @@ void Dx7interface::set_dialog(Glib::ustring title){
         }else if( action_type == ACT_WARNING){
             get_gwidget<Gtk::Box>("box_warning")->set_visible(true);
             get_gwidget<Gtk::Label>("label_warning")->set_label(title);
+            get_gwidget<Gtk::Button>("btn_dialog_param")->set_label("Close");
+        }else if( action_type == ACT_RECEIVE){
+            get_gwidget<Gtk::Box>("box_receive")->set_visible(true);
+            get_gwidget<Gtk::Label>("label_receive")->set_label(title);
             get_gwidget<Gtk::Button>("btn_dialog_param")->set_label("Close");
         };
     }catch( const std::exception & ex ){
@@ -807,6 +811,7 @@ void Dx7interface::create_popover_menu(){
     menu->append("_Save sound", "menu.save_sound");
     menu->append("_Save bank", "menu.save_bank");
     menu->append("_Send bank", "menu.send_bank");
+    menu->append("_Receive bank", "menu.receive_bank");
     menu->append("_Restore sound", "menu.restore_sound");
     menu->append("_Restore bank", "menu.restore_bank");
     menu->append("_Insert At", "menu.insert_at");
@@ -859,16 +864,18 @@ void Dx7interface::clean_bank(){
             bank_modif.get().sound[i] = bank_1_origin.sound[0];
         };
     }, bank_origin_src, bank_modif_src);
-
-
+    LOG( "log before n_items" );
     unsigned int n_items = bank_data_model->get_n_items();              // clear all listview entry
+    LOG( "log after n_items" );
     if (n_items > 0) {
+        LOG( "log in remove_all" );
         bank_data_model->remove_all();
     };
     LOG( LOG_OUT() );
 };
 void Dx7interface::set_init_voice_in_origin(){
     // store actual bank values
+    LOG( LOG_IN() );
     unsigned int bank_nb_sound_origin = bank_nb_sound;
     Glib::ustring bank_name = bank_1_origin.name;
     // Read init_voice
@@ -880,6 +887,7 @@ void Dx7interface::set_init_voice_in_origin(){
     // restore bank_1 values
     bank_1_origin.name = bank_name;
     bank_nb_sound = bank_nb_sound_origin;
+    LOG( LOG_OUT() );
 };
 void Dx7interface::set_bank_name(Glib::ustring name){
     get_gwidget<Gtk::Button>("bank_select")->set_label(name);
@@ -963,14 +971,14 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     /*for (uint8_t byte : sysex_buffer) {
      *      msg_log = std::hex + std::setw(2) + std::setfill('0') + static_cast<int>(byte) + " ";
     }*/
+    if( ! receive ){
+        return;
+    };
     Glib::ustring bank_name = _("Received");
     msg_log = _("Buffer size of received bank: ");
     msg_log.append( tostr<int>(sysex_buffer.size()) );
     LOG( msg_log );
-
     block_ui();
-
-
     Bank_ptr bank_ptr;
     switch( sysex_buffer.size() ){
         case 163: /* one voice Dx7 bulk 1 */
@@ -987,13 +995,18 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     };
 
     if( sysex_buffer.size() == 163 && sysex_buffer[3] == 0x00){
-        clean_bank();
-        receive_voice_by_byte(&bank_ptr->sound[0], sysex_buffer);
-        bank_1_origin.name = bank_name;
-        old_snum=0;
-        snum=0;
-        set_bank_name(bank_name);
-        restore_origin(BANK);
+        auto local_sysex_buffer = sysex_buffer;
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, &local_sysex_buffer, bank_ptr, bank_name](const Glib::RefPtr<Gdk::FrameClock>&) {
+            clean_bank();
+            receive_voice_by_byte(&bank_ptr->sound[0], local_sysex_buffer);
+            bank_1_origin.name = bank_name;
+            old_snum=0;
+            snum=0;
+            set_bank_name(bank_name);
+            restore_origin(BANK);
+            return false; // Return false to remove the callback after one executio
+        });
+
     }else if( sysex_buffer[3] == 0x09 ){
         clean_bank();
         for (snum=0; snum < bank_nb_sound; snum++){
@@ -1013,8 +1026,6 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
         //     receive_paramters(&bank_ptr->sound[snum], sysex_buffer);
         // };
     };
-
-    slot_selected_sound_change.unblock();
     LOG( LOG_OUT() );
 };
 /* restore */
@@ -1028,7 +1039,6 @@ void Dx7interface::restore_origin(unsigned int type){
             LOG( msg_log );
             for ( snum = 0 ; snum < bank_nb_sound; snum++ ){
                 bank_modif.get().sound[snum] = bank_origin.get().sound[snum];
-                update_data_model<SoundBankItem>(bank_data_model, bank_modif.get().sound[snum].name);
             };
             snum = old_snum;
         }else{
@@ -1036,13 +1046,15 @@ void Dx7interface::restore_origin(unsigned int type){
             LOG( msg_log );
             bank_modif.get().sound[snum] = bank_origin.get().sound[snum];
             update_data_model<SoundBankItem>(bank_data_model, bank_modif.get().sound[snum].name);
-        }
+        };
         if( bank_nb_sound != 1){
             bank_1_origin.sound[0] = bank_origin.get().sound[snum];
             bank_1_modif.sound[0] = bank_1_origin.sound[0];
         };
     }, bank_origin_src, bank_modif_src);
-
+    if(type == BANK){
+       update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_src);
+    };
     select_voice(snum);
     LOG( LOG_OUT() );
 };
@@ -1058,7 +1070,7 @@ void Dx7interface::on_restore_sound(){
     LOG( LOG_OUT() );
 };
 
-/*** INSERT / REPLACE / DELETE / MOOVE ***/
+/*** INSERT / REPLACE / DELETE / MOOVE / RECEIVE ***/
 /* REPLACE */
 void Dx7interface::on_replace_sound(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file){
     read_file_as_datastream(data_stream_index,
@@ -1282,6 +1294,25 @@ void Dx7interface::on_delete_sound(){
     update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_src);
     LOG( LOG_OUT() );
 };
+
+/* RECEIVE */
+void Dx7interface::on_receive_bank(){
+    receive = true;
+    try{
+        action_type = ACT_RECEIVE;
+        slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
+            [this]() {
+                receive = false;
+                dialog_param->close();
+            }
+        );
+        OpenDialogParam("Ready to Receive");
+    }catch( const std::exception & ex ){
+        msg_err = error( __PRETTY_FUNCTION__, "Unknow", ex.what() );
+        LOG_ERR( msg_err );
+    };
+};
+
 
 /* SEND / SAVE */
 void Dx7interface::on_send_bank(){
@@ -1557,7 +1588,12 @@ void Dx7interface::on_sound_name_event(){
 void Dx7interface::select_voice(unsigned int position){
     slot_selected_sound_change.unblock();
     #if (GTKMM_MAJOR_VERSION == 4 && GTKMM_MINOR_VERSION >= 12)
-        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, position](const Glib::RefPtr<Gdk::FrameClock>&) {
+        bool first_run = true;
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, position, &first_run](const Glib::RefPtr<Gdk::FrameClock>&) {
+            if(first_run) { // need to skip first ticks callback to select element
+                first_run = false;
+                return true;
+            };
             (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to(position, nullptr, Gtk::ListScrollFlags::SELECT);
             return false; // Return false to remove the callback after one executio
         });
@@ -2740,6 +2776,7 @@ void Dx7interface::attach_action_group_signals(){
     action_group->add_action("save_sound", sigc::mem_fun(*this, &Dx7interface::on_save_sound));
     action_group->add_action("save_bank", sigc::mem_fun(*this, &Dx7interface::on_save_bank));
     action_group->add_action("send_bank", sigc::mem_fun(*this, &Dx7interface::on_send_bank));
+    action_group->add_action("receive_bank", sigc::mem_fun(*this, &Dx7interface::on_receive_bank));
     action_group->add_action("restore_sound", sigc::mem_fun(*this, &Dx7interface::on_restore_sound));
     action_group->add_action("restore_bank", sigc::mem_fun(*this, &Dx7interface::on_restore_bank));
     action_group->add_action("insert_at", sigc::mem_fun(*this, &Dx7interface::on_insert_at));
