@@ -1007,57 +1007,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     set_bank_name(bank_name);
 
     restore_origin(BANK);
-    /*auto [bank_origin_src, bank_modif_src] = get_banks_source();
-    update_data_model_full<SoundBankItem>(bank_data_model, bank_modif_src);
-    */
     slot_selected_sound_change.unblock();
-
-//     switch( sysex_buffer.size() ){
-//         case 136:
-//             bank_nb_sound = 1;
-//             clean_bank();
-//             receive_voice(&bank_1_origin.sound[snum], sysex_buffer);
-//             bank_1_origin.name = bank_name;
-//             bank_1_modif=bank_1_origin;
-//             break;
-//         case 163:
-//             bank_nb_sound = 1;
-//             clean_bank();
-//             receive_voice_by_byte(&bank_1_origin.sound[snum], sysex_buffer);
-//             bank_1_origin.name = bank_name;
-//             bank_1_modif=bank_1_origin;
-//             break;
-//         case 4104:
-//             bank_nb_sound = 32;
-//             if( sysex_buffer[3] == 0x09 ){
-//                 clean_bank();
-//                 for (; snum < 32; snum++){
-//                     receive_voice(&bank_32_origin.sound[snum], sysex_buffer);
-//                 };
-//                 snum = 0; // set selected to 0
-//                 bank_32_origin.name = bank_name;
-//
-//                 bank_32_modif=bank_32_origin;
-//                 bank_1_origin.sound[0]=bank_32_origin.sound[0];
-//                 bank_1_origin.name = bank_name;
-//                 bank_1_modif=bank_1_origin;
-//             }
-//             /*if ( sysex_buffer[3] == 0x02 ){
-//                 snum = 0;
-//                 // TODO : check 0x02 position
-//                 for (; snum < 32; snum++){
-//                     receive_paramters(&bank_32_origin.sound[snum], sysex_buffer);
-//                 };
-//             };*/
-//             break;
-//     }
-    /*(get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, position](const Glib::RefPtr<Gdk::FrameClock>&) {
-        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->scroll_to(position, nullptr, Gtk::ListScrollFlags::SELECT);
-        return false; // Return false to remove the callback after one executio
-    });*/
-    //get_gwidget<Gtk::Button>("bank_select")->set_label(bank_name);
-    //slot_selected_sound_change.unblock();
-    //select_voice(snum);
     LOG( LOG_OUT() );
 };
 /* restore */
