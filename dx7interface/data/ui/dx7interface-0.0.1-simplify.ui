@@ -66,12 +66,12 @@
               </object>
             </property>
             <property name="width-request">150</property>
-            <child type="label">
+            <property name="label-widget">
               <object class="GtkLabel" id="label_load_sound">
                 <property name="label" translatable="yes">Sounds Bank:</property>
                 <property name="single-line-mode">1</property>
               </object>
-            </child>
+            </property>
           </object>
         </property>
         <property name="reveal-child">1</property>
@@ -99,7 +99,7 @@
             <property name="halign">start</property>
             <property name="valign">start</property>
             <property name="vexpand-set">True</property>
-            <child>
+            <property name="child">
               <object class="GtkBox" id="box_algo_lfo_mod_ptch">
                 <property name="halign">start</property>
                 <property name="spacing">4</property>
@@ -250,9 +250,7 @@
                     <property name="label-widget">
                       <object class="GtkLabel" id="label_algo">
                         <property name="label"> ALGO</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
+                        <property name="attributes">weight bold</property>
                       </object>
                     </property>
                   </object>
@@ -649,9 +647,7 @@
                     <property name="label-widget">
                       <object class="GtkLabel" id="label_modulation">
                         <property name="label">MODULATION</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
+                        <property name="attributes">weight bold</property>
                       </object>
                     </property>
                   </object>
@@ -850,9 +846,7 @@
                     <property name="label-widget">
                       <object class="GtkLabel" id="label_EG_pitch">
                         <property name="label">PITCH ENVELOPPE</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
+                        <property name="attributes">weight bold</property>
                       </object>
                     </property>
                   </object>
@@ -1429,24 +1423,22 @@
                     <property name="label-widget">
                       <object class="GtkLabel" id="label_controllers">
                         <property name="justify">center</property>
-                        <property name="label" translatable="yes">CONTROLLERS</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
+                        <property name="label" translatable="yes">CONTROLLER</property>
+                        <property name="attributes">weight bold</property>
                       </object>
                     </property>
                   </object>
                 </child>
               </object>
-            </child>
-            <child type="label">
+            </property>
+            <property name="label-widget">
               <object class="GtkLabel" id="label_exp_algo_lfo_mod_ptch">
                 <property name="halign">start</property>
                 <property name="label" translatable="yes">Alg / LFO / Mod / Ptch</property>
                 <property name="selectable">1</property>
                 <property name="valign">start</property>
               </object>
-            </child>
+            </property>
           </object>
         </child>
         <child>
@@ -1455,7 +1447,7 @@
             <property name="halign">start</property>
             <property name="vexpand">True</property>
             <property name="vexpand-set">True</property>
-            <child>
+            <property name="child">
               <object class="GtkNotebook" id="notebook_onglets">
                 <property name="focusable">1</property>
                 <property name="vexpand">1</property>
@@ -1968,14 +1960,12 @@
                               </object>
                             </property>
                             <property name="vexpand">1</property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_general_op1">
                                 <property name="label" translatable="no"> OP 1</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
+                                <property name="attributes">weight bold</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">0</property>
@@ -2472,14 +2462,12 @@
                               </object>
                             </property>
                             <property name="vexpand">1</property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_general_op2">
                                 <property name="label" translatable="no"> OP 2</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
+                                <property name="attributes">weight bold</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">1</property>
                               <property name="row">0</property>
@@ -2975,14 +2963,12 @@
                               </object>
                             </property>
                             <property name="vexpand">1</property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_general_op3">
                                 <property name="label" translatable="no"> OP 3</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
+                                <property name="attributes">weight bold</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">2</property>
                               <property name="row">0</property>
@@ -3487,14 +3473,12 @@
                               </object>
                             </property>
                             <property name="vexpand">1</property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_general_op4">
                                 <property name="label" translatable="no"> OP 4</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
+                                <property name="attributes">weight bold</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">1</property>
@@ -3975,14 +3959,12 @@
                               </object>
                             </property>
                             <property name="vexpand">1</property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_general_op5">
                                 <property name="label" translatable="no"> OP 5</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
+                                <property name="attributes">weight bold</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">1</property>
                               <property name="row">1</property>
@@ -4478,14 +4460,12 @@
                               </object>
                             </property>
                             <property name="vexpand">1</property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_general_op6">
                                 <property name="label" translatable="no"> OP 6</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
+                                <property name="attributes">weight bold</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">2</property>
                               <property name="row">1</property>
@@ -4499,9 +4479,7 @@
                     <property name="tab">
                       <object class="GtkLabel" id="label_onglet_op">
                         <property name="label" translatable="yes"> Operators </property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
+                        <property name="attributes">weight bold</property>
                       </object>
                     </property>
                   </object>
@@ -4665,12 +4643,12 @@
                                 </child>
                               </object>
                             </property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_kls_op1">
                                 <property name="label" translatable="no"> OP 1</property>
                                 <property name="use-markup">1</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">0</property>
@@ -4829,12 +4807,12 @@
                                 </child>
                               </object>
                             </property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_kls_op2">
                                 <property name="label" translatable="no"> OP 2</property>
                                 <property name="use-markup">1</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">1</property>
                               <property name="row">0</property>
@@ -4993,12 +4971,12 @@
                                 </child>
                               </object>
                             </property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_kls_op3">
                                 <property name="label" translatable="no"> OP 3</property>
                                 <property name="use-markup">1</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">2</property>
                               <property name="row">0</property>
@@ -5157,12 +5135,12 @@
                                 </child>
                               </object>
                             </property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_kls_op4">
                                 <property name="label" translatable="no"> OP 4</property>
                                 <property name="use-markup">1</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">0</property>
                               <property name="row">1</property>
@@ -5321,12 +5299,12 @@
                                 </child>
                               </object>
                             </property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_kls_op5">
                                 <property name="label" translatable="no"> OP 5</property>
                                 <property name="use-markup">1</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">1</property>
                               <property name="row">1</property>
@@ -5485,12 +5463,12 @@
                                 </child>
                               </object>
                             </property>
-                            <child type="label">
+                            <property name="label-widget">
                               <object class="GtkLabel" id="label_kls_op6">
                                 <property name="label" translatable="no"> OP 6</property>
                                 <property name="use-markup">1</property>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">2</property>
                               <property name="row">1</property>
@@ -5505,9 +5483,7 @@
                     <property name="tab">
                       <object class="GtkLabel" id="label_level_scaling">
                         <property name="label" translatable="yes"> Level Scalling </property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
+                        <property name="attributes">weight bold</property>
                       </object>
                     </property>
                   </object>
@@ -5521,7 +5497,7 @@
                         <child>
                           <object class="GtkFrame" id="frame_affect_param">
                             <property name="halign">start</property>
-                            <child>
+                            <property name="child">
                               <object class="GtkBox" id="box_listen_affect_param">
                                 <property name="orientation">vertical</property>
                                 <child>
@@ -5602,7 +5578,7 @@
                                   </object>
                                 </child>
                               </object>
-                            </child>
+                            </property>
                             <layout>
                               <property name="column">1</property>
                               <property name="row">0</property>
@@ -5775,23 +5751,21 @@
                     <property name="tab">
                       <object class="GtkLabel" id="label_fonction">
                         <property name="label" translatable="yes">Functions</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
+                        <property name="attributes">weight bold</property>
                       </object>
                     </property>
                   </object>
                 </child>
               </object>
-            </child>
-            <child type="label">
+            </property>
+            <property name="label-widget">
               <object class="GtkLabel" id="label_exp_op_lvl_scl_fct">
                 <property name="halign">start</property>
                 <property name="label" translatable="yes">Op / Lvl Scl / Fct</property>
                 <property name="selectable">1</property>
                 <property name="valign">start</property>
               </object>
-            </child>
+            </property>
           </object>
         </child>
       </object>
@@ -6470,7 +6444,7 @@
       <property name="upper">127</property>
   </object>
   <object class="GtkWindow" id="dialog_param">
-    <child>
+    <property name="child">
     <object class="GtkBox" id="box">
         <property name="visible">true</property>
         <property name="halign">center</property>
@@ -6639,6 +6613,6 @@
         </object>
         </child>
     </object>
-    </child>
+    </property>
   </object>
 </interface>
