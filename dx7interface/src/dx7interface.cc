@@ -1531,6 +1531,7 @@ void Dx7interface::update_modified(){
     if(!bank_1_modif.sound->modified){
         update_data_model_number<SoundBankItem>(bank_data_model, std::to_string(snum)+"*");
         bank_1_modif.sound->modified = true;
+        select_voice(snum);
     };
 };
 template<class ListStoreType>
