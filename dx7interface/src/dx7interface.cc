@@ -2284,21 +2284,21 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
 void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> data){
         int i;
         i=6 + (64 * snum);
-        sound->extra.functions.poly_mono.val = (data[i++]>>6) & sound->extra.functions.poly_mono.mask;
-        sound->extra.functions.ptch_bnd_rng.val = (data[i]) & sound->extra.functions.ptch_bnd_rng.mask;
-        sound->extra.functions.ptch_bnd_stp.val = ( (data[i]>>4) + ((data[i+14]>>6)+3) ) & sound->extra.functions.ptch_bnd_stp.mask;
+        sound->extra.controller.poly_mono.val = (data[i++]>>6) & sound->extra.controller.poly_mono.mask;
+        sound->extra.controller.ptch_bnd_rng.val = (data[i]) & sound->extra.controller.ptch_bnd_rng.mask;
+        sound->extra.controller.ptch_bnd_stp.val = ( (data[i]>>4) + ((data[i+14]>>6)+3) ) & sound->extra.controller.ptch_bnd_stp.mask;
         i++;
-        sound->extra.functions.portamento_tm.val = (data[i++]) & sound->extra.functions.portamento_tm.mask;
-        sound->extra.functions.portamento_glss.val = (data[i]) & sound->extra.functions.portamento_glss.mask;
-        sound->extra.functions.portamento_md.val = (data[i++]>>1) & sound->extra.functions.portamento_md.mask;
-        sound->extra.functions.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.md_whl_assgn.val = (data[i++]>>4) & sound->extra.functions.md_whl_assgn.mask;
-        sound->extra.functions.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.foot_assgn.val = (data[i++]>>4) & sound->extra.functions.foot_assgn.mask;
-        sound->extra.functions.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.functions.aftrtch_assgn.mask;
-        sound->extra.functions.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.functions.brth_assgn.val = (data[i++]>>4) & sound->extra.functions.brth_assgn.mask;
+        sound->extra.controller.portamento_tm.val = (data[i++]) & sound->extra.controller.portamento_tm.mask;
+        sound->extra.controller.portamento_glss.val = (data[i]) & sound->extra.controller.portamento_glss.mask;
+        sound->extra.controller.portamento_md.val = (data[i++]>>1) & sound->extra.controller.portamento_md.mask;
+        sound->extra.controller.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.md_whl_assgn.val = (data[i++]>>4) & sound->extra.controller.md_whl_assgn.mask;
+        sound->extra.controller.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.foot_assgn.val = (data[i++]>>4) & sound->extra.controller.foot_assgn.mask;
+        sound->extra.controller.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.controller.aftrtch_assgn.mask;
+        sound->extra.controller.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
+        sound->extra.controller.brth_assgn.val = (data[i++]>>4) & sound->extra.controller.brth_assgn.mask;
 };
 
 /* read: set (in ui from struct) */
