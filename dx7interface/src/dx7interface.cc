@@ -860,6 +860,7 @@ void Dx7interface::clean_bank(){
         };
     }, bank_origin_src, bank_modif_src);
 
+
     unsigned int n_items = bank_data_model->get_n_items();              // clear all listview entry
     if (n_items > 0) {
         bank_data_model->remove_all();
@@ -968,7 +969,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     LOG( msg_log );
 
     block_ui();
-    clean_bank();
+
 
     Bank_ptr bank_ptr;
     switch( sysex_buffer.size() ){
@@ -986,11 +987,23 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
     };
 
     if( sysex_buffer.size() == 163 && sysex_buffer[3] == 0x00){
+        clean_bank();
         receive_voice_by_byte(&bank_ptr->sound[0], sysex_buffer);
+        bank_1_origin.name = bank_name;
+        old_snum=0;
+        snum=0;
+        set_bank_name(bank_name);
+        restore_origin(BANK);
     }else if( sysex_buffer[3] == 0x09 ){
+        clean_bank();
         for (snum=0; snum < bank_nb_sound; snum++){
             receive_voice(&bank_ptr->sound[snum], sysex_buffer);
         };
+        bank_1_origin.name = bank_name;
+        old_snum=0;
+        snum=0;
+        set_bank_name(bank_name);
+        restore_origin(BANK);
     }else if( sysex_buffer[3] == 0x02 ){
         msg_log = "Receive parameters";
         LOG( msg_log );
@@ -1000,13 +1013,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
         //     receive_paramters(&bank_ptr->sound[snum], sysex_buffer);
         // };
     };
-    bank_1_origin.name = bank_name;
-    old_snum=0;
-    snum=0;
 
-    set_bank_name(bank_name);
-
-    restore_origin(BANK);
     slot_selected_sound_change.unblock();
     LOG( LOG_OUT() );
 };
