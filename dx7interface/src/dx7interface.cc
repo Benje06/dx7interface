@@ -864,11 +864,8 @@ void Dx7interface::clean_bank(){
             bank_modif.get().sound[i] = bank_1_origin.sound[0];
         };
     }, bank_origin_src, bank_modif_src);
-    LOG( "log before n_items" );
     unsigned int n_items = bank_data_model->get_n_items();              // clear all listview entry
-    LOG( "log after n_items" );
     if (n_items > 0) {
-        LOG( "log in remove_all" );
         bank_data_model->remove_all();
     };
     LOG( LOG_OUT() );
@@ -949,7 +946,7 @@ void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<
 
     if( file_size == 155 ){
         seek_voice_by_byte(data_stream.at(data_stream_index), &bank_ptr->sound[0]);
-        seek_parameters(file_base, &bank_ptr->sound[snum]);
+        seek_parameters(file_base, &bank_ptr->sound[0]);
     }else{
         for( snum=0; snum < bank_nb_sound; snum++ ){
             seek_voice(data_stream.at(data_stream_index), &bank_ptr->sound[snum]);
@@ -972,6 +969,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
      *      msg_log = std::hex + std::setw(2) + std::setfill('0') + static_cast<int>(byte) + " ";
     }*/
     if( ! receive ){
+        LOG( LOG_OUT() );
         return;
     };
     Glib::ustring bank_name = _("Received");
@@ -1439,7 +1437,7 @@ void Dx7interface::write_bank_as_sysex(unsigned int data_stream_index, Glib::Ref
     }catch( const std::exception& ex ){
         msg_err = error( __PRETTY_FUNCTION__, _(" Error writing to file: \n") + file->get_path(), ex.what() );
         LOG_ERR( msg_err );
-    }
+    };
     /*
     string msg_log = "varaiable l: " + (int)l  ;
     LOG( msg_log );
@@ -2121,12 +2119,15 @@ void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* 
             data_stream_param = Gio::DataInputStream::create(file_fct->read());
             seek_voice_parameters(sound);
             data_stream_param->close();
+        }else{
+            LOG( "before seek voice" );
+            seek_voice_parameters(sound);
+            LOG( "after seek voice" );
         };
-    }else{
-        seek_voice_parameters(sound);
     };
 };
 void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
+    LOG( LOG_IN() );
     if(!isStreamClosed(data_stream_param)){
         /* skip */
         //for (unsigned int i=0; i<(pos*98); data_stream_param->read_byte(),i++);
@@ -2181,21 +2182,29 @@ void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
             data_stream_param->read_byte();
         };
     }else{
-        sound->extra.controller.poly_mono.val = 0x00;
-        sound->extra.controller.ptch_bnd_rng.val = 0x00;
-        sound->extra.controller.ptch_bnd_stp.val = 0x00;
-        sound->extra.controller.portamento_md.val = 0x00;
-        sound->extra.controller.portamento_glss.val = 0x00;
-        sound->extra.controller.portamento_tm.val = 0x00;
-        sound->extra.controller.md_whl_rng.val = 0x00;
-        sound->extra.controller.md_whl_assgn.val = 0x00;
-        sound->extra.controller.foot_rng.val = 0x00;
-        sound->extra.controller.foot_assgn.val = 0x00;
-        sound->extra.controller.brth_rng.val = 0x00;
-        sound->extra.controller.brth_assgn.val = 0x00;
-        sound->extra.controller.aftrtch_rng.val = 0x00;
-        sound->extra.controller.aftrtch_assgn.val = 0x00;
+        LOG( "entre init controllers" );
+        init_controllers_parameters(sound);
+        LOG( "sort init controllers" );
     };
+    LOG( LOG_OUT() );
+};
+
+void Dx7interface::init_controllers_parameters(St_dx7sysex_1* sound){
+    sound->extra.controller.poly_mono.val = 0x00;
+    sound->extra.controller.ptch_bnd_rng.val = 0x02;
+    sound->extra.controller.ptch_bnd_stp.val = 0x00;
+    sound->extra.controller.portamento_md.val = 0x00;
+    sound->extra.controller.portamento_glss.val = 0x00;
+    sound->extra.controller.portamento_tm.val = 0x00;
+    sound->extra.controller.md_whl_rng.val = 0x35;
+    sound->extra.controller.md_whl_assgn.val = 0x01;
+    sound->extra.controller.foot_rng.val = 0x00;
+    sound->extra.controller.foot_assgn.val = 0x00;
+    sound->extra.controller.brth_rng.val = 0x00;
+    sound->extra.controller.brth_assgn.val = 0x00;
+    sound->extra.controller.aftrtch_rng.val = 0x35;
+    sound->extra.controller.aftrtch_assgn.val = 0x04;
+    sound->extra.controller.voice_attenuation.val = 0x00;
 };
 
 void Dx7interface::receive_voice(St_dx7sysex_1* sound, std::vector<uint8_t> data){
@@ -2326,6 +2335,7 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
 };
 
 void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> data){
+        LOG( LOG_IN() );
         int i;
         i=6 + (64 * snum);
         // BYTE 0
@@ -2355,6 +2365,7 @@ void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> 
         sound->extra.controller.brth_assgn.val = (data[i]>>4) & sound->extra.controller.brth_assgn.mask;
         // BYTE 14
         sound->extra.controller.voice_attenuation.val = data[i+7] & sound->extra.controller.voice_attenuation.mask;
+        LOG( LOG_OUT() );
 };
 
 /* read: set (in ui from struct) */
@@ -2781,8 +2792,6 @@ void Dx7interface::init_gesture_controller(){
 
 void Dx7interface::init_global_fonction_parameter(){
     LOG( LOG_IN() );
-    on_mono_poly_event();
-    on_portamento_md_event();
     on_txt_freq_op_event();
     LOG( LOG_OUT() );
 };

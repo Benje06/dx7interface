@@ -683,6 +683,7 @@ class Dx7interface : public Gx_module, public Synth {
         void seek_parameters(Glib::ustring file_base,
                              St_dx7sysex_1* sound); // get sound parameter from file to fill sound controllers param struct
         void seek_voice_parameters(St_dx7sysex_1* sound);
+        void init_controllers_parameters(St_dx7sysex_1* sound);
         /* set voice value from sound in bank to the interface */
         void set_voice(st_dx7sysex_1* sound);               // set voice in GUI
         void set_voice_parameters(St_dx7sysex_1* sound);    // set sound parameter
