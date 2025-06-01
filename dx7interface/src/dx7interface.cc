@@ -996,7 +996,7 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
 
     if( sysex_buffer.size() == 163 && sysex_buffer[3] == 0x00){
         auto local_sysex_buffer = sysex_buffer;
-        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, &local_sysex_buffer, bank_ptr, bank_name](const Glib::RefPtr<Gdk::FrameClock>&) {
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, local_sysex_buffer, bank_ptr, bank_name](const Glib::RefPtr<Gdk::FrameClock>&) {
             clean_bank();
             receive_voice_by_byte(&bank_ptr->sound[0], local_sysex_buffer);
             bank_1_origin.name = bank_name;
@@ -1008,23 +1008,26 @@ void Dx7interface::receive_bank(std::vector<uint8_t> sysex_buffer){
         });
 
     }else if( sysex_buffer[3] == 0x09 ){
-        clean_bank();
-        for (snum=0; snum < bank_nb_sound; snum++){
-            receive_voice(&bank_ptr->sound[snum], sysex_buffer);
-        };
-        bank_1_origin.name = bank_name;
-        old_snum=0;
-        snum=0;
-        set_bank_name(bank_name);
-        restore_origin(BANK);
+        auto local_sysex_buffer = sysex_buffer;
+        (get_gwidget<Gtk::ColumnView>("columnview_bank"))->add_tick_callback([this, local_sysex_buffer, bank_ptr, bank_name](const Glib::RefPtr<Gdk::FrameClock>&) {
+            clean_bank();
+            for (snum=0; snum < bank_nb_sound; snum++){
+                receive_voice(&bank_ptr->sound[snum], local_sysex_buffer);
+            };
+            bank_1_origin.name = bank_name;
+            old_snum=0;
+            snum=0;
+            set_bank_name(bank_name);
+            restore_origin(BANK);
+            return false; // Return false to remove the callback after one executio
+        });
     }else if( sysex_buffer[3] == 0x02 ){
         msg_log = "Receive parameters";
         LOG( msg_log );
-        //  snum = 0;
-        //  // TODO : check 0x02 position
-        //  for (snum=0; snum < bank_nb_sound; snum++){
-        //     receive_paramters(&bank_ptr->sound[snum], sysex_buffer);
-        // };
+        snum = 0;
+        for (snum=0; snum < bank_nb_sound; snum++){
+            receive_paramters(&bank_ptr->sound[snum], sysex_buffer);
+        };
     };
     LOG( LOG_OUT() );
 };
@@ -2325,21 +2328,33 @@ void Dx7interface::receive_voice_by_byte(St_dx7sysex_1* sound, std::vector<uint8
 void Dx7interface::receive_paramters(St_dx7sysex_1* sound, std::vector<uint8_t> data){
         int i;
         i=6 + (64 * snum);
+        // BYTE 0
         sound->extra.controller.poly_mono.val = (data[i++]>>6) & sound->extra.controller.poly_mono.mask;
+        // BYTE 1
         sound->extra.controller.ptch_bnd_rng.val = (data[i]) & sound->extra.controller.ptch_bnd_rng.mask;
-        sound->extra.controller.ptch_bnd_stp.val = ( (data[i]>>4) + ((data[i+14]>>6)+3) ) & sound->extra.controller.ptch_bnd_stp.mask;
+        uint8_t step1 = (data[i]>>4) & 0x07;
+        uint8_t step15 = ( ( (data[i+14]>>6) & 0x01 ) <<3 ) & 0x0F ;
+        sound->extra.controller.ptch_bnd_stp.val = ( step1 + step15 ) & sound->extra.controller.ptch_bnd_stp.mask;
         i++;
+        // BYTE 2
         sound->extra.controller.portamento_tm.val = (data[i++]) & sound->extra.controller.portamento_tm.mask;
+        // BYTE 3
         sound->extra.controller.portamento_glss.val = (data[i]) & sound->extra.controller.portamento_glss.mask;
         sound->extra.controller.portamento_md.val = (data[i++]>>1) & sound->extra.controller.portamento_md.mask;
+        // BYTE 4
         sound->extra.controller.md_whl_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
         sound->extra.controller.md_whl_assgn.val = (data[i++]>>4) & sound->extra.controller.md_whl_assgn.mask;
+        // BYTE 5
         sound->extra.controller.foot_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
         sound->extra.controller.foot_assgn.val = (data[i++]>>4) & sound->extra.controller.foot_assgn.mask;
+        // BYTE 6
         sound->extra.controller.aftrtch_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
         sound->extra.controller.aftrtch_assgn.val = (data[i++]>>4) & sound->extra.controller.aftrtch_assgn.mask;
+        // BYTE 7
         sound->extra.controller.brth_rng.val = (uint8_t)(( (data[i]) & 0x10 )* 6.6);
-        sound->extra.controller.brth_assgn.val = (data[i++]>>4) & sound->extra.controller.brth_assgn.mask;
+        sound->extra.controller.brth_assgn.val = (data[i]>>4) & sound->extra.controller.brth_assgn.mask;
+        // BYTE 14
+        sound->extra.controller.voice_attenuation.val = data[i+7] & sound->extra.controller.voice_attenuation.mask;
 };
 
 /* read: set (in ui from struct) */

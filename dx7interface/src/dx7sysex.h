@@ -145,6 +145,7 @@
         St_8 brth_assgn;
         St_100 aftrtch_rng;
         St_8 aftrtch_assgn;
+        St_8 voice_attenuation;
     }St_ctrl;
 
     typedef struct st_extra {
