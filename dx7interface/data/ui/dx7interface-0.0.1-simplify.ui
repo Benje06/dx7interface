@@ -856,7 +856,7 @@
                     <property name="child">
                       <object class="GtkBox" id="box_fonctions">
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkBox" id="box_controller_pitch">
                             <property name="orientation">vertical</property>
                             <property name="vexpand">True</property>
                             <child>
@@ -1156,7 +1156,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkGrid">
+                              <object class="GtkGrid" id="grid_pitch_bend">
                                 <property name="column-homogeneous">True</property>
                                 <property name="valign">end</property>
                                 <child>
@@ -1254,7 +1254,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkBox" id="box_porta _various_controllers">
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkFrame" id="frame_portamento">
@@ -1323,8 +1323,8 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkGrid">
-                                <property name="column-homogeneous">True</property>
+                              <object class="GtkGrid" id="grid_various_controllers">
+                                <property name="column-homogeneous">False</property>
                                 <property name="row-homogeneous">True</property>
                                 <property name="vexpand">True</property>
                                 <child>
