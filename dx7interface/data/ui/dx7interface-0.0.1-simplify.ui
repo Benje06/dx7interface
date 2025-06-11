@@ -1254,7 +1254,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkBox" id="box_porta _various_controllers">
+                          <object class="GtkBox" id="box_porta_various_controllers">
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkFrame" id="frame_portamento">
@@ -1324,7 +1324,6 @@
                             </child>
                             <child>
                               <object class="GtkGrid" id="grid_various_controllers">
-                                <property name="column-homogeneous">False</property>
                                 <property name="row-homogeneous">True</property>
                                 <property name="vexpand">True</property>
                                 <child>
