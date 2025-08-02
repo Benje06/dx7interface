@@ -22,13 +22,13 @@ Elle permet aussi de gerer les **banques de sons**.
 <ins>Dx7interface et un Tx216 sous Manjaro par Jean-Michel</ins>:
 <table>
   <tr>
-    <td align="center"><b>Maiden Voyage (avec un TX216 Yamaha)</b></td>
+    <td align="center"><b>Maiden Voyage (TX216 Yamaha)</b></td>
     <td align="center"><b>Test de Dx7interface sur un TX216</b></td>
   </tr>
   <tr>
     <td align="center">
-      <a href="https://youtu.be/rE62dQA1REk">
-        <img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
+      <a href="https://youtu.be/C3u_7x552dg">
+        <img src="https://img.youtube.com/vi/C3u_7x552dg/maxresdefault.jpg" width="400">
       </a>
     </td>
     <td align="center">
@@ -400,3 +400,4 @@ A l'exception de la police et des images, voir ci-dessous.
 ## Contributeurs:
 ENNAIME Mirsal merci pour l'aide au démarrage et le truc debug.h \
 Termitor, merci pour le calcul mathématique ^^
+
