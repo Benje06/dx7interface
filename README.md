@@ -31,8 +31,8 @@ It run on:
   </tr>
   <tr>
     <td align="center">
-      <a href="https://youtu.be/rE62dQA1REk">
-  		<img src="https://img.youtube.com/vi/rE62dQA1REk/maxresdefault.jpg" width="400">
+      <a href="https://youtu.be/C3u_7x552dg">
+  		<img src="https://img.youtube.com/vi/C3u_7x552dg/maxresdefault.jpg" width="400">
 	  </a>
     </td>
     <td align="center">
