@@ -57,6 +57,8 @@
     #include <iomanip>
     #include <sstream>
     #include <string>
+    #include <vector>
+    #include <getopt.h>
 
     #if defined(__WIN32) || defined(__MINGW32__)
         #define WIN32_LEAN_AND_MEAN
@@ -67,6 +69,7 @@
         #undef WINDING
         #undef IGNORE
         #undef near
+        #undef DOUBLE_CLICK
         #define DS "\\"
         /* CR+LF */
         #undef EOL
@@ -137,7 +140,7 @@
             };
         };
         return result;
-    }
+    };
     // used to hash MACRO value to array (ex: use to convert MACRO int type of snd_seq_event_type to text message with the name of the macro)
     constexpr std::size_t str_const_hash(const char* str) {
         // Implement a simple compile-time hash function
@@ -170,6 +173,58 @@
                         +_("Reason => ") + why;
         return msg;
     };
+    
+    /*** HELP FORMATTING ***/
+    /* One option line in a --help output.
+     *   short_opt   : single short letter, or 0 if no short form
+     *   long_opt    : long form without the leading "--"
+     *   arg_name    : argument placeholder (e.g. "CHAR"), empty if no argument
+     *   description : one entry per logical line; each entry is passed
+     *                 separately to gettext at the call site, so no '\n' is
+     *                 ever embedded inside a translatable string.
+     */
+    struct help_options {
+        char                     short_opt;
+        std::string              long_opt;
+        std::string              arg_name;
+        std::vector<std::string> description;
+    };
+    /* Format a --help message in GNU style.
+     * Layout:
+     *   - description column is fixed at 24
+     *   - if the option form is <= 23 chars: description on the same line
+     *   - if >= 24 chars: option alone, description on the next line
+     *   - additional description entries: indented to column 24
+     * The header (Usage / Options:) is built here so callers don't repeat it.
+     */
+    inline std::string help_format( const std::string& prog_name,
+                                    const std::vector<help_options>& options){
+        constexpr std::size_t COL = 24;
+        const std::string indent(COL, ' ');
+        std::string msg = _("Usage: ") + prog_name + _(" [OPTIONS]") + "\n\n"
+                        + _("Options:") + "\n";
+        for (const auto& o : options){
+            std::string form = "  -" + o.short_opt;
+                        form += ", --" + o.long_opt;
+            if (!o.arg_name.empty()){
+                form += "=" + o.arg_name;
+            }
+            if (form.size() < COL){
+                form.append(COL - form.size(), ' ');
+            }else{
+                form += "\n" + indent;
+            }
+            msg += form;
+            for (std::size_t i = 0; i < o.description.size(); ++i){
+                if (i > 0){
+                    msg += indent;
+                }
+                msg += o.description[i] + "\n";
+            }
+        }
+        return msg;
+    }
+
     /*** INIT NLS ***/
     inline void init_nls(){
         #ifdef ENABLE_NLS
@@ -183,4 +238,3 @@
 
     #include "logger.h"
 #endif /* interface_COMMON_H */
-

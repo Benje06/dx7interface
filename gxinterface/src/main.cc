@@ -27,10 +27,10 @@
 #include "main.h"
 
 int main (int argc, char *argv[]){
-    char interface=0;
+    char interface='g'; // Unic existant mode g as gtk
     std::string msg="", err_msg="";
     std::string log_file="gxinterface.log";
-    unsigned int log_lvl=1;
+    unsigned int log_lvl=2;
     // Initialize logging system
     #if(defined(__WIN32) || defined(__MINGW32__))
         const char* localAppData = std::getenv("LOCALAPPDATA");
@@ -49,42 +49,70 @@ int main (int argc, char *argv[]){
     LOG("*******************************************************************");
 
     LOG(LOG_IN());
-    init_nls();
-
-    /* check params */
-    for ( int i = 0 ; i < argc ; i++){
-        if ( (argc > 1) && std::string(argv[i]) == "-u" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
-            interface=gchar(argv[i+1][0]);
-            msg = _("Interface graphic mode: ");
-            msg += interface;
-            LOG( msg );
-        };
-        if ( (argc > 1) && std::string(argv[i]) == "-l" && (argv[i+1] != NULL) && (std::string(argv[i+1]) != "") ){
-            log_lvl=std::stoi(argv[i+1]);
-            LogManager::instance().set_log_level(log_lvl);
-        };
-    };
-    if ( interface == 0 ){
-        interface='g'; //force only supported mode
-         msg = _("Interface graphic mode: ");
-         msg += interface;
-        LOG( msg );
-    };
     try{
-        switch (interface) {
-                    // choose interface gnome kde x11 ..
-                    case 'g' :{
-                            auto g_app = Gx_interface::create();
-                            return g_app->run(argc, argv);
-                            break;
-                    };
-                    default:{
-                        msg = _("The option: ");
+        init_nls();
+        static const std::vector<help_options> opts = {
+            { 'g', "gui-mode",  "g",
+                { _("graphic interface mode (supported: g, default: g)") }
+            },
+            { 'l', "log-level", "[0/1/2]",
+                { _("log level: 0=no log, 1=log to file,"),
+                  _("2=log to file and console (default: 2)") }
+            },
+            { 'h', "help",      "",
+                { _("display this help and exit") }
+            }
+        };
+        static const struct option long_options[] = {
+            { "gui-mode",  required_argument, nullptr, 'g' },
+            { "log-level", required_argument, nullptr, 'l' },
+            { "help",      no_argument,       nullptr, 'h' },
+            { nullptr,     0,                 nullptr,  0  }
+        };
+        /* check params */
+        optind = 0;   /* reentrancy: full reset of getopt internal state */
+        opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+        int opt;
+        while ((opt = getopt_long(argc, argv, "g:l:h", long_options, nullptr)) != -1) {
+            switch (opt) {
+                case 'g':
+                    if (optarg && optarg[0] != '\0') {
+                        interface = char(optarg[0]);
+                        msg = _("Interface graphic mode: ");
                         msg += interface;
-                        msg +=_(" is not valid for an interface type");
-                        LOG(msg);
-                        break;
+                        LOG( msg );
                     };
+                    break;
+                case 'l':
+                    log_lvl = std::stoi(optarg);
+                    LogManager::instance().set_log_level(log_lvl);
+                    break;
+                case 'h':
+                    LOG(help_format(argv[0], opts));
+                    LOG(LOG_OUT());
+                    return 0;
+                case '?':
+                default:
+                    /* Unknown option or missing argument: ignore here so that
+                     * options targeted at gxinterface or the module are
+                     * preserved for them to parse later. */
+                    break;
+            };
+        };
+        switch (interface) {
+            // choose interface gnome kde x11 ..
+            case 'g' :{
+                    auto g_app = Gx_interface::create();
+                    return g_app->run(argc, argv);
+                    break;
+            };
+            default:{
+                msg = _("The option: ");
+                msg += interface;
+                msg +=_(" is not valid for an interface type");
+                LOG(msg);
+                break;
+            };
         };
     }catch(const std::exception& ex){
         err_msg = error( __PRETTY_FUNCTION__, _("Error: in application start -> ") , ex.what() );

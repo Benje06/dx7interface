@@ -18,10 +18,8 @@
     #endif
 
     #include "common.h"
-    #include <string>
     #include <fstream>
     #include <memory>
-    #include <vector>
     #include <mutex>
     class Logger {
         private:

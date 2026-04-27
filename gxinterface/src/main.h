@@ -27,5 +27,4 @@
 	#define main_H
 	#include "common.h"
 	#include "gxinterface.h"
-	gint err;
 #endif /* main_H */
