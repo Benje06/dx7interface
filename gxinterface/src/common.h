@@ -159,7 +159,7 @@
         
         std::tm tm_buffer;
         #if defined(__WIN32) || defined(__MINGW32__)
-            localtime_s(&tm_buffer,&now_time);
+            localtime_s(&tm_buffer, &now_time);
         #else
             localtime_r(&now_time, &tm_buffer);  // POSIX thread-safe version
         #endif
@@ -201,11 +201,18 @@
                                     const std::vector<help_options>& options){
         constexpr std::size_t COL = 24;
         const std::string indent(COL, ' ');
-        std::string msg = _("Usage: ") + prog_name + _(" [OPTIONS]") + "\n\n"
-                        + _("Options:") + "\n";
+        static bool header_done = false;
+        std::string msg;
+        if (!header_done) {
+            msg = _("Usage: ") + prog_name + _(" [OPTIONS]") + "\n\n"
+                + _("Options:") + "\n";
+            header_done = true;
+        }
         for (const auto& o : options){
-            std::string form = "  -" + o.short_opt;
-                        form += ", --" + o.long_opt;
+            std::string form = "  -";
+                        form += o.short_opt;
+                        form += ", --";
+                        form += o.long_opt;
             if (!o.arg_name.empty()){
                 form += "=" + o.arg_name;
             }
@@ -228,13 +235,13 @@
     /*** INIT NLS ***/
     inline void init_nls(){
         #ifdef ENABLE_NLS
-            setlocale (LC_ALL, "");
+            setlocale(LC_ALL, "");
             std::locale::global(std::locale(""));
-            textdomain (GETTEXT_PACKAGE);
-            bindtextdomain (GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
-            bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+            textdomain(GETTEXT_PACKAGE);
+            bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
+            bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
         #endif
-    };
+    }
 
     #include "logger.h"
 #endif /* interface_COMMON_H */

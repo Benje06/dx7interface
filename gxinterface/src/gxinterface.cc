@@ -44,6 +44,10 @@ Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HAND
 
 Gx_interface::~Gx_interface(){
     LOG(LOG_IN());
+    if (argv) {
+        g_strfreev(argv);
+        argv = nullptr;
+    };
     delete module_manager;
     LOG(LOG_OUT());
 };
@@ -77,38 +81,96 @@ void Gx_interface::on_activate(){
 
 int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line){
     LOG(LOG_IN());
-    //argc;
+    itype = "interface";
+    iname = UI_FILE;
+    bool i_set = false;
+    bool m_set = false;
+    bool help_requested = false;
+    std::string path;
+    optind = 0;   /* reentrancy: full reset of getopt internal state */
+    opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+    int opt;
+    /* Free previous argv if reentry (e.g. DBus reactivation, second instance) */
+    if (argv) {
+        g_strfreev(argv);
+        argv = nullptr;
+    };
     argv = command_line->get_arguments(argc);
-    int i;
-    /* TODO: use C++ getopts */
-    /* analyse argument of command line */
-    itype="interface";
-    iname=UI_FILE;
-    for ( i = 1; i <= argc; i++) {
-        if ( (argv[i] != NULL) && ( Glib::ustring(argv[i]) == "-i" || (Glib::ustring(argv[i]) == "-m") )
-        && (argv[i+1] != NULL) && ( Glib::ustring(argv[i+1]) != "" )
-        ){  // -i and interface filename as argument
-            FILE *file = fopen(argv[i+1],"r");
-            if ( file == NULL ) {						// try open fil
-                iname=UI_FILE;
-                if ( Glib::ustring(argv[i]) == "-m" ){
-                    msg = _("Module ") + std::string(argv[i+1]) + _(" doesn't exist or could not be read !!!");
-                    LOG( msg );
-                }else{
-                    msg = _("Interface file ") + std::string(argv[i+1]) + _(" doesn't exist or could not be read !!!");
-                    LOG( msg );
-                };
-                msg = _("Loading default interface file.");
-                LOG( msg );
-            }else{
-                if ( Glib::ustring(argv[i]) == "-m" ){
-                    itype="module";
-                    msg = _("Loading module.");
-                    LOG( msg );
-                };
-                iname=Glib::ustring(argv[i+1]);
-                fclose(file);
+    static const std::vector<help_options> opts = {
+        { 'i', "interface", "FILE",
+            { _("Specific interface file (.ui) to be loaded") }
+        },
+        { 'm', "module",    "FILE",
+            { _("load a module (.dll/.so/.la) and run it") }
+        }
+    };
+    static const struct option long_options[] = {
+        { "interface", required_argument, nullptr, 'i' },
+        { "module",    required_argument, nullptr, 'm' },
+        { "help",      no_argument,       nullptr, 'h' },
+        { nullptr,     0,                 nullptr,  0  }
+    };
+    /* Phase 1: parse and collect */
+    while ((opt = getopt_long(argc, argv, "i:m:h", long_options, nullptr)) != -1) {
+        switch (opt) {
+            case 'i':
+                i_set = true;
+                if (optarg) path = optarg;
+                break;
+            case 'm':
+                m_set = true;
+                if (optarg) path = optarg;
+                break;
+            case 'h':
+                help_requested = true;
+                break;
+            case '?':
+            default:
+                /* Unknown option or missing argument: ignore here so that
+                 * options targeted at main or the module are preserved
+                 * for them to parse later. */
+                break;
+        };
+    };
+    /* Phase 2: apply effects */
+    /* mutual exclusion: -i and -m cannot be used together */
+    if (i_set && m_set) {
+        err_msg = error( __PRETTY_FUNCTION__,
+                         _("Conflicting options"),
+                         _("-i and -m are mutually exclusive") );
+        LOG_ERR( err_msg );
+        LOG( help_format(argv[0], opts) );
+        LOG(LOG_OUT());
+        return 1;
+    };
+    /* unified file load + fallback for -i / -m */
+    if (i_set || m_set) {
+        FILE* file = fopen(path.c_str(), "r");
+        if (file == NULL) {
+            iname = UI_FILE;
+            if (m_set) {
+                msg = _("Module ") + path + _(" doesn't exist or could not be read !!!");
+            } else {
+                msg = _("Interface file ") + path + _(" doesn't exist or could not be read !!!");
             };
+            LOG( msg );
+            msg = _("Loading default interface file.");
+            LOG( msg );
+        } else {
+            if (m_set) {
+                itype = "module";
+                msg = _("Loading module.");
+                LOG( msg );
+            };
+            iname = path;
+            fclose(file);
+        };
+    };
+    if (help_requested) {
+        LOG( help_format(argv[0], opts) );
+        if (!m_set) {
+            LOG(LOG_OUT());
+            return 0;
         };
     };
     msg = _("Loading file: ") + iname;

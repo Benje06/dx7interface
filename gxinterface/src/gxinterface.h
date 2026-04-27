@@ -57,7 +57,7 @@ class Gx_interface: public Gtk::Application {
 		std::string err_msg, msg;
 		Gemod* module_manager = nullptr;			/* gestionnaire de module */
 		int argc;
-        char** argv;
+        char** argv = nullptr;
 		Gx_interface();
 		~Gx_interface();
 		/* Override of Gtk::Application */

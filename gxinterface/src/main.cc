@@ -25,12 +25,14 @@
 
 /* TODO : change interface selector to getops :p */
 #include "main.h"
-
+#include <gtk/gtk.h>
 int main (int argc, char *argv[]){
     char interface='g'; // Unic existant mode g as gtk
     std::string msg="", err_msg="";
     std::string log_file="gxinterface.log";
     unsigned int log_lvl=2;
+    bool log_lvl_set=false;
+    bool help_requested=false;
     // Initialize logging system
     #if(defined(__WIN32) || defined(__MINGW32__))
         const char* localAppData = std::getenv("LOCALAPPDATA");
@@ -52,15 +54,15 @@ int main (int argc, char *argv[]){
     try{
         init_nls();
         static const std::vector<help_options> opts = {
+            { 'h', "help",      "",
+                { _("display this help and exit") }
+            },
             { 'g', "gui-mode",  "g",
                 { _("graphic interface mode (supported: g, default: g)") }
             },
             { 'l', "log-level", "[0/1/2]",
                 { _("log level: 0=no log, 1=log to file,"),
                   _("2=log to file and console (default: 2)") }
-            },
-            { 'h', "help",      "",
-                { _("display this help and exit") }
             }
         };
         static const struct option long_options[] = {
@@ -78,19 +80,15 @@ int main (int argc, char *argv[]){
                 case 'g':
                     if (optarg && optarg[0] != '\0') {
                         interface = char(optarg[0]);
-                        msg = _("Interface graphic mode: ");
-                        msg += interface;
-                        LOG( msg );
                     };
                     break;
                 case 'l':
                     log_lvl = std::stoi(optarg);
-                    LogManager::instance().set_log_level(log_lvl);
+                    log_lvl_set = true;
                     break;
                 case 'h':
-                    LOG(help_format(argv[0], opts));
-                    LOG(LOG_OUT());
-                    return 0;
+                    help_requested = true;
+                    break;
                 case '?':
                 default:
                     /* Unknown option or missing argument: ignore here so that
@@ -99,12 +97,25 @@ int main (int argc, char *argv[]){
                     break;
             };
         };
+        /* apply parameters */
+        if (log_lvl_set) {
+            LogManager::instance().set_log_level(log_lvl);
+        };
+        msg = _("Interface graphic mode: ");
+        msg += interface;
+        LOG( msg );
+        if (help_requested) {
+            LOG( help_format(argv[0], opts) );
+        };
         switch (interface) {
             // choose interface gnome kde x11 ..
             case 'g' :{
-                    auto g_app = Gx_interface::create();
-                    return g_app->run(argc, argv);
-                    break;
+                #if defined(__WIN32) || defined(__MINGW32__)
+                    gtk_disable_setlocale();
+                #endif
+                auto g_app = Gx_interface::create();
+                return g_app->run(argc, argv);
+                break;
             };
             default:{
                 msg = _("The option: ");
