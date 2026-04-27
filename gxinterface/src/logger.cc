@@ -53,9 +53,9 @@ void LogManager::add_handler(std::shared_ptr<Logger> handler){
     handlers.push_back(handler);
 };
 void LogManager::set_log_level(unsigned int log_level){
+    std::lock_guard<std::mutex> lock(manager_mutex);
     if( log_level >= 0 && log_level <= 2){
         {
-            std::lock_guard<std::mutex> lock(manager_mutex);
             msg = _("Switching to log level: ") + std::to_string(log_level);
             for (auto& handler : handlers) {
                 handler->set_log_level(log_level);
