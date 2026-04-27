@@ -23,9 +23,10 @@
  * ----------------------------------------------------------------------------
  */
 
-/* TODO : change interface selector to getops :p */
 #include "main.h"
-#include <gtk/gtk.h>
+#if(defined(__WIN32) || defined(__MINGW32__))
+    #include <gtk/gtk.h>
+#endif
 int main (int argc, char *argv[]){
     char interface='g'; // Unic existant mode g as gtk
     std::string msg="", err_msg="";
@@ -36,7 +37,9 @@ int main (int argc, char *argv[]){
     // Initialize logging system
     #if(defined(__WIN32) || defined(__MINGW32__))
         const char* localAppData = std::getenv("LOCALAPPDATA");
-        log_file = std::string(localAppData) + "\\gxinterface\\" + log_file;
+        if (localAppData && *localAppData) {
+            log_file = std::string(localAppData) + "\\gxinterface\\" + log_file;
+        }
     #endif
     LogManager::instance().add_handler(
         std::make_shared<Logger>( log_file, log_lvl )
