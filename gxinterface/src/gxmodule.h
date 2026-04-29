@@ -68,9 +68,9 @@ class Gx_module {
 
 		/*** CONSTRUCTORS/DESTRUCTORS ***/
 		/* gx_module as .ui */
-		Gx_module(Glib::ustring,Glib::ustring);
+		Gx_module(Glib::ustring, Glib::ustring);
 		/* gx_module as .la */
-		Gx_module(Glib::ustring, uint8_t, Glib::ustring,char**,int);
+		Gx_module(Glib::ustring, uint8_t, Glib::ustring, char**, int);
 		/* for array of gx module */
 		Gx_module();
 		virtual ~Gx_module();

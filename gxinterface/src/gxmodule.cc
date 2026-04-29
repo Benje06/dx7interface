@@ -58,7 +58,7 @@ Gx_module::Gx_module(Glib::ustring filename, Glib::ustring caller){
     };
 };
 /* gx module as .la */
-Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller,char** argv,int argc) {
+Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller, char** argv, int argc) {
     LOG(PRE_LOG(caller.c_str(),"")); 
 	LOG(LOG_IN());
     mod.desc=caller;

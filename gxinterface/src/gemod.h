@@ -82,7 +82,7 @@ class Gemod : public Gx_module {
 		*/
 		Gemod(Glib::ustring);
 		/* for gemod as module (inheritance) 
-		* ustring : the module_name, name of the .la
+		* ustring : the module_name, name of the .la/.dll/.so
 		* guint : index of the module in the module manager
 		*/
 		Gemod(Glib::ustring,uint8_t,char**,int);
