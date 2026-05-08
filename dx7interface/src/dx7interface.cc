@@ -17,7 +17,7 @@
  * See the GNU General Public License for more details.
  * ----------------------------------------------------------------------------
  */
-
+/* TODO USE CONST REF as possible const <...> & */
 #ifndef Dx7interface_CC
         #define Dx7interface_CC
         #include "dx7interface.h"
@@ -51,6 +51,10 @@ Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODU
     mod_options.cssfile = CSSFILE;
     mod_options.custom_font = FONT;
     mod_options.icon = ICON;
+    mod_options.datastream.in = DX7_DATASTREAM_IN_COUNT;
+    mod_options.datastream.out = DX7_DATASTREAM_OUT_COUNT;
+    /* set datastream vector */
+    Gx_module::set_datastream(mod_options.datastream);
     /* MIDI */
     /* Yamaha specific */
     Synth::id_fabricant=id_fabricant;
@@ -101,9 +105,9 @@ void Dx7interface::set_default_values(){
     bank_1_modif.sound->extra.mute.val=0x3F; // all unmuted
     bank_1_origin.sound->extra.mute.val=0x3F;
     Glib::RefPtr<Gio::File> init_voice = Gio::File::create_for_path( DATA_DIR"cfg/DX7_INIT_VOICE.syx" );
-    set_bank(0, init_voice);
+    set_bank(DX7_BANK, init_voice);
     Glib::RefPtr<Gio::File> param_file = Gio::File::create_for_path( DATA_DIR"cfg/midi_learn_default_config.cfg" );
-    read_midi_learned_param(1, param_file);
+    read_midi_learned_param(DX7_MIDI_LEARN, param_file);
 };
 
 bool Dx7interface::Run(){
@@ -285,9 +289,9 @@ void Dx7interface::read_midi_learned_param(unsigned int data_stream_index, Glib:
     Glib::ustring function_name;
     Glib::ustring param_number;
     std::regex pattern("[^0-9]+");
-    data_stream.at(data_stream_index) = Gio::DataInputStream::create(param_file->read());
-    data_stream.at(data_stream_index)->read_line(line);
-    while(data_stream.at(data_stream_index)->read_line(line)){
+    data_stream_in.at(data_stream_index) = Gio::DataInputStream::create(param_file->read());
+    data_stream_in.at(data_stream_index)->read_line(line);
+    while(data_stream_in.at(data_stream_index)->read_line(line)){
         function_name = line.substr(0,line.find_last_of(","));
         param_number = line.substr(line.find_last_of(",")+1,line.length());
 
@@ -301,7 +305,7 @@ void Dx7interface::read_midi_learned_param(unsigned int data_stream_index, Glib:
             };
         };
     };
-    data_stream.at(data_stream_index)->close();
+    data_stream_in.at(data_stream_index)->close();
     LOG( LOG_OUT() );
 };
 void Dx7interface::save_midi_learned_param(unsigned int data_stream_index, Glib::RefPtr<Gio::File> param_file){
@@ -341,13 +345,13 @@ void Dx7interface::save_midi_learned_param(unsigned int data_stream_index, Glib:
 
 void Dx7interface::on_midi_learn_param_save(){
     save_type=PARAM_MIDI;
-    OpenDialogFileSave(2,
+    OpenDialogFileSave(DX7_MIDI_LEARN,
                        std::bind(&Dx7interface::save_midi_learned_param, this,
                                  std::placeholders::_1,std::placeholders::_2) );
 };
 void Dx7interface::on_midi_learn_param_select(){
     //LOG( LOG_IN() );
-    OpenDialogFileSelect(2,
+    OpenDialogFileSelect(DX7_MIDI_LEARN,
                          std::bind(&Dx7interface::read_midi_learned_param, this,
                                    std::placeholders::_1,std::placeholders::_2) );
 };
@@ -800,7 +804,7 @@ void Dx7interface::create_bank_voices_list(){
     slot_bank_select = (get_gwidget<Gtk::Button>("bank_select"))->signal_clicked().connect(
         sigc::bind(
             sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSelect),
-                0,
+                DX7_BANK,
                 std::bind(&Dx7interface::set_bank, this,
                           std::placeholders::_1, std::placeholders::_2) ));
     slot_bank_reveal = (get_gwidget<Gtk::Button>("btn_toolbar_reveal_bank"))->signal_clicked().connect(
@@ -877,7 +881,7 @@ void Dx7interface::set_init_voice_in_origin(){
     Glib::ustring bank_name = bank_1_origin.name;
     // Read init_voice
     Glib::RefPtr<Gio::File> init_voice_file = Gio::File::create_for_path( DATA_DIR"cfg/DX7_INIT_VOICE.syx" );
-    read_file_as_datastream( 1,
+    read_file_as_datastream(DX7_VOICE,
                             init_voice_file,
                             std::bind(&Dx7interface::set_bank_sounds, this,
                                       std::placeholders::_1, std::placeholders::_2) );
@@ -886,16 +890,36 @@ void Dx7interface::set_init_voice_in_origin(){
     bank_nb_sound = bank_nb_sound_origin;
     LOG( LOG_OUT() );
 };
+
 void Dx7interface::set_bank_name(Glib::ustring name){
     get_gwidget<Gtk::Button>("bank_select")->set_label(name);
 };
+
+bool Dx7interface::isValidSize(const Glib::RefPtr<Gio::File>& bank_file){
+    LOG( LOG_IN() );
+    auto [file_name, file_base, file_size] = get_file_attribut(bank_file);
+    switch (file_size)
+    {
+        case 16384:
+        case 128:
+        case 155:
+        case 8200:
+            LOG( LOG_OUT() );
+            return true;
+    }
+    LOG( LOG_OUT() );
+    return false;
+};
+
 void Dx7interface::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> bank_file){
     LOG( LOG_IN() );
-    Synth::set_bank(data_stream_index,
-                    bank_file,
-                    std::bind(&Dx7interface::set_bank_sounds, this,
-                              std::placeholders::_1, std::placeholders::_2) );
-    restore_origin(BANK);
+    if(isValidSize(bank_file)){
+        Synth::set_bank(data_stream_index,
+                        bank_file,
+                        std::bind(&Dx7interface::set_bank_sounds, this,
+                                std::placeholders::_1, std::placeholders::_2) );
+        restore_origin(BANK);
+    };
     slot_selected_sound_change.unblock();
     LOG( LOG_OUT() );
 };
@@ -905,8 +929,8 @@ void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<
     auto [file_name, file_base, file_size] = get_file_attribut(file);
     msg_log = _("Bank name: ") + file_name ;
     LOG( msg_log );
-    // moove to seek_paraemters
-    parse_sysex(file, data_stream.at(data_stream_index), file_size);
+    
+    parse_sysex(file, data_stream_in.at(data_stream_index), file_size);
 
     if( std::filesystem::exists( (file_base+"_fct.syx").c_str() ) ){
         Glib::RefPtr<Gio::File> file_fct=Gio::File::create_for_path( (file_base+"_fct.syx").c_str() );
@@ -936,7 +960,6 @@ void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<
             bank_32_origin.name = file_name;
             bank_ptr = reinterpret_cast<Bank_ptr>(&bank_32_origin);
             break;
-
         case 16384: /* 128 voices */
             bank_nb_sound = 128;
             bank_128_origin.name = file_name;
@@ -945,11 +968,11 @@ void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<
     };
 
     if( file_size == 155 ){
-        seek_voice_by_byte(data_stream.at(data_stream_index), &bank_ptr->sound[0]);
+        seek_voice_by_byte(data_stream_in.at(data_stream_index), &bank_ptr->sound[0]);
         seek_parameters(file_base, &bank_ptr->sound[0]);
     }else{
         for( snum=0; snum < bank_nb_sound; snum++ ){
-            seek_voice(data_stream.at(data_stream_index), &bank_ptr->sound[snum]);
+            seek_voice(data_stream_in.at(data_stream_index), &bank_ptr->sound[snum]);
             seek_parameters(file_base, &bank_ptr->sound[snum]);
         };
     };
@@ -1075,7 +1098,8 @@ void Dx7interface::on_restore_sound(){
 /* REPLACE */
 void Dx7interface::on_replace_sound(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file){
     read_file_as_datastream(data_stream_index,
-                            file,std::bind(&Dx7interface::replace_sound, this,
+                            file,
+                            std::bind(&Dx7interface::replace_sound, this,
                                           std::placeholders::_1, std::placeholders::_2) );
 }
 void Dx7interface::replace_sound(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file){
@@ -1084,11 +1108,11 @@ void Dx7interface::replace_sound(unsigned int data_stream_index, Glib::RefPtr<Gi
     auto[file_name, file_base, file_size] = get_file_attribut(file);
     msg_log = _("Replaced sound: ") + bank_1_modif.sound->name;
     LOG( msg_log );
-    parse_sysex(file, data_stream.at(data_stream_index), file_size);
+    parse_sysex(file, data_stream_in.at(data_stream_index), file_size);
     if( file_size == 128 ){
-        seek_voice(data_stream.at(data_stream_index), &bank_1_modif.sound[0]);
+        seek_voice(data_stream_in.at(data_stream_index), &bank_1_modif.sound[0]);
     }else{
-        seek_voice_by_byte(data_stream.at(data_stream_index), &bank_1_modif.sound[0]);
+        seek_voice_by_byte(data_stream_in.at(data_stream_index), &bank_1_modif.sound[0]);
     }
     seek_parameters(file_base, &bank_1_modif.sound[0]);
     msg_log = _(" With: ") + bank_1_modif.sound->name ;
@@ -1178,12 +1202,12 @@ void Dx7interface::read_voice(unsigned int data_stream_index, BankVariant& bank_
         unsigned int pos=get_gwidget<Gtk::SpinButton>("spinbutton_insert_start")->get_value();;
         if(byte_flag){
             for( ; pos < bank_nb_sound && pos < max_write_pos; pos++ ){
-                seek_voice_by_byte(data_stream.at(data_stream_index), &bank_origin.get().sound[pos]);
+                seek_voice_by_byte(data_stream_in.at(data_stream_index), &bank_origin.get().sound[pos]);
                 bank_modif.get().sound[pos] = bank_origin.get().sound[pos];
             };
         }else{
             for( ; pos < bank_nb_sound && pos < max_write_pos; pos++ ){
-                seek_voice(data_stream.at(data_stream_index), &bank_origin.get().sound[pos]);
+                seek_voice(data_stream_in.at(data_stream_index), &bank_origin.get().sound[pos]);
                 bank_modif.get().sound[pos] = bank_origin.get().sound[pos];
             };
         };
@@ -1225,7 +1249,7 @@ void Dx7interface::insert_at(unsigned int data_stream_index, Glib::RefPtr<Gio::F
     block_ui(); // needed
     update_bank_modif(); // to save change
 
-    parse_sysex(file, data_stream.at(data_stream_index), file_size);
+    parse_sysex(file, data_stream_in.at(data_stream_index), file_size);
     if( (file_size % 128) == 0 ){                    // file is multiple of 128
         nb_snd_in_file = (file_size / 128);
         byte_flag=false;
@@ -1268,7 +1292,7 @@ void Dx7interface::on_insert_at(){
         slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSelect),
-                0,
+                DX7_VOICE,
                 std::bind(&Dx7interface::on_insert_sound, this,
                           std::placeholders::_1,std::placeholders::_2) ));
         OpenDialogParam(_("Insert Sound(s) at"));
@@ -1288,7 +1312,7 @@ void Dx7interface::on_delete_sound(){
     old_snum = bank_nb_sound-1;
     snum = bank_nb_sound-1;
     Glib::RefPtr<Gio::File> init_voice_file = Gio::File::create_for_path( DATA_DIR"cfg/DX7_INIT_VOICE.syx" );
-    read_file_as_datastream(0,
+    read_file_as_datastream(DX7_VOICE,
                            init_voice_file,
                            std::bind(&Dx7interface::replace_sound, this,
                                      std::placeholders::_1, std::placeholders::_2) );
@@ -1318,7 +1342,7 @@ void Dx7interface::on_receive_bank(){
 /* SEND / SAVE */
 void Dx7interface::on_send_bank(){
     send_bank=true;
-    write_bank_as_sysex(0, nullptr, 0);
+    write_bank_as_sysex(DX7_BANK, nullptr, 0);
     on_mute_op_event();
 };
 void Dx7interface::on_save_bank(){
@@ -1330,8 +1354,8 @@ void Dx7interface::on_save_bank(){
         slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
-                              0,
-                              std::bind(&Dx7interface::on_file_save, this,
+                                DX7_BANK,
+                                std::bind(&Dx7interface::on_file_save, this,
                                         std::placeholders::_1,std::placeholders::_2) ));
         OpenDialogParam("Saving Bank");
     }catch( const std::exception & ex ){
@@ -1807,7 +1831,7 @@ void Dx7interface::write_voice_as_raw(unsigned int data_stream_index, Glib::RefP
         LOG_ERR( msg_err );
     }
 };
-void Dx7interface::write_voice_ctrl_parameters(st_dx7sysex_1* sound,unsigned char* msg, unsigned int* index){
+void Dx7interface::write_voice_ctrl_parameters(st_dx7sysex_1* sound, unsigned char* msg, unsigned int* index){
     LOG( LOG_IN() );
     if(write_ctrl_params){
         try{
@@ -1878,9 +1902,9 @@ void Dx7interface::on_save_sound(){
         slot_btn_dialog_param = btn_dialog_param->signal_clicked().connect(
             sigc::bind(
                 sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSave),
-                       0,
-                       std::bind(&Dx7interface::on_file_save, this,
-                                 std::placeholders::_1, std::placeholders::_2) ));
+                                DX7_VOICE,
+                                std::bind(&Dx7interface::on_file_save, this,
+                                            std::placeholders::_1, std::placeholders::_2) ));
         OpenDialogParam("Saving sound");
     }catch( const std::exception & ex ){
         msg_err = error( __PRETTY_FUNCTION__, _(" Unknow "), ex.what() );
@@ -2807,7 +2831,7 @@ void Dx7interface::attach_action_group_signals(){
     action_group->add_action("insert_at", sigc::mem_fun(*this, &Dx7interface::on_insert_at));
     action_group->add_action("replace_sound", sigc::bind(
         sigc::mem_fun(*this, &Dx7interface::OpenDialogFileSelect),
-                      0,
+                      DX7_VOICE,
                       std::bind(&Dx7interface::on_replace_sound, this,
                                 std::placeholders::_1, std::placeholders::_2) ));
     action_group->add_action("delete_sound", sigc::mem_fun(*this, &Dx7interface::on_delete_sound));

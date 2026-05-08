@@ -95,6 +95,17 @@ class Dx7interface : public Gx_module, public Synth {
         bool send_bank = false;
         bool remove_pending = false;
 
+        /* Datastream*/
+         enum DxStreamSlot {
+            DX7_BANK                = 0,
+            DX7_VOICE               = 1,
+            DX7_MIDI_LEARN          = 1,
+            DX7_DATASTREAM_IN_COUNT = 3,
+            DX7_DATASTREAM_OUT_COUNT= 3
+        };
+
+        bool isValidSize(const Glib::RefPtr<Gio::File>&);
+
         /*** Dx7 specific ***/
         bool mode_tf1 = false;                  // mode tf1 = fonction parameter by sound
         static const uint8_t id_fabricant=0x43; /* static fix yamaha id */
