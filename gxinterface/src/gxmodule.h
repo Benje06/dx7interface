@@ -35,12 +35,17 @@
 */
 class Gx_module {
 	public:
-		typedef struct st_mod_options {  		/* Module options */
+		typedef struct st_datastream {		/* IO slot counts requested by the module */
+			unsigned int in  = 0;
+			unsigned int out = 0;
+		} St_datastream;
+		typedef struct st_mod_options {		/* Module options */
 			Glib::ustring name="";
 			Glib::ustring color="";
-			Glib::ustring cssfile="";     /* CSS file */
+			Glib::ustring cssfile="";		/* CSS file */
 			Glib::ustring icon="";
-			std::string custom_font="";  /* custom font */
+			std::string custom_font="";		/* custom font */
+			St_datastream datastream;		/* number of IO slots requested by the module */
 		} St_mod_options;
 		/*** CALLED BY MODULE in LoadPlug ***/
         St_mod_options get_module_options();
@@ -127,16 +132,28 @@ class Gx_module {
 		Glib::RefPtr<Gio::File> initial_folder_open=nullptr;
 		Glib::RefPtr<Gio::File> initial_folder_save=nullptr;
 
-        std::vector<Glib::RefPtr<Gio::DataInputStream>> data_stream = std::vector<Glib::RefPtr<Gio::DataInputStream>>(3, nullptr);
-        std::vector<Glib::RefPtr<Gio::DataOutputStream>>data_stream_out = std::vector<Glib::RefPtr<Gio::DataOutputStream>>(3, nullptr);
+		/* IO data streams. Sizes are zero by default; the module declares
+         * how many slots it needs through datastream.in / datastream.out
+         * in St_mod_options, and set_module_options resizes accordingly.
+		 */
+        std::vector<Glib::RefPtr<Gio::DataInputStream>> data_stream_in;
+        std::vector<Glib::RefPtr<Gio::DataOutputStream>>data_stream_out;
+		/* Resize a single IO slot vector. */
+        template <typename T>
+        void set_datastream(std::vector<T>& vec, unsigned int count){
+            vec.resize(count, nullptr);
+        };
+        /* Resize both IO slot vectors at once. */
+        void set_datastream(const St_datastream& ds);
+
 		virtual void set_param();          				// function to set the parameters of action
 		/* LOAD */
 		void OpenDialogFileSelect(unsigned int,
                                   std::function<void(unsigned int, Glib::RefPtr<Gio::File>)>);
-        void read_file_as_datastream(unsigned int data_stream_index,
-                                    Glib::RefPtr<Gio::File> file,
-                                    std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct);
-        std::tuple<Glib::ustring, Glib::ustring, unsigned int> get_file_attribut(Glib::RefPtr<Gio::File> file);
+        void read_file_as_datastream(unsigned int,
+                                    Glib::RefPtr<Gio::File>,
+                                    std::function<void(unsigned int, Glib::RefPtr<Gio::File>)>);
+        std::tuple<Glib::ustring, Glib::ustring, unsigned int> get_file_attribut(Glib::RefPtr<Gio::File>);
 		bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
 		/* SAVE */
         void OpenDialogFileSave(unsigned int,

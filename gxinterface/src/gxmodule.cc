@@ -101,10 +101,10 @@ void Gx_module::set_param(){};
 void Gx_module::read_file_as_datastream(unsigned int data_stream_index, Glib::RefPtr<Gio::File> file, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct){
     LOG(LOG_IN());
     try {
-        data_stream.at(data_stream_index) = Gio::DataInputStream::create(file->read());
+        data_stream_in.at(data_stream_index) = Gio::DataInputStream::create(file->read());
         funct(data_stream_index, file);
-        if(!isStreamClosed(data_stream.at(data_stream_index))){
-            data_stream.at(data_stream_index)->close();
+        if(!isStreamClosed(data_stream_in.at(data_stream_index))){
+            data_stream_in.at(data_stream_index)->close();
         };
     }catch(const std::exception& ex){
         msg_err = error( __PRETTY_FUNCTION__, _("Can't Read: ") + file->get_path(), ex.what() );
@@ -346,7 +346,7 @@ void Gx_module::analyse_param(char** argv, int argc){
 void Gx_module::extractPath(Glib::ustring filename){
 	LOG(LOG_IN());
 	/* extract to extpath ( extention, filename, path ,name ,file ) */
-	int start, end;
+	size_t start, end;
 	mod.extpath.file=filename;
 	start = filename.find_last_of(DS);
 	mod.extpath.filename = filename.substr(start+1, filename.length() - (start+1) );
@@ -354,7 +354,6 @@ void Gx_module::extractPath(Glib::ustring filename){
 	end = filename.find_last_of(".");
 	mod.extpath.ext = filename.substr( end+1, filename.length() );
 	mod.extpath.name = filename.substr(start+1, mod.extpath.filename.length() - mod.extpath.ext.length() -1 );
-	/** TODO remove std **/
     //LOG(" mod.extpath.name " + mod.extpath.name);
 	//LOG(" mod.extpath.ext " + mod.extpath.ext);
 	//LOG(" mod.extpath.path " + mod.extpath.path);
@@ -478,6 +477,12 @@ bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
         return false;
     }; 
 };
+/* Set datastream size */
+void Gx_module::set_datastream(const St_datastream& ds){
+    set_datastream(data_stream_in,  ds.in);
+    set_datastream(data_stream_out, ds.out);
+};
+/* Module options */
 void Gx_module::set_module_options(St_mod_options mod_options){
     set_style_file(mod_options.cssfile);
     set_custom_font_file(mod_options.custom_font);
@@ -824,8 +829,8 @@ void Gx_module::set_app_icon(Gtk::Window* main_window){ // UNUSED
     // only for the windows icon on title, doesn't change the panel icon
     if( mod_options.icon != "" ){
         auto icon_theme = Gtk::IconTheme::get_for_display(Gdk::Display::get_default());
-        int start = mod_options.icon.find_last_of(DS);
-        int end = mod_options.icon.find_last_of(".");
+        size_t start = mod_options.icon.find_last_of(DS);
+        size_t end = mod_options.icon.find_last_of(".");
         Glib::ustring icon_path = mod_options.icon.substr( 0, start );
         Glib::ustring icon_name = mod_options.icon.substr( start+1 , end - (start+1) );
         icon_theme->add_search_path( icon_path );
