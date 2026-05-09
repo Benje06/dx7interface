@@ -99,9 +99,10 @@ class Dx7interface : public Gx_module, public Synth {
          enum DxStreamSlot {
             DX7_BANK                = 0,
             DX7_VOICE               = 1,
-            DX7_MIDI_LEARN          = 1,
-            DX7_DATASTREAM_IN_COUNT = 3,
-            DX7_DATASTREAM_OUT_COUNT= 3
+            DX7_MIDI_LEARN          = 2,
+            DX7_VOICE_PARAM         = 3,
+            DX7_DATASTREAM_IN_COUNT = 4,
+            DX7_DATASTREAM_OUT_COUNT= 4
         };
 
         bool isValidSize(const Glib::RefPtr<Gio::File>&);
