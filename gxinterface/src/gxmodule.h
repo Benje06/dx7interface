@@ -57,8 +57,6 @@ class Gx_module {
 		/* set module */
 		bool set_mod(Glib::ustring, uint8_t);
 		void unset_mod();
-		/* Standalone mode call by gemod */
-		void create_window();
 		/* extpath properties */
 		Glib::ustring get_name();
 		Glib::ustring get_file();
@@ -78,6 +76,11 @@ class Gx_module {
 		Gx_module(Glib::ustring, uint8_t, Glib::ustring, char**, int);
 		/* for array of gx module */
 		Gx_module();
+		/* prevent accidental copy/move (raw pointers ownership) */
+		Gx_module(const Gx_module&) = delete;
+		Gx_module& operator=(const Gx_module&) = delete;
+		Gx_module(Gx_module&&) = delete;
+		Gx_module& operator=(Gx_module&&) = delete;
 		virtual ~Gx_module();
 	protected:
 		std::string msg_err="", msg_log="";
@@ -108,8 +111,14 @@ class Gx_module {
 			};
 		};
 		Gtk::Window* get_window();
+		/* Standalone mode call by gemod */
+		void create_window();
 		/* To give main window to the module */
 		void set_main_window(Gtk::Window*);
+		/* Destroy the standalone window created by create_window().
+         * Deleting main_window cascades to main_scrolledwindow and
+         * main_viewport via Gtk parent-child ownership. */
+        void destroy_main_window();
 		/* set or update the name in the extpath */
 		void set_module_name(Glib::ustring);
 		void set_app_name(Glib::ustring);
@@ -154,7 +163,7 @@ class Gx_module {
                                     Glib::RefPtr<Gio::File>,
                                     std::function<void(unsigned int, Glib::RefPtr<Gio::File>)>);
         std::tuple<Glib::ustring, Glib::ustring, unsigned int> get_file_attribut(Glib::RefPtr<Gio::File>);
-		bool isStreamClosed(Glib::RefPtr<Gio::DataInputStream>&);
+		bool hasStream(Glib::RefPtr<Gio::DataInputStream>&);
 		/* SAVE */
         void OpenDialogFileSave(unsigned int,
                                 std::function<void(unsigned int, Glib::RefPtr<Gio::File>)>);	// function to show the select file dialog for save

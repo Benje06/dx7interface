@@ -103,7 +103,7 @@ void Gx_module::read_file_as_datastream(unsigned int data_stream_index, Glib::Re
     try {
         data_stream_in.at(data_stream_index) = Gio::DataInputStream::create(file->read());
         funct(data_stream_index, file);
-        if(!isStreamClosed(data_stream_in.at(data_stream_index))){
+        if(hasStream(data_stream_in.at(data_stream_index))){
             data_stream_in.at(data_stream_index)->close();
         };
     }catch(const std::exception& ex){
@@ -148,14 +148,14 @@ void Gx_module::write_file_as_datastream(unsigned int data_stream_index, Glib::R
         throw std::runtime_error(msg_err);
     };
 };
-bool Gx_module::isStreamClosed(Glib::RefPtr<Gio::DataInputStream>& stream) {
+bool Gx_module::hasStream(Glib::RefPtr<Gio::DataInputStream>& stream) {
     try{
-        if( stream ){  return false;
-        }else{              return true;
+        if( stream ){  return true;
+        }else{         return false;
         };
     }catch( const Gio::Error& e ){
         //if( e.code() == Gio::Error::CLOSED ){ return true; };
-        return true;
+        return false;
     };
 };
 /* Select/Save File */
@@ -310,11 +310,19 @@ void Gx_module::set_dialog(Glib::ustring title){};
 void Gx_module::create_window(){
     LOG(LOG_IN());
     try{
+        if (!rootbox){
+            msg_err = error( __PRETTY_FUNCTION__,
+                            _("Cannot create window"),
+                            _("rootbox is null") );
+            LOG_ERR( msg_err );
+            LOG(LOG_OUT());
+            return;
+        };
         main_scrolledwindow = new Gtk::ScrolledWindow();
         main_window = new Gtk::Window();
         main_viewport = new Gtk::Viewport(main_scrolledwindow->get_hadjustment(),
                                             main_scrolledwindow->get_vadjustment());
-        main_viewport->set_child(*(get_rootbox()));
+        main_viewport->set_child(*(rootbox));
         main_scrolledwindow->set_child(*main_viewport);
         main_window->set_child(*main_scrolledwindow);
         main_window->set_title(get_app_name());
@@ -331,17 +339,54 @@ void Gx_module::create_window(){
         throw std::runtime_error(msg_err);
     };
     LOG(LOG_OUT());
-}
+};
+
+void Gx_module::destroy_main_window(){
+    LOG(LOG_IN());
+    try{
+        if (main_window){
+            delete main_window;
+            main_window = nullptr;
+            main_scrolledwindow = nullptr;
+            main_viewport = nullptr;
+        };
+    }catch(const std::exception& ex){
+        msg_err = error( __PRETTY_FUNCTION__, _("Failed to destroy main window"), ex.what() );
+        LOG_ERR( msg_err );
+    };
+    LOG(LOG_OUT());
+};
 
 /*** MODULE ***/
 void Gx_module::analyse_param(char** argv, int argc){
-    for ( int i = 1; i <= argc; i++) {
-        if ( (argv[i] != NULL) && ( Glib::ustring(argv[i]) == "-c" || (Glib::ustring(argv[i]) == "--color") )
-            && (argv[i+1] != NULL) && ( Glib::ustring(argv[i+1]) != "" )
-        ){  // -c and html color code as argument
-            mod.color = Glib::ustring(argv[i+1]);
+    LOG(LOG_IN());
+    static const struct option long_options[] = {
+        { "color",  required_argument, nullptr, 'c' },
+        { nullptr,  0,                 nullptr,  0  }
+    };
+    /* Phase 1: parse and collect — no side effects in the loop. */
+    std::string color;
+    optind = 0;   /* reentrancy: full reset of getopt internal state */
+    opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+    int opt;
+    while ((opt = getopt_long(argc, argv, "c:", long_options, nullptr)) != -1) {
+        switch (opt) {
+            case 'c':
+                if (optarg) color = optarg;
+                break;
+            case '?':
+            default:
+                /* Unknown option or missing argument: ignore here so that
+                 * options targeted at main, gxinterface or derived modules
+                 * are preserved for them to parse later. */
+                break;
         };
     };
+    /* Phase 2: apply effects */
+    if (!color.empty()) {
+        mod.color = color;
+    };
+    LOG(LOG_OUT());
 };
 void Gx_module::extractPath(Glib::ustring filename){
 	LOG(LOG_IN());
@@ -500,6 +545,7 @@ void Gx_module::set_main_window(Gtk::Window* window){ // set main window on a mo
 Gtk::Window* Gx_module::get_window(){
     return main_window;
 };
+
 Gtk::Box* Gx_module::get_rootbox() 	{
     return rootbox;
 };

@@ -40,7 +40,9 @@
 Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
 	LOG(LOG_IN());
 	try{
-		modules=new Gx_module[nb_max_module];
+		is_manager_ = true;
+		max_modules=nb_max_modules;
+		modules=new Gx_module[max_modules];
 		attach_signals();
 		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
@@ -54,8 +56,9 @@ Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
 Gemod::Gemod(Glib::ustring module_name, uint8_t max_mod) : Gx_module(module_name, "Gemod"){
 	LOG(LOG_IN());
 	try{
+		is_manager_ = true;
 		max_modules=max_mod;
-		modules=new Gx_module[max_mod];
+		modules=new Gx_module[max_modules];
 		attach_signals();
 		LOG(LOG_OUT());
 	}catch(const std::exception& ex){
@@ -85,12 +88,11 @@ Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : 
 
 Gemod::~Gemod(){
 	LOG(LOG_IN());
-	// TODO: clean all what is constructed by new
-	if( max_modules != 1 ){
+	if( is_manager_ ){
 		dettach_signals();
 	}else{
-		//TODO: ??? delete_windows 
-	}
+        destroy_main_window();
+    };
 	if(modules){
 		delete[] modules;
 	};
@@ -125,6 +127,13 @@ Glib::ustring Gemod::get_module_name(uint8_t index){
 /* get root widget(box_main) from refxml by module index */
 Gtk::Box* Gemod::get_module_root(uint8_t index)	{ 
 	try {
+		if (index >= max_modules) {
+			msg_err = error( __PRETTY_FUNCTION__,
+							 _("Invalid module index: ") + tostr<unsigned int>(index),
+							 _("Index out of bounds (max_modules = ") + tostr<unsigned int>(max_modules) + ")" );
+			LOG_ERR( msg_err );
+			return nullptr;
+		};
 		return modules[index].get_rootbox();
 	}catch(const std::exception& ex){
 		msg_err = error( __PRETTY_FUNCTION__, _("Fail to get rootbox"), ex.what() );
@@ -246,10 +255,10 @@ bool Gemod::add_module(Glib::ustring module_name){
 					modules[nb_mod].set_app_name(nb_mod_ident);
 				};
 				msg_log = '\t' + _("number of module with this name (nb_mod_ident): ") + tostr<unsigned int>(nb_mod_ident) + EOL;
-				msg_log = '\t' + _("Index module (nb_mod): ") + tostr<unsigned int>(nb_mod) + EOL;
-				msg_log = '\t' + _("App name (mod.name): ") + modules[nb_mod].get_app_name() + EOL;
-				msg_log = '\t' + _("Module name (extpath.name): ") + modules[nb_mod].get_name() + EOL;
-				msg_log = '\t' + _("Module ext (extpath.ext): ") + modules[nb_mod].get_ext() + EOL;
+				msg_log += '\t' + _("Index module (nb_mod): ") + tostr<unsigned int>(nb_mod) + EOL;
+				msg_log += '\t' + _("App name (mod.name): ") + modules[nb_mod].get_app_name() + EOL;
+				msg_log += '\t' + _("Module name (extpath.name): ") + modules[nb_mod].get_name() + EOL;
+				msg_log += '\t' + _("Module ext (extpath.ext): ") + modules[nb_mod].get_ext() + EOL;
 				LOG( msg_log );
 				Gtk::Box* box = modules[nb_mod].get_rootbox();
 				if (box != nullptr){
@@ -270,6 +279,7 @@ bool Gemod::add_module(Glib::ustring module_name){
 					}else{
 						// create_window and attach widget widget box
 						modules[nb_mod].create_window();
+						nb_mod++;
 						LOG(LOG_OUT());
 						return true;
 					};
@@ -289,6 +299,11 @@ bool Gemod::add_module(Glib::ustring module_name){
 				LOG(LOG_OUT());
 				return false;
 			};
+		}else{
+			msg_err = error( __PRETTY_FUNCTION__,
+							 _("Cannot add module: ") + module_name,
+							 _("Maximum number of modules reached: ") + tostr<unsigned int>(max_modules) );
+			LOG_ERR( msg_err );
 		};
 		LOG(LOG_OUT()); 
 		return false;

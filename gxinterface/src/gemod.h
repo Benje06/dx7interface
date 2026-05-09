@@ -37,7 +37,8 @@
 class Gemod : public Gx_module {
 	private:
 		Gx_module * modules;        // array of modules
-		uint8_t nb_mod=0, max_modules=1, nb_max_module=5;  // nombre de module chargé et max module
+		uint8_t nb_mod=0, max_modules=1, nb_max_modules=5;  // nombre de module chargé et max module
+		bool is_manager_ = false;   // true when Gemod operates as a module manager (constructors 1 and 2), false in standalone mode (constructor 3)
 		std::string msg="", error_msg="";
 
 		/* callback function */
