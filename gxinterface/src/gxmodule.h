@@ -50,6 +50,8 @@ class Gx_module {
 		/*** CALLED BY MODULE in LoadPlug ***/
         St_mod_options get_module_options();
 		/*** CALLED BY GEMOD ***/
+		/* Standalone mode call by gemod */
+		void create_window();
 		/* send root widget of module */
 		Gtk::Box* get_rootbox();
 		/* set or update the name in the extpath */
@@ -111,8 +113,6 @@ class Gx_module {
 			};
 		};
 		Gtk::Window* get_window();
-		/* Standalone mode call by gemod */
-		void create_window();
 		/* To give main window to the module */
 		void set_main_window(Gtk::Window*);
 		/* Destroy the standalone window created by create_window().
