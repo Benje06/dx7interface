@@ -934,7 +934,7 @@ void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<
 
     if( std::filesystem::exists( (file_base+"_fct.syx").c_str() ) ){
         Glib::RefPtr<Gio::File> file_fct=Gio::File::create_for_path( (file_base+"_fct.syx").c_str() );
-        data_stream_in.at(DX7_BANK_PARAM) = Gio::DataInputStream::create(file_fct->read());
+        data_stream_in.at(DX7_VOICE_PARAM) = Gio::DataInputStream::create(file_fct->read());
     }
 
     Bank_ptr bank_ptr;
@@ -980,8 +980,8 @@ void Dx7interface::set_bank_sounds(unsigned int data_stream_index, Glib::RefPtr<
 
     old_snum=0;
     snum=0; // reset to first element
-    /*if(hasStream(data_stream_in.at(DX7_BANK_PARAM))){
-        data_stream_in.at(DX7_BANK_PARAM)->close();
+    /*if(hasStream(data_stream_in.at(DX7_VOICE_PARAM))){
+        data_stream_in.at(DX7_VOICE_PARAM)->close();
     };*/
 };
 
@@ -2134,15 +2134,15 @@ void Dx7interface::seek_voice_by_byte(Glib::RefPtr<Gio::DataInputStream> data_st
 };
 
 void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* sound){
-    if(!hasStream(data_stream_in.at(DX7_BANK_PARAM))){ // case fct for one sound
+    if(!hasStream(data_stream_in.at(DX7_VOICE_PARAM))){ // case fct for one sound
         Glib::ustring file_path = bank_file_base + sound->name + "_fct.syx";
         if( std::filesystem::exists( file_path.c_str() )){ 
             Glib::RefPtr<Gio::File> file_fct = Gio::File::create_for_path( file_path.c_str() );
             msg_log = _("For voice: ") + sound->name + _("\n\tParameters of function reads from file: ") + file_fct->get_path() ;
             LOG( msg_log );
-            data_stream_in.at(DX7_BANK_PARAM) = Gio::DataInputStream::create(file_fct->read());
+            data_stream_in.at(DX7_VOICE_PARAM) = Gio::DataInputStream::create(file_fct->read());
             seek_voice_parameters(sound);
-            data_stream_in.at(DX7_BANK_PARAM)->close();
+            data_stream_in.at(DX7_VOICE_PARAM)->close();
         }else{
             LOG( "before seek voice" );
             seek_voice_parameters(sound);
@@ -2152,58 +2152,58 @@ void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* 
 };
 void Dx7interface::seek_voice_parameters(St_dx7sysex_1* sound){
     LOG( LOG_IN() );
-    if(hasStream(data_stream_in.at(DX7_BANK_PARAM))){
+    if(hasStream(data_stream_in.at(DX7_VOICE_PARAM))){
         /* skip */
-        //for (unsigned int i=0; i<(pos*98); data_stream_in.at(DX7_BANK_PARAM)->read_byte(),i++);
+        //for (unsigned int i=0; i<(pos*98); data_stream_in.at(DX7_VOICE_PARAM)->read_byte(),i++);
         for(uint8_t i=0; i<14; i++){
             for(uint8_t j=0; j<4; j++){
-                data_stream_in.at(DX7_BANK_PARAM)->read_byte();
+                data_stream_in.at(DX7_VOICE_PARAM)->read_byte();
             };
-            switch(data_stream_in.at(DX7_BANK_PARAM)->read_byte()){
+            switch(data_stream_in.at(DX7_VOICE_PARAM)->read_byte()){
                 case 0x40:
-                    sound->extra.controller.poly_mono.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.poly_mono.mask;
+                    sound->extra.controller.poly_mono.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.poly_mono.mask;
                     break;
                 case 0x41:
-                    sound->extra.controller.ptch_bnd_rng.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.ptch_bnd_rng.mask;
+                    sound->extra.controller.ptch_bnd_rng.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.ptch_bnd_rng.mask;
                     break;
                 case 0x42:
-                    sound->extra.controller.ptch_bnd_stp.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.ptch_bnd_stp.mask;
+                    sound->extra.controller.ptch_bnd_stp.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.ptch_bnd_stp.mask;
                     break;
                 case 0x43:
-                    sound->extra.controller.portamento_md.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.portamento_md.mask;
+                    sound->extra.controller.portamento_md.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.portamento_md.mask;
                     break;
                 case 0x44:
-                    sound->extra.controller.portamento_glss.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.portamento_glss.mask;
+                    sound->extra.controller.portamento_glss.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.portamento_glss.mask;
                     break;
                 case 0x45:
-                    sound->extra.controller.portamento_tm.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.portamento_tm.mask;
+                    sound->extra.controller.portamento_tm.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.portamento_tm.mask;
                     break;
                 case 0x46:
-                    sound->extra.controller.md_whl_rng.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.md_whl_rng.mask;
+                    sound->extra.controller.md_whl_rng.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.md_whl_rng.mask;
                     break;
                 case 0x47:
-                    sound->extra.controller.md_whl_assgn.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.md_whl_assgn.mask;
+                    sound->extra.controller.md_whl_assgn.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.md_whl_assgn.mask;
                     break;
                 case 0x48:
-                    sound->extra.controller.foot_rng.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.foot_rng.mask;
+                    sound->extra.controller.foot_rng.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.foot_rng.mask;
                     break;
                 case 0x49:
-                    sound->extra.controller.foot_assgn.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.foot_assgn.mask;
+                    sound->extra.controller.foot_assgn.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.foot_assgn.mask;
                     break;
                 case 0x4A:
-                    sound->extra.controller.brth_rng.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.brth_rng.mask;
+                    sound->extra.controller.brth_rng.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.brth_rng.mask;
                     break;
                 case 0x4B:
-                    sound->extra.controller.brth_assgn.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.brth_assgn.mask;
+                    sound->extra.controller.brth_assgn.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.brth_assgn.mask;
                     break;
                 case 0x4C:
-                    sound->extra.controller.aftrtch_rng.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.aftrtch_rng.mask;
+                    sound->extra.controller.aftrtch_rng.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.aftrtch_rng.mask;
                     break;
                 case 0x4D:
-                    sound->extra.controller.aftrtch_assgn.val = data_stream_in.at(DX7_BANK_PARAM)->read_byte() & sound->extra.controller.aftrtch_assgn.mask;
+                    sound->extra.controller.aftrtch_assgn.val = data_stream_in.at(DX7_VOICE_PARAM)->read_byte() & sound->extra.controller.aftrtch_assgn.mask;
                     break;
             };
-            data_stream_in.at(DX7_BANK_PARAM)->read_byte();
+            data_stream_in.at(DX7_VOICE_PARAM)->read_byte();
         };
     }else{
         LOG( "entre init controllers" );
