@@ -539,7 +539,7 @@ class Dx7interface : public Gx_module, public Synth {
         unsigned int save_index = 0;
         Gtk::CheckButton* checkbutton_bulk = nullptr;
         void set_param() override;
-        void set_dialog(Glib::ustring title) override;
+        void set_dialog(const Glib::ustring&) override;
         void OpenDialogFileSelect(unsigned int data_stream_index,
                                   std::function<void(unsigned int data_stream_index,
                                                      Glib::RefPtr<Gio::File> file)>);

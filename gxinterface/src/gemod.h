@@ -49,15 +49,15 @@ class Gemod : public Gx_module {
 		virtual void on_module_select_event();
 		virtual void on_menu_add_module_event();
 		virtual void on_menu_del_module_event();
-		virtual bool add_module(Glib::ustring);
-		virtual bool del_module(Glib::ustring);
+		virtual bool add_module(const Glib::ustring&);
+		virtual bool del_module(const Glib::ustring&);
 		/* objet specifique a l interface de base */
-		uint8_t get_module_count(Glib::ustring);    // count the number of module provided by same file 
-		int8_t get_module_index(Glib::ustring);     // get the index of a module from his name (mod.name)
+		uint8_t get_module_count(const Glib::ustring&);    // count the number of module provided by same file 
+		int8_t get_module_index(const Glib::ustring&);     // get the index of a module from his name (mod.name)
 		Glib::ustring get_module_name(uint8_t);     // get module name from his index
 		Gtk::Box* get_module_root(uint8_t);         // get box_main from refxml by modules[] index
-		Gtk::Box* get_module_root(Glib::ustring);   // !!! CAUTION !!! get rootbox by module name finding the module index can be empty Gtk::Box
-		bool load(Glib::ustring);
+		Gtk::Box* get_module_root(const Glib::ustring&);   // !!! CAUTION !!! get rootbox by module name finding the module index can be empty Gtk::Box
+		//bool load(const Glib::ustring&);
 		/* Menu construction */
 		//virtual gboolean add_menu(Glib::ustring, Glib::ustring);
 		//virtual gboolean del_menu(Glib::ustring);
@@ -81,18 +81,18 @@ class Gemod : public Gx_module {
 		/* for gemod as base module manager not as a module 
 		* ustring name of the .ui
 		*/
-		Gemod(Glib::ustring);
+		Gemod(const Glib::ustring&);
 		/* for gemod as module (inheritance) 
 		* ustring : the module_name, name of the .la/.dll/.so
 		* guint : index of the module in the module manager
 		*/
-		Gemod(Glib::ustring,uint8_t,char**,int);
+		Gemod(const Glib::ustring&, uint8_t, char**, int);
 		/* for gemod as module with specified number of modules 
 		* ustring : the module_name, name of the .la
 		* guint : index of the module in the module manager
 		* guint : number of module in the module
 		*/
-		Gemod(Glib::ustring,uint8_t);
+		Gemod(const Glib::ustring&, uint8_t);
 		virtual ~Gemod();
 };
 #endif  /* gemod_H */

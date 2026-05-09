@@ -57,7 +57,7 @@ class Gx_module {
 		/* set or update the name in the extpath */
 		void set_app_name(unsigned int);
 		/* set module */
-		bool set_mod(Glib::ustring, uint8_t);
+		bool set_mod(const Glib::ustring&, uint8_t);
 		void unset_mod();
 		/* extpath properties */
 		Glib::ustring get_name();
@@ -73,9 +73,9 @@ class Gx_module {
 
 		/*** CONSTRUCTORS/DESTRUCTORS ***/
 		/* gx_module as .ui */
-		Gx_module(Glib::ustring, Glib::ustring);
+		Gx_module(const Glib::ustring&, const Glib::ustring&);
 		/* gx_module as .la */
-		Gx_module(Glib::ustring, uint8_t, Glib::ustring, char**, int);
+		Gx_module(const Glib::ustring&, uint8_t, const Glib::ustring&, char**, int);
 		/* for array of gx module */
 		Gx_module();
 		/* prevent accidental copy/move (raw pointers ownership) */
@@ -94,7 +94,7 @@ class Gx_module {
 		std::tuple<std::shared_ptr<void>, St_mod_options> (*module_func) (uint8_t);
 		/* get a widget inside the refxml should be in the headers to be use as an external C*/
 		template <class widgetType>
-		widgetType* get_gwidget(Glib::ustring widget_name){
+		widgetType* get_gwidget(const Glib::ustring& widget_name){
 			try{
 				auto widget = refXml->get_object(widget_name);
 				if (widget){
@@ -120,8 +120,8 @@ class Gx_module {
          * main_viewport via Gtk parent-child ownership. */
         void destroy_main_window();
 		/* set or update the name in the extpath */
-		void set_module_name(Glib::ustring);
-		void set_app_name(Glib::ustring);
+		void set_module_name(const Glib::ustring&);
+		void set_app_name(const Glib::ustring&);
 		St_mod_options mod_options;
 		/* FILES */
 		/** Open File Save Dialog **/
@@ -172,8 +172,8 @@ class Gx_module {
                                      unsigned char*,
                                      unsigned int);
 		/* Dialog Paramaters for action */
-		void OpenDialogParam(Glib::ustring);  			// function to show the dialog parameters
-		virtual void set_dialog(Glib::ustring);    		// function to set the dialog parameters displayed
+		void OpenDialogParam(const Glib::ustring&);  			// function to show the dialog parameters
+		virtual void set_dialog(const Glib::ustring&);    		// function to set the dialog parameters displayed
 
 	private:
 		typedef struct st_extPath{             	/* Provided file informations */
@@ -209,18 +209,18 @@ class Gx_module {
 		virtual void dettach_signals();
 		/* Set module */
 		void analyse_param(char**, int);
-		void extractPath(Glib::ustring);
-		bool set_refxml(Glib::ustring);
-		bool load(Glib::ustring,uint8_t);
-		bool load_ui(Glib::ustring,uint8_t);
-		bool load_so_la(Glib::ustring,uint8_t);
-		void set_module_options(St_mod_options);
+		void extractPath(const Glib::ustring&);
+		bool set_refxml(const Glib::ustring&);
+		bool load(const Glib::ustring&, uint8_t);
+		bool load_ui(const Glib::ustring&, uint8_t);
+		bool load_so_la(const Glib::ustring&, uint8_t);
+		void set_module_options(const St_mod_options&);
         /* all the app */
-        void set_icon_file(Glib::ustring);
+        void set_icon_file(const Glib::ustring&);
 		void set_app_icon(Gtk::Window*);
 
 		/*** CSS STYLE ***/
-		void set_style_file(Glib::ustring); // CSS to be call by the module
+		void set_style_file(const Glib::ustring&); // CSS to be call by the module
 		/** Apply style **/
 		void apply_style_to_screen(); // apply_style to the window
 		/*template <class widgetType>
@@ -233,12 +233,12 @@ class Gx_module {
 		void clear_style_of(widgetType*);			//  clear all class of a widget
 
 		/*** FONTS ***/
-		void set_custom_font_file(Glib::ustring);
+		void set_custom_font_file(const Glib::ustring&);
 		void load_custom_font();
 		/* Pango/Cairo */
 		void load_font_into_pango();
 		void list_pango_fonts();
-		bool is_font_present(Glib::ustring font_name);
+		bool is_font_present(const Glib::ustring& font_name);
 		/* Windows */
 		void add_custom_font(const std::string&);
 		/* FontConfig */

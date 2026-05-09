@@ -37,7 +37,7 @@
 * Call by gxinterface if type=interface
 * load the UI and create space for modules
 */
-Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
+Gemod::Gemod(const Glib::ustring& module_name) : Gx_module(module_name,"Gemod"){
 	LOG(LOG_IN());
 	try{
 		is_manager_ = true;
@@ -53,7 +53,7 @@ Gemod::Gemod(Glib::ustring module_name) : Gx_module(module_name,"Gemod"){
 	};
 };
 /* Gemod as module module manager with specified numbers of module same as precedent */
-Gemod::Gemod(Glib::ustring module_name, uint8_t max_mod) : Gx_module(module_name, "Gemod"){
+Gemod::Gemod(const Glib::ustring& module_name, uint8_t max_mod) : Gx_module(module_name, "Gemod"){
 	LOG(LOG_IN());
 	try{
 		is_manager_ = true;
@@ -69,7 +69,7 @@ Gemod::Gemod(Glib::ustring module_name, uint8_t max_mod) : Gx_module(module_name
 	};
 };
 /* Gemod as module call if type=module */
-Gemod::Gemod(Glib::ustring module_name, uint8_t index, char** argv, int argc) : Gx_module(module_name, index, "Gemod", argv, argc){
+Gemod::Gemod(const Glib::ustring& module_name, uint8_t index, char** argv, int argc) : Gx_module(module_name, index, "Gemod", argv, argc){
 	LOG(LOG_IN());
 	try{
 		if(get_rootbox()){
@@ -101,7 +101,7 @@ Gemod::~Gemod(){
 
 /*** MODULE ***/
 /* count the number of module with same source file */
-uint8_t Gemod::get_module_count(Glib::ustring module_file){
+uint8_t Gemod::get_module_count(const Glib::ustring& module_file){
 	uint8_t nb = 0;
 	for (uint8_t i = 0 ; i < nb_mod; i++){
 		if ( modules[i].get_file() == module_file ){ 
@@ -111,7 +111,7 @@ uint8_t Gemod::get_module_count(Glib::ustring module_file){
 	return nb;	
 };
 /* Get module index by module name(mod.name) */
-int8_t Gemod::get_module_index(Glib::ustring name){
+int8_t Gemod::get_module_index(const Glib::ustring& name){
 	for (uint8_t i = 0 ; i < nb_mod; i++){
 		if ( modules[i].get_app_name() == name ){ 
 			return i;
@@ -142,7 +142,7 @@ Gtk::Box* Gemod::get_module_root(uint8_t index)	{
 	}
 };
 /* !!! CAUTION !!! get root widget by module name based on module index can be empty */
-Gtk::Box* Gemod::get_module_root(Glib::ustring module_name){
+Gtk::Box* Gemod::get_module_root(const Glib::ustring& module_name){
 	LOG(LOG_IN());
 	try {
 		auto index = get_module_index(module_name);
@@ -242,7 +242,7 @@ LOG(LOG_OUT()); };
 void Gemod::on_menu_del_module_event(){ LOG(LOG_IN());
 	/*del_module("data/ui/dx7.glade");*/
 LOG(LOG_OUT()); };
-bool Gemod::add_module(Glib::ustring module_name){
+bool Gemod::add_module(const Glib::ustring& module_name){
 	LOG(LOG_IN());
 	try{
 		if ( nb_mod < max_modules ){
@@ -314,7 +314,7 @@ bool Gemod::add_module(Glib::ustring module_name){
 		return false;
 	}
 };
-bool Gemod::del_module(Glib::ustring module_name){ 
+bool Gemod::del_module(const Glib::ustring& module_name){ 
 	LOG(LOG_IN());
 	// must base on app_name
 	/** TODO : remove module

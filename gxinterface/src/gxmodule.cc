@@ -40,7 +40,7 @@
  * function are in gemod class
  */
 
-Gx_module::Gx_module(Glib::ustring filename, Glib::ustring caller){
+Gx_module::Gx_module(const Glib::ustring& filename, const Glib::ustring& caller){
     LOG(PRE_LOG(caller.c_str(),""));
     LOG(LOG_IN());
     mod.desc=caller;
@@ -58,7 +58,7 @@ Gx_module::Gx_module(Glib::ustring filename, Glib::ustring caller){
     };
 };
 /* gx module as .la */
-Gx_module::Gx_module(Glib::ustring filename, uint8_t index, Glib::ustring caller, char** argv, int argc) {
+Gx_module::Gx_module(const Glib::ustring& filename, uint8_t index, const Glib::ustring& caller, char** argv, int argc) {
     LOG(PRE_LOG(caller.c_str(),"")); 
 	LOG(LOG_IN());
     mod.desc=caller;
@@ -280,7 +280,7 @@ void Gx_module::OpenDialogFileSave(unsigned int data_stream_index, std::function
 };
 
 /* Parameters */
-void Gx_module::OpenDialogParam(Glib::ustring title){
+void Gx_module::OpenDialogParam(const Glib::ustring& title){
     LOG(LOG_IN());
     try{
         if(dialog_param){
@@ -303,7 +303,7 @@ void Gx_module::OpenDialogParam(Glib::ustring title){
     };
     LOG(LOG_OUT());
 };
-void Gx_module::set_dialog(Glib::ustring title){};
+void Gx_module::set_dialog(const Glib::ustring& title){};
 
 
 /* WINDOW */
@@ -388,7 +388,7 @@ void Gx_module::analyse_param(char** argv, int argc){
     };
     LOG(LOG_OUT());
 };
-void Gx_module::extractPath(Glib::ustring filename){
+void Gx_module::extractPath(const Glib::ustring& filename){
 	LOG(LOG_IN());
 	/* extract to extpath ( extention, filename, path ,name ,file ) */
 	size_t start, end;
@@ -406,7 +406,7 @@ void Gx_module::extractPath(Glib::ustring filename){
 	//LOG(" mod.extpath.file " + mod.extpath.file);
 	LOG(LOG_OUT());
 };
-bool Gx_module::set_refxml(Glib::ustring filename)	{
+bool Gx_module::set_refxml(const Glib::ustring& filename)	{
     LOG(LOG_IN());
 	try { 
 	    refXml = Gtk::Builder::create_from_file(filename);
@@ -421,7 +421,7 @@ bool Gx_module::set_refxml(Glib::ustring filename)	{
 	};
 };
 /* load .ui or .la in a module construction */
-bool Gx_module::load(Glib::ustring filename, uint8_t index){
+bool Gx_module::load(const Glib::ustring& filename, uint8_t index){
     /* TODO: maybe try catch to throw lower throw */
     LOG(LOG_IN());
 	extractPath(filename);
@@ -441,7 +441,7 @@ bool Gx_module::load(Glib::ustring filename, uint8_t index){
 		return false;
 	};
 };
-bool Gx_module::load_ui(Glib::ustring filename, uint8_t index){
+bool Gx_module::load_ui(const Glib::ustring& filename, uint8_t index){
     LOG(LOG_IN());
     try{
         /* TODO: maybe throw lower part */
@@ -483,7 +483,7 @@ bool Gx_module::load_ui(Glib::ustring filename, uint8_t index){
             return false;
     };
 };
-bool Gx_module::load_so_la(Glib::ustring filename,uint8_t index){
+bool Gx_module::load_so_la(const Glib::ustring& filename, uint8_t index){
     LOG(LOG_IN());
     try{
         gmodule = new Glib::Module(filename);
@@ -528,7 +528,7 @@ void Gx_module::set_datastream(const St_datastream& ds){
     set_datastream(data_stream_out, ds.out);
 };
 /* Module options */
-void Gx_module::set_module_options(St_mod_options mod_options){
+void Gx_module::set_module_options(const St_mod_options& mod_options){
     set_style_file(mod_options.cssfile);
     set_custom_font_file(mod_options.custom_font);
     set_icon_file(mod_options.icon);
@@ -552,7 +552,7 @@ Gtk::Box* Gx_module::get_rootbox() 	{
 
 /*** CSS STYLE ***/
 /* set the CSS style file provided*/
-void Gx_module::set_style_file(Glib::ustring file_css){
+void Gx_module::set_style_file(const Glib::ustring& file_css){
     LOG(LOG_IN());
     if( std::filesystem::exists(file_css.c_str()) ){
         mod.cssfile=file_css;
@@ -648,7 +648,7 @@ void Gx_module::clear_style_of(widgetType* widget){
 };
 
 /*** FONTS ***/
-void Gx_module::set_custom_font_file(Glib::ustring custom_font_file){
+void Gx_module::set_custom_font_file(const Glib::ustring& custom_font_file){
     LOG(LOG_IN());
     if( std::filesystem::exists(custom_font_file.c_str()) ){
         mod.custom_font=custom_font_file;
@@ -711,7 +711,7 @@ void Gx_module::list_pango_fonts(){       // List all available font families
         LOG_ERR( msg_err );
     };
 };
-bool Gx_module::is_font_present(Glib::ustring font_name){
+bool Gx_module::is_font_present(const Glib::ustring& font_name){
     bool found = false;
     auto families = ((Pango::CairoFontMap::get_default())->create_context())->list_families();
     for (const auto& family : families) {
@@ -828,7 +828,7 @@ void Gx_module::dettach_signals(){};
 
 /*** MOD ***/
 /* Add/remove */
-bool Gx_module::set_mod( Glib::ustring filename, uint8_t index ) 	{
+bool Gx_module::set_mod(const Glib::ustring& filename, uint8_t index) 	{
     LOG(LOG_IN());
 	if( load(filename,index) ){
 	    LOG(LOG_OUT());
@@ -846,7 +846,7 @@ void Gx_module::unset_mod()	{ LOG(LOG_IN());
     LOG(LOG_OUT()); 
 };
 /* extpath */
-void Gx_module::set_module_name(Glib::ustring name) { mod.extpath.name = name; };	
+void Gx_module::set_module_name(const Glib::ustring& name) { mod.extpath.name = name; };	
 Glib::ustring  Gx_module::get_name(){	return mod.extpath.name ; };
 Glib::ustring  Gx_module::get_file(){	return mod.extpath.file ; };
 Glib::ustring  Gx_module::get_ext(){	return mod.extpath.ext ; };
@@ -856,7 +856,7 @@ Glib::ustring  Gx_module::get_path(){	return mod.extpath.path ; };
 /*** APP ***/
 /* mod */
 /* Set icon */
-void Gx_module::set_icon_file(Glib::ustring icon_file){
+void Gx_module::set_icon_file(const Glib::ustring& icon_file){
     LOG(LOG_IN());
     if( icon_file != ""){
         if( std::filesystem::exists(icon_file.c_str()) ){
@@ -890,7 +890,7 @@ void Gx_module::set_app_icon(Gtk::Window* main_window){ // UNUSED
     };
 };
 /* set name */
-void Gx_module::set_app_name(Glib::ustring name){
+void Gx_module::set_app_name(const Glib::ustring& name){
     if(main_window){
       main_window->set_title(name);
     };

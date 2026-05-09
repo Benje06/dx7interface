@@ -679,7 +679,7 @@ void Dx7interface::set_param(){
         #endif
     };
 };
-void Dx7interface::set_dialog(Glib::ustring title){
+void Dx7interface::set_dialog(const Glib::ustring& title){
     LOG( LOG_IN() );
     try{
         // all box must be listed here

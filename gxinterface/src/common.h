@@ -167,7 +167,7 @@
         ostr << std::put_time(&tm_buffer, "%Y-%m-%d %H:%M:%S");
         return ostr.str();
     };
-    inline std::string error(std::string from, std::string what, std::string why){
+   inline std::string error(const std::string& from, const std::string& what, const std::string& why){
         std::string msg = _("From: ") + from + "\n\t"
                         + what + "\n\t"
                         +_("Reason => ") + why;
