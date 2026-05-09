@@ -305,7 +305,7 @@ $ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y
 ```
 - <ins>for Dx7interface</ins>:
 ```sh
-$ cd cd to_git_clone_directory/dx7interface/
+$ cd to_git_clone_directory/dx7interface/
 $ sudo checkinstall -D --fstrans=no --install=yes --pkgversion="1.0.0" -y
 ```
 
