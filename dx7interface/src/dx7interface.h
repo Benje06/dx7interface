@@ -560,7 +560,6 @@ class Dx7interface : public Gx_module, public Synth {
         #endif
         Glib::RefPtr<Gio::File> initial_folder_open_param=nullptr;
         Glib::RefPtr<Gio::File> initial_folder_save_param=nullptr;
-        Glib::RefPtr<Gio::DataInputStream> data_stream_param=nullptr;
 
         /*** THREAD ***/
         bool Run();    /* Thread function  */
