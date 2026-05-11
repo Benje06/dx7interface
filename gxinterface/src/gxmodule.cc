@@ -369,7 +369,7 @@ void Gx_module::analyse_param(char** argv, int argc){
     optind = 0;   /* reentrancy: full reset of getopt internal state */
     opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
     int opt;
-    while ((opt = getopt_long(argc, argv, "c:", long_options, nullptr)) != -1) {
+    while ((opt = getopt_long(argc, argv, "+c:", long_options, nullptr)) != -1) {
         switch (opt) {
             case 'c':
                 if (optarg) color = optarg;

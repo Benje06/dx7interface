@@ -111,7 +111,7 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
         { nullptr,     0,                 nullptr,  0  }
     };
     /* Phase 1: parse and collect */
-    while ((opt = getopt_long(argc, argv, "i:m:h", long_options, nullptr)) != -1) {
+    while ((opt = getopt_long(argc, argv, "+i:m:h", long_options, nullptr)) != -1) {
         switch (opt) {
             case 'i':
                 i_set = true;

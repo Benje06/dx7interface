@@ -78,7 +78,7 @@ int main (int argc, char *argv[]){
         optind = 0;   /* reentrancy: full reset of getopt internal state */
         opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
         int opt;
-        while ((opt = getopt_long(argc, argv, "g:l:h", long_options, nullptr)) != -1) {
+        while ((opt = getopt_long(argc, argv, "+g:l:h", long_options, nullptr)) != -1) {
             switch (opt) {
                 case 'g':
                     if (optarg && optarg[0] != '\0') {
