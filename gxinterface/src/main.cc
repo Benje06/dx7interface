@@ -77,8 +77,15 @@ int main (int argc, char *argv[]){
         /* check params */
         optind = 0;   /* reentrancy: full reset of getopt internal state */
         opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+
+        std::vector<char*> argv_copy(argc + 1);
+        for(int i = 0; i < argc; ++i) {
+            argv_copy[i] = strdup(argv[i]);   // deep copy
+        }
+        argv_copy[argc] = nullptr;
+
         int opt;
-        while ((opt = getopt_long(argc, argv, "+g:l:h", long_options, nullptr)) != -1) {
+        while ((opt = getopt_long(argc, argv_copy.data(), "g:l:h", long_options, nullptr)) != -1) {
             switch (opt) {
                 case 'g':
                     if (optarg && optarg[0] != '\0') {
@@ -100,6 +107,10 @@ int main (int argc, char *argv[]){
                     break;
             };
         };
+        // Free memory
+        for(int i = 0; i < argc; ++i) {
+            free(argv_copy[i]);
+        }
         /* apply parameters */
         if (log_lvl_set) {
             LogManager::instance().set_log_level(log_lvl);

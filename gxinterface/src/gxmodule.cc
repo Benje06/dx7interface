@@ -368,8 +368,13 @@ void Gx_module::analyse_param(char** argv, int argc){
     std::string color;
     optind = 0;   /* reentrancy: full reset of getopt internal state */
     opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+    std::vector<char*> argv_copy(argc + 1);
+    for(int i = 0; i < argc; ++i) {
+        argv_copy[i] = strdup(argv[i]);   // deep copy
+    }
+    argv_copy[argc] = nullptr;
     int opt;
-    while ((opt = getopt_long(argc, argv, "+c:", long_options, nullptr)) != -1) {
+    while ((opt = getopt_long(argc, argv_copy.data(), "c:", long_options, nullptr)) != -1) {
         switch (opt) {
             case 'c':
                 if (optarg) color = optarg;
@@ -382,6 +387,10 @@ void Gx_module::analyse_param(char** argv, int argc){
                 break;
         };
     };
+    // Free memory
+    for(int i = 0; i < argc; ++i) {
+        free(argv_copy[i]);
+    }
     /* Phase 2: apply effects */
     if (!color.empty()) {
         mod.color = color;

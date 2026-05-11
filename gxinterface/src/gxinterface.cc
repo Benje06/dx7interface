@@ -110,8 +110,13 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
         { "help",      no_argument,       nullptr, 'h' },
         { nullptr,     0,                 nullptr,  0  }
     };
+    std::vector<char*> argv_copy(argc + 1);
+    for(int i = 0; i < argc; ++i) {
+        argv_copy[i] = strdup(argv[i]);   // deep copy
+    }
+    argv_copy[argc] = nullptr;
     /* Phase 1: parse and collect */
-    while ((opt = getopt_long(argc, argv, "+i:m:h", long_options, nullptr)) != -1) {
+    while ((opt = getopt_long(argc, argv_copy.data(), "i:m:h", long_options, nullptr)) != -1) {
         switch (opt) {
             case 'i':
                 i_set = true;
@@ -132,6 +137,10 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
                 break;
         };
     };
+    // Free memory
+    for(int i = 0; i < argc; ++i) {
+        free(argv_copy[i]);
+    }
     /* Phase 2: apply effects */
     /* mutual exclusion: -i and -m cannot be used together */
     if (i_set && m_set) {
