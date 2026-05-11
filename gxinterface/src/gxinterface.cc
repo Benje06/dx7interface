@@ -34,8 +34,8 @@ Gx_interface::Gx_interface(): Gtk::Application("", Gio::Application::Flags::HAND
         /* TODO : set log handler */
         //setup_log_handlers();
     }catch(const std::exception& ex){
-        err_msg = error( __PRETTY_FUNCTION__, _("Failed to construct gxinterface"), ex.what() );
-        LOG_ERR( err_msg );
+        msg_err = error( __PRETTY_FUNCTION__, _("Failed to construct gxinterface"), ex.what() );
+        LOG_ERR( msg_err );
         LOG(LOG_OUT());
         throw;
     };
@@ -73,8 +73,8 @@ void Gx_interface::on_activate(){
             (*module_manager->get_window()).set_visible(true);
         };
     }catch(const std::exception& ex){
-        err_msg = error( __PRETTY_FUNCTION__, _("Error: in application activate -> "), ex.what() );
-        LOG_ERR( err_msg );
+        msg_err = error( __PRETTY_FUNCTION__, _("Error: in application activate -> "), ex.what() );
+        LOG_ERR( msg_err );
     };
     LOG(LOG_OUT());
 };
@@ -87,15 +87,9 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
     bool m_set = false;
     bool help_requested = false;
     std::string path;
-    optind = 0;   /* reentrancy: full reset of getopt internal state */
-    opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
     int opt;
-    /* Free previous argv if reentry (e.g. DBus reactivation, second instance) */
-    if (argv) {
-        g_strfreev(argv);
-        argv = nullptr;
-    };
-    argv = command_line->get_arguments(argc);
+    std::vector<char*> argv_copy(argc + 1);
+
     static const std::vector<help_options> opts = {
         { 'i', "interface", "FILE",
             { _("Specific interface file (.ui) to be loaded") }
@@ -110,81 +104,105 @@ int Gx_interface::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine
         { "help",      no_argument,       nullptr, 'h' },
         { nullptr,     0,                 nullptr,  0  }
     };
-    std::vector<char*> argv_copy(argc + 1);
-    for(int i = 0; i < argc; ++i) {
-        argv_copy[i] = strdup(argv[i]);   // deep copy
-    }
-    argv_copy[argc] = nullptr;
-    /* Phase 1: parse and collect */
-    while ((opt = getopt_long(argc, argv_copy.data(), "i:m:h", long_options, nullptr)) != -1) {
-        switch (opt) {
-            case 'i':
-                i_set = true;
-                if (optarg) path = optarg;
-                break;
-            case 'm':
-                m_set = true;
-                if (optarg) path = optarg;
-                break;
-            case 'h':
-                help_requested = true;
-                break;
-            case '?':
-            default:
-                /* Unknown option or missing argument: ignore here so that
-                 * options targeted at main or the module are preserved
-                 * for them to parse later. */
-                break;
+
+    try{
+        /* Free previous argv if reentry (e.g. DBus reactivation, second instance) */
+        if (argv) {
+            g_strfreev(argv);
+            argv = nullptr;
         };
-    };
-    // Free memory
-    for(int i = 0; i < argc; ++i) {
-        free(argv_copy[i]);
-    }
-    /* Phase 2: apply effects */
-    /* mutual exclusion: -i and -m cannot be used together */
-    if (i_set && m_set) {
-        err_msg = error( __PRETTY_FUNCTION__,
-                         _("Conflicting options"),
-                         _("-i and -m are mutually exclusive") );
-        LOG_ERR( err_msg );
-        LOG( help_format(argv[0], opts) );
-        LOG(LOG_OUT());
-        return 1;
-    };
-    /* unified file load + fallback for -i / -m */
-    if (i_set || m_set) {
-        FILE* file = fopen(path.c_str(), "r");
-        if (file == NULL) {
-            iname = UI_FILE;
-            if (m_set) {
-                msg = _("Module ") + path + _(" doesn't exist or could not be read !!!");
-            } else {
-                msg = _("Interface file ") + path + _(" doesn't exist or could not be read !!!");
+        argv = command_line->get_arguments(argc);
+        argv_copy.resize(argc + 1);
+
+        for(int i = 0; i < argc; ++i) {
+            argv_copy[i] = strdup(argv[i]);   // deep copy
+        }
+        argv_copy[argc] = nullptr;
+
+        /* Phase 1: parse and collect */
+        optind = 0;   /* reentrancy: full reset of getopt internal state */
+        opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+        while ((opt = getopt_long(argc, argv_copy.data(), "i:m:h", long_options, nullptr)) != -1) {
+            switch (opt) {
+                case 'i':
+                    i_set = true;
+                    if (optarg) path = optarg;
+                    break;
+                case 'm':
+                    m_set = true;
+                    if (optarg) path = optarg;
+                    break;
+                case 'h':
+                    help_requested = true;
+                    break;
+                case '?':
+                default:
+                    /* Unknown option or missing argument: ignore here so that
+                    * options targeted at main or the module are preserved
+                    * for them to parse later. */
+                    break;
             };
-            LOG( msg );
-            msg = _("Loading default interface file.");
-            LOG( msg );
-        } else {
-            if (m_set) {
-                itype = "module";
-                msg = _("Loading module.");
-                LOG( msg );
-            };
-            iname = path;
-            fclose(file);
         };
-    };
-    if (help_requested) {
-        LOG( help_format(argv[0], opts) );
-        if (!m_set) {
+        // Free memory
+        for(size_t i = 0; i < argv_copy.size(); ++i){
+            free(argv_copy[i]);
+            argv_copy[i] = nullptr;
+        }
+        /* Phase 2: apply effects */
+        /* mutual exclusion: -i and -m cannot be used together */
+        if (i_set && m_set) {
+            msg_err = error( __PRETTY_FUNCTION__,
+                            _("Conflicting options"),
+                            _("-i and -m are mutually exclusive") );
+            LOG_ERR( msg_err );
+            LOG( help_format(argv[0], opts) );
             LOG(LOG_OUT());
-            return 0;
+            return 1;
         };
-    };
-    msg = _("Loading file: ") + iname;
-    LOG( msg );
-    LOG(LOG_OUT());
-    activate();
-    return 0;
+        /* unified file load + fallback for -i / -m */
+        if (i_set || m_set) {
+            FILE* file = fopen(path.c_str(), "r");
+            if (file == NULL) {
+                iname = UI_FILE;
+                if (m_set) {
+                    msg_log= _("Module ") + path + _(" doesn't exist or could not be read !!!");
+                } else {
+                    msg_log= _("Interface file ") + path + _(" doesn't exist or could not be read !!!");
+                };
+                LOG( msg_log);
+                msg_log= _("Loading default interface file.");
+                LOG( msg_log);
+            } else {
+                if (m_set) {
+                    itype = "module";
+                    msg_log= _("Loading module.");
+                    LOG( msg_log);
+                };
+                iname = path;
+                fclose(file);
+            };
+        };
+        if (help_requested) {
+            LOG( help_format(argv[0], opts) );
+            if (!m_set) {
+                LOG(LOG_OUT());
+                return 0;
+            };
+        };
+        msg_log= _("Loading file: ") + iname;
+        LOG( msg_log);
+        LOG(LOG_OUT());
+        activate();
+        return 0;
+    }catch(const std::exception& ex){
+        for(size_t i = 0; i < argv_copy.size(); ++i){
+            free(argv_copy[i]);
+            argv_copy[i] = nullptr;
+        }
+        msg_err = error( __PRETTY_FUNCTION__ , _("The analyse of command line parameter failed.") , ex.what());
+        LOG_ERR( msg_err );
+        LOG(LOG_OUT());
+        throw std::runtime_error(msg_err);
+		return 1;
+    };    
 };

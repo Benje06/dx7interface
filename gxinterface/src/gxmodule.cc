@@ -360,41 +360,56 @@ void Gx_module::destroy_main_window(){
 /*** MODULE ***/
 void Gx_module::analyse_param(char** argv, int argc){
     LOG(LOG_IN());
+    /* Phase 1: parse and collect — no side effects in the loop. */
+    int opt;
+    std::string color;
+    std::vector<char*> argv_copy(argc + 1);
+
     static const struct option long_options[] = {
         { "color",  required_argument, nullptr, 'c' },
         { nullptr,  0,                 nullptr,  0  }
     };
-    /* Phase 1: parse and collect — no side effects in the loop. */
-    std::string color;
-    optind = 0;   /* reentrancy: full reset of getopt internal state */
-    opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
-    std::vector<char*> argv_copy(argc + 1);
-    for(int i = 0; i < argc; ++i) {
-        argv_copy[i] = strdup(argv[i]);   // deep copy
-    }
-    argv_copy[argc] = nullptr;
-    int opt;
-    while ((opt = getopt_long(argc, argv_copy.data(), "c:", long_options, nullptr)) != -1) {
-        switch (opt) {
-            case 'c':
-                if (optarg) color = optarg;
-                break;
-            case '?':
-            default:
-                /* Unknown option or missing argument: ignore here so that
-                 * options targeted at main, gxinterface or derived modules
-                 * are preserved for them to parse later. */
-                break;
+
+    try{
+        for(int i = 0; i < argc; ++i) {
+            argv_copy[i] = strdup(argv[i]);   // deep copy
+        }
+        argv_copy[argc] = nullptr;
+        optind = 0;   /* reentrancy: full reset of getopt internal state */
+        opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+        while ((opt = getopt_long(argc, argv_copy.data(), "c:", long_options, nullptr)) != -1) {
+            switch (opt) {
+                case 'c':
+                    if (optarg) color = optarg;
+                    break;
+                case '?':
+                default:
+                    /* Unknown option or missing argument: ignore here so that
+                    * options targeted at main, gxinterface or derived modules
+                    * are preserved for them to parse later. */
+                    break;
+            };
         };
-    };
-    // Free memory
-    for(int i = 0; i < argc; ++i) {
-        free(argv_copy[i]);
-    }
-    /* Phase 2: apply effects */
-    if (!color.empty()) {
-        mod.color = color;
-    };
+        // Free memory
+        for(size_t i = 0; i < argv_copy.size(); ++i){
+            free(argv_copy[i]);
+            argv_copy[i] = nullptr;
+        }
+        /* Phase 2: apply effects */
+        if (!color.empty()) {
+            mod.color = color;
+        };
+    }catch(const std::exception& ex){
+        // Free memory
+        for(size_t i = 0; i < argv_copy.size(); ++i){
+            free(argv_copy[i]);
+            argv_copy[i] = nullptr;
+        }
+        msg_err = error( __PRETTY_FUNCTION__ , _("failed.") , ex.what());
+        LOG_ERR( msg_err );
+        LOG(LOG_OUT());
+        throw std::runtime_error(msg_err);
+	};
     LOG(LOG_OUT());
 };
 void Gx_module::extractPath(const Glib::ustring& filename){

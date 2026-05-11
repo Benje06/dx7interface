@@ -51,13 +51,14 @@
 
 class Gx_interface: public Gtk::Application {
 	private:
+		int argc = 0;
+        char** argv = nullptr;
+		std::string msg_err="", msg_log="";
 		/* Application variables */
 		Glib::ustring itype;						/* interface type */
 		Glib::ustring iname;						/* interface name */
-		std::string err_msg, msg;
 		Gemod* module_manager = nullptr;			/* gestionnaire de module */
-		int argc;
-        char** argv = nullptr;
+
 		Gx_interface();
 		~Gx_interface();
 		/* Override of Gtk::Application */

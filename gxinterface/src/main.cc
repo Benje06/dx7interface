@@ -54,31 +54,31 @@ int main (int argc, char *argv[]){
     LOG("*******************************************************************");
 
     LOG(LOG_IN());
+    static const std::vector<help_options> opts = {
+        { 'h', "help",      "",
+            { _("display this help and exit") }
+        },
+        { 'g', "gui-mode",  "g",
+            { _("graphic interface mode (supported: g, default: g)") }
+        },
+        { 'l', "log-level", "[0/1/2]",
+            { _("log level: 0=no log, 1=log to file,"),
+                _("2=log to file and console (default: 2)") }
+        }
+    };
+    static const struct option long_options[] = {
+        { "gui-mode",  required_argument, nullptr, 'g' },
+        { "log-level", required_argument, nullptr, 'l' },
+        { "help",      no_argument,       nullptr, 'h' },
+        { nullptr,     0,                 nullptr,  0  }
+    };
+    /* check params */
+    optind = 0;   /* reentrancy: full reset of getopt internal state */
+    opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
+
+    std::vector<char*> argv_copy(argc + 1);
     try{
         init_nls();
-        static const std::vector<help_options> opts = {
-            { 'h', "help",      "",
-                { _("display this help and exit") }
-            },
-            { 'g', "gui-mode",  "g",
-                { _("graphic interface mode (supported: g, default: g)") }
-            },
-            { 'l', "log-level", "[0/1/2]",
-                { _("log level: 0=no log, 1=log to file,"),
-                  _("2=log to file and console (default: 2)") }
-            }
-        };
-        static const struct option long_options[] = {
-            { "gui-mode",  required_argument, nullptr, 'g' },
-            { "log-level", required_argument, nullptr, 'l' },
-            { "help",      no_argument,       nullptr, 'h' },
-            { nullptr,     0,                 nullptr,  0  }
-        };
-        /* check params */
-        optind = 0;   /* reentrancy: full reset of getopt internal state */
-        opterr = 0;   /* silence getopt's own stderr; we log via LogManager */
-
-        std::vector<char*> argv_copy(argc + 1);
         for(int i = 0; i < argc; ++i) {
             argv_copy[i] = strdup(argv[i]);   // deep copy
         }
@@ -110,6 +110,7 @@ int main (int argc, char *argv[]){
         // Free memory
         for(int i = 0; i < argc; ++i) {
             free(argv_copy[i]);
+            argv_copy[i] = nullptr;
         }
         /* apply parameters */
         if (log_lvl_set) {
@@ -140,6 +141,10 @@ int main (int argc, char *argv[]){
             };
         };
     }catch(const std::exception& ex){
+        for(size_t i = 0; i < argv_copy.size(); ++i){
+            free(argv_copy[i]);
+            argv_copy[i] = nullptr;
+        }
         err_msg = error( __PRETTY_FUNCTION__, _("Error: in application start -> ") , ex.what() );
         LOG_ERR( err_msg );
         LOG(LOG_OUT());
