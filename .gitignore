@@ -371,11 +371,8 @@ gxinterface/src/.libs/lt-gxinterface.c
 dx7interface/src/.deps/dx7interface_0_0_1_la-dx7interface.Tpo
 dx7interface/m4/opus.m4
 dx7interface/m4/ogg.m4
-.gitignore
 dx7interface/autoscan-2.73.log
 dx7interface/config/config.guess~
-.gitignore
-.gitignore
 dx7interface/m4/gst-element-check-1.0.m4
 dx7interface/m4/vorbis.m4
 dx7interface/src/.dirstamp
@@ -419,3 +416,10 @@ gxinterface/lib/.libs/libgxlogmanager-0.0.1.lai
 dx7interface/lib/libgxgtkclass-0.0.1.la
 dx7interface/lib/libgxsynth-0.0.1.la
 dx7interface/config/config.sub~
+gxinterface/lib/libgxthread-0.0.1.la
+gxinterface/lib/.libs/libgxthread-0.0.1-1.dll
+gxinterface/lib/.libs/libgxthread-0.0.1.a
+gxinterface/lib/.libs/libgxthread-0.0.1.dll.a
+gxinterface/lib/.libs/libgxthread-0.0.1.la
+gxinterface/lib/.libs/libgxthread-0.0.1.lai
+gxinterface/src/.libs/gxinterface.exe
