@@ -1,5 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 0.95.1 -->
 <interface domain="dx7interface">
   <!-- interface-name dx7interface-0.0.1-simplify.ui -->
   <requires lib="gio" version="2.44"/>
@@ -2537,8 +2536,8 @@
                                         <property name="model">
                                           <object class="GtkStringList">
                                             <items>
-                                              <item translatable="no">RATIO</item>
-                                              <item translatable="no">FIXED</item>
+                                              <item translatable="yes">RATIO</item>
+                                              <item translatable="yes">FIXED</item>
                                             </items>
                                           </object>
                                         </property>
@@ -5687,6 +5686,20 @@
                                     </object>
                                 </child>
                                 <child>
+                                  <object class="GtkButton" id="btn_reconnect_midi">
+                                    <property name="focusable">1</property>
+                                    <property name="label" translatable="yes">Reconnect MiDi</property>
+                                    <property name="margin-bottom">4</property>
+                                    <property name="margin-top">4</property>
+                                    <property name="receives-default">1</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="column-span">2</property>
+                                      <property name="row">5</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
                                   <object class="GtkButton" id="btn_panic">
                                     <property name="focusable">1</property>
                                     <property name="label" translatable="yes">panic</property>
@@ -5696,7 +5709,7 @@
                                     <layout>
                                       <property name="column">0</property>
                                       <property name="column-span">2</property>
-                                      <property name="row">5</property>
+                                      <property name="row">6</property>
                                     </layout>
                                   </object>
                                 </child>
@@ -5710,7 +5723,7 @@
                                         <layout>
                                             <property name="column">0</property>
                                             <property name="column-span">2</property>
-                                            <property name="row">6</property>
+                                            <property name="row">7</property>
                                         </layout>
                                     </object>
                                 </child>
@@ -5720,7 +5733,7 @@
                                         <layout>
                                             <property name="column">0</property>
                                             <property name="column-span">2</property>
-                                            <property name="row">7</property>
+                                            <property name="row">8</property>
                                         </layout>
                                     </object>
                                 </child>
@@ -5730,7 +5743,7 @@
                                         <layout>
                                             <property name="column">0</property>
                                             <property name="column-span">2</property>
-                                            <property name="row">8</property>
+                                            <property name="row">9</property>
                                         </layout>
                                     </object>
                                 </child>
