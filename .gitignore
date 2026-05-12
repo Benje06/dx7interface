@@ -423,3 +423,5 @@ gxinterface/lib/.libs/libgxthread-0.0.1.dll.a
 gxinterface/lib/.libs/libgxthread-0.0.1.la
 gxinterface/lib/.libs/libgxthread-0.0.1.lai
 gxinterface/src/.libs/gxinterface.exe
+dx7interface/lib/Makefile
+dx7interface/lib/Makefile.in
