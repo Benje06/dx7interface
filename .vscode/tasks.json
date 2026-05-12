@@ -1,9 +1,8 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        {   "label": "GX Autogen",
+        {
+            "label": "GX Autogen",
             "type": "shell",
             "command": "./autogen.sh",
             "args": [
@@ -28,7 +27,8 @@
                 "cwd": "${workspaceFolder}/gxinterface"
             }
         },
-        {   "label": "GX Autogen DEBUG",
+        {
+            "label": "GX Autogen DEBUG",
             "type": "shell",
             "command": "./autogen.sh",
             "args": [
@@ -44,7 +44,6 @@
                 "'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable'",
                 "'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable'",
                 "'LDFLAGS=-ggdb3'"
-                    
             ],
             "problemMatcher": [
                 "$gcc"
@@ -59,7 +58,8 @@
                 }
             }
         },
-        {    "label": "GX Make",
+        {
+            "label": "GX Make",
             "type": "shell",
             "command": "make -j3",
             "group": {
@@ -71,7 +71,8 @@
                 "cwd": "${workspaceFolder}/gxinterface"
             }
         },
-        {  "label": "GX Install",
+        {
+            "label": "GX Install",
             "type": "shell",
             "command": "make DESTDIR=/d/gxinterface/package install",
             "problemMatcher": [
@@ -83,7 +84,8 @@
                 "cwd": "${workspaceFolder}/gxinterface"
             }
         },
-        {   "label": "GX Install UCRT64",
+        {
+            "label": "GX Install UCRT64",
             "type": "shell",
             "command": "make install",
             "problemMatcher": [
@@ -95,7 +97,8 @@
                 "cwd": "${workspaceFolder}/gxinterface"
             }
         },
-        {   "label": "GX Clean",
+        {
+            "label": "GX Clean",
             "type": "shell",
             "command": "make clean || true",
             "group": "none",
@@ -105,7 +108,8 @@
             },
             "problemMatcher": []
         },
-        {   "label": "GX Distclean",
+        {
+            "label": "GX Distclean",
             "type": "shell",
             "command": "make distclean || true",
             "problemMatcher": [
@@ -120,7 +124,8 @@
                 "cwd": "${workspaceFolder}/gxinterface"
             }
         },
-        {   "label": "Gxinterface: Full Build",
+        {
+            "label": "Gxinterface: Full Build",
             "dependsOn": [
                 "GX Distclean",
                 "GX Autogen",
@@ -132,7 +137,8 @@
             "dependsOrder": "sequence",
             "problemMatcher": []
         },
-        {   "label": "Gxinterface: Full Build DEBUG",
+        {
+            "label": "Gxinterface: Full Build DEBUG",
             "dependsOn": [
                 "GX Distclean",
                 "GX Autogen DEBUG",
@@ -143,7 +149,8 @@
             "group": "none",
             "dependsOrder": "sequence"
         },
-        {   "label": "Dx7interface: Full Build",
+        {
+            "label": "Dx7interface: Full Build",
             "dependsOn": [
                 "DX Distclean",
                 "DX Autogen",
@@ -153,7 +160,8 @@
             "group": "none",
             "dependsOrder": "sequence"
         },
-        {   "label": "Dx7interface: Full Build DEBUG",
+        {
+            "label": "Dx7interface: Full Build DEBUG",
             "dependsOn": [
                 "DX Distclean",
                 "DX Autogen DEBUG",
@@ -163,7 +171,8 @@
             "group": "none",
             "dependsOrder": "sequence"
         },
-        {   "label": "DX Autogen",
+        {
+            "label": "DX Autogen",
             "type": "shell",
             "command": "./autogen.sh",
             "args": [
@@ -189,7 +198,8 @@
             "group": "build",
             "detail": "Generate configure script"
         },
-        {   "label": "DX Autogen DEBUG",
+        {
+            "label": "DX Autogen DEBUG",
             "type": "shell",
             "command": "./autogen.sh",
             "args": [
@@ -204,7 +214,7 @@
                 "--enable-console=1",
                 "'CFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -Wextra -Wno-unused-but-set-variable'",
                 "'CXXFLAGS=-DGIOMM_DISABLE_DEPRECATED -DGLIBMM_DISABLE_DEPRECATED -DGDKMM_DISABLE_DEPRECATED -DGTKMM_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -ggdb3 -O0 -Wall -fno-inline -std=c++17 -Wno-unused-but-set-variable'",
-                "'LDFLAGS=-ggdb3'"                   
+                "'LDFLAGS=-ggdb3'"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -219,7 +229,8 @@
                 }
             }
         },
-        {   "label": "DX Make",
+        {
+            "label": "DX Make",
             "type": "shell",
             "command": "make -j3",
             "group": {
@@ -231,7 +242,8 @@
                 "cwd": "${workspaceFolder}/dx7interface"
             }
         },
-        {   "label": "DX Install",
+        {
+            "label": "DX Install",
             "type": "shell",
             "command": "make DESTDIR=/d/gxinterface/package install",
             "problemMatcher": [
@@ -243,7 +255,8 @@
                 "cwd": "${workspaceFolder}/dx7interface"
             }
         },
-        {   "label": "DX Clean",
+        {
+            "label": "DX Clean",
             "type": "shell",
             "command": "make clean || true",
             "group": "none",
@@ -252,7 +265,8 @@
                 "cwd": "${workspaceFolder}/dx7interface"
             }
         },
-        {   "label": "DX Distclean",
+        {
+            "label": "DX Distclean",
             "type": "shell",
             "command": "make distclean || true",
             "problemMatcher": [
@@ -267,7 +281,8 @@
                 "cwd": "${workspaceFolder}/dx7interface"
             }
         },
-        {   "label": "UCRT clean",
+        {
+            "label": "UCRT clean",
             "type": "shell",
             "command": "rm",
             "args": [
@@ -331,7 +346,6 @@
                 "/usr/bin/libgxlogmanager-0.0.1-1.dll",
                 "/bin/libgxinterface-0.0.1-1.dll",
                 "/bin/libgxlogmanager-0.0.1-1.dll"
-
             ],
             "problemMatcher": [
                 "$gcc"
@@ -342,7 +356,8 @@
                 "cwd": "${workspaceFolder}/dx7interface"
             }
         },
-        {   "label": "Build PACKAGE",
+        {
+            "label": "Build PACKAGE",
             "type": "shell",
             "command": "makensis script.nsi",
             "group": "none",
@@ -351,7 +366,8 @@
                 "cwd": "${workspaceFolder}"
             }
         },
-        {   "label": "Build PACKAGE DEBUG",
+        {
+            "label": "Build PACKAGE DEBUG",
             "type": "shell",
             "command": "makensis script_debug.nsi",
             "group": "none",
@@ -360,7 +376,8 @@
                 "cwd": "${workspaceFolder}"
             }
         },
-        {   "label": "Build ALL",
+        {
+            "label": "Build ALL",
             "type": "shell",
             "command": "makensis script.nsi",
             "dependsOn": [
@@ -376,7 +393,8 @@
                 "cwd": "${workspaceFolder}"
             }
         },
-        {   "label": "Build ALL DEBUG",
+        {
+            "label": "Build ALL DEBUG",
             "type": "shell",
             "command": "echo \"done\"",
             "dependsOn": [
@@ -391,6 +409,26 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             }
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc.exe build active file",
+            "command": "D:/crosscompile/msys2/ucrt64/bin/gcc.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+            ],
+            "options": {
+                "cwd": "D:/crosscompile/msys2/ucrt64/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Task generated by Debugger."
         }
     ]
 }
