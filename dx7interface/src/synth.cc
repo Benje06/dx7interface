@@ -1,15 +1,17 @@
 /* app */
 #include "synth.h"
 
-Synth::Synth(Glib::ustring name){
+Synth::Synth(const Glib::ustring& name){
     caller = name;
     LOG( caller );
     LOG( LOG_IN());
     init_nls();
+/*
     #if defined(__RtMidi__)
         port_in = new RtMidiIn();
         port_out = new RtMidiOut();
     #endif
+*/
     connect_midi(name);
     LOG( caller );
     LOG( LOG_OUT());
@@ -28,7 +30,7 @@ void Synth::block_midi(){
     block_midi_msg=true;
 };
 
-void Synth::connect_midi(Glib::ustring name){
+void Synth::connect_midi(const Glib::ustring& name){
     LOG( LOG_IN());
     #if defined(__ALSA__)
         snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_DUPLEX, 0);
@@ -59,10 +61,13 @@ void Synth::connect_midi(Glib::ustring name){
     #endif
     #if defined(__RtMidi__)
         try {
-            int port_out_index = 0;
-            int port_in_index = 0;
-
-            unsigned int portCount;
+            int port_out_index = -1;
+            int port_in_index = -1;
+            unsigned int portCount = 0;
+            bool good_name=false;
+            std::string phantom = "";
+            port_in = new RtMidiIn();
+            port_out = new RtMidiOut();
             portCount = port_in->getPortCount();
             if (portCount == 0) {
                 LOG( std::string(_("No MIDI Input Ports available.")));
@@ -70,16 +75,31 @@ void Synth::connect_midi(Glib::ustring name){
                 LOG( std::string(_("Available Midi Input Ports: ")));
                 for (unsigned int i = 0; i < portCount; i++) {
                     std::string portName = port_in->getPortName(i);
-                    if( portName.find(name+"_in") == 0 ){
-                        port_in_index = i;
-                    }
-                    LOG( std::string(std::to_string(i) + ": " + std::string(portName) ));
+                    try {
+                        port_in->openPort(i);
+                        if(portName.find(name+"_in") == 0){
+                            port_in_index = i;
+                        }
+                        port_in->closePort();
+                    } catch (const RtMidiError& ex) {
+                        /* port fantôme : nom listé par WinMM mais device disparu */
+                        LOG_ERR( std::string(_("Phantom MIDI input port (WinMM cache): "))
+                                 + portName + " — " + ex.getMessage() );
+                        phantom = _(" (Phantom port)");
+                    }               
+                    LOG( std::string(std::to_string(i) + ": " + std::string(portName) + std::string(phantom)));
+                    phantom = "";
                 }
-                port_in->openPort(port_in_index);
-                port_in_name = port_in->getPortName(port_in_index);
-                LOG( std::string(_("Opened MIDI Input Port: ")) + std::string(port_in->getPortName(port_in_index)));
-                port_in->setCallback(&Synth::midiInCallback, this);
-            }
+                if(port_in_index != -1){
+                    port_in->openPort(port_in_index);
+                    port_in_name = port_in->getPortName(port_in_index);
+                    LOG( std::string(_("Opened MIDI Input Port: ")) + std::string(port_in->getPortName(port_in_index)));
+                    port_in->setCallback(&Synth::midiInCallback, this);
+                    // Don't ignore sysex, timing, or active sensing messages.
+                    port_in->ignoreTypes( false, false, false );
+                };
+            };
+            good_name=false;
             portCount = port_out->getPortCount();
             if (portCount == 0) {
                 LOG( std::string(_("No MIDI Output Ports available.")));
@@ -87,14 +107,26 @@ void Synth::connect_midi(Glib::ustring name){
                 LOG( std::string(_("Available Midi Ouput Ports: ")));
                 for (unsigned int i = 0; i < portCount; i++) {
                     std::string portName = port_out->getPortName(i);
-                    if( portName.find(name+"_out") == 0 ){
-                        port_out_index = i;
-                    }
-                    LOG( std::string(std::to_string(i) + std::string(": ") + std::string(portName)));
-                }
-                port_out->openPort(port_out_index);
-                port_out_name = port_out->getPortName(port_out_index);
-                LOG( std::string(_("Opened MIDI Output Port: ")) + std::string(port_out->getPortName(port_out_index)));
+                    try {
+                        port_out->openPort(i);
+                        if(portName.find(name+"_out") == 0){
+                            port_out_index = i;
+                        }
+                        port_out->closePort();
+                    }catch (const RtMidiError& ex) {
+                        /* port fantôme : nom listé par WinMM mais device disparu */
+                        LOG_ERR( std::string(_("Phantom MIDI output port (WinMM cache): "))
+                                 + portName + " — " + ex.getMessage() );
+                        phantom = _(" (Phantom port)");
+                    };
+                    LOG( std::string(std::to_string(i) + ": " + std::string(portName) + std::string(phantom)));
+                    phantom = "";
+                };
+                if(port_in_index != -1){
+                    port_out->openPort(port_out_index);
+                    port_out_name = port_out->getPortName(port_out_index);
+                    LOG( std::string(_("Opened MIDI Output Port: ")) + std::string(port_out->getPortName(port_out_index)));
+                };
             }
             // Open virtual ports with specified names
             //port_in->openVirtualPort(port_in_name);
@@ -124,9 +156,24 @@ void Synth::deconnect_midi(){
             port_out->closePort(); // Close the virtual output port
             LOG( std::string(_("Disconnected MIDI output port: ")) + std::string(port_out_name) );
         };
+        if(port_in){
+            LOG("delete IN");
+            delete port_in;
+            port_in=nullptr;
+        };
+        if(port_out){
+            LOG("delete OUT");
+            delete port_out;
+            port_out=nullptr;
+        }
     #endif
     LOG( LOG_OUT());
 };
+
+void Synth::reconnect_midi(const Glib::ustring& name){
+    deconnect_midi();
+    connect_midi(name);
+}
 
 void Synth::send_midi(char ev_type, unsigned int size, unsigned char *msg){
     //LOG( LOG_IN());
@@ -256,7 +303,7 @@ void Synth::set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File> ban
             }
         }
     };
-    int Synth::get_last_interface_with_name(Glib::ustring name){
+    int Synth::get_last_interface_with_name(const Glib::ustring& name){
         int count = 0;
         snd_seq_client_info_t *cinfo;
         snd_seq_client_info_alloca(&cinfo);

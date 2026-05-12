@@ -69,7 +69,7 @@ extern "C" {
 
 class Dx7interface : public Gx_module, public Synth {
     public:
-        Dx7interface(Glib::ustring ui, uint8_t index);
+        Dx7interface(const Glib::ustring& ui, uint8_t index);
         virtual ~Dx7interface();
         //void add_action();
 
@@ -77,8 +77,8 @@ class Dx7interface : public Gx_module, public Synth {
         /**** Generic ****/
         std::shared_ptr<int> pending_remove = std::make_shared<int>(0); // counter storing box remove pending task
 
-        using FunctionPtr = void (Dx7interface::*)(bool);                             /* abstract for function without parameters */
-        using FunctionPtrInt = void (Dx7interface::*)(int);                       /* abstract for function with int parameter */
+        using FunctionPtr = void (Dx7interface::*)(bool);               /* abstract for function without parameters */
+        using FunctionPtrInt = void (Dx7interface::*)(int);             /* abstract for function with int parameter */
 
         #ifdef __linux__ 
             /*** ALSA MIDI ***/
@@ -136,17 +136,17 @@ class Dx7interface : public Gx_module, public Synth {
         void update_modified();
         template<class ListStoreType>
         void update_data_model_number(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
-                               Glib::ustring number);
+                                      const Glib::ustring& number);
         template<class ListStoreType>
         void update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
-                               Glib::ustring sound_name);
+                               const Glib::ustring& sound_name);
         template<class ListStoreType>
         void update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
                                     BankVariant& bank_modif_dest);
         template<class ListStoreType>
         void update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model,
                                      unsigned int index_element,
-                                     Glib::ustring name);
+                                     const Glib::ustring& name);
 
         /*** MIDI LEARN ***/
         bool midi_learn=false;
@@ -175,8 +175,8 @@ class Dx7interface : public Gx_module, public Synth {
                               int function_index);
         void rem_midi_learned(int param_number,
                               int function_index);
-        void add_midi_learn_param_widget(Glib::ustring function_name,
-                                         Glib::ustring param_number,
+        void add_midi_learn_param_widget(const Glib::ustring& function_name,
+                                         const Glib::ustring& param_number,
                                          int selected_item);
         /* CREATE MIDI LEARN LIST */
         void create_param_list();
@@ -586,7 +586,7 @@ class Dx7interface : public Gx_module, public Synth {
         void select_voice(unsigned int position);
         void clean_bank();  // read reset1.syx reset32.syx reset128.syx (empty file 0x00 of specified number of voice)
         void set_bank(unsigned int, Glib::RefPtr<Gio::File> file);
-        void set_bank_name(Glib::ustring name);
+        void set_bank_name(const Glib::ustring& name);
         void set_bank_sounds(unsigned int datat_stream_index,
                              Glib::RefPtr<Gio::File> file);
         void receive_bank(std::vector<uint8_t> sysex_buffer);
@@ -691,7 +691,7 @@ class Dx7interface : public Gx_module, public Synth {
                         st_dx7sysex_1* sound);     // get voice param from file to fill sound struct
         void seek_voice_by_byte(Glib::RefPtr<Gio::DataInputStream> data_stream,
                                 st_dx7sysex_1* sound);     // get voice param from file to fill sound struct
-        void seek_parameters(Glib::ustring file_base,
+        void seek_parameters(const Glib::ustring& file_base,
                              St_dx7sysex_1* sound); // get sound parameter from file to fill sound controllers param struct
         void seek_voice_parameters(St_dx7sysex_1* sound);
         void init_controllers_parameters(St_dx7sysex_1* sound);
@@ -718,7 +718,7 @@ class Dx7interface : public Gx_module, public Synth {
         std::array<double, 4> bg_color = {0.0, 0.0, 0.0, 0.0};
         /* Cairomm context helpers */
         int* get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>& cr,
-                                 Glib::ustring name);  /* retourne la taille de sla zone visible */
+                                 const Glib::ustring& name);  /* retourne la taille de sla zone visible */
         /* ADSR */
         void redraw_all_curve();
         void draw_background(const Cairo::RefPtr<Cairo::Context>& cr);                                 /* dessine le fond */
@@ -728,7 +728,7 @@ class Dx7interface : public Gx_module, public Synth {
         void draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr,
                        double width,
                        double height,
-                       Glib::ustring name);        /* dessine la courbe */
+                       const Glib::ustring& name);        /* dessine la courbe */
         void draw_point(const Cairo::RefPtr<Cairo::Context>& cr,
                         double x,
                         double y,
@@ -741,20 +741,20 @@ class Dx7interface : public Gx_module, public Synth {
         void draw_kls(const Cairo::RefPtr<Cairo::Context>& cr,
                       double width,
                       double height,
-                      Glib::ustring);         /* dessine la courbe */
+                      const Glib::ustring&);         /* dessine la courbe */
         void draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr,
                            double width,
                            double height,
-                           Glib::ustring num_op);    /*dessine le clavier */
+                           const Glib::ustring& num_op);    /*dessine le clavier */
         void draw_axis(const Cairo::RefPtr<Cairo::Context>& cr,
                        double width,
                        double height);                       /* dessine les axes */
         void draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr,
-                            Glib::ustring type_curve,
+                            const Glib::ustring& type_curve,
                             double width,
                             double height,
                             double dpth,
-                            Glib::ustring dir,
+                            const Glib::ustring& dir,
                             double lvl); /* draw kls curve type */
 
         /* Mouse Gesture */
@@ -772,11 +772,11 @@ class Dx7interface : public Gx_module, public Synth {
         void mouse_click(int n_press,
                          double x,
                          double y,
-                         Glib::ustring name);
+                         const Glib::ustring& name);
         void mouse_click_release(int n_press,
                                  double x,
                                  double y,
-                                 Glib::ustring name);
+                                 const Glib::ustring& name);
         /* Mouse mooves */
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op1;
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_op2;
@@ -787,7 +787,7 @@ class Dx7interface : public Gx_module, public Synth {
         Glib::RefPtr<Gtk::EventControllerMotion> controller_mouse_moove_pitch;
         void mouse_mooves(double x,
                           double y,
-                          Glib::ustring name);
+                          const Glib::ustring& name);
 
         /*** UI ***/
         FunctionPtr mute_by_level_functions[6] = {
@@ -825,11 +825,11 @@ class Dx7interface : public Gx_module, public Synth {
         void on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,
                               int width,
                               int height,
-                              Glib::ustring num_op);
+                              const Glib::ustring& num_op);
         void on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,
                                int width,
                                int height,
-                               Glib::ustring num_op);
+                               const Glib::ustring& num_op);
 
         /*** EVENTS and SIGC ::connection slot for blocking ***/
         /** BANK **/
@@ -850,8 +850,8 @@ class Dx7interface : public Gx_module, public Synth {
         void on_setup_sound_number_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align);
         void on_setup_sound_name_label(const Glib::RefPtr<Gtk::ListItem>& list_item, Gtk::Align);
         void on_sound_name_event();
-        Glib::ustring check_sound_name(Glib::ustring ssound_name); // check valid caracter for soundname entered in textbox
-        void set_sound_name(Glib::ustring sound_name);
+        Glib::ustring check_sound_name(const Glib::ustring& ssound_name); // check valid caracter for soundname entered in textbox
+        void set_sound_name(const Glib::ustring& sound_name);
         sigc::connection slot_sound_name_activate;
         sigc::connection slot_sound_name_change;
         /** Functions parameters **/
@@ -861,6 +861,8 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_midi_channel_send;
         void on_midi_channel_receive_event();
         sigc::connection slot_midi_channel_receive;
+        void on_midi_reconnect_event();
+        sigc::connection slot_btn_reconnect_midi;
 
         void on_mono_poly_event();
         sigc::connection slot_poly;

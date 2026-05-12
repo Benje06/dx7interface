@@ -29,7 +29,7 @@ extern "C" {
     };
 };
 
-Dx7interface::Dx7interface(Glib::ustring ui, uint8_t index) :  Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME) {
+Dx7interface::Dx7interface(const Glib::ustring& ui, uint8_t index) :  Gx_module(ui,MODULE_NAME), Synth(MODULE_NAME) {
     /*basic constructor */
     /* 
      * Debug for logmanager
@@ -159,7 +159,7 @@ void Dx7interface::rem_midi_learned(int param_number, int function_index){
     };
     //LOG( LOG_OUT() );
 };
-void Dx7interface::add_midi_learn_param_widget(Glib::ustring function_name, Glib::ustring param_number, int selected_item){
+void Dx7interface::add_midi_learn_param_widget(const Glib::ustring& function_name, const Glib::ustring& param_number, int selected_item){
     //LOG( LOG_IN() );
     // TODO: check param_number is a numeric
     auto box = get_gwidget<Gtk::Box>("box_listen_affect_param");
@@ -891,7 +891,7 @@ void Dx7interface::set_init_voice_in_origin(){
     LOG( LOG_OUT() );
 };
 
-void Dx7interface::set_bank_name(Glib::ustring name){
+void Dx7interface::set_bank_name(const Glib::ustring& name){
     get_gwidget<Gtk::Button>("bank_select")->set_label(name);
 };
 
@@ -1338,7 +1338,6 @@ void Dx7interface::on_receive_bank(){
     };
 };
 
-
 /* SEND / SAVE */
 void Dx7interface::on_send_bank(){
     send_bank=true;
@@ -1541,16 +1540,16 @@ void Dx7interface::write_bank_as_raw(unsigned int data_stream_index, Glib::RefPt
 };
 /*** VOICE ***/
 /* Sound Name modification */
-Glib::ustring Dx7interface::check_sound_name(Glib::ustring sound_name){
+Glib::ustring Dx7interface::check_sound_name(const Glib::ustring& sound_name){
     // LOG( LOG_IN() );
-    sound_name = sound_name.substr(0, 10);
-    unsigned int missing_char = 10 - sound_name.length();
+    Glib::ustring tmp_sound_name = sound_name.substr(0, 10);
+    unsigned int missing_char = 10 - tmp_sound_name.length();
     for( unsigned int i=0; i < missing_char ;i++){
-        sound_name += ' ';
+        tmp_sound_name += ' ';
     }
-    sound_name = str_to_ascii(sound_name);
+    tmp_sound_name = str_to_ascii(tmp_sound_name);
     // LOG( LOG_OUT() );
-    return sound_name;
+    return tmp_sound_name;
 };
 void Dx7interface::update_modified(){
     if(!bank_1_modif.sound->modified){
@@ -1560,7 +1559,7 @@ void Dx7interface::update_modified(){
     };
 };
 template<class ListStoreType>
-void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int index_element, Glib::ustring name){
+void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, unsigned int index_element, const Glib::ustring& name){
     auto param = ListStoreType::create(name);
     if( !data_model->get_item(index_element) ){
         data_model->insert(index_element, param);
@@ -1569,7 +1568,7 @@ void Dx7interface::update_param_data_model(Glib::RefPtr<Gio::ListStore<ListStore
     };
 };
 template<class ListStoreType>
-void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring sound_name){
+void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, const Glib::ustring& sound_name){
     auto sound = ListStoreType::create(std::to_string(snum),sound_name);
     if( !data_model->get_item(snum) ){
         data_model->insert(snum, sound);
@@ -1578,7 +1577,7 @@ void Dx7interface::update_data_model(Glib::RefPtr<Gio::ListStore<ListStoreType>>
     };
 };
 template<class ListStoreType>
-void Dx7interface::update_data_model_number(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, Glib::ustring number){
+void Dx7interface::update_data_model_number(Glib::RefPtr<Gio::ListStore<ListStoreType>> data_model, const Glib::ustring& number){
     auto sound = ListStoreType::create(number, bank_1_modif.sound->name);
     if( !data_model->get_item(snum) ){
         data_model->insert(snum, sound);
@@ -1596,7 +1595,7 @@ void Dx7interface::update_data_model_full(Glib::RefPtr<Gio::ListStore<ListStoreT
     }, bank_modif_dest );
     snum=temp_snum;
 };
-void Dx7interface::set_sound_name(Glib::ustring sound_name){
+void Dx7interface::set_sound_name(const Glib::ustring& sound_name){
     // LOG( LOG_IN() );
     bank_1_modif.sound->name = sound_name;
     update_data_model<SoundBankItem>(bank_data_model, sound_name);
@@ -2133,7 +2132,7 @@ void Dx7interface::seek_voice_by_byte(Glib::RefPtr<Gio::DataInputStream> data_st
     //LOG( LOG_OUT() );
 };
 
-void Dx7interface::seek_parameters(Glib::ustring bank_file_base, St_dx7sysex_1* sound){
+void Dx7interface::seek_parameters(const Glib::ustring& bank_file_base, St_dx7sysex_1* sound){
     if(!hasStream(data_stream_in.at(DX7_VOICE_PARAM))){ // case fct for one sound
         Glib::ustring file_path = bank_file_base + sound->name + "_fct.syx";
         if( std::filesystem::exists( file_path.c_str() )){ 
@@ -3034,9 +3033,14 @@ void Dx7interface::attach_signals(){
     slot_btn_panic = (get_gwidget<Gtk::Button>("btn_panic"))->signal_clicked().connect(
         sigc::mem_fun(*this, &Dx7interface::on_panic_event));
 
-    /* */
+    /* reconnect_midi */
+    slot_btn_reconnect_midi = (get_gwidget<Gtk::Button>("btn_reconnect_midi"))->signal_clicked().connect(
+        sigc::mem_fun(*this, &Dx7interface::on_midi_reconnect_event));
+
+    /* Mute by op level */
     (get_gwidget<Gtk::CheckButton>("checkbutton_mute_by_level"))->signal_toggled().connect(
         sigc::mem_fun(*this, &Dx7interface::on_checkbutton_mute_by_level_event));
+    
     /* Algo */
     (get_gwidget<Gtk::DrawingArea>("drawingarea_algo"))->set_draw_func(
         sigc::mem_fun(*this, &Dx7interface::on_draw_algo) );
@@ -5060,7 +5064,7 @@ void Dx7interface::attach_signals(){
 };
 
 /*** Mouse gesture on drawingarea ***/
-void Dx7interface::mouse_mooves(double x, double y, Glib::ustring name){
+void Dx7interface::mouse_mooves(double x, double y, const Glib::ustring& name){
     if(p_drag != -1){
         double width = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_width();
         double height = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_height();
@@ -5085,7 +5089,7 @@ void Dx7interface::mouse_mooves(double x, double y, Glib::ustring name){
         (get_gwidget<Gtk::SpinButton>("eg_lvl"+tostr<int>(p_drag)+"_"+name))->set_value(val_y);
     };
 };
-void Dx7interface::mouse_click(int n_press, double x, double y, Glib::ustring name){
+void Dx7interface::mouse_click(int n_press, double x, double y, const Glib::ustring& name){
     //double width = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_width();
     double height = (double)get_gwidget<Gtk::DrawingArea>("drawingarea_eg_"+name)->get_height();
     y = std::abs(height - y);
@@ -5096,12 +5100,12 @@ void Dx7interface::mouse_click(int n_press, double x, double y, Glib::ustring na
         };
     };
 };
-void Dx7interface::mouse_click_release(int n_press, double x, double y, Glib::ustring name){
+void Dx7interface::mouse_click_release(int n_press, double x, double y, const Glib::ustring& name){
     p_drag=-1;
 };
 
 /*** DRAW FUNCTIONS ***/
-int* Dx7interface::get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>& cr, Glib::ustring name){
+int* Dx7interface::get_cr_visible_size(const Cairo::RefPtr<Cairo::Context>& cr, const Glib::ustring& name){
     int* size = nullptr;
     GdkSurface* surface = (get_gwidget<Gtk::DrawingArea>(name))->get_native()->get_surface()->gobj();
 
@@ -5200,7 +5204,7 @@ void Dx7interface::draw_note_off(const Cairo::RefPtr<Cairo::Context>& cr,double 
     cr->restore();
 };
 
-void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring name){
+void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, const Glib::ustring& name){
     //LOG( LOG_IN() );
     //set origin to bottom left
     cr->translate(0, height);
@@ -5256,7 +5260,7 @@ void Dx7interface::draw_adsr(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     //LOG( LOG_OUT() );
 };
 /* KLS */
-void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
+void Dx7interface::draw_keyboard(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, const Glib::ustring& num_op){
     //LOG( LOG_IN() );
     /* key touch */
     if (std::filesystem::exists(std::string(PROGRAMNAME_IMG_DIR"/touche_b.png"))
@@ -5415,7 +5419,7 @@ void Dx7interface::draw_axis(const Cairo::RefPtr<Cairo::Context>& cr, double wid
     //LOG( LOG_OUT() );
 };
 
-void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr, Glib::ustring type_curve, double width, double height, double dpth, Glib::ustring dir, double lvl){
+void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr, const Glib::ustring& type_curve, double width, double height, double dpth, const Glib::ustring& dir, double lvl){
     double half_width  = width/2.0;
     double half_height = (height/2.0) + ( (height)*(lvl - 50.0)/160.0 );
     double scale_factor = (100.0 - dpth) +25 ; // +25, to get 85 at max ( 85==100 depth)
@@ -5460,7 +5464,7 @@ void Dx7interface::draw_kls_curve(const Cairo::RefPtr<Cairo::Context>& cr, Glib:
     };
 };
 
-void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, Glib::ustring num_op){
+void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double width, double height, const Glib::ustring& num_op){
     //LOG( LOG_IN() );
     Glib::ustring rght_curve =(
         std::dynamic_pointer_cast<Gtk::StringObject>(
@@ -5488,7 +5492,7 @@ void Dx7interface::draw_kls(const Cairo::RefPtr<Cairo::Context>& cr, double widt
 
 /** EVENTS **/
 /* Draw */
-void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
+void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, const Glib::ustring& num_op){
     // LOG( LOG_IN() );
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
@@ -5501,7 +5505,7 @@ void Dx7interface::on_draw_kls_event(const Cairo::RefPtr<Cairo::Context>& cr,int
     // LOG( LOG_OUT() );
 };
 
-void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, Glib::ustring num_op){
+void Dx7interface::on_draw_op_event(const Cairo::RefPtr<Cairo::Context>& cr,int width, int height, const Glib::ustring& num_op){
     // LOG( LOG_IN() );
     if( cr && (width != 0) && (height != 0) ){
         double wdth=(double)width, hght=(double)height;
@@ -5601,7 +5605,9 @@ void Dx7interface::on_midi_channel_receive_event(){
     channel_receive = (get_gwidget<Gtk::SpinButton>("midi_channel_receive"))->get_value()-1;
     // LOG( LOG_OUT() );
 };
-
+void Dx7interface::on_midi_reconnect_event(){
+    reconnect_midi(MODULE_NAME);
+}
 
 /* Compare */
 void Dx7interface::on_compare_event(){

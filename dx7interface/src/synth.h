@@ -119,7 +119,7 @@
 
 class Synth : public Thread {
     public:
-        Synth(Glib::ustring);
+        Synth(const Glib::ustring&);
         virtual ~Synth();
     private:
         bool block_midi_msg;
@@ -136,7 +136,7 @@ class Synth : public Thread {
                 int spfd;                              /* taille de la file de queue */
                 struct pollfd *pfd;                    /* array de file de queue du sequenceur */
                 void list_midi_ports();
-                int get_last_interface_with_name(Glib::ustring);
+                int get_last_interface_with_name(const Glib::ustring&);
         #endif
         #if defined(__RtMidi__)
                 std::string port_in_name;
@@ -176,7 +176,7 @@ class Synth : public Thread {
         virtual void read_file_as_datastream(unsigned int data_stream_index, Glib::RefPtr<Gio::File>, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> funct) = 0;
         void parse_sysex(Glib::RefPtr<Gio::File>, Glib::RefPtr<Gio::DataInputStream>&, unsigned int&);
         void set_bank(unsigned int data_stream_index, Glib::RefPtr<Gio::File>, std::function<void(unsigned int, Glib::RefPtr<Gio::File>)> );
-        virtual void set_bank_name(Glib::ustring) = 0;      // function to set the name of the loaded bank on the ui
+        virtual void set_bank_name(const Glib::ustring&) = 0;      // function to set the name of the loaded bank on the ui
 
         /* MIDI */
         /*** MIDI ***/
@@ -204,8 +204,9 @@ class Synth : public Thread {
         #endif
         struct timespec ts = {0, 666666666L};
         size_t* get_seq_buffer_size();
-        void connect_midi(Glib::ustring);
+        void connect_midi(const Glib::ustring&);
         void deconnect_midi();
+        void reconnect_midi(const Glib::ustring&);
         void send_midi(char, unsigned int, unsigned char*);
         /* could be overrride in the synthé module itself*/
         #if defined(__ALSA__)
