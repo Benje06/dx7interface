@@ -282,7 +282,7 @@ void Dx7interface::clean_midi_learn(){
     };
     //LOG( LOG_OUT() );
 };
-void Dx7interface::read_midi_learned_param(unsigned int data_stream_index, Glib::RefPtr<Gio::File> param_file){
+void Dx7interface::read_midi_learned_param(unsigned int data_stream_index, const Glib::RefPtr<Gio::File>& param_file){
     LOG( LOG_IN() );
     clean_midi_learn();
     std::string line;
@@ -308,7 +308,7 @@ void Dx7interface::read_midi_learned_param(unsigned int data_stream_index, Glib:
     data_stream_in.at(data_stream_index)->close();
     LOG( LOG_OUT() );
 };
-void Dx7interface::save_midi_learned_param(unsigned int data_stream_index, Glib::RefPtr<Gio::File> param_file){
+void Dx7interface::save_midi_learned_param(unsigned int data_stream_index, const Glib::RefPtr<Gio::File>& param_file){
     auto output_stream = param_file->replace();
     data_stream_out.at(data_stream_index) = Gio::DataOutputStream::create(output_stream);
     std::string line;

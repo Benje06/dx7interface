@@ -159,12 +159,12 @@ class Dx7interface : public Gx_module, public Synth {
         sigc::connection slot_midi_learn_load;
         void on_midi_learn_param_select();
         void read_midi_learned_param(unsigned int data_stream_index,
-                                     Glib::RefPtr<Gio::File> file);
+                                     const Glib::RefPtr<Gio::File>& file);
         /* write */
         sigc::connection slot_midi_learn_save;
         void on_midi_learn_param_save();
         void save_midi_learned_param(unsigned int data_stream_index,
-                                     Glib::RefPtr<Gio::File> param_file);
+                                     const Glib::RefPtr<Gio::File>& param_file);
         /* clean */
         void clean_midi_learn();
 
