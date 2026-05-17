@@ -30,7 +30,7 @@ void Synth::block_midi(){
     block_midi_msg=true;
 };
 
-void Synth::connect_midi(const Glib::ustring& name){
+void Synth::connect_midi(Glib::ustring& name){
     LOG( LOG_IN());
     #if defined(__ALSA__)
         snd_seq_open(&seq_handle, "default", SND_SEQ_OPEN_DUPLEX, 0);
