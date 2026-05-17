@@ -206,7 +206,7 @@ class Synth : public Thread {
         size_t* get_seq_buffer_size();
         void connect_midi(Glib::ustring&);
         void deconnect_midi();
-        void reconnect_midi(const Glib::ustring&);
+        void reconnect_midi(Glib::ustring&);
         void send_midi(char, unsigned int, unsigned char*);
         /* could be overrride in the synthé module itself*/
         #if defined(__ALSA__)
