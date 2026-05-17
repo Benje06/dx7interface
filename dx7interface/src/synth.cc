@@ -170,7 +170,7 @@ void Synth::deconnect_midi(){
     LOG( LOG_OUT());
 };
 
-void Synth::reconnect_midi(Glib::ustring& name){
+void Synth::reconnect_midi(Glib::ustring name){
     deconnect_midi();
     connect_midi(name);
 }

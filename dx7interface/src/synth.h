@@ -204,7 +204,7 @@ class Synth : public Thread {
         #endif
         struct timespec ts = {0, 666666666L};
         size_t* get_seq_buffer_size();
-        void connect_midi(Glib::ustring&);
+        void connect_midi(Glib::ustring);
         void deconnect_midi();
         void reconnect_midi(Glib::ustring);
         void send_midi(char, unsigned int, unsigned char*);
