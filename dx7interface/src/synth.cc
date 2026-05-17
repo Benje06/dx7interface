@@ -1,7 +1,7 @@
 /* app */
 #include "synth.h"
 
-Synth::Synth(const Glib::ustring& name){
+Synth::Synth(Glib::ustring& name){
     caller = name;
     LOG( caller );
     LOG( LOG_IN());

@@ -119,7 +119,7 @@
 
 class Synth : public Thread {
     public:
-        Synth(const Glib::ustring&);
+        Synth(Glib::ustring&);
         virtual ~Synth();
     private:
         bool block_midi_msg;
