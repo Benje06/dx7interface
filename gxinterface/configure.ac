@@ -86,6 +86,7 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([libintl.h])
 AC_CHECK_HEADERS([fcntl.h])
 AC_CHECK_HEADERS([unistd.h])
+AC_CHECK_FUNCS([strdup])
 AM_COND_IF([PLATFORM_WINDOWS],[
     AC_CHECK_FUNCS([getcwd])
     AC_CHECK_FUNCS([putenv])
