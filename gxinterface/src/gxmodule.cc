@@ -686,6 +686,7 @@ void Gx_module::set_custom_font_file(const Glib::ustring& custom_font_file){
     LOG(LOG_OUT());
 };
 void Gx_module::load_custom_font() {
+    LOG(LOG_IN());
     /*
      * Function to load a custom font into Fontconfig
      * load_font_into_fontconfig: add font to fontconfig (working)
@@ -705,9 +706,11 @@ void Gx_module::load_custom_font() {
             LOG(LOG_OUT());
         };
     };
+    LOG(LOG_OUT());
 };
 /** Pango **/
 void Gx_module::load_font_into_pango() {  // Function to make the custom font available in Pango
+    LOG(LOG_IN());
     std::filesystem::path full_path;
     try{
         auto font_map = Pango::CairoFontMap::get_default();
@@ -722,6 +725,7 @@ void Gx_module::load_font_into_pango() {  // Function to make the custom font av
         LOG(LOG_OUT());
         throw std::runtime_error(msg_err);
     };
+    LOG(LOG_OUT());
 };
 void Gx_module::list_pango_fonts(){       // List all available font families
     try{
@@ -748,6 +752,7 @@ bool Gx_module::is_font_present(const Glib::ustring& font_name){
 };
 /** Windows **/
 void Gx_module::add_custom_font(const std::string& font_path) {
+    LOG(LOG_IN());
     /*
      * Function to load a custom font into Fontconfig
      * load_font_into_fontconfig: add font to fontconfig (working)
@@ -790,6 +795,7 @@ void Gx_module::add_custom_font(const std::string& font_path) {
             LOG_ERR( msg_err );
         };
     #endif
+    LOG(LOG_OUT());
 };
 /** Fontconfig **/
 FcConfig* Gx_module::load_font_into_fontconfig(const std::string& font_path) {
