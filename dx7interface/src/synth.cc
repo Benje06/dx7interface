@@ -511,7 +511,12 @@ bool Synth::Run() {
         msg = _("Channel: ") + std::to_string((channel));
         LOG( msg );
         switch (eventType) {
-            case 0x90: { // Note On
+            /*
+            #define SND_SEQ_EVENT_KEYPRESS 0xA0
+            #define SND_SEQ_EVENT_CHANPRESS 0xD0
+            #define SND_SEQ_EVENT_SENSING 0xFE
+            */
+            case SND_SEQ_EVENT_NOTEON: { // Note On
                 unsigned char note = message[1];
                 unsigned char velocity = message[2];
                 msg = _("Note: ") + std::to_string(int(note)) 
@@ -519,7 +524,7 @@ bool Synth::Run() {
                 LOG( msg );
                 break;
             }
-            case 0x80: { // Note Off
+            case SND_SEQ_EVENT_NOTEOFF: { // Note Off
                 unsigned char note = message[1];
                 unsigned char velocity = message[2];
                 msg = _("Note: ") + std::to_string(int(note))
@@ -527,7 +532,7 @@ bool Synth::Run() {
                 LOG( msg );
                 break;
             }
-            case 0xB0: { // Control Change
+            case SND_SEQ_EVENT_CONTROLLER: { // Control Change
                 unsigned char controller = message[1];
                 unsigned char value = message[2];
                 msg = _("Controller: ") + std::to_string(int(controller))
@@ -535,15 +540,21 @@ bool Synth::Run() {
                 LOG( msg );
                 break;
             }
-            case 0xE0: { // Pitch Bend
+            case SND_SEQ_EVENT_PITCHBEND: { // Pitch Bend
                 unsigned short pitchBend = (message[2] + 7) | message[1]; // Combine MSB and LSB
                 msg = _("Value: ") + pitchBend;
                 LOG( msg );
                 break;
             }
-            case 0xC0: { // Program Change
+            case SND_SEQ_EVENT_PGMCHANGE: { // Program Change
                 unsigned char program = message[1];
                 msg = _("Program: ") + std::to_string(int(program));
+                LOG( msg );
+                break;
+            }
+            case SND_SEQ_EVENT_SYSEX: { // Sysex Message
+                unsigned char sysexmsg = message[1];
+                msg = _("SysEx message: ") + std::to_string(int((message[2] + 7) | message[1]));
                 LOG( msg );
                 break;
             }
