@@ -11,6 +11,7 @@ src/gxinterface.cc
 src/gxinterface.h
 src/common.h
 src/logger.cc
+src/getops.cc
 
 #ui
 data/ui/interface.ui
