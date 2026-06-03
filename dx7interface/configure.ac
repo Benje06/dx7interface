@@ -329,33 +329,32 @@ AC_OUTPUT
 echo "
 Configuration:
 
-      Source code location:	 ${srcdir}
-      Compiler:		 C : ${CC},		C++ : ${CXX}
+    Source code location:	 ${srcdir}
+    Compiler:		 C : ${CC},		C++ : ${CXX}
 
-      env:      ${host_os}
-      Windows:  ${platform_win32}   console:    ${console}
-      Linux:    ${platform_linux}
-      Log format:   minimal: ${debug}
-                    extended:  ${debug_deep}
+    env:      ${host_os}
+    Windows:  ${platform_win32}       console: ${console}
+    Linux:    ${platform_linux}      ID_LIKE: ${ID_LIKE}
+    Msys2:    ${MSYSTEM}
 
-      CFLAGS:  ${CFLAGS}
-      CPPFLAGS: ${CPPFLAGS}
-      CXXFLAGS: ${CXXFLAGS}
-      DEPS_LIBS: ${DEPS_LIBS}
-      LDFLAGS: ${LDFLAGS}
+    CFLAGS:  ${CFLAGS}
+    CPPFLAGS: ${CPPFLAGS}
+    CXXFLAGS: ${CXXFLAGS}
+    DEPS_LIBS: ${DEPS_LIBS}
+    LDFLAGS: ${LDFLAGS}
 
-      GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}
-      
-      PROGRAMNAME_LOCALEDIR: ${PROGRAMNAME_LOCALEDIR}
-      PROGRAMNAME_UI_DIR: ${PROGRAMNAME_UI_DIR}
-      PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
-      PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
-      PROGRAMNAME_DATA_DIR: ${PROGRAMNAME_DATA_DIR}
-      
-      Midi:
-        ALSA: ${alsa}
-        JUCE: ${juce}
-        RtMidi: ${rtmidi}
+    GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}
+
+    PROGRAMNAME_LOCALEDIR: ${PROGRAMNAME_LOCALEDIR}
+    PROGRAMNAME_UI_DIR: ${PROGRAMNAME_UI_DIR}
+    PROGRAMNAME_MOD_DIR: ${PROGRAMNAME_MOD_DIR}
+    PROGRAMNAME_IMG_DIR: ${PROGRAMNAME_IMG_DIR}
+    PROGRAMNAME_DATA_DIR: ${PROGRAMNAME_DATA_DIR}
+
+    Midi:
+    ALSA: ${alsa}
+    JUCE: ${juce}
+    RtMidi: ${rtmidi}
 
 "
 

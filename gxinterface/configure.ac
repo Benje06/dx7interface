@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 # tools :
-AC_PREREQ([2.72])
+AC_PREREQ([2.73])
 LT_PREREQ([1.0.0])
 AC_REVISION([$REVISION: 1.0.0$])
 AC_INIT([gxinterface],[1.0.0],[benhaim_jerome@yahoo.fr])
@@ -266,14 +266,13 @@ Configuration:
 
   Source code location:	 ${srcdir}
   libdir location:	     ${libdir}
-  Compiler:		 C : ${CC}		C++ : ${CXX}
+  Compiler:     C : ${CC}		C++ : ${CXX}
 
   env:      ${host_os}
-  Msystem:  ${MSYSTEM}
-  Windows:  ${platform_win32}   console:    ${console}
-  Linux:    ${platform_linux}
-  Log format:   minimal: ${debug}
-                extended:  ${debug_deep}
+  Windows:  ${platform_win32}       console: ${console}
+  Linux:    ${platform_linux}      ID_LIKE: ${ID_LIKE}
+  Msys2:    ${MSYSTEM}
+  Log format:   minimal: ${debug}   extended: ${debug_deep}
 
   CPPFLAGS: ${CPPFLAGS}
   CFLAGS:  ${CFLAGS}

@@ -34,8 +34,11 @@ rm -f config.cache acconfig.h
 rep=`pwd`
 pname=${rep##/*/}
 
-if [[ ${MSYSTEM} == "UCRT64" ]]; then
-    ACLOCAL_FLAGS="-I ${prefix_path}/share/aclocal $ACLOCAL_FLAGS"
+ID_LIKE=$(grep -i "id_like=" /etc/os-release | cut -d'=' -f2)
+export ID_LIKE
+
+if [[ "${ID_LIKE}" == "arch" ]]; then
+    ACLOCAL_FLAGS="-I ${prefix_path}/share/aclocal -I /usr/share/gettext/m4 $ACLOCAL_FLAGS"
 else
     ACLOCAL_FLAGS="-I ${prefix_path}/share/aclocal $ACLOCAL_FLAGS"
 fi

@@ -31,8 +31,8 @@ Name=4Autogen
 Type=Script Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=--prefix=/usr --enable-maintainer-mode --enable-dev --enable-log=2 --enable-console=0
-EnvironmentGroup=GTK4
+Arguments=--prefix=/usr --enable-maintainer-mode --enable-log=2 --enable-console=0
+EnvironmentGroup=
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/autogen.sh
 Execute on Remote Host=false
 Interpreter=bash
@@ -48,8 +48,8 @@ Name=4D_Autogen
 Type=Script Application
 
 [Launch][Launch Configuration 1][Data]
-Arguments=--prefix=/usr --enable-maintainer-mode --enable-dev  --enable-log=2 --enable-console=0
-EnvironmentGroup=GTK4_DBUG
+Arguments=--prefix=/usr --enable-maintainer-mode --enable-dev  --enable-log=2 --enable-console=0 --enable-alsa
+EnvironmentGroup=DEBUG
 Executable=file:///home/jerome/dev/git/gtk4/gxinterface/autogen.sh
 Execute on Remote Host=false
 Interpreter=bash
@@ -152,7 +152,7 @@ Type=Native Application
 Arguments=distclean
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
-EnvironmentGroup=GTK4_DBUG
+EnvironmentGroup=
 Executable=file:///usr/bin/make
 External Terminal=konsole --noclose --workdir %workdir -e %exe
 Kill Before Executing Again=4194304
