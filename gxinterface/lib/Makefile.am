@@ -116,7 +116,7 @@ libgxthread_0_0_1_la_CPPFLAGS += \
 endif
 
 libgxthread_0_0_1_la_LIBADD = \
-	libgxinterface-0.0.1.la \
+	libgxlogmanager-0.0.1.la \
 	$(DEPS_LIBS) $(INTLLIBS) $(GTKMM_LIBS) $(GLIBMM_LIBS)
 
 

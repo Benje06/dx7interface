@@ -269,6 +269,7 @@ Configuration:
   Compiler:		 C : ${CC}		C++ : ${CXX}
 
   env:      ${host_os}
+  Msystem:  ${MSYSTEM}
   Windows:  ${platform_win32}   console:    ${console}
   Linux:    ${platform_linux}
   Log format:   minimal: ${debug}
