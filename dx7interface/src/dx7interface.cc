@@ -1748,15 +1748,15 @@ void Dx7interface::write_voice_bulk32(unsigned int* l, unsigned char* msg, St_dx
             *voice_checksum -= msg[(*l)-1];
             msg[(*l)++] = sound->op[j].kls.rght_dpth.val & 0x7F;
             *voice_checksum -= msg[(*l)-1];
-            msg[(*l)++] = ( (sound->op[j].kls.rght_curve.val + 2) + (sound->op[j].kls.lft_curve.val & 0x03) ) & 0x0F ;
+            msg[(*l)++] = ( (sound->op[j].kls.rght_curve.val << 2) + (sound->op[j].kls.lft_curve.val & 0x03) ) & 0x0F ;
             *voice_checksum -= msg[(*l)-1];
-            msg[(*l)++] = ( (sound->op[j].dtun.val + 3) + (sound->op[j].krs.val & 0x07) ) & 0x7F;
+            msg[(*l)++] = ( (sound->op[j].dtun.val << 3) + (sound->op[j].krs.val & 0x07) ) & 0x7F;
             *voice_checksum -= msg[(*l)-1];
-            msg[(*l)++] = ( (sound->op[j].kvs.val + 2) + (sound->op[j].ams.val & 0x03) ) & 0x1F;
+            msg[(*l)++] = ( (sound->op[j].kvs.val << 2) + (sound->op[j].ams.val & 0x03) ) & 0x1F;
             *voice_checksum -= msg[(*l)-1];
             msg[(*l)++] = sound->op[j].lvl.val & 0x7F;
             *voice_checksum -= msg[(*l)-1];
-            msg[(*l)++] = ( ( sound->op[j].freq_coarse.val + 1) + (sound->op[j].freq_mode.val & 0x01)  ) & 0x3F;
+            msg[(*l)++] = ( ( sound->op[j].freq_coarse.val << 1) + (sound->op[j].freq_mode.val & 0x01)  ) & 0x3F;
             *voice_checksum -= msg[(*l)-1];
             msg[(*l)++] = sound->op[j].freq_fine.val & 0x7F;
             *voice_checksum -= msg[(*l)-1];
@@ -1771,7 +1771,7 @@ void Dx7interface::write_voice_bulk32(unsigned int* l, unsigned char* msg, St_dx
         };
         msg[(*l)++] = sound->algo.algo.val & 0x1F;
         *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = ( (sound->algo.oks.val + 3) + (sound->algo.feedback.val & 0x07) ) & 0x0F;
+        msg[(*l)++] = ( (sound->algo.oks.val << 3) + (sound->algo.feedback.val & 0x07) ) & 0x0F;
         *voice_checksum -= msg[(*l)-1];
 
         msg[(*l)++] = sound->lfo.speed.val & 0x7F;
@@ -1782,7 +1782,7 @@ void Dx7interface::write_voice_bulk32(unsigned int* l, unsigned char* msg, St_dx
         *voice_checksum -= msg[(*l)-1];
         msg[(*l)++] = sound->lfo.amd.val & 0x7F;
         *voice_checksum -= msg[(*l)-1];
-        msg[(*l)++] = ( ( sound->lfo.pms.val + 4) + ( (sound->lfo.wave.val & 0x07) +1 ) + (sound->lfo.sync.val & 0x01) ) & 0x7F;
+        msg[(*l)++] = ( ( sound->lfo.pms.val << 4) + ( (sound->lfo.wave.val & 0x07) << 1 ) + (sound->lfo.sync.val & 0x01) ) & 0x7F;
         *voice_checksum -= msg[(*l)-1];
         msg[(*l)++] = sound->algo.transpose.val & 0x7F;
         *voice_checksum -= msg[(*l)-1];
